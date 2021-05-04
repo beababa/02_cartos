@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+# gros fichiers
+dataE/
+dataS/
+script/chrysomele_cache/

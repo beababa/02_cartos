@@ -1,0 +1,284 @@
+---
+title: "Dégâts gel"
+author: "B. Maranget"
+date: "04/05/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+# Librairies
+
+```{r}
+library("sf")
+library("mapsf")
+library("cartography")
+```
+
+
+
+# Donnée
+
+pb recup fond selon l'ordi
+
+
+```{r}
+# définition du chemin data
+if (Sys.getenv("PWD") == "/home/tachasa/02_cartos") { chemin <- "../00_DATA/"
+} else  {
+  chemin <- paste0 (Sys.getenv("OneDrive"),"\\beaCarto\\data sauve\\")
+  }
+# fond
+fond <-  st_read(paste0(chemin,"ign.gpkg"), "france", quiet = TRUE)
+dpt <- st_read(paste0(chemin, "ign.gpkg"), "dpt", quiet = TRUE)
+fondSimplifie <-  st_simplify(st_union(fond),preserveTopology = FALSE,20000)
+plot(fondSimplifie)
+data<-read.csv(file="data.csv", header=TRUE, sep=";", dec=".", na.strings="NA", fill=TRUE)
+# spatialisation du fichier
+data <- st_as_sf(data, coords = c("Longitude", "Latitude"), crs=4326)
+data <- st_transform(data, crs = 2154)
+facteur <- names(data)[6:17]
+facteur
+st_write(data, "data.gpkg", "data", quiet = TRUE, delete_layer = TRUE)
+# carto
+png("carto.png")
+mf_theme("ink")
+mf_map(data, var= "OC1", type = "choro")
+mf_layout("Stations météo premier palier", credits = "Arvalis, 2021")
+dev.off()
+```
+
+![](carto.png)
+
+# Interpolation objet sf
+
+
+## Grille
+
+```{r}
+bb <- st_bbox(fond)
+grille <- st_make_grid(bb, cellsize = 2000, crs = 2154)
+# 80000 pour les tests / 8000 pour le final
+grille <- st_as_sf(grille)
+plot(grille)
+```
+
+## Modèle et interpolation
+
+L'objet data est en format sf.
+Le résultat de l'interpolation est également un objet sf, pas un objet raster. Il 
+faut juste le projeter à nouveau.
+
+
+```{r}
+couleurTitre <-c( "#fc8d59" ,"#ffffbf" ,"#99d594")
+couleurTitreSerie <- rep (couleurTitre, each = 3)
+# du pluls chaud au plus froid
+couleurAmelie <- c ("#D81918","#FB8D4B","#FFDD94","#DEEED0","#8FC4DD","#2A7BB6")
+titre <- c("Palier 1 - 4 m3/h/m3", "Palier 1 - 8 m3/h/m3", "Palier 1 - 12 m3/h/m3", "Palier 1 - 16 m3/h/m3", "Palier 2 - 4 m3/h/m3", "Palier 2 - 8 m3/h/m3", "Palier 2 - 12 m3/h/m3", "Palier 2 - 16 m3/h/m3", "Palier 3 - 4 m3/h/m3", "Palier 3 - 8 m3/h/m3", "Palier 3 - 12 m3/h/m3", "Palier 3 - 16 m3/h/m3")
+
+```
+
+### Version avec une différenciation spatiale entre la grille et le fond. Tros long.
+
+```{r,eval=FALSE}
+i <- 1
+for (i in 1:12) {
+  png(paste0(facteur[i], ".png"))
+  par(mar = c(0,0,1.2,0))
+  # récupération contenu col
+  datasel <- data [,facteur [i], drop = TRUE]
+  fit_IDW <-
+    gstat(
+      formula = datasel ~ 1,
+      data = data,
+      set = list(idp = 2)
+    )
+  # formula définit la variable dépendante comme un modèle linéaire des variables independantes
+  # set options gstat attention qgis coeff r puissance, lié à l'éloignement progressif (oeil de taureau))
+  tic()
+  interp <- stats::predict(fit_IDW, newdata = grille)
+  toc()
+  class(interp)
+  st_crs(interp)
+  # nécessité epsg
+  interp <- st_transform(interp, 2154)
+  # récupératin du contenu de la 3 colonne
+  var <- names(interp)[3]
+  # coupure sur territoire français
+  res <- st_difference(fondSimplifie, interp)
+  # récupération des donnée car st_difference ne gère que les géométries
+  res2 <- st_intersection(interp, res)
+  # affichage du résulat
+
+  #mf_map(res2, var = var, type = "choro", pal = couleurAmelie, breaks = c(0,1,2,3,4,5,99 ))
+  choroLayer(res2, var = var, col = couleurAmelie, border = NA, breaks = c(0,1,2,3,4,5,99),
+             legend.title.txt = "Nombre de cellules ventilables")
+  #mf_map(fond, col = NA, add = TRUE)
+  layoutLayer(titre [i], col = couleurTitreSerie [i])
+  dev.off()
+
+}
+
+```
+
+![](res1.png)
+
+![](res8000.png)
+
+### Faire un masque afin d'éviter les st_difference
+
+```{r}
+bbox50 <- st_as_sfc(st_bbox(bb + c(-50000,-50000,50000,50000), crs = 2154))
+masque <- st_difference(bbox50,fond)
+plot( masque)
+
+
+i <- 1
+for (i in 1:12) {
+  png(paste0("img/masque_",facteur[i], ".png"))
+  par(mar = c(0,0,1.2,0))
+  # récupération contenu col
+  datasel <- data [,facteur [i], drop = TRUE]
+  fit_IDW <-
+    gstat(
+      formula = datasel ~ 1,
+      data = data,
+      set = list(idp = 0.5)
+    )
+  # formula définit la variable dépendante comme un modèle linéaire des variables independantes
+  # set options gstat attention qgis coeff r puissance, lié à l'éloignement progressif (oeil de taureau))
+  print(tic())
+  interp <- stats::predict(fit_IDW, newdata = grille)
+  print(toc())
+  class(interp)
+  st_crs(interp)
+  # nécessité epsg
+  interp <- st_transform(interp, 2154)
+  # récupératin du nom de la 3 colonne
+  var <- names(interp)[3]
+  # affichage du résulat
+  #mf_map(res2, var = var, type = "choro", pal = couleurAmelie, breaks = c(0,1,2,3,4,5,99 ))
+  par(mar=c(0,0,1.2,0))
+  choroLayer(interp, var = var, col = couleurAmelie, border = NA, breaks = c(0,1,2,3,4,5,99),
+             legend.title.txt = "Nombre de \ncellules ventilables")
+  plot(masque, col = "antiquewhite1", border= "antiquewhite1", add = TRUE)
+  plot(dpt, border = "antiquewhite3", col = NA, lwd = 0.6, add = TRUE)
+  #mf_map(fond, col = NA, add = TRUE)
+  layoutLayer(titre [i], col = couleurTitreSerie [i])
+  dev.off()
+}
+
+# on garde en mémoire la 1e carte
+st_write(interp, "data.gpkg", "test", delete_layer = TRUE)
+```
+
+
+## Recherche pour lissage. passer de couleur à palette
+
+
+### Utiliser une palette viridis
+
+```{r}
+png("img/lissage_viridis.png")
+interp <- st_read("data.gpkg", "test", quiet = TRUE)
+library(viridis)
+choroLayer(interp, var = var, col =  viridis(50), border = NA, method ="fisher", nclass = 51,
+             legend.title.txt = "Nombre de \ncellules ventilables")
+plot(masque, col = "antiquewhite1", border= "antiquewhite1", add = TRUE)
+plot(dpt, border = "antiquewhite3", col = NA, lwd = 0.6, add = TRUE)
+layoutLayer(titre [i], col = couleurTitreSerie [i])
+dev.off()
+```
+
+
+### Autre solution : unir les carreaux et simplifier
+
+
+```{r}
+png("img/lissage_simplifgeom.png")
+interp$valeur <- cut(interp$var1.pred, breaks = c(0,1,2,3,4,5,99))
+table(interp$valeur)
+agg <- aggregate(interp, by = list(classe = interp$valeur), length)
+aggSimplifie <- st_simplify(agg, preserveTopology = FALSE, 10000)
+plot(aggSimplifie$geometry)
+aggSimplifie
+choroLayer(aggSimplifie, var = "classe", col = couleurAmelie, border = NA, breaks = c(0,1,2,3,4,5,99),
+             legend.title.txt = "Nombre de \ncellules ventilables")
+plot(masque, col = "antiquewhite1", border= "antiquewhite1", add = TRUE)
+plot(dpt, border = "antiquewhite3", col = NA, lwd = 0.6, add = TRUE)
+layoutLayer(titre [i], col = couleurTitreSerie [i])
+dev.off()
+```
+
+### Les trois propositions
+
+![](img/masque_potr1_4.png)
+![](img/lissage_viridis.png)
+![](img/lissage_simplifgeom.png)
+
+
+# Interpolation objet sp raster
+
+## Grille
+
+```{r}
+# https://epsg.io/2154
+crs_raster_format <- 
+"+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "
+grilleR <- fond %>% 
+  st_bbox() %>% 
+  st_as_sfc() %>% 
+  st_make_grid(
+  cellsize = c(2000, 2000),
+  what = "centers"
+  ) %>%
+  st_as_sf() %>%
+  cbind(., st_coordinates(.)) %>% 
+  st_drop_geometry() %>% 
+  mutate(Z = 0) %>%
+  raster::rasterFromXYZ( 
+    crs = crs_raster_format)
+
+datasel <- data [,facteur [1], drop = TRUE]
+datasp <- as(data,"Spatial")
+crs.lamb <- CRS("+init=epsg:2154")
+
+# Et on impose ce système à meuse pour avoir une projection plus classique
+
+library(rgdal)
+datasp <- as(data, "Spatial")
+datasp <- spTransform(datasp, crs.lamb)
+fit_IDW <-
+    gstat(
+      formula = datasel ~ 1,
+      data = datasp,
+      nmax = 10, nmin = 3,
+      set = list(idp = 0.5)
+    )
+fit_IDW
+datasp
+grilleR
+
+interp_IDW <- raster::interpolate(grilleR, fit_IDW)
+interp_IDW <- stats::predict(grilleR, fit_IDW)
+library("stars")
+class(interp_IDW)
+sf <- st_as_sf(interp_IDW)
+plot(grilleR)
+plot(interp_IDW, breaks = c(0,1,2,3,4,5,99), col = couleurAmelie)
+
+
+```
+
