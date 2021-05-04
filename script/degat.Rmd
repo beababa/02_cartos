@@ -150,33 +150,65 @@ y <- create_grid(x = centr, res = 2000)
 pot <- mcpotential(
   x = centr, y = y,
   var = "reponse",
-  fun = "e", span = 75,
-  beta = 2, limit = 300, 
+  fun = "e", span = 7500,
+  beta = 2, limit = 30000, 
   ncl = 2
 )
 # Define potential according to the maximum value
 y$pot <- pot / max(pot) * 100
 # create equipotential areas
 equipot <- equipotential(y, var = "pot", mask = regionS)
+equipot
 plot(equipot$geometry)
 # map potentials
-opar <- par(mar = c(0, 0, 1.2, 0), bg = "#b5bece", no.readonly = TRUE)
-seq(0,100, length.out = 11)
+png("../img/potentiel.png")
+par(mar = c(0, 0, 1.2, 0))
+mypal <- carto.pal(pal1 = "green.pal", n1 = 1, pal2 = "wine.pal", n2 = 9)
+ghostLayer(regionS$geom, bg = "lightblue2")
+plot(region$geom, col = "antiquewhite1", border = "grey", add = TRUE)
 choroLayer(equipot, var = "center", 
-           breaks = seq(0,100,length.out = 11), 
-           col = hcl.colors(10, 'teal'),
+           breaks = seq(-20, 100,length.out = 11), 
+           col = mypal,
            border = "#121725", 
            lwd = .2, 
-           legend.pos = "bottom", 
-           legend.title.txt = "Potential Intensity",
-           legend.horiz = TRUE)
-layoutLayer(title = "Potentials de réponse", 
-            col = "#121725", coltitle = "#4dB8da",
+           legend.pos = "topright", 
+           legend.title.txt = "densité réponses oui",
+           legend.horiz = FALSE,
+           add = TRUE)
+layoutLayer(title = "Concentration des réponses validant un dégât en région Centre Val de Loire", 
+            theme = "red.pal",
             sources = "Arvalis,2021",
             horiz = FALSE, 
             postitle = "center", 
             scale = FALSE)
-par(opar)
+dev.off()
+```
+
+carte plus classique
+
+```{r}
+summary(jointuresf$reponse)
+png("../img/choro.png")
+par(mar = c(0, 0, 1.2, 0))
+mypal <- carto.pal(pal1 = "green.pal", n1 = 1, pal2 = "wine.pal", n2 = 4)
+ghostLayer(regionS$geom, bg = "lightblue2")
+plot(region$geom, col = "antiquewhite1", border = "grey", add = TRUE)
+choroLayer(jointuresf, var = "reponse", 
+           breaks = c(-2, 0,2,4,8,10), 
+           col = mypal,
+           border = "#121725", 
+           lwd = .2, 
+           legend.pos = "topright", 
+           legend.title.txt = "différence oui non",
+           legend.horiz = FALSE,
+           add = TRUE)
+layoutLayer(title = "Réponses validant un dégât en région Centre Val de Loire", 
+            theme = "red.pal",
+            sources = "Arvalis,2021",
+            horiz = FALSE, 
+            postitle = "center", 
+            scale = FALSE)
+dev.off()
 ```
 
 
