@@ -120,7 +120,7 @@ mf_layout("difference nb oui et nb non pour les dégats par commune", credits = 
 dev.off()
 ```
 
-![](carto.png)
+
 
 Autre solution : pct oui / réponse totale
 
@@ -184,6 +184,8 @@ layoutLayer(title = "Concentration des réponses validant un dégât en région 
 dev.off()
 ```
 
+![](../img/potentiel.png)
+
 carte plus classique
 
 ```{r}
@@ -212,3 +214,4 @@ dev.off()
 ```
 
 
+![](../img/choro.png)
