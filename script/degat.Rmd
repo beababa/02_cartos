@@ -1,0 +1,217 @@
+---
+title: "Dégâts gel"
+author: "B. Maranget"
+date: "04/05/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+# Librairies
+
+```{r}
+library("sf")
+library("mapsf") # descendant de cartography
+library("cartography")
+```
+
+
+
+# Donnée
+
+pb recup fond selon l'ordi
+
+
+```{r}
+# définition du chemin data
+if (Sys.getenv("PWD") == "/home/tachasa") { chemin <- "../../00_DATA/"
+} else  {
+  chemin <- paste0 (Sys.getenv("OneDrive"),"\\beaCarto\\data sauve\\")
+  }
+# fond
+region <-  st_read(paste0(chemin,"ign.gpkg"), "region", quiet = TRUE)
+dpt <- st_read(paste0(chemin, "ign.gpkg"), "dpt", quiet = TRUE)
+commune <- st_read(paste0(chemin, "ign.gpkg"), "commune", quiet = TRUE)
+# sélection centre val de loire
+regionS <- region [4,]
+dptS <- dpt [dpt$INSEE_REG == 24,]
+communeS <- commune [commune$INSEE_REG == 24,]
+```
+
+Donnée métier
+
+```{r}
+data <- read.csv(file="../data/degat.csv", na.strings = "NA", stringsAsFactors = TRUE,)
+# les codes postaux ont été légèrement modifiés dans le fichier d'origine : rajout ou suppression de zéro, suppression d'une ligne sans cp
+# verif des levels
+for (i in 2:23) {
+  print (paste0("TITRE : ",names(data [i])))
+  print(levels(data [,i]))
+  }
+```
+
+La donnée semble propre
+
+Jointure par le code postal
+
+https://www.data.gouv.fr/fr/datasets/base-officielle-des-codes-postaux/
+
+point de vigilance : code INSEE et code postal. Plusieurs code postal pour un seul code INSEE.
+
+On choisit arbitrairement la correspondance code postal avec le premier code INSEE disponible
+
+```{r}
+# récupération et filtrage sur les colonnes nécessaires du fichier
+equiv <- read.csv2("../data/laposte_hexasmal.csv")
+str(equiv)
+equiv <- equiv [, c("Code_commune_INSEE", "Code_postal")]
+# on cherche les indices des lignes dupliquées.
+doublons <- which(duplicated(equiv$Code_postal))
+# on récupère au moins un exemplaire de chaque Code postal
+equivSimplif <- equiv [-doublons,]
+# vérif : une seule donnée
+table(equivSimplif$Code_postal)
+jointureData <- merge(data, equivSimplif, all.x, by.x = "cp", by.y = "Code_postal")
+# 257 sur 261, 4 cp de la data ne sont pas dans equivSimplif. A priori erreurs de saisie 
+diff <- setdiff(data$ID,jointureData$ID)
+data$cp [data$ID %in% diff]
+```
+
+
+
+
+
+```{r}
+communeS$INSEE_COM <- as.integer(communeS$INSEE_COM)
+jointureCommuneS <- merge(communeS, jointureData, by.x = "INSEE_COM", by.y = "Code_commune_INSEE")
+# 245 sur 261, aie !
+diff <- setdiff(data$cp, jointureCommuneS$cp)
+equivSimplif [equivSimplif$Code_postal == 31300,]
+```
+
+TODO à explorer la dispartion des 15 données
+
+Cartographie de la donnée dégat
+
+Il y a plusieurs réponses par communes, on décide de mesurer le nb de oui sur le nb total de réponse
+
+```{r}
+data <- jointureCommuneS [, c("INSEE_COM","degat")]
+str(data)
+data$num <- ifelse(data$degat == "Oui", 1, -1)
+agg <- aggregate(data$num, by = list(data$INSEE_COM), sum)
+names(agg) <- c("INSEE_COM", "reponse")
+jointure <- merge(agg, communeS, by.x = "INSEE_COM", by.y = "INSEE_COM")
+jointuresf <- st_as_sf(jointure)
+mf_theme("ink")
+mf_map(jointuresf, var= "reponse", type = "choro")
+mf_layout("difference nb oui et nb non pour les dégats par commune", credits = "Arvalis, 2021")
+dev.off()
+```
+
+
+
+Autre solution : pct oui / réponse totale
+
+```{r}
+data$oui <- ifelse (data$degat == "Oui", 1,0)
+data$non  <- ifelse(data$degat == "Non", 1,0)
+aggOui <- aggregate(data$oui, by = list(data$INSEE_COM), sum)
+aggNon <- aggregate(data$non, by = list(data$INSEE_COM), sum)
+aggTot <- merge(aggOui, aggNon, all = TRUE, by = "Group.1")
+names(aggTot) <- c("INSEE_COM", "oui", "nom")
+aggTot$pct <- (aggTot$oui / (aggTot$oui + aggTot$nom))*100
+aggTotsf <- merge()^
+barplot(sort(aggTot$pct))
+mf_map(aggTot, "pct", type = "choro")
+```
+
+Trop peu de données, on met en place un lissage spatial
+
+
+```{r}
+library(potential)
+centr <- st_centroid(jointuresf)
+plot_inter(fun = "e", span = 75000, beta = 2, limit = 250000)
+# create a regular grid
+y <- create_grid(x = centr, res = 2000)
+# compute potentials
+pot <- mcpotential(
+  x = centr, y = y,
+  var = "reponse",
+  fun = "e", span = 7500,
+  beta = 2, limit = 30000, 
+  ncl = 2
+)
+# Define potential according to the maximum value
+y$pot <- pot / max(pot) * 100
+# create equipotential areas
+equipot <- equipotential(y, var = "pot", mask = regionS)
+equipot
+plot(equipot$geometry)
+# map potentials
+png("../img/potentiel.png")
+par(mar = c(0, 0, 1.2, 0))
+mypal <- carto.pal(pal1 = "green.pal", n1 = 1, pal2 = "wine.pal", n2 = 9)
+ghostLayer(regionS$geom, bg = "lightblue2")
+plot(region$geom, col = "antiquewhite1", border = "grey", add = TRUE)
+choroLayer(equipot, var = "center", 
+           breaks = seq(-20, 100,length.out = 11), 
+           col = mypal,
+           border = "#121725", 
+           lwd = .2, 
+           legend.pos = "topright", 
+           legend.title.txt = "densité réponses oui",
+           legend.horiz = FALSE,
+           add = TRUE)
+layoutLayer(title = "Concentration des réponses validant un dégât en région Centre Val de Loire", 
+            theme = "red.pal",
+            sources = "Arvalis,2021",
+            horiz = FALSE, 
+            postitle = "center", 
+            scale = FALSE)
+dev.off()
+```
+
+![](../img/potentiel.png)
+
+carte plus classique
+
+```{r}
+summary(jointuresf$reponse)
+png("../img/choro.png")
+par(mar = c(0, 0, 1.2, 0))
+mypal <- carto.pal(pal1 = "green.pal", n1 = 1, pal2 = "wine.pal", n2 = 4)
+ghostLayer(regionS$geom, bg = "lightblue2")
+plot(region$geom, col = "antiquewhite1", border = "grey", add = TRUE)
+choroLayer(jointuresf, var = "reponse", 
+           breaks = c(-2, 0,2,4,8,10), 
+           col = mypal,
+           border = "#121725", 
+           lwd = .2, 
+           legend.pos = "topright", 
+           legend.title.txt = "différence oui non",
+           legend.horiz = FALSE,
+           add = TRUE)
+layoutLayer(title = "Réponses validant un dégât en région Centre Val de Loire", 
+            theme = "red.pal",
+            sources = "Arvalis,2021",
+            horiz = FALSE, 
+            postitle = "center", 
+            scale = FALSE)
+dev.off()
+```
+
+
+![](../img/choro.png)
