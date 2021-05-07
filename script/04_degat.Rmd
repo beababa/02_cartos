@@ -18,267 +18,258 @@ knitr::opts_chunk$set(eval = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 ```
 
+
+
+# Objet
+
+Nous avons fait une enquête agriculteurs afin d’avoir une idée de l’impact des dégâts de gel du mois d’Avril.
+
+Les réponses sont toutes rattachées à un code postal.
+
+La carte doit permettre d’identifier les zones les plus touchées à l’échelle de la région Centre Val de Loire.
+
+5 espèces différentes - Nature des dégats / Etendue / Nature des symptômes
+
+Codes couleur : 
+
+    - Dégâts Oui/ non avec 2 couleur (rouge/vert par exemple)
+    
+    - Etendu des dégâts (3 couleurs pour les 3 proposition, par exemple 
+        
+          * Généralisés en rouge / 
+          
+          * Localisés en orange / 
+          
+          * Ponctuels en jaune)
+          
+    
+    - Nature des symptôme (3 couleurs pour les 3 proposition, par exemple 
+    
+          * Destruction totale en rouge / 
+          
+          * Destruction maitre brin en orange / 
+          
+          * sur feuilles en jaune)
+
 # Librairies
 
 ```{r}
 library("sf")
-library("mapsf")
+library("mapsf") # descendant de cartography
 library("cartography")
 ```
 
 
 
-# Donnée
+# Données
 
-pb recup fond selon l'ordi
+## pb recup fond selon l'ordi
 
 
 ```{r}
 # définition du chemin data
-if (Sys.getenv("PWD") == "/home/tachasa/02_cartos") { chemin <- "../00_DATA/"
+if (Sys.getenv("PWD") == "/home/tachasa") { chemin <- "../../00_DATA/"
 } else  {
   chemin <- paste0 (Sys.getenv("OneDrive"),"\\beaCarto\\data sauve\\")
   }
 # fond
-fond <-  st_read(paste0(chemin,"ign.gpkg"), "france", quiet = TRUE)
+region <-  st_read(paste0(chemin,"ign.gpkg"), "region", quiet = TRUE)
 dpt <- st_read(paste0(chemin, "ign.gpkg"), "dpt", quiet = TRUE)
-fondSimplifie <-  st_simplify(st_union(fond),preserveTopology = FALSE,20000)
-plot(fondSimplifie)
-data<-read.csv(file="data.csv", header=TRUE, sep=";", dec=".", na.strings="NA", fill=TRUE)
-# spatialisation du fichier
-data <- st_as_sf(data, coords = c("Longitude", "Latitude"), crs=4326)
-data <- st_transform(data, crs = 2154)
-facteur <- names(data)[6:17]
-facteur
-st_write(data, "data.gpkg", "data", quiet = TRUE, delete_layer = TRUE)
-# carto
-png("carto.png")
-mf_theme("ink")
-mf_map(data, var= "OC1", type = "choro")
-mf_layout("Stations météo premier palier", credits = "Arvalis, 2021")
+commune <- st_read(paste0(chemin, "ign.gpkg"), "commune", quiet = TRUE)
+# sélection centre val de loire
+regionS <- region [4,]
+dptS <- dpt [dpt$INSEE_REG == 24,]
+communeS <- commune [commune$INSEE_REG == 24,]
+plot(communeS$POPULATION)
+# pour affichage des grosses communes
+labelCommuneS <- communeS [communeS$POPULATION > 40000,]
+```
+
+## Donnée métier
+
+```{r}
+data <- read.csv(file="../data/04_degat.csv", na.strings = "NA", stringsAsFactors = TRUE,)
+# les codes postaux ont été légèrement modifiés dans le fichier d'origine : rajout ou suppression de zéro, suppression d'une ligne sans cp
+# verif des levels
+for (i in 2:23) {
+  print (paste0("TITRE : ",names(data [i])))
+  print(levels(data [,i]))
+  }
+```
+
+
+# Jointure
+
+La donnée semble propre
+
+Jointure par le code postal
+
+https://www.data.gouv.fr/fr/datasets/base-officielle-des-codes-postaux/
+
+point de vigilance : code INSEE et code postal. Plusieurs code postal pour un seul code INSEE.
+
+On choisit arbitrairement la correspondance code postal avec le premier code INSEE disponible
+
+```{r}
+# récupération et filtrage sur les colonnes nécessaires du fichier
+equiv <- read.csv2("../data/laposte_hexasmal.csv")
+str(equiv)
+equiv <- equiv [, c("Code_commune_INSEE", "Code_postal")]
+# on cherche les indices des lignes dupliquées.
+doublons <- which(duplicated(equiv$Code_postal))
+# on récupère au moins un exemplaire de chaque Code postal
+equivSimplif <- equiv [-doublons,]
+# vérif : une seule donnée
+table(equivSimplif$Code_postal)
+jointureData <- merge(data, equivSimplif, all.x, by.x = "cp", by.y = "Code_postal")
+# 257 sur 261, 4 cp de la data ne sont pas dans equivSimplif. A priori erreurs de saisie 
+diff <- setdiff(data$ID,jointureData$ID)
+data$cp [data$ID %in% diff]
+```
+
+
+
+
+
+```{r}
+communeS$INSEE_COM <- as.integer(communeS$INSEE_COM)
+jointureCommuneS <- merge(communeS, jointureData, by.x = "INSEE_COM", by.y = "Code_commune_INSEE")
+# 245 sur 261, aie !
+diff <- setdiff(data$cp, jointureCommuneS$cp)
+equivSimplif [equivSimplif$Code_postal == 31300,]
+```
+
+TODO à explorer la dispartion des 15 données
+
+
+# Cartographie
+
+## Carte par commune
+
+### Différence
+
+Il y a plusieurs réponses par communes, on décide de mesurer la différence entre les nons et les ouis par code postal.
+
+```{r}
+data <- jointureCommuneS [, c("INSEE_COM","degat")]
+table(data$degat)
+# 49 noms pour 187 oui
+data$num <- ifelse(data$degat == "Oui", 1, -1)
+agg <- aggregate(data$num, by = list(data$INSEE_COM), sum)
+names(agg) <- c("INSEE_COM", "reponse")
+jointure <- merge(agg, communeS, by.x = "INSEE_COM", by.y = "INSEE_COM")
+jointuresf <- st_as_sf(jointure)
+mf_theme("brutal")
+mf_shadow(regionS)
+mf_map(region, add = TRUE)
+mf_shadow(regionS, add = TRUE)
+mf_map(jointuresf, var= "reponse", leg_title = "diff. oui non", type = "choro", add = TRUE)
+mf_label(labelCommuneS, "NOM_COM", halo = TRUE)
+mf_layout("difference nb oui et nb non pour les dégats par commune", credits = "Arvalis, 2021")
+```
+
+
+### Autre solution : pct oui / réponse totale par commune
+
+```{r}
+data$oui <- ifelse (data$degat == "Oui", 1,0)
+data$non  <- ifelse(data$degat == "Non", 1,0)
+aggOui <- aggregate(data$oui, by = list(data$INSEE_COM), sum)
+aggNon <- aggregate(data$non, by = list(data$INSEE_COM), sum)
+aggTot <- merge(aggOui, aggNon, all = TRUE, by = "Group.1")
+aggTot
+names(aggTot) <- c("INSEE_COM", "oui", "non")
+plot(aggTot$oui,aggTot$non)
+aggTot$pct <- (aggTot$oui / (aggTot$oui + aggTot$non))*100
+plot(sort(aggTot$pct))
+aggTotsf <- st_as_sf(merge(aggTot, communeS, by = "INSEE_COM"))
+
+mf_theme("brutal")
+mf_shadow(regionS)
+mf_map(region, add = TRUE)
+mf_shadow(regionS, add = TRUE)
+mf_map(aggTotsf, "pct", leg_title = "% oui / totalité réponses", nbreaks = 5, breaks = c(0,20,60,80,100), type = "choro", leg_val_rnd = 0, add = TRUE)
+mf_label(labelCommuneS, "NOM_COM", halo = TRUE)
+mf_layout("Rapport oui sur la totalité des réponses pour les dégats par commune", credits = "Arvalis, 2021")
+```
+
+
+## Carte lissée
+
+Même si la donnée est peu nombreuse, elle est bien répartie sur le territoire.
+Une carte lissée permettra de souligner les zones où les réponses oui ont été les plus 
+importantes.
+
+### Avec la différence
+
+```{r}
+library(potential)
+centr <- st_centroid(jointuresf)
+plot_inter(fun = "e", span = 75000, beta = 2, limit = 250000)
+# create a regular grid
+y <- create_grid(x = centr, res = 2000)
+# compute potentials
+pot <- mcpotential(
+  x = centr, y = y,
+  var = "reponse",
+  fun = "e", span = 7500,
+  beta = 2, limit = 30000, 
+  ncl = 2
+)
+# Define potential according to the maximum value
+y$pot <- pot / max(pot) * 100
+# create equipotential areas
+equipot <- equipotential(y, var = "pot", mask = regionS)
+equipot
+plot(equipot$geometry)
+# map potentials
+png("../img/potentielDiff.png")
+par(mar = c(0, 0, 1.2, 0))
+mypal <- carto.pal(pal1 = "green.pal", n1 = 1, pal2 = "wine.pal", n2 = 9)
+ghostLayer(regionS$geom, bg = "lightblue2")
+plot(region$geom, col = "antiquewhite1", border = "grey", add = TRUE)
+choroLayer(equipot, var = "center", 
+           breaks = seq(-20, 100,length.out = 11), 
+           col = mypal,
+           border = "#121725", 
+           lwd = .2, 
+           legend.pos = "topright", 
+           legend.title.txt = "densité différence oui non",
+           legend.horiz = FALSE,
+           add = TRUE)
+labelLayer(labelCommuneS,txt = "NOM_COM", halo = TRUE, add = TRUE)
+layoutLayer(title = "Concentration des différences oui/non sur un dégât en région Centre Val de Loire - 247 réponses", 
+            theme = "red.pal",
+            sources = "Arvalis,2021",
+            horiz = FALSE, 
+            postitle = "center", 
+            scale = FALSE)
 dev.off()
 ```
 
-![](carto.png)
+![](../img/potentielDiff.png)
 
-# Interpolation objet sf
+## Carte des oui / non dégats pour les 5 cultures
 
-
-## Grille
-
-```{r}
-bb <- st_bbox(fond)
-grille <- st_make_grid(bb, cellsize = 2000, crs = 2154)
-# 80000 pour les tests / 8000 pour le final
-grille <- st_as_sf(grille)
-plot(grille)
-```
-
-## Modèle et interpolation
-
-L'objet data est en format sf.
-Le résultat de l'interpolation est également un objet sf, pas un objet raster. Il 
-faut juste le projeter à nouveau.
 
 
 ```{r}
-couleurTitre <-c( "#fc8d59" ,"#ffffbf" ,"#99d594")
-couleurTitreSerie <- rep (couleurTitre, each = 3)
-# du pluls chaud au plus froid
-couleurAmelie <- c ("#D81918","#FB8D4B","#FFDD94","#DEEED0","#8FC4DD","#2A7BB6")
-titre <- c("Palier 1 - 4 m3/h/m3", "Palier 1 - 8 m3/h/m3", "Palier 1 - 12 m3/h/m3", "Palier 1 - 16 m3/h/m3", "Palier 2 - 4 m3/h/m3", "Palier 2 - 8 m3/h/m3", "Palier 2 - 12 m3/h/m3", "Palier 2 - 16 m3/h/m3", "Palier 3 - 4 m3/h/m3", "Palier 3 - 8 m3/h/m3", "Palier 3 - 12 m3/h/m3", "Palier 3 - 16 m3/h/m3")
+jointureCommuneS
+numCol <- grep( "degat", names(jointureCommuneS))
+data <- jointureCommuneS [, c(1, numCol), drop = TRUE]
 
-```
-
-### Version avec une différenciation spatiale entre la grille et le fond. Tros long.
-
-```{r,eval=FALSE}
-i <- 1
-for (i in 1:12) {
-  png(paste0(facteur[i], ".png"))
-  par(mar = c(0,0,1.2,0))
-  # récupération contenu col
-  datasel <- data [,facteur [i], drop = TRUE]
-  fit_IDW <-
-    gstat(
-      formula = datasel ~ 1,
-      data = data,
-      set = list(idp = 2)
-    )
-  # formula définit la variable dépendante comme un modèle linéaire des variables independantes
-  # set options gstat attention qgis coeff r puissance, lié à l'éloignement progressif (oeil de taureau))
-  tic()
-  interp <- stats::predict(fit_IDW, newdata = grille)
-  toc()
-  class(interp)
-  st_crs(interp)
-  # nécessité epsg
-  interp <- st_transform(interp, 2154)
-  # récupératin du contenu de la 3 colonne
-  var <- names(interp)[3]
-  # coupure sur territoire français
-  res <- st_difference(fondSimplifie, interp)
-  # récupération des donnée car st_difference ne gère que les géométries
-  res2 <- st_intersection(interp, res)
-  # affichage du résulat
-
-  #mf_map(res2, var = var, type = "choro", pal = couleurAmelie, breaks = c(0,1,2,3,4,5,99 ))
-  choroLayer(res2, var = var, col = couleurAmelie, border = NA, breaks = c(0,1,2,3,4,5,99),
-             legend.title.txt = "Nombre de cellules ventilables")
-  #mf_map(fond, col = NA, add = TRUE)
-  layoutLayer(titre [i], col = couleurTitreSerie [i])
-  dev.off()
-
+i <- 3
+for (i in 1:8){
+  # filtre sur lignes vides
+  dataCult <-  data [data [,i] != "", c(1,i)]
+  # nb observation
+  nb <- nrow(dataCult)
+  table(dataCult [,2])
+  dataCult$oui <- ifelse(dataCult [,2] == "Oui",1,0)
+  dataCult$non <- ifelse(dataCult [,2] == "Non", -1, 0)
+  aggdata <-  aggregate (dataCult$INSEE_COM, by = list (dataCult$oui, dataCult$non), sum)
 }
-
+aggdata
 ```
 
-![](res1.png)
-
-![](res8000.png)
-
-### Faire un masque afin d'éviter les st_difference
-
-```{r}
-bbox50 <- st_as_sfc(st_bbox(bb + c(-50000,-50000,50000,50000), crs = 2154))
-masque <- st_difference(bbox50,fond)
-plot( masque)
-
-
-i <- 1
-for (i in 1:12) {
-  png(paste0("img/masque_",facteur[i], ".png"))
-  par(mar = c(0,0,1.2,0))
-  # récupération contenu col
-  datasel <- data [,facteur [i], drop = TRUE]
-  fit_IDW <-
-    gstat(
-      formula = datasel ~ 1,
-      data = data,
-      set = list(idp = 0.5)
-    )
-  # formula définit la variable dépendante comme un modèle linéaire des variables independantes
-  # set options gstat attention qgis coeff r puissance, lié à l'éloignement progressif (oeil de taureau))
-  print(tic())
-  interp <- stats::predict(fit_IDW, newdata = grille)
-  print(toc())
-  class(interp)
-  st_crs(interp)
-  # nécessité epsg
-  interp <- st_transform(interp, 2154)
-  # récupératin du nom de la 3 colonne
-  var <- names(interp)[3]
-  # affichage du résulat
-  #mf_map(res2, var = var, type = "choro", pal = couleurAmelie, breaks = c(0,1,2,3,4,5,99 ))
-  par(mar=c(0,0,1.2,0))
-  choroLayer(interp, var = var, col = couleurAmelie, border = NA, breaks = c(0,1,2,3,4,5,99),
-             legend.title.txt = "Nombre de \ncellules ventilables")
-  plot(masque, col = "antiquewhite1", border= "antiquewhite1", add = TRUE)
-  plot(dpt, border = "antiquewhite3", col = NA, lwd = 0.6, add = TRUE)
-  #mf_map(fond, col = NA, add = TRUE)
-  layoutLayer(titre [i], col = couleurTitreSerie [i])
-  dev.off()
-}
-
-# on garde en mémoire la 1e carte
-st_write(interp, "data.gpkg", "test", delete_layer = TRUE)
-```
-
-
-## Recherche pour lissage. passer de couleur à palette
-
-
-### Utiliser une palette viridis
-
-```{r}
-png("img/lissage_viridis.png")
-interp <- st_read("data.gpkg", "test", quiet = TRUE)
-library(viridis)
-choroLayer(interp, var = var, col =  viridis(50), border = NA, method ="fisher", nclass = 51,
-             legend.title.txt = "Nombre de \ncellules ventilables")
-plot(masque, col = "antiquewhite1", border= "antiquewhite1", add = TRUE)
-plot(dpt, border = "antiquewhite3", col = NA, lwd = 0.6, add = TRUE)
-layoutLayer(titre [i], col = couleurTitreSerie [i])
-dev.off()
-```
-
-
-### Autre solution : unir les carreaux et simplifier
-
-
-```{r}
-png("img/lissage_simplifgeom.png")
-interp$valeur <- cut(interp$var1.pred, breaks = c(0,1,2,3,4,5,99))
-table(interp$valeur)
-agg <- aggregate(interp, by = list(classe = interp$valeur), length)
-aggSimplifie <- st_simplify(agg, preserveTopology = FALSE, 10000)
-plot(aggSimplifie$geometry)
-aggSimplifie
-choroLayer(aggSimplifie, var = "classe", col = couleurAmelie, border = NA, breaks = c(0,1,2,3,4,5,99),
-             legend.title.txt = "Nombre de \ncellules ventilables")
-plot(masque, col = "antiquewhite1", border= "antiquewhite1", add = TRUE)
-plot(dpt, border = "antiquewhite3", col = NA, lwd = 0.6, add = TRUE)
-layoutLayer(titre [i], col = couleurTitreSerie [i])
-dev.off()
-```
-
-### Les trois propositions
-
-![](img/masque_potr1_4.png)
-![](img/lissage_viridis.png)
-![](img/lissage_simplifgeom.png)
-
-
-# Interpolation objet sp raster
-
-## Grille
-
-```{r}
-# https://epsg.io/2154
-crs_raster_format <- 
-"+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "
-grilleR <- fond %>% 
-  st_bbox() %>% 
-  st_as_sfc() %>% 
-  st_make_grid(
-  cellsize = c(2000, 2000),
-  what = "centers"
-  ) %>%
-  st_as_sf() %>%
-  cbind(., st_coordinates(.)) %>% 
-  st_drop_geometry() %>% 
-  mutate(Z = 0) %>%
-  raster::rasterFromXYZ( 
-    crs = crs_raster_format)
-
-datasel <- data [,facteur [1], drop = TRUE]
-datasp <- as(data,"Spatial")
-crs.lamb <- CRS("+init=epsg:2154")
-
-# Et on impose ce système à meuse pour avoir une projection plus classique
-
-library(rgdal)
-datasp <- as(data, "Spatial")
-datasp <- spTransform(datasp, crs.lamb)
-fit_IDW <-
-    gstat(
-      formula = datasel ~ 1,
-      data = datasp,
-      nmax = 10, nmin = 3,
-      set = list(idp = 0.5)
-    )
-fit_IDW
-datasp
-grilleR
-
-interp_IDW <- raster::interpolate(grilleR, fit_IDW)
-interp_IDW <- stats::predict(grilleR, fit_IDW)
-library("stars")
-class(interp_IDW)
-sf <- st_as_sf(interp_IDW)
-plot(grilleR)
-plot(interp_IDW, breaks = c(0,1,2,3,4,5,99), col = couleurAmelie)
-
-
-```
 
