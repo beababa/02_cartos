@@ -256,7 +256,7 @@ dev.off()
 ```{r}
 jointureCommuneS
 numCol <- grep( "degat", names(jointureCommuneS))
-data <- jointureCommuneS [, c(1, numCol), drop = TRUE]
+data <- jointureCommuneS [, c(1, numCol), drop = T]
 
 i <- 3
 for (i in 1:8){
@@ -267,9 +267,11 @@ for (i in 1:8){
   table(dataCult [,2])
   dataCult$oui <- ifelse(dataCult [,2] == "Oui",1,0)
   dataCult$non <- ifelse(dataCult [,2] == "Non", -1, 0)
-  aggdata <-  aggregate (dataCult$INSEE_COM, by = list (dataCult$oui, dataCult$non), sum)
-}
-aggdata
+  dataCult$num <- dataCult$oui + dataCult$non
+  jointure <- merge(communeS$INSEE_COM,dataCult, by = "INSEE_COM")
+  aggdata <-  aggregate (dataCult$INSEE_COM, by = list (dataCult$num), sum)
+  # pourquoi ça marche plus haut ? à cause de la géométrie
+  }
 ```
 
 
