@@ -1,0 +1,62 @@
+---
+title: "Recherche doublons - prep données"
+author: "B. Maranget"
+date: "26/07/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Ouverture donnée et suppression doublons texte pour etiquette
+
+
+# Import
+
+```{r}
+
+library(sf)
+data <- st_read("../../03_Data/antibruit.gpkg", "ETS", stringsAsFactors = T)
+str(data)
+names(data)
+levels(data$CAT)
+levels(data$TYPE)
+# pour OSM, amenity=social_facility/school/child_care pour la CAT
+# pour le type amenity=hospital,  healthcare=psychotherapist, 
+# building = public pour tous
+```
+
+
+
+# recherche doublons
+
+```{r, eval = FALSE}
+data$ETIK <- ifelse(duplicated(data$NOM)==TRUE,"", data$NOM)
+table(data$ETIK)
+```
+
+
+# Export
+
+```{r}
+st_write(data, "../../03_Data/antibruit.gpkg", "ETS", delete_layer = T)
+```
+
+
+```{r}
+levels(data$CAT)
+data$CAT

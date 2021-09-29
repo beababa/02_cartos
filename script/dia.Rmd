@@ -1,0 +1,96 @@
+---
+title: "Recup fichier dia"
+author: "B. Maranget"
+date: "28/09/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+reprise de données DIA pour Operis - Oxalis
+
+
+# Import
+
+```{r}
+library(xlsx)
+diaOp <- read.xlsx("Format_DIA2019.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
+diaMairie <- read.xlsx("DIA.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
+diaMairie  <- diaMairie[!is.na(diaMairie$n.DIA),]
+```
+
+Nettoyage du fichier diaMairie
+
+
+```{r}
+# pb des lignes vides
+# l'étude est toujours présente
+diaMairie <- diaMairie [!is.na(diaMairie$ETUDE),]
+# les dates, celles qui commencent par 44 sont ok
+lgPb <- grep("^44",diaMairie$DATE.ARRIVEE.MAIRIE)
+dfPb <- diaMairie [- lgPb,]
+# on enlève les lg problématiques pour les modifier
+diaMairie <- diaMairie [lgPb,]
+# 8 pb de dates
+pb$DATE.ARRIVEE.MAIRIE
+pb$DATE.ARRIVEE.MAIRIE <- c("0", "10/02/2021", "0", "14/05/2021","0", "31/05/2021","0","16/06/2021")
+pb$DATE.ARRIVEE.MAIRIE <- as.Date(pb$DATE.ARRIVEE.MAIRIE, format = "%d/%m/%Y")
+pb
+# les 3 zero sont convertis en NA
+diaMairie$DATE.ARRIVEE.MAIRIE <- as.integer(diaMairie$DATE.ARRIVEE.MAIRIE)
+table(diaMairie$DATE.ARRIVEE.MAIRIE, useNA = "always")
+# test sur les NA
+# format excel à partir du 1 janvier 1900
+diaMairie$DATE.ARRIVEE.MAIRIE <- as.Date(diaMairie$DATE.ARRIVEE.MAIRIE, origin = "1900-01-01")
+# on concatène les 2 tableaux
+diaMairieF <- rbind(diaMairie, pb)
+table(diaMairieF$DATE.ARRIVEE.MAIRIE, useNA = "always")
+diaMairieF [is.na(diaMairieF$DATE.ARRIVEE.MAIRIE),]
+diaMairie <- diaMairieF
+```
+
+# Correspondances
+
+```{r}
+diaNom <- diaOp$COLONNES
+diaNom
+df <- NA
+# création dataframe... bricolage !
+df <- data.frame(TYPE_DIA = "DIA",1:312)
+df [, diaNom [2:58]] <- ""
+head(diaMairie)
+df$DOSSIERNUMERO <- substring(diaMairie$n.DIA,12,17)
+df <- df [, -2]
+df$COMMUNEINSEENOM <- "BONDY"
+df$COMMUNECODE <- "93010"
+df$DOSSIERANNEE <- "2021"
+df$DOSSIERDATEDEPOT <- diaMairie$DATE.ARRIVEE.MAIRIE
+# 4 dates manquantes
+df$DOSSIERPARCELLE <- paste0(diaMairie$SECTION,diaMairie$N..PARCELLE)
+df$
+# pb parcelles pl numeros
+# on cpt le nb de parcelles et on colle
+gregexpr (",", df$DOSSIERPARCELLE)
+# concaténation avec séparateur ","
+df$DOSSIERPARCELLE <- gsub(";|-|et",",",df$DOSSIERPARCELLE)
+df$DOSSIERPARCELLE <- gsub(" ", "", df$DOSSIERPARCELLE)
+df$DOSSIERPARCELLE
+# fonction pour répéter les zones parcelles
+diaMairie$SECTION
+```
+

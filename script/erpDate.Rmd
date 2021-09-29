@@ -1,0 +1,98 @@
+---
+title: Calcul date"
+author: "B. Maranget"
+date: "26/07/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Calcul des dates de visites
+
+
+# Import
+
+```{r}
+library(sf)
+library(cartography)
+library(mapsf)
+library(units)
+data <- st_read("../../03_Data/erp.gpkg", "erp", stringsAsFactors = T)
+str(data$Dernière.visite)
+names(data)
+data$Dernière.visite <- as.Date(data$Dernière.visite, format = "%d/%m/%y")
+data$nb <- as.numeric(Sys.Date() - data$Dernière.visite)/365
+bondy <- st_read("../../03_Data/limites.gpkg", "bondy")
+rue <-  st_read("../../03_Data/limites.gpkg", "rue")
+colpal <- carto.pal(pal1="green.pal", n1=1, pal2="red.pal", n2=2)
+summary(data$nb)
+```
+
+
+```{r}
+for (t in 1:11){
+  mf_export(
+    bondy,
+    filename = paste0("../../05_Carte/erp_", th[t], ".png"),
+    width = 600,
+    theme = th [t],
+    expandBB = c(0, 0, 0, .3)
+  )
+  mf_map (bondy)
+  mf_shadow(bondy, col ="grey50", add = TRUE)
+  mf_map(rue, col = "white", add = TRUE)
+  mf_choro(
+    data,
+    var = "nb",
+    leg_title = "durée (année)",
+    pal = colpal,
+    border = NA,
+    pch = 21,
+    lwd = 3,
+    breaks =  c(0, 1, 2, 3),
+    nbreaks = 4,
+    leg_val_rnd = 0,
+    add = TRUE
+  )
+  mf_layout("Durée depuis dernière visite ERP",
+            credits = "Bondy, 2021 \nSources : OSM, sources internes",
+            arrow = FALSE)
+  dev.off()
+}
+
+```
+
+themes possible
+ "brutal", "ink", "dark", "agolalight", "candy", "darkula", "iceberg", "green", "nevermind", "jsk", "barcelona". 
+
+```{r}
+th <- c ("brutal", "ink", "dark", "agolalight", "candy", "darkula", "iceberg", "green", "nevermind", "jsk", "barcelona")
+```
+
+
+![](../../05_Carte/erp_brutal.png)
+![](../../05_Carte/erp_ink.png)
+![](../../05_Carte/erp_dark.png)
+![](../../05_Carte/erp_agolalight.png)
+![](../../05_Carte/erp_candy.png)
+![](../../05_Carte/erp_darkula.png)
+![](../../05_Carte/erp_iceberg.png)
+![](../../05_Carte/erp_green.png)
+![](../../05_Carte/erp_nevermind.png)
+![](../../05_Carte/erp_jsk.png)
+![](../../05_Carte/erp_barcelona.png)
