@@ -29,9 +29,10 @@ reprise de données DIA pour Operis - Oxalis
 
 ```{r}
 library(xlsx)
-diaOp <- read.xlsx("Format_DIA2019.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
-diaMairie <- read.xlsx("DIA.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
-diaMairie  <- diaMairie[!is.na(diaMairie$n.DIA),]
+diaOp <- read.xlsx("../data/Format_DIA2019.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
+diaMairie <- read.xlsx("../data/DIA.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
+diaMairie  <- diaMairie[!is.na(diaMairie$N..PARCELLE),]
+tail(diaMairie)
 ```
 
 Nettoyage du fichier diaMairie
@@ -47,10 +48,10 @@ dfPb <- diaMairie [- lgPb,]
 # on enlève les lg problématiques pour les modifier
 diaMairie <- diaMairie [lgPb,]
 # 8 pb de dates
-pb$DATE.ARRIVEE.MAIRIE
-pb$DATE.ARRIVEE.MAIRIE <- c("0", "10/02/2021", "0", "14/05/2021","0", "31/05/2021","0","16/06/2021")
-pb$DATE.ARRIVEE.MAIRIE <- as.Date(pb$DATE.ARRIVEE.MAIRIE, format = "%d/%m/%Y")
-pb
+dfPb$DATE.ARRIVEE.MAIRIE
+dfPb$DATE.ARRIVEE.MAIRIE <- c("0", "10/02/2021", "0", "14/05/2021","0", "31/05/2021","0","16/06/2021")
+dfPb$DATE.ARRIVEE.MAIRIE <- as.Date(dfPb$DATE.ARRIVEE.MAIRIE, format = "%d/%m/%Y")
+dfPb
 # les 3 zero sont convertis en NA
 diaMairie$DATE.ARRIVEE.MAIRIE <- as.integer(diaMairie$DATE.ARRIVEE.MAIRIE)
 table(diaMairie$DATE.ARRIVEE.MAIRIE, useNA = "always")
@@ -58,7 +59,7 @@ table(diaMairie$DATE.ARRIVEE.MAIRIE, useNA = "always")
 # format excel à partir du 1 janvier 1900
 diaMairie$DATE.ARRIVEE.MAIRIE <- as.Date(diaMairie$DATE.ARRIVEE.MAIRIE, origin = "1900-01-01")
 # on concatène les 2 tableaux
-diaMairieF <- rbind(diaMairie, pb)
+diaMairieF <- rbind(diaMairie, dfPb)
 table(diaMairieF$DATE.ARRIVEE.MAIRIE, useNA = "always")
 diaMairieF [is.na(diaMairieF$DATE.ARRIVEE.MAIRIE),]
 diaMairie <- diaMairieF
