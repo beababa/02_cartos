@@ -1,0 +1,59 @@
+"","COLONNES","NATURE","FORMAT","EXEMPLE"
+"1","TYPE DIA","type de dia","TEXTE (""DIA"" ou ""DAB"")","DIA"
+"2","COMMUNEINSEENOM","commune nom","TEXTE","OPERISVILLE"
+"3","COMMUNECODE","commune code insee","TEXTE","99999"
+"4","DOSSIERNOM","dossier nom","TEXTE (tel qu'attendu sous Oxalis/Droits de Cités)","DIA 99999 07 00047"
+"5","DOSSIERANNEE","dossier annee","TEXTE (sur 4 chiffres)","2007"
+"6","DOSSIERNUMERO","dossier numero","TEXTE","47"
+"7","DOSSIERDATEDEPOT","dossier date depot","TEXTE (""DD/MM/AA"")","29/08/07"
+"8","DOSSIERPARCELLE","dossier parcelles","TEXTE Concaténation des parcelles avec séparateur "", ""","AC188, AC463, AC464"
+"9","OBSERVATIONS","observations","TEXTE (max 1000 caractères)","Champs permettant la concaténation d'informations supplémentaires"
+"10","TERRADRNUMVOIE","Terrain numéro voie","TEXTE",NA
+"11","TERRADRVOIE","Terrain libellé voie","TEXTE",NA
+"12","TERRCODPOSTAL","Terrain code postal","TEXTE",NA
+"13","TERRLOCALITE","Terrain localite","TEXTE",NA
+"14","TERRSURFACE","Terrain surface","TEXTE (chiffres et ',' uniquement)","110.55"
+"15","DOSBIENNONBATI","Bien non bati","TEXTE (0 pour non, 1 pour oui)","1"
+"16","DOSBIENBATISURTERRPROPRE","Bien bati sur Terrain propre","TEXTE (0 pour non, 1 pour oui)","0"
+"17","DOSBIENBATISURTERRAUTRUI","Bien bati sur Terrain autrui","TEXTE (0 pour non, 1 pour oui)","0"
+"18","DOSBIENBATVENDUSTOTAL","Bâtiments vendus en totalité","TEXTE (0 pour non, 1 pour oui)","1"
+"19","DOSBIENBATVENDUSSURFAUSOL","Surface au sol","TEXTE (chiffres et ',' uniquement)","110.55"
+"20","DOSBIENBATVENDUSSURFUTIL","Surface utile","TEXTE (chiffres et ',' uniquement)","110.55"
+"21","DOSBIENUSAGEOCCUPAUTREUSAGELIB","Usage","TEXTE (max 100 caractères)","habitation"
+"22","PROPRIETTYPPERS","Propriétaire type personne","TEXTE (""Particulier"" ou ""Personne morale"")","Particulier"
+"23","PROPRIETQUALITEPART","Propriétaire qualite particulier","TEXTE (max 100 caractères)",NA
+"24","PROPRIETNOMPART","Propriétaire nom particulier","TEXTE (max 100 caractères)",NA
+"25","PROPRIETPRENOMPART","Propriétaire prenom particulier","TEXTE (max 100 caractères)",NA
+"26","PROPRIETCATJURID","Propriétaire catégorie juridique","TEXTE (max 100 caractères)",NA
+"27","PROPRIETDENOMINATION","Propriétaire dénomination","TEXTE (max 100 caractères)",NA
+"28","PROPRIETADRNUMVOIEPERSMORAL","Propriétaire numéro voie","TEXTE (max 100 caractères)",NA
+"29","PROPRIETADRTYPEVOIE","Propriétaire type voie","TEXTE (max 100 caractères)",NA
+"30","PROPRIETADRVOIEPERSMORAL","Propriétaire libellé voie","TEXTE (max 100 caractères)",NA
+"31","PROPRIETCODPOSTALPERSMORAL","Propriétaire code postal","TEXTE (max 100 caractères)",NA
+"32","PROPRIETLOCALITEPERSMORAL","Propriétaire localite","TEXTE (max 100 caractères)",NA
+"33","ACQUEREURQUALITE","Acquereur qualite","TEXTE (max 100 caractères)",NA
+"34","ACQUEREURNOM","Acquereur nom","TEXTE (max 100 caractères)",NA
+"35","ACQUEREURPRENOM","Acquereur prenom","TEXTE (max 100 caractères)",NA
+"36","ACQUEREURADRNUMVOIE","Acquereur numéro voie","TEXTE (max 100 caractères)",NA
+"37","ACQUEREURADRVOIE","Acquereur libellé voie","TEXTE (max 100 caractères)",NA
+"38","ACQUEREURLIEUDIT","Acquereur lieu dit","TEXTE (max 100 caractères)",NA
+"39","ACQUEREURCODPOSTAL","Acquereur code postal","TEXTE (max 100 caractères)",NA
+"40","ACQUEREURLOCALITE","Acquereur localite","TEXTE (max 100 caractères)",NA
+"41","SIGNATAIREQUALITE","Signataire qualite","TEXTE (max 100 caractères)",NA
+"42","SIGNATAIRENOM","Signataire nom","TEXTE (max 100 caractères)",NA
+"43","SIGNATAIREPRENOM","Signataire prenom","TEXTE (max 100 caractères)",NA
+"44","SIGNATAIREADRNUMVOIE","Signataire numéro voie","TEXTE (max 100 caractères)",NA
+"45","SIGNATAIREADRVOIE","Signataire libellé voie","TEXTE (max 100 caractères)",NA
+"46","SIGNATAIRELIEUDIT","Signataire lieu dit","TEXTE (max 100 caractères)",NA
+"47","SIGNATAIRECODPOSTAL","Signataire code postal","TEXTE (max 100 caractères)",NA
+"48","SIGNATAIRELOCALITE","Signataire localite","TEXTE (max 100 caractères)",NA
+"49","DOSCESSIONAMIABLE","Cession amiable","TEXTE (""Amiable"" ou ""Adjudication"")","Amiable"
+"50","DOSAMIABLEPRIXVENTEC","Cession amiable prix de vente","TEXTE (chiffres et ',' uniquement)","49084.66"
+"51","DOSAMIABLEMODALPAIE","Cession amiable modalité paiement","TEXTE (""Comptant à la signature de l'acte"" ou ""Paiement à terme"")","Paiement à terme"
+"52","DOSADJUDICATIONTYPE","Adjudication type","TEXTE (""Obligatoire"", ""Vente"" ou ""Volontaire"")","Obligatoire"
+"53","DOSADJUDICATIONDATE","Adjudication date","TEXTE (""DD/MM/AA"")","06/12/07"
+"54","DOSADJUDICATIONMONTANT","Adjudication montant","TEXTE (chiffres et ',' uniquement)","49084.66"
+"55","DOSDECISIONESTIMDOMAINE","Estimation des domaines","TEXTE (chiffres et ',' uniquement)","49084.66"
+"56","DOSDECISIONPROPCOLLECTIVITE","Décision proposition collectivité","TEXTE (chiffres et ',' uniquement)","49084.66"
+"57","DOSDECISIONNATUREDECISION","Décision nature décision","TEXTE (""Préemption"", ""Non préemption"" ou ""Délégation"")","Préemption"
+"58","DOSDECISIONDATESIGNATURE","Décision date signature","TEXTE (""DD/MM/AA"")","15/09/07"

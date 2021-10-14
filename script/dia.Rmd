@@ -63,6 +63,8 @@ diaMairieF <- rbind(diaMairie, dfPb)
 table(diaMairieF$DATE.ARRIVEE.MAIRIE, useNA = "always")
 diaMairieF [is.na(diaMairieF$DATE.ARRIVEE.MAIRIE),]
 diaMairie <- diaMairieF
+write.csv(diaMairie, "../data/diaMairie.csv", fileEncoding = "UTF-8")
+write.csv(diaOp, "../data/diaOp.cvs", fileEncoding = "UTF-8")
 ```
 
 # Correspondances
@@ -72,7 +74,7 @@ diaNom <- diaOp$COLONNES
 diaNom
 df <- NA
 # création dataframe... bricolage !
-df <- data.frame(TYPE_DIA = "DIA",1:312)
+df <- data.frame(TYPE_DIA = "DIA",1:311)
 df [, diaNom [2:58]] <- ""
 head(diaMairie)
 df$DOSSIERNUMERO <- substring(diaMairie$n.DIA,12,17)
@@ -83,7 +85,7 @@ df$DOSSIERANNEE <- "2021"
 df$DOSSIERDATEDEPOT <- diaMairie$DATE.ARRIVEE.MAIRIE
 # 4 dates manquantes
 df$DOSSIERPARCELLE <- paste0(diaMairie$SECTION,diaMairie$N..PARCELLE)
-df$
+df
 # pb parcelles pl numeros
 # on cpt le nb de parcelles et on colle
 gregexpr (",", df$DOSSIERPARCELLE)
