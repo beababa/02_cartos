@@ -69,23 +69,49 @@ write.csv(diaOp, "../data/diaOp.csv", fileEncoding = "UTF-8")
 
 # Correspondances
 
+Récupération des csv
+
+
+```{r}
+diaMairie <- read.csv("../data/diaMairie.csv", fileEncoding = "UTF-8")
+diaOp <- read.csv("../data/diaOp.csv", fileEncoding = "UTF-8")
+```
+
+
+
 ```{r}
 diaNom <- diaOp$COLONNES
 diaNom
 df <- NA
-# création dataframe... bricolage !
-df <- data.frame(TYPE_DIA = "DIA",1:311)
+# création dataframe... bricolage ! attention au nb lg de diaMairie
+df <- data.frame(TYPE_DIA = "DIA",1:337)
 df [, diaNom [2:58]] <- ""
-head(diaMairie)
-df$DOSSIERNUMERO <- substring(diaMairie$n.DIA,12,17)
+df$DOSSIERNUMERO <- substring(diaMairie$n.DIA,15,17)
+# suppression colonne fid
+df
 df <- df [, -2]
 df$COMMUNEINSEENOM <- "BONDY"
 df$COMMUNECODE <- "93010"
 df$DOSSIERANNEE <- "2021"
+df$TERRCODPOSTAL <- "93140"
+df$TERRLOCALITE <- "Bondy"
+#dossier nom
+chaine <- "DIA 93010 21 C0"
+df$DOSSIERNOM <- paste0(chaine, df$DOSSIERNUMERO)
+```
+
+Problème date
+
+```{r}
 df$DOSSIERDATEDEPOT <- diaMairie$DATE.ARRIVEE.MAIRIE
+table(df$DOSSIERDATEDEPOT, useNA = "always")
 # 4 dates manquantes
+```
+
+Parcelles et section
+
+```{r}
 df$DOSSIERPARCELLE <- paste0(diaMairie$SECTION,diaMairie$N..PARCELLE)
-df
 # pb parcelles pl numeros
 # on cpt le nb de parcelles et on colle
 gregexpr (",", df$DOSSIERPARCELLE)
@@ -93,7 +119,32 @@ gregexpr (",", df$DOSSIERPARCELLE)
 df$DOSSIERPARCELLE <- gsub(";|-|et",",",df$DOSSIERPARCELLE)
 df$DOSSIERPARCELLE <- gsub(" ", "", df$DOSSIERPARCELLE)
 df$DOSSIERPARCELLE
+```
+
+TODO
+```{r}
 # fonction pour répéter les zones parcelles
-diaMairie$SECTION
+```
+
+
+
+```{r}
+df$OBSERVATIONS <-  diaMairie$N..LOT.COPRO
+df$TERRADRNUMVOIE <- paste0(diaMairie$N..VOIRIE," ", diaMairie$SUFFIXE)
+df$TERRADRVOIE <- diaMairie$NOM.VOIRIE
+df$TERRSURFACE <- diaMairie$SURFACE.TOTALE.DU.TERRAIN..m..
+df$DOSBIENBATVENDUSSURFUTIL <- diaMairie$SURFACE.HABITABLE..m..
+df$PROPRIETNOMPART  <- diaMairie$VENDEUR
+df$ACQUEREURNOM <- diaMairie$ACQUEREUR
+df$DOSBIENUSAGEOCCUPAUTREUSAGELIB <- diaMairie$TYPOLOGIE.DU.BIEN
+df$DOSADJUDICATIONMONTANT <- diaMairie$PRIX....
+df$DOSADJUDICATIONMONTANT
+df$ACQUEREURNOM
+```
+
+
+```{r}
+head(df)
+write.csv(df, "../data/diaExport.csv", na = "", fileEncoding = "UTF-8")
 ```
 
