@@ -30,7 +30,7 @@ reprise de données DIA pour Operis - Oxalis
 ```{r}
 library(xlsx)
 diaOp <- read.xlsx("../data/Format_DIA2019.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
-diaMairie <- read.xlsx("../data/DIA.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
+diaMairie <- read.xlsx("../data/DIAau30_09_2021.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
 diaMairie  <- diaMairie[!is.na(diaMairie$N..PARCELLE),]
 tail(diaMairie)
 ```
@@ -64,7 +64,7 @@ table(diaMairieF$DATE.ARRIVEE.MAIRIE, useNA = "always")
 diaMairieF [is.na(diaMairieF$DATE.ARRIVEE.MAIRIE),]
 diaMairie <- diaMairieF
 write.csv(diaMairie, "../data/diaMairie.csv", fileEncoding = "UTF-8")
-write.csv(diaOp, "../data/diaOp.cvs", fileEncoding = "UTF-8")
+write.csv(diaOp, "../data/diaOp.csv", fileEncoding = "UTF-8")
 ```
 
 # Correspondances
