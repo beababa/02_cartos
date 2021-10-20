@@ -1,0 +1,157 @@
+---
+title: "Recup fichier ads"
+author: "B. Maranget"
+date: "20/10/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+reprise de données ADS pour Operis - Oxalis
+
+
+# Import
+
+```{r}
+library(xlsx)
+library(readxl)
+ADSOp <- read.xlsx("../data/Format_ADS2007.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
+write.csv(ADSOp, "../data/adsOp.csv", fileEncoding = "UTF-8")
+for (i in 1:10) {
+  data <- read_excel("../data/REGISTRE ADS.xls", sheet = i)
+  write.csv(data, paste0("../data/ads", i, ".csv"), na ="")
+}
+```
+
+Nettoyage du fichier diaMairie
+
+
+```{r}
+# pb des lignes vides
+# l'étude est toujours présente
+diaMairie <- diaMairie [!is.na(diaMairie$ETUDE),]
+# les dates, celles qui commencent par 44 sont ok
+lgPb <- grep("^44",diaMairie$DATE.ARRIVEE.MAIRIE)
+dfPb <- diaMairie [- lgPb,]
+# on enlève les lg problématiques pour les modifier
+diaMairie <- diaMairie [lgPb,]
+# 8 pb de dates
+dfPb$DATE.ARRIVEE.MAIRIE
+dfPb$DATE.ARRIVEE.MAIRIE <- c("0", "10/02/2021", "0", "14/05/2021","0", "31/05/2021","0","16/06/2021")
+dfPb$DATE.ARRIVEE.MAIRIE <- as.Date(dfPb$DATE.ARRIVEE.MAIRIE, format = "%d/%m/%Y")
+dfPb
+# les 3 zero sont convertis en NA
+diaMairie$DATE.ARRIVEE.MAIRIE <- as.integer(diaMairie$DATE.ARRIVEE.MAIRIE)
+table(diaMairie$DATE.ARRIVEE.MAIRIE, useNA = "always")
+# test sur les NA
+# format excel à partir du 1 janvier 1900
+diaMairie$DATE.ARRIVEE.MAIRIE <- as.Date(diaMairie$DATE.ARRIVEE.MAIRIE, origin = "1900-01-01")
+# on concatène les 2 tableaux
+diaMairieF <- rbind(diaMairie, dfPb)
+table(diaMairieF$DATE.ARRIVEE.MAIRIE, useNA = "always")
+diaMairieF [is.na(diaMairieF$DATE.ARRIVEE.MAIRIE),]
+diaMairie <- diaMairieF
+write.csv(diaMairie, "../data/diaMairie.csv", fileEncoding = "UTF-8")
+write.csv(diaOp, "../data/diaOp.csv", fileEncoding = "UTF-8")
+```
+
+# Correspondances
+
+Récupération des csv
+
+
+```{r}
+diaMairie <- read.csv("../data/diaMairie.csv", fileEncoding = "UTF-8")
+diaOp <- read.csv("../data/diaOp.csv", fileEncoding = "UTF-8")
+```
+
+
+
+```{r}
+diaNom <- diaOp$COLONNES
+diaNom
+df <- NA
+# création dataframe... bricolage ! attention au nb lg de diaMairie
+df <- data.frame(TYPE_DIA = "DIA",1:337)
+df [, diaNom [2:58]] <- ""
+df$DOSSIERNUMERO <- substring(diaMairie$n.DIA,15,17)
+# suppression colonne fid
+df
+df <- df [, -2]
+df$COMMUNEINSEENOM <- "BONDY"
+df$COMMUNECODE <- "93010"
+df$DOSSIERANNEE <- "2021"
+df$TERRCODPOSTAL <- "93140"
+df$TERRLOCALITE <- "Bondy"
+#dossier nom
+chaine <- "DIA 93010 21 C0"
+df$DOSSIERNOM <- paste0(chaine, df$DOSSIERNUMERO)
+```
+
+Problème date
+
+```{r}
+df$DOSSIERDATEDEPOT <- as.Date(df$DOSSIERDATEDEPOT)
+str(df$DOSSIERDATEDEPOT)
+df$DOSSIERDATEDEPOT <- format(diaMairie$DATE.ARRIVEE.MAIRIE, format = "%d/%m/%Y")
+df$DOSSIERDATEDEPOT <- format(df$DOSSIERDATEDEPOT, format = "%d/%m/%Y")
+format(df$DOSSIERDATEDEPOT, format = "%d/%m/%Y")
+table(df$DOSSIERDATEDEPOT, useNA = "always")
+# 4 dates manquantes
+```
+
+Parcelles et section
+
+```{r}
+df$DOSSIERPARCELLE <- paste0(diaMairie$SECTION,diaMairie$N..PARCELLE)
+# pb parcelles pl numeros
+# on cpt le nb de parcelles et on colle
+gregexpr (",", df$DOSSIERPARCELLE)
+# concaténation avec séparateur ","
+df$DOSSIERPARCELLE <- gsub(";|-|et",",",df$DOSSIERPARCELLE)
+df$DOSSIERPARCELLE <- gsub(" ", "", df$DOSSIERPARCELLE)
+df$DOSSIERPARCELLE
+```
+
+TODO
+```{r}
+# fonction pour répéter les zones parcelles
+```
+
+
+
+```{r}
+df$OBSERVATIONS <-  diaMairie$N..LOT.COPRO
+df$TERRADRNUMVOIE <- paste0(diaMairie$N..VOIRIE," ", diaMairie$SUFFIXE)
+df$TERRADRVOIE <- diaMairie$NOM.VOIRIE
+df$TERRSURFACE <- diaMairie$SURFACE.TOTALE.DU.TERRAIN..m..
+df$DOSBIENBATVENDUSSURFUTIL <- diaMairie$SURFACE.HABITABLE..m..
+df$PROPRIETNOMPART  <- diaMairie$VENDEUR
+df$ACQUEREURNOM <- diaMairie$ACQUEREUR
+df$SIGNATAIRENOM <- diaMairie$ETUDE
+df$DOSBIENUSAGEOCCUPAUTREUSAGELIB <- diaMairie$TYPOLOGIE.DU.BIEN
+df$DOSAMIABLEPRIXVENTEC <- diaMairie$PRIX....
+df$ACQUEREURNOM <- diaMairie$ACQUEREUR
+```
+
+
+```{r}
+head(df)
+write.csv(df, "../data/diaExport.csv", na = "", fileEncoding = "UTF-8")
+```
+

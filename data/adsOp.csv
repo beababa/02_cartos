@@ -1,0 +1,62 @@
+"","COLONNES","NATURE","FORMAT","EXEMPLE","NA.","NA..1","NA..2"
+"1","Type","Type de dossier","TEXTE (10)","PC, PC MI, DP, CUa, CUb",NA,NA,NA
+"2","Numéro","numéro de dossier","TEXTE (20) concaténation 
+""0"" + code insee (sur 5 caractères) + année (sur 2 caractères) + code instructeur  (sur 1 caractère) + numéro de dossier (sur 4 caractères et complété par des 0)
+
+En cas de modificatif ou transfert, ajout d'un ""-"" suivi du numéro correspondant au numéro de modificatif ou transfert","09999912S0102-1",NA,NA,NA
+"3","Initial","numéro de dossier initial en cas de modificatif ou transfert","TEXTE (20)","09999912S0102",NA,NA,NA
+"4","INSEE","code insee commune","TEXTE (5)","99999",NA,NA,NA
+"5","Commune","nom commune","TEXTE (100)","Operisville",NA,NA,NA
+"6","Autonome","Autonome","TEXTE (3) - ""Oui""/""Non""","Oui",NA,NA,NA
+"7","Projet","Type de projet","TEXTE (100)","construction d'une habitation",NA,NA,NA
+"8","Destination","Type de destination","TEXTE (100)","Habitation",NA,NA,NA
+"9","Nb logements","Nombre de logements","TEXTE (10)","2",NA,NA,NA
+"10","Surface terrain","Surface terrain","TEXTE (10)","337",NA,NA,NA
+"11","SHON existante","SHON existante","TEXTE (10)","142.14",NA,NA,NA
+"12","SHON construite","SHON construite","TEXTE (10)","142.14",NA,NA,NA
+"13","SHON transformation SHOB","SHON transformation SHOB","TEXTE (10)","142.14",NA,NA,NA
+"14","SHON changement destination","SHON changement destination","TEXTE (10)","142.14",NA,NA,NA
+"15","SHON démolie","SHON démolie","TEXTE (10)","142.14",NA,NA,NA
+"16","SHON supprimée","SHON supprimée","TEXTE (10)","142.14",NA,NA,NA
+"17","Architecte","Recours à un architecte","TEXTE (3) - ""Oui""/""Non""","Oui",NA,NA,NA
+"18","Demandeur","Nom prénom / dénomination","TEXTE (100) - format concaténé","DUPOND Henry",NA,NA,NA
+"19","Opposition CNIL","Opposition CNIL (utilisation informations à des fins commerciales)","TEXTE (3) - ""Oui""/""Non""","Oui",NA,NA,NA
+"20","Adresse demandeur","Adresse demandeur","TEXTE (100) - format concaténé","61 rue des Hirondelles 99999 Operisville",NA,NA,NA
+"21","Terrain","Adresse terrain","TEXTE (100) - format concaténé","5 impasse des Ormeaux 99999 Operisville",NA,NA,NA
+"22","Références cadastrales","Parcelles du terrain","TEXTE (100) - format concaténé séparateur "", ""","BV-23, BV-24",NA,NA,NA
+"23","Lotissement","terrain situé dans un lotissement ?","TEXTE (3) - ""Oui""/""Non""","Oui",NA,NA,NA
+"24","AFU","terrain partie d’un remembrement urbain","TEXTE (3) - ""Oui""/""Non""","Oui",NA,NA,NA
+"25","Détail ZAC AFU",NA,"TEXTE (100)",NA,NA,NA,NA
+"26","Autorité","Compétence du dossier","TEXTE (100)","Le maire Au nom de la commune",NA,NA,NA
+"27","Etat","Etat du dossier","TEXTE (100)","Décision notifiée au demandeur",NA,NA,NA
+"28","Centre instructeur","Nom centre instructeur","TEXTE (100)","D.D.T.  POLE ADS SUD",NA,NA,NA
+"29","Instructeur","Nom prénom Instructeur","TEXTE (100)","DURAND Stéphanie",NA,NA,NA
+"30","Liquidateur","Nom prénom Liquidateur","TEXTE (100)","DURAND Stéphanie",NA,NA,NA
+"31","Complexité","Complexité du dossier","TEXTE (100)","Complexité moyenne",NA,NA,NA
+"32","Dépôt en mairie","Date dépôt en mairie","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"33","Réception DDE","Date réception DDE","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"34","Complétude","Date complétude","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"35","Notification majoration","Date notification majoration","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"36","DLI","Date limite d'instruction","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"37","Date envoi demande de pièces","Date envoi demande de pièces","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"38","Date notification demande de pièces","Date notification demande de pièces","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"39","Date envoi délai majoration","Date envoi délai majoration","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"40","Date notification délai majoration","Date notification délai majoration","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"41","Service consulté","Service consulté et date de consultation","TEXTE (100) - concaténation Nom du service et date de consultation","ERDF 24/08/2009","En cas de consultation de plusieurs services, il faut dupliquer les lignes en différenciant uniquement les 3 champs en jaune.",NA,NA
+"42","Proposition service","Proposition service","TEXTE (100)","Favorable",NA,NA,NA
+"43","Date proposition service","Date proposition service","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"44","Date transmission proposition","Date transmission proposition","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"45","Date instruction terminée","Date instruction terminée","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"46","Date accord tacite","Date accord tacite","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"47","Date de rejet tacite","Date de rejet tacite","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"48","Date de refus tacite","Date de refus tacite","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"49","Date de décision","Date de décision","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"50","Date notification décision","Date notification décision","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"51","Nature décision","Nature décision","TEXTE (100)","Favorable",NA,NA,NA
+"52","Récolement","Type de récolement","TEXTE (100)","Récolement obligatoire",NA,NA,NA
+"53","DOC","Date ouverture de chantier","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"54","DAACT","Date achèvement travaux","TEXTE (10) - format ""DD/MM/YYYY""","43409",NA,NA,NA
+"55","Type Evolution","Evolution dossier","TEXTE (100)","Transfert",NA,NA,NA
+"56","Statut Evolution","Statut Evolution","TEXTE (100)","Décision notifiée au demandeur",NA,NA,NA
+"57","Statut dernières taxes","Statut dernières taxes","TEXTE (100)","Taxable (calcul édité)",NA,NA,NA
+"58","Statut dernière RAP","Statut dernière RAP","TEXTE (100)","Exonéré",NA,NA,NA
