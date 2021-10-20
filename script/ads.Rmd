@@ -48,12 +48,48 @@ TODO retester avec un enregistrement en UTF-8
 
 ```{r}
 registre <- read.csv("../data/ads1b.csv")
-# 26 colonnes uniquement
+# 26 colonnes uniquement et 5358 dossiers
 noms <- names(registre)[1:26]
-registre <- registre [, noms]
-# 5358  numéros d'archivage
-registre [registre$N..d.Archivage == "5358",]
-tail(registre)
+registre <- registre [c(1:5358), noms]
+```
+
+Etablissement de la table d'équivalence
+
+```{r}
+modele <-  read.csv("../data/adsOp1.csv")
+equiv <- modele [,c("COLONNES", "MAIRIE", "MAIRIE.2")]
+```
+
+Construction du df d'arrivée
+
+58 colonnes
+
+création d'une matrice convertie ensuite en df
+
+```{r}
+nomsModele <- modele$COLONNES
+nbData <- length(nomsModele)*length(registre$X)
+df <-  NA
+df <- matrix(data = 0,nrow = 5358, ncol = 58)
+names(df) <- nomsModele
+df <- data.frame(df)
+```
+
+
+
+Equivalence simple
+
+On prend la table des équivalences, certaines colonnes ne fonctionneront pas mais
+le try permettra de gérer l'erreur
+Pour les noms de colonnes avec des "'" et des " ", on remplace par des points
+
+```{r}
+equiv$MAIRIE3 <- gsub(" |'", ".",equiv$MAIRIE)
+for (i in 1:58) {
+  print(i)
+  try(df [ , equiv$COLONNES [i]] <- registre [,equiv$MAIRIE3[i]])
+}
+write.csv(df, "../data/premierJet.csv", fileEncoding = "UTF-8")
 ```
 
 

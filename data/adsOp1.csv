@@ -1,0 +1,62 @@
+COLONNES,NATURE,FORMAT,EXEMPLE,MAIRIE,MAIRIE 2,,num col,nom col
+Type,Type de dossier,TEXTE (10),"PC, PC MI, DP, CUa, CUb",Type d'autorisation,,,1,N° d'Archivage
+Numéro,numéro de dossier,"TEXTE (20) concaténation 
+""0"" + code insee (sur 5 caractères) + année (sur 2 caractères) + code instructeur  (sur 1 caractère) + numéro de dossier (sur 4 caractères et complété par des 0)
+
+En cas de modificatif ou transfert, ajout d'un ""-"" suivi du numéro correspondant au numéro de modificatif ou transfert",09999912S0102-1,référence,,,2,Type d'autorisation
+Initial,numéro de dossier initial en cas de modificatif ou transfert,TEXTE (20),09999912S0102,,,,3,référence
+INSEE,code insee commune,TEXTE (5),99999,,,,4,année du dépôt
+Commune,nom commune,TEXTE (100),Operisville,,,,5,date de la demande
+Autonome,Autonome,"TEXTE (3) - ""Oui""/""Non""",Oui,,,,6,Avis de dépôt affiché du XX/XX/XX Jusqu'à la date de décision
+Projet,Type de projet,TEXTE (100),construction d'une habitation,nature des travaux envisagés,,,7,Nom
+Destination,Type de destination,TEXTE (100),Habitation,nature des travaux envisagés,,,8,Adresse du demandeur
+Nb logements,Nombre de logements,TEXTE (10),2,nature des travaux envisagés,,,9,Numéro
+Surface terrain,Surface terrain,TEXTE (10),337,surface du terrain en m²,,,10,adresse du chantier
+SHON existante,SHON existante,TEXTE (10),"142,14",,,,11,section cadastrale
+SHON construite,SHON construite,TEXTE (10),"142,14",SURFACE DE PLANCHER CREEE,oui,,12,n° parcelle
+SHON transformation SHOB,SHON transformation SHOB,TEXTE (10),"142,14",,,,13,nature des travaux envisagés
+SHON changement destination,SHON changement destination,TEXTE (10),"142,14",,,,14,SURFACE DE PLANCHER CREEE
+SHON démolie,SHON démolie,TEXTE (10),"142,14",,,,15,surface du terrain en m²
+SHON supprimée,SHON supprimée,TEXTE (10),"142,14",,,,16,année de décision
+Architecte,Recours à un architecte,"TEXTE (3) - ""Oui""/""Non""",Oui,,,,17,date de la décision autorisation
+Demandeur,Nom prénom / dénomination,TEXTE (100) - format concaténé,DUPOND Henry,Nom,,,18,date de la décision refus
+Opposition CNIL,Opposition CNIL (utilisation informations à des fins commerciales),"TEXTE (3) - ""Oui""/""Non""",Oui,,,,19,date de la décision de sans suite
+Adresse demandeur,Adresse demandeur,TEXTE (100) - format concaténé,61 rue des Hirondelles 99999 Operisville,Adresse du demandeur,,A,20,"date de la décision caduque, retrait à titre gracieux,rectificatif,              transfert (A PRECISER)"
+Terrain,Adresse terrain,TEXTE (100) - format concaténé,5 impasse des Ormeaux 99999 Operisville,Numéro, adresse du chantier ,,21,ouverture de chantier
+Références cadastrales,Parcelles du terrain,"TEXTE (100) - format concaténé séparateur "", ""","BV-23, BV-24",section cadastrale,,,22,achévement des travaux
+Lotissement,terrain situé dans un lotissement ?,"TEXTE (3) - ""Oui""/""Non""",Oui,,,,23,certificat de conformité
+AFU,terrain partie d’un remembrement urbain,"TEXTE (3) - ""Oui""/""Non""",Oui,,,,24,date d'affichage Mairie
+Détail ZAC AFU,,TEXTE (100),,,,,25,AUTRES AFFICHAGES
+Autorité,Compétence du dossier,TEXTE (100),Le maire Au nom de la commune,,,,,
+Etat,Etat du dossier,TEXTE (100),Décision notifiée au demandeur,A DEDUIRE,,,,
+Centre instructeur,Nom centre instructeur,TEXTE (100),D.D.T.  POLE ADS SUD,,,,,
+Instructeur,Nom prénom Instructeur,TEXTE (100),DURAND Stéphanie,,,,,
+Liquidateur,Nom prénom Liquidateur,TEXTE (100),DURAND Stéphanie,,,,,
+Complexité,Complexité du dossier,TEXTE (100),Complexité moyenne,,,,,
+Dépôt en mairie,Date dépôt en mairie,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,date de la demande,,,,
+Réception DDE,Date réception DDE,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Complétude,Date complétude,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Notification majoration,Date notification majoration,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+DLI,Date limite d'instruction,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date envoi demande de pièces,Date envoi demande de pièces,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date notification demande de pièces,Date notification demande de pièces,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date envoi délai majoration,Date envoi délai majoration,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date notification délai majoration,Date notification délai majoration,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Service consulté,Service consulté et date de consultation,TEXTE (100) - concaténation Nom du service et date de consultation,ERDF 24/08/2009,,,,,
+Proposition service,Proposition service,TEXTE (100),Favorable,,,,,
+Date proposition service,Date proposition service,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date transmission proposition,Date transmission proposition,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date instruction terminée,Date instruction terminée,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,date de la décision autorisation,,,,
+Date accord tacite,Date accord tacite,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date de rejet tacite,Date de rejet tacite,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date de refus tacite,Date de refus tacite,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,date de la décision refus,,,,
+Date de décision,Date de décision,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Date notification décision,Date notification décision,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,date d'affichage Mairie,,,,
+Nature décision,Nature décision,TEXTE (100),Favorable,A DEDUIRE,,,,
+Récolement,Type de récolement,TEXTE (100),Récolement obligatoire,,,,,
+DOC,Date ouverture de chantier,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+DAACT,Date achèvement travaux,"TEXTE (10) - format ""DD/MM/YYYY""",05/11/2018,,,,,
+Type Evolution,Evolution dossier,TEXTE (100),Transfert,,,,,
+Statut Evolution,Statut Evolution,TEXTE (100),Décision notifiée au demandeur,,,,,
+Statut dernières taxes,Statut dernières taxes,TEXTE (100),Taxable (calcul édité),,,,,
+Statut dernière RAP,Statut dernière RAP,TEXTE (100),Exonéré,,,,,
