@@ -71,8 +71,8 @@ nomsModele <- modele$COLONNES
 nbData <- length(nomsModele)*length(registre$X)
 df <-  NA
 df <- matrix(data = 0,nrow = 5358, ncol = 58)
-names(df) <- nomsModele
 df <- data.frame(df)
+names(df) <- nomsModele
 ```
 
 
@@ -91,6 +91,20 @@ for (i in 1:58) {
 }
 write.csv(df, "../data/premierJet.csv", fileEncoding = "UTF-8")
 ```
+
+
+Les parcelles : section et numéro
+
+Le problème
+
+Il y a deux colonnes qu'il faut concaténer mais pl sections et pl numéros
+
+```{r}
+registre [, c("section.cadastrale","n..parcelle")]
+```
+
+
+
 
 
 
