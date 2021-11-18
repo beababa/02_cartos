@@ -41,13 +41,13 @@ for (i in 1:10) {
 }
 ```
 
-Nettoyage du fichier 
+# Nettoyage du fichier 
 
 Pb d'encodage sur lg de titre, on ouvre avec libre office
 TODO retester avec un enregistrement en UTF-8
 
 ```{r}
-registre <- read.csv("../data/ads1b.csv")
+registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
 # 26 colonnes uniquement et 5358 dossiers
 noms <- names(registre)[1:26]
 registre <- registre [c(1:5358), noms]
@@ -56,7 +56,7 @@ registre <- registre [c(1:5358), noms]
 Etablissement de la table d'équivalence
 
 ```{r}
-modele <-  read.csv("../data/adsOp1.csv")
+modele <-  read.csv("../data/adsOp1.csv", encoding="UTF-8")
 equiv <- modele [,c("COLONNES", "MAIRIE", "MAIRIE.2")]
 ```
 
@@ -92,6 +92,7 @@ for (i in 1:58) {
 write.csv(df, "../data/premierJet.csv", fileEncoding = "UTF-8")
 ```
 
+# Les parcelles
 
 Les parcelles : section et numéro
 
@@ -99,12 +100,77 @@ Le problème
 
 Il y a deux colonnes qu'il faut concaténer mais pl sections et pl numéros
 
+sous problème
+
+- espace
+
+- séparateur
+
+
+
+
+
 ```{r}
-registre [, c("section.cadastrale","n..parcelle")]
+head(registre [, c("section.cadastrale","n..parcelle")],20)
+```
+
+
+## Suprression des espaces
+
+La colonne n..parcelle comporte des numéros séparés par pl espace
+Idem pour la colonne section cadastrale
+
+Démarche pour la section
+
+- remplacement de tous les caractères de séparation par un caractère unique (l'espace)
+- remplacement de 1er espace par un ;
+- suppression de tous les espaces restants
+
+
+Cela ne fonctionne que si 2 éléments... ce qui est le cas pour les sections.
+
+```{r}
+registre$section.cadastrale
+testSection <- gsub("[','|'et'|/'\n']", " ", registre$section.cadastrale)
+testSection <- sub(" ",";",registre$section.cadastrale)
+testSection <- gsub(" ","", testSection)
+testParcelle <- sub(" ", ";", registre$n..parcelle)
+testParcelle <- gsub (" ", "", testParcelle)
+export <- cbind(testSection, testParcelle,  registre$section.cadastrale, registre$n..parcelle)
+write.csv(export, "../data/export.csv", fileEncoding = "UTF-8")
+
+```
+
+```{r}
+ind <- grep(";", testSection)
+testSection
 ```
 
 
 
+plusieurs shémas à rassembler en un. / , et espace deviennent uniquement /
+puis on adjoint la section à chaque numparcelle
 
+```{r}
 
+strsplit(test, " |/|,\.")
+```
 
+Pour les dates, on reprend la démarche DIA, on liste les champs à date. 
+On répare les anomalies puis on convertit (attention à l'export)
+
+```{r}
+# dates
+str(registre)
+registre$date.de.la.demande <-as.Date(registre$date.de.la.demande, origin = "1900-01-01")
+pb <- which(!(substring(registre$date.de.la.demande, 0,2)  %in% c("36","37", "38","39", "40","41","42","43","44")))
+registre$date.de.la.demande [pb]
+write.csv(registre$date.de.la.demande [pb], "data/pbDate.csv")
+equiv <- read.csv("data/pbDateOk.csv")
+equiv <- equiv [-26, c(1:3)]
+# conversion en chiffre csv
+equiv$ok <- as.Date(equiv$ok, format = "%d/%m/%y", origin = "")
+equiv$ok <- as.integer(equiv$ok)
+equiv$ok
+registre$date.de.la.demande [pb] <- equiv$ok
+```
