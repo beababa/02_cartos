@@ -106,14 +106,54 @@ sous problème
 
 - séparateur
 
-
-
-
-
 ```{r}
 head(registre [, c("section.cadastrale","n..parcelle")],20)
 ```
 
+## Repérer les lignes problèmatiques
+
+### Section : lignes vides
+
+Envoyer les lignes sans numéros de section pour vérif
+
+```{r}
+export <- registre [registre$section.cadastrale == "",]
+write.csv (export, "../data/registreSansSection.csv", fileEncoding = "UTF-8")
+95/5358
+```
+
+95 lignes sans numéro de section...(moins de 2 % des lignes) A voir avec Rabia
+
+### Longueur du champs
+
+Beaucoup d'espaces dans les champs, donc on les supprime, puis on pointe les champs
+dont la longueur indiquent un problème.
+
+Toutes les lignes > 2 posent pb
+
+```{r}
+extraction <- registre [ nchar(registre$section.cadastrale) > 2, ]
+extraction$section.cadastrale
+# pour les parcelles  on supprime les double espaces
+registre$n..parcelle <- gsub ("  ", "" , registre$n..parcelle) 
+head(registre$n..parcelle)
+extraction <- registre [nchar(gsub ("  ", "" , registre$n..parcelle)) > 4, ]
+extraction$n..parcelle
+```
+
+720 lignes pose problème
+
+Lignes avec un chiffre décimal (voir avec Rabia)
+
+```{r}
+ind <- grep ("\\.",extraction$n..parcelle )
+extraction$n..parcelle [ind]
+write.csv(extraction, "../data/exportPbPointParcelle.csv", fileEncoding =  "UTF-8")
+```
+
+45 lignes à traiter plus tard
+
+On utilise les variables texte et texteCol
 
 ## Suprression des espaces
 
@@ -130,22 +170,29 @@ Démarche pour la section
 Cela ne fonctionne que si 2 éléments... ce qui est le cas pour les sections.
 
 ```{r}
-registre$section.cadastrale
-testSection <- gsub("[','|'et'|/'\n']", " ", registre$section.cadastrale)
+texte <- extraction
+texteCol <- extraction$section.cadastrale
+ch <- "','&'et'&/'\n'&'à'&'/'&'-'"
+chTot <- paste0("[",ch,"]")
+testSection <- gsub(chTot, " ", registre$section.cadastrale)
 testSection <- sub(" ",";",registre$section.cadastrale)
 testSection <- gsub(" ","", testSection)
 testParcelle <- sub(" ", ";", registre$n..parcelle)
 testParcelle <- gsub (" ", "", testParcelle)
 export <- cbind(testSection, testParcelle,  registre$section.cadastrale, registre$n..parcelle)
 write.csv(export, "../data/export.csv", fileEncoding = "UTF-8")
-
 ```
+
+tests divers
+
+Comparaison nb cas avant et après
 
 ```{r}
-ind <- grep(";", testSection)
-testSection
+nbDeb <- length(grep(chTot, registre$section.cadastrale))
+nbFin <- length(grep(chTot, testSection))
 ```
 
+C'est bizarre, il faut passer plusieurs fois gsub ? Pb du t qui disparaît
 
 
 plusieurs shémas à rassembler en un. / , et espace deviennent uniquement /
@@ -155,6 +202,9 @@ puis on adjoint la section à chaque numparcelle
 
 strsplit(test, " |/|,\.")
 ```
+
+
+# Les dates
 
 Pour les dates, on reprend la démarche DIA, on liste les champs à date. 
 On répare les anomalies puis on convertit (attention à l'export)
