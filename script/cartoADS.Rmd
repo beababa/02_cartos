@@ -1,0 +1,130 @@
+---
+title: "Carto ADS"
+author: "B. Maranget"
+date: "20/10/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Cartographie données ADS à la parcelle
+
+
+# Données
+
+
+```{r}
+library(sf)
+geo <- st_read("G:/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json")
+plot(head(geo$geometry))
+geo$loc <- paste0(geo$section,geo$numero)
+registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
+# 26 colonnes uniquement et 5358 dossiers
+noms <- names(registre)[1:26]
+registre <- registre [c(1:5358), noms]
+```
+
+
+```{r}
+registre2021 <- registre [registre$année.du.dépôt == "2021",]
+registre2021$section.cadastrale <-  substring(registre2021$section.cadastrale,1,2)
+registre2021 <- registre2021 [registre2021$section.cadastrale !="",]
+```
+
+2 nuls
+
+
+On procède pareil pour les parcelles
+
+
+
+```{r}
+registre2021$n..parcelle
+# Uniformisation des séparateurs
+registre2021$n..parcelle <- gsub(";|-| |/", ",", registre2021$n..parcelle)
+liste <- strsplit(registre2021$n..parcelle,",")
+# récupération uniquement des premiers éléments
+vec <- NULL
+for (i in 1:length(liste)) {
+  tmp <- liste [[i]][1]
+  vec <- c(vec,tmp)
+}
+  registre2021$n..parcelle <- vec
+registre2021$loc <- paste0(registre2021$section.cadastrale,registre2021$n..parcelle)
+```
+
+
+On va cartographier les mois
+
+```{r}
+registre2021$date.de.la.demande <- as.numeric(registre2021$date.de.la.demande)
+registre2021$date.de.la.demande <-as.Date(registre2021$date.de.la.demande, origin = "1900-01-01",
+                                          format = "%d/%m/%y")
+registre2021$date.de.la.demande
+registre2021$mois <- substring(registre2021$date.de.la.demande,6,7)
+registre2021$mois
+```
+jointure
+
+```{r}
+dataF <- merge(geo, registre2021, by="loc" )
+# 277 sur 286
+dataF <- st_as_sf(dataF)
+plot(dataF$geometry)
+dataF <- st_transform(dataF, 2154)
+st_crs(dataF)
+dataF$mois
+```
+
+carto
+
+
+
+
+```{r}
+library(mapsf)
+bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
+rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
+
+
+  mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(dataF)
+  dataF$mois
+  mf_map(
+    dataF,
+    type = "typo",
+    var = "mois",
+    col = "antiquewhite",
+    leg_title = "recettes (en milliers d'euros)",
+    leg_pos = "right",
+    add = TRUE
+  )
+  mf_label(data, var = "id")
+  mf_layout(title = annee [i],
+            credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+```
+

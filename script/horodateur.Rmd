@@ -1,0 +1,172 @@
+---
+title: "Recup fichier horodateur"
+author: "B. Maranget"
+date: "20/10/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+reprise de données horodateurs stats mensuelles et carto
+
+# Conversion XLS CSV (pb sous linux)
+
+```{r}
+library(xlsx)
+library(readxl)
+# recup identifiant
+data <- read.xlsx("../data/horodateur.xlsx", startRow= 2, header = TRUE,sheetIndex = 6, encoding = "UTF-8")
+# liste de tous les horodateurs
+id <- as.vector(data [,c(1)])
+id <- c(id,"O 12")
+# suppression NA et lg totaux
+id <- na.omit(id)
+lg <- grep("^O|^V", id)
+id <- sort(id[lg])
+data <- NA
+data <-  cbind(id)
+
+i <- 2
+annee <- seq(2018,2022)
+for (i in 2:6) {
+  print(i)
+  tmp <- read.xlsx("../data/horodateur.xlsx", sheet = i, startRow= 2, 
+                    header = TRUE,sheetIndex = 2, encoding = "UTF-8")
+  tmp <- tmp [c(1:40), c(1,16)]
+  names(tmp) <- c("id", annee [i-1])
+  data <- merge(data, tmp, by = "id")
+}
+write.csv(data, paste0("../data/horodateur.csv"), na ="", fileEncoding = "UTF-8")
+```
+
+# Carto 
+
+
+## Jointure
+
+```{r}
+library(sf)
+bornes <- st_read("../data/stationnement.gpkg")
+data$id <- gsub(" ", "", data$id)
+names(bornes) [1] <- "id"
+bornes <- merge (bornes, data, by = "id" )
+st_write(bornes, "../data/stationnement.gpkg", "bornes", delete_layer = TRUE)
+```
+
+## Une carte par an
+
+
+```{r}
+library(mapsf)
+bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
+rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
+data <- st_read("../data/stationnement.gpkg", "bornes")
+data$X2018 <- as.numeric(data$X2018)/1000
+data$X2019 <- as.numeric(data$X2019)/1000
+data$X2020 <- as.numeric(data$X2020)/1000
+data$X2021 <- as.numeric(data$X2021)/1000
+st_write(data, "../data/stationnement.gpkg", "bornes", delete_layer = TRUE)
+```
+
+
+```{r}
+annee <- seq(2018,2021)
+i <- 1
+  png("G:/03_SIG/05_Carte/horodateur.png", width = 900, height = 900, res = 100)
+  par(mfrow = c(2,2))
+for (i in 1:4) {
+  mf_init(data, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(
+    data,
+    type = "prop",
+    var = paste0("X", annee [i]),
+    col = "antiquewhite",
+    leg_title = "recettes (en milliers d'euros)",
+    leg_pos = "right",
+    add = TRUE
+  )
+  mf_label(data, var = "id")
+  mf_layout(title = annee [i],
+            credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+}
+dev.off()
+```
+
+
+
+
+
+## Une carte évolution
+
+
+Evolution absolue et relative
+2020 / 2018
+
+```{r}
+data <- st_read("../data/stationnement.gpkg", "bornes", int64_as_string = FALSE )
+str(data)
+data$absolue <- data$X2018- data$X2021
+data$relative <- round( (data$X2021 / data$X2018)*100,0)
+```
+
+
+```{r}
+data$absolue [11] <- 0
+valeur <- c("absolue","relative")
+legende <- c("milliers d'euros", "%")
+i <- 1
+  png("G:/03_SIG/05_Carte/horodateurDiff.png", width = 900, height = 450, res = 100)
+  par(mfrow = c(1,2))
+for (i in 1:2) {
+  mf_init(data, theme = "barcelona")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(
+    data,
+    type = "prop",
+    var = valeur [i],
+    col = "antiquewhite",
+    leg_title = legende [i],
+    leg_pos = "right",
+    add = TRUE
+  )
+  mf_label(data, var = "id")
+  mf_layout(title = paste0("Recettes horodateurs (2018-2021) : différence ", valeur [i]),
+            credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+}
+dev.off()
+```
+
+![](G:/03_SIG/05_Carte/horodateur.png)
+![](G:/03_SIG/05_Carte/horodateurDiff.png)
