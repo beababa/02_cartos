@@ -27,10 +27,12 @@ Cartographie données ADS à la parcelle
 
 # Données
 
+On reprend la version opendata du cadastre (juillet 2021) et le registre 2021 ADS
+
 
 ```{r}
 library(sf)
-geo <- st_read("G:/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json")
+geo <- st_read("E:/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json")
 plot(head(geo$geometry))
 geo$loc <- paste0(geo$section,geo$numero)
 registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
@@ -38,6 +40,10 @@ registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
 noms <- names(registre)[1:26]
 registre <- registre [c(1:5358), noms]
 ```
+
+## Traitement des données
+
+### Sections 
 
 
 ```{r}
@@ -51,7 +57,7 @@ registre2021 <- registre2021 [registre2021$section.cadastrale !="",]
 
 On procède pareil pour les parcelles
 
-
+### Parcelles
 
 ```{r}
 registre2021$n..parcelle
@@ -68,18 +74,41 @@ for (i in 1:length(liste)) {
 registre2021$loc <- paste0(registre2021$section.cadastrale,registre2021$n..parcelle)
 ```
 
+### Promoteur
+
+
+```{r}
+liste <- strsplit(registre2021$Nom, ":") 
+registre2021$promoteur <- sapply(liste, `[`, 1)
+registre2021$Nom <- sapply(liste, `[`, 2)
+registre2021$promoteur
+```
+
+
+### Surface
+
+```{r}
+registre2021$surface <- as.numeric(gsub( " m²|lot .|(|)", "", registre2021$`surface.du.terrain.en.m²`))
+table(registre2021$surface, useNA = "always")
+hist(registre2021$surface)
+```
+
+
+
+32 NA / 10 gros permis
+
+
+### Mois
 
 On va cartographier les mois
 
 ```{r}
 registre2021$date.de.la.demande <- as.numeric(registre2021$date.de.la.demande)
-registre2021$date.de.la.demande <-as.Date(registre2021$date.de.la.demande, origin = "1900-01-01",
-                                          format = "%d/%m/%y")
-registre2021$date.de.la.demande
-registre2021$mois <- substring(registre2021$date.de.la.demande,6,7)
+registre2021$date.de.la.demande <-as.Date(registre2021$date.de.la.demande, origin = "1900-01-01")
+registre2021$mois <- as.numeric(format(registre2021$date.de.la.demande, "%m"))
 registre2021$mois
 ```
-jointure
+## Jointure
 
 ```{r}
 dataF <- merge(geo, registre2021, by="loc" )
@@ -91,18 +120,39 @@ st_crs(dataF)
 dataF$mois
 ```
 
-carto
+## Etiquettes
 
 
+dataLabel pour étiquettes
+
+la surface pour filtrer les labels
+
+```{r}
+
+ind <- which(registre2021$surface > 10000)
+registre2021$promoteur [ind]
+dataLabel <- dataF [dataF$surface > 10000&!is.na(dataF$surface),]
+plot(dataLabel$geometry)
+# on supprime un doublon nom
+grep("SNCF", dataLabel$promoteur)
+dataLabel <- dataLabel [-3,]
+```
+
+
+
+
+# Cartographie
 
 
 ```{r}
 library(mapsf)
-bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
-rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
+bondy <- st_read("E:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
+rue <-  st_read( "E:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
 
-
-  mf_init(bondy, theme = "candy")
+mf_export(x = bondy, filename = "E:/03_SIG/05_Carte/ads.png", 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 250)
+  #mf_init(bondy, theme = "candy")
   mf_shadow(bondy, add = TRUE)
   mf_map(bondy, add = TRUE)
   mf_map(
@@ -112,19 +162,37 @@ rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet
     lwd = 2,
     add = TRUE
   )
-  mf_map(dataF)
-  dataF$mois
   mf_map(
     dataF,
-    type = "typo",
+    type = "choro",
+    border = NA,
     var = "mois",
-    col = "antiquewhite",
-    leg_title = "recettes (en milliers d'euros)",
-    leg_pos = "right",
+    leg_pos = "n",
     add = TRUE
   )
-  mf_label(data, var = "id")
-  mf_layout(title = annee [i],
+
+  mf_label(dataLabel, var = "promoteur", overlap = F, halo = T, cex = 0.5)
+  
+ # start the inset
+mf_inset_on( fig = c(0.75, .95, 0.84, .99))
+# draw the histogram
+bks <- mf_get_breaks(x = dataF$mois, nbreaks = 5, breaks = "quantile") 
+pal <- hcl.colors(n = 5, palette = "Dark Mint", rev = TRUE)
+mf_theme("candy")
+fg <-mf_theme()$fg
+par(mar = c(0,0,0.8,0))
+hist(dataF$mois, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
+     xlab="mois", ylab = "", main ="")
+axis(side = 1, at = bks, las = 2, tick = FALSE, line = -.9, 
+  cex.axis = .7, col.axis = fg)
+title("Nb ADS par mois", cex.main = .5, col.main = fg, 
+      font.main = 1, adj = 0)
+# close the inset
+mf_inset_off()
+   mf_layout(title = paste0("ADS en 2021 : ", length(dataF$mois)),
             credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+dev.off()
 ```
 
+
+![](E:/03_SIG/05_Carte/ads.png)
