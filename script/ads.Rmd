@@ -29,7 +29,7 @@ reprise de données ADS pour Operis - Oxalis
 
 A ne faire qu'une fois pour pouvoir travailler sur le linux
 
-```{r}
+```{r, eval=FALSE}
 library(xlsx)
 library(readxl)
 ADSOp <- read.xlsx("../data/Format_ADS2007.xls", startRow= 1, header = TRUE,sheetIndex = 1, encoding = "UTF-8")
@@ -123,6 +123,29 @@ write.csv (export, "../data/registreSansSection.csv", fileEncoding = "UTF-8")
 ```
 
 95 lignes sans numéro de section...(moins de 2 % des lignes) A voir avec Rabia
+
+La vérif est trop longue voir si on peut passer par des adresses
+
+On importe les majic et l'edigeo dans qgis et on exporte en gpkg la table parcelleInfo
+
+
+
+```{r}
+library(sf)
+export$adresse.du.chantier
+export$Numéro
+adresse <- export [, c("adresse.du.chantier", "Numéro")]
+cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
+cadastre <- cadastre [, c("geo_parcelle","proprietaire_info")]
+head(adresse)
+head(cadastre)
+eclate <- strsplit(cadastre$proprietaire_info , "- ")
+cadastre$adresse <- sapply(eclate, "[",2)
+cadastre$adresse
+adresse$adresse.du.chantier
+```
+
+
 
 ### Longueur du champs
 
