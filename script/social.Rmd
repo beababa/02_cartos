@@ -1,0 +1,272 @@
+---
+title: "Habitat social"
+author: "B. Maranget"
+date: "20/10/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Carto de l'habitat social.
+
+# Données spatiales
+
+## Récupération du géocodage
+
+```{r}
+library(sf)
+data <- read.csv("G:/03_SIG/03_Data/logement.geocoded.csv")
+str(data)
+data <- st_as_sf(data, coords =c("longitude", "latitude"), crs = 4326)
+plot(data)
+
+```
+
+## Jointure
+
+Jointure sur parcelle pour récupérer surface plutôt que point.
+Problème des multiparcelles ?
+
+ou jointure sur bâtiment ?
+
+```{r}
+cadastre <- st_read("G:/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json")
+cadastre <- st_transform(cadastre, 2154)
+data <- st_transform(data, 2154)
+st_write(data, "G:/03_SIG/03_Data/logement.gpkg", "habitat", delete_layer = T )
+st_write(cadastre, "G:/03_SIG/03_Data/logement.gpkg", "parcelles", delete_layer = T)
+jointureSpatiale <- st_intersection(data, cadastre)
+
+
+# carto pb
+zoom <- st_buffer (data [20,], 200)
+library(mapsf)
+bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
+# effacement des secteurs d'intervention voirie
+bondy <- st_union(bondy)
+rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
+
+
+  mf_init(zoom, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(cadastre, col = "antiquewhite1", border = "grey", add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+ mf_map(
+    data,
+    type = "base",
+    pch - 8,
+    cex = 1.2,
+    border = NA,
+    col = "red",
+    add = TRUE
+  )
+
+   mf_layout(title = "Points hors des parcelles ", credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+
+```
+
+Problème : les points sont sur  les rues.
+
+Idée : le tampon
+
+
+```{r}
+dataBuffer <- st_buffer(data, 2)
+# le tampon de 2 m permet de récupérer autant de géométrie que d'adresses au départ
+jointureSpatiale <- st_intersection(cadastre, dataBuffer)
+plot(zoom$geometry)
+plot(cadastre$geometry, add = T)
+plot(jointureSpatiale$geometry, add = T)
+```
+
+On récupère la géométrie des parcelles
+
+```{r}
+str(jointureSpatiale)
+dataSansGeom <- jointureSpatiale [, c("id", "organisme","Type.de.logement","nb.logements"),drop = T]
+data <- merge(dataSansGeom, cadastre [, c("id")], by = "id")
+data <- st_as_sf(data)
+st_write(data,  "G:/03_SIG/03_Data/logement.gpkg", "jointure", delete_layer = T)
+```
+
+
+
+# Cartographie
+
+
+fond de carte, couches nécessaires
+
+```{r}
+qpv <- st_read("G:/03_SIG/03_Data/limites.gpkg", "qpv1")
+```
+
+
+
+```{r}
+library(mapsf)
+
+
+mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pru.png", 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 250)
+  #mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+
+    mf_map(
+    qpv,
+    type = "base",
+    col = "antiquewhite1",
+    border = NA,
+    lwd = 2,
+    add = TRUE
+  )
+      mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(
+    data,
+    type = "choro",
+    border = NA,
+    var = "nb.logements",
+    leg_pos = "right",
+    add = TRUE
+  )
+
+#  mf_label(data, var = "organisme", overlap = F, halo = T, cex = 0.5)
+  
+ # start the inset
+mf_inset_on( fig = c(0.75, .95, 0.84, .99))
+# draw the histogram
+bks <- mf_get_breaks(x = data$nb.logements, nbreaks = 5, breaks = "quantile") 
+pal <- hcl.colors(n = 5, palette = "Dark Mint", rev = TRUE)
+mf_theme("candy")
+fg <-mf_theme()$fg
+par(mar = c(0,0,0.8,0))
+hist(data$nb.logements, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
+     xlab="logements", ylab = "", main ="")
+axis(side = 1, at = bks, las = 2, tick = FALSE, line = -.9, 
+  cex.axis = .7, col.axis = fg)
+title("Nb logements", cex.main = .5, col.main = fg, 
+      font.main = 1, adj = 0)
+# close the inset
+mf_inset_off()
+   mf_layout(title = "Habitat social",
+            credits = paste0("OSM / Inventaire parcs logements sociaux\n", "Bondy, 2021"))
+dev.off()
+
+
+```
+
+
+
+```{r}
+library(mapsf)
+
+
+mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pru.png", 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 250)
+  #mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(
+    data,
+    type = "choro",
+    border = NA,
+    var = "nb.logements",
+    leg_pos = "right",
+    add = TRUE
+  )
+
+#  mf_label(data, var = "organisme", overlap = F, halo = T, cex = 0.5)
+  
+ # start the inset
+mf_inset_on( fig = c(0.75, .95, 0.84, .99))
+# draw the histogram
+bks <- mf_get_breaks(x = data$nb.logements, nbreaks = 5, breaks = "quantile") 
+pal <- hcl.colors(n = 5, palette = "Dark Mint", rev = TRUE)
+mf_theme("candy")
+fg <-mf_theme()$fg
+par(mar = c(0,0,0.8,0))
+hist(data$nb.logements, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
+     xlab="logements", ylab = "", main ="")
+axis(side = 1, at = bks, las = 2, tick = FALSE, line = -.9, 
+  cex.axis = .7, col.axis = fg)
+title("Nb logements", cex.main = .5, col.main = fg, 
+      font.main = 1, adj = 0)
+# close the inset
+mf_inset_off()
+   mf_layout(title = "Habitat social",
+            credits = paste0("OSM / Inventaire parcs logements sociaux\n", "Bondy, 2021"))
+dev.off()
+
+
+```
+
+
+
+```{r}
+library(mapsf)
+
+
+mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pruOrganisme.png", 
+          expandBB = c(0,0,0,0.55),
+          width = 1000, res = 150)
+  #mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_typo(
+    data,
+    border = NA,
+    var = "organisme",
+    cex = 0.5,
+    add = TRUE
+  )
+
+  
+   mf_layout(title = "Habitat social : organisme",
+            credits = paste0("OSM / Inventaire parcs logements sociaux\n", "Bondy, 2021"))
+dev.off()
+
+
+```
