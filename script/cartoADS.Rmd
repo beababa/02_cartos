@@ -31,8 +31,18 @@ On reprend la version opendata du cadastre (juillet 2021) et le registre 2021 AD
 
 
 ```{r}
+# pb lettre clé usb
+usb <- "G:"
+
+
+```
+
+
+
+
+```{r}
 library(sf)
-geo <- st_read("E:/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json")
+geo <- st_read(paste0(usb,"/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json"))
 plot(head(geo$geometry))
 geo$loc <- paste0(geo$section,geo$numero)
 registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
@@ -40,6 +50,37 @@ registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
 noms <- names(registre)[1:26]
 registre <- registre [c(1:5358), noms]
 ```
+
+
+## Premières analyses
+
+
+```{r}
+library(RColorBrewer)
+tab <- table(registre$Type.d.autorisation, registre$année.du.dépôt)
+tab <- tab [c(3,4,9,11:13), c(3:25)]
+tabAVT <- tab [c(1,2),]
+# 3 graphiques
+
+getwd()
+png("../img/nbADS.png", width = 600, height = 800, res = 100)
+par(mfrow = c(3,1))
+barplot(tabAVT, beside = T, main = "type d'autorisation ADS, déclaration préalable et travaux", 
+        col = c("burlywood", "chocolate3"), border = NA, 
+        legend = T, horiz = F, las=2, bg = "antiquewhite")
+barplot(tab [3,], beside = T, main = "type d'autorisation ADS - PC", 
+        col = "antiquewhite2", border = NA, 
+        legend = F, horiz = F, las=2, bg = "antiquewhite" )
+abline(h = mean(tab [3,]), col = "antiquewhite3", lwd = 3, lty=2)
+barplot(tab [c(4:6), c(7:23)], beside = T, main = "type d'autorisation ADS, modifications", 
+        col = brewer.pal(n = 3, name = "Accent"), border = NA, 
+        legend = T, horiz = F, las=2, bg = "antiquewhite" )
+agg <- aggregate(registre$Type.d.autorisation,list(registre$année.du.dépôt, registre$Type.d.autorisation), length)
+names(agg) <-  c("année", "type", "nb")
+dev.off()
+```
+
+![](../img/nbADS.png)
 
 ## Traitement des données
 
@@ -70,7 +111,7 @@ for (i in 1:length(liste)) {
   tmp <- liste [[i]][1]
   vec <- c(vec,tmp)
 }
-  registre2021$n..parcelle <- vec
+registre2021$n..parcelle <- vec
 registre2021$loc <- paste0(registre2021$section.cadastrale,registre2021$n..parcelle)
 ```
 
@@ -128,7 +169,6 @@ dataLabel pour étiquettes
 la surface pour filtrer les labels
 
 ```{r}
-
 ind <- which(registre2021$surface > 10000)
 registre2021$promoteur [ind]
 dataLabel <- dataF [dataF$surface > 10000&!is.na(dataF$surface),]
@@ -195,4 +235,4 @@ dev.off()
 ```
 
 
-![](E:/03_SIG/05_Carte/ads.png)
+![](G:/03_SIG/05_Carte/ads.png)

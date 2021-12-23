@@ -107,8 +107,66 @@ str(jointureSpatiale)
 dataSansGeom <- jointureSpatiale [, c("id", "organisme","Type.de.logement","nb.logements"),drop = T]
 data <- merge(dataSansGeom, cadastre [, c("id")], by = "id")
 data <- st_as_sf(data)
-st_write(data,  "G:/03_SIG/03_Data/logement.gpkg", "jointure", delete_layer = T)
 ```
+
+Rectification bailleurs
+
+
+```{r}
+sort(names(table(logement$organisme)))
+logement$organisme [logement$organisme == 'BATIGEREEN IDF'] <- 'BATIGERE EN IDF'
+logement$organisme [logement$organisme == 'CDC HABIT AT SOCIAL'] <- 'CDC HABITAT SOCIAL'
+st_write(logement,  "G:/03_SIG/03_Data/logement.gpkg", "jointure", delete_layer = T)
+```
+
+
+
+
+
+## Autre donnée disponible : cadastre
+
+
+Récupération des couches cadastre via QGIS
+
+```{r}
+library(sf)
+cadastre <- st_read("G:/03_SIG/03_Data/03_SOCLE/cadastre.sqlite", "parcelle_info")
+liste <- strsplit(cadastre$proprietaire, " - ")
+cadastre$proprio_nom <- sapply(liste, '[',2)
+tab <- table(cadastre$proprio_nom) 
+tab <- tab [tab > 10]
+grosProprio <- names(tab)
+cartoGrosProprio <- cadastre [cadastre$proprio_nom %in% grosProprio,]
+surface <- aggregate(st_area(cartoGrosProprio$geom)/10000, by = list(cartoGrosProprio$proprio_nom), sum)
+data <- aggregate(cartoGrosProprio$geom, by = list(cartoGrosProprio$proprio_nom), st_union)
+data <- st_as_sf(data)
+names(data) [1] <- "Propriétaires"
+```
+
+
+```{r}
+hist(tab)
+st_read("G:/03_SIG/03_Data/logement.gpkg", "jointure")
+tab <- table(logement$organisme)
+bailleurs <- names(tab) [-1]
+sort(bailleurs)
+# attention rectif données
+motif <-  NULL
+tmp
+for (i in 1:length(bailleurs)){
+  tmp <- paste0("\'",
+               bailleurs [i],
+               "\'",
+               "|")
+  motif <- paste0(motif, tmp)
+}
+bailleurs
+
+logementSocial <- cadastre [cadastre$proprietaire %in% bailleurs,]
+lg <- grep (motif, cadastre$proprietaire)
+cadastre [lg,]
+```
+
 
 
 
@@ -119,14 +177,14 @@ fond de carte, couches nécessaires
 
 ```{r}
 qpv <- st_read("G:/03_SIG/03_Data/limites.gpkg", "qpv1")
+bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
+rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
 ```
 
 
 
 ```{r}
 library(mapsf)
-
-
 mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pru.png", 
           expandBB = c(0,0,0,0.3),
           width = 1000, res = 250)
@@ -240,8 +298,6 @@ dev.off()
 
 ```{r}
 library(mapsf)
-
-
 mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pruOrganisme.png", 
           expandBB = c(0,0,0,0.55),
           width = 1000, res = 150)
@@ -270,3 +326,62 @@ dev.off()
 
 
 ```
+
+## Gros propriétaires cadastre
+
+```{r}
+data$Propriétaires[ order(data$surface)]
+data$surface <- st_area(data$geometry)/10000
+library(mapsf)
+mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/grosProprioCadastre.png", 
+          expandBB = c(0,0,0,0.2),
+          width = 2100,  height = 2970, res = 400)
+  #mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(
+    data,
+    type = "typo",
+    val_order = data$Propriétaires[ order(data$surface)],
+    pal = hcl.colors(n = 14, palette = "Dark Mint", rev = TRUE),
+    border = NA,
+    var = "Propriétaires",
+    leg_pos = "n",
+   
+    add = TRUE
+  )
+
+#  mf_label(data, var = "organisme", overlap = F, halo = T, cex = 0.5)
+  
+ # start the inset
+mf_inset_on( fig = c(0.75, .95, 0.84, .99))
+# draw the histogram
+bks <- mf_get_breaks(x = st_area(data)/10000, nbreaks = 5, breaks = "quantile") 
+pal <- hcl.colors(n = 14, palette = "Dark Mint", rev = TRUE)
+mf_theme("candy")
+fg <-mf_theme()$fg
+par(mar = c(0,0,0.8,0))
+
+
+barplot(sort(data$surface), names.arg = data$Propriétaires[ order(data$surface)], las = 2, ylab = "surface (hac)", col = pal, cex.names = 0.4, axes = F)
+axis(side = 4, at = c(1,50), las = 2, tick = FALSE, line = -.9, 
+  cex.axis = .7, col.axis = fg)
+
+title("Surface (ha) / propriétaire", cex.main = .5, col.main = fg, 
+      font.main = 1, adj = 0)
+
+
+# close the inset
+mf_inset_off()
+   mf_layout(title = "Propriétaires, plus de 10 parcelles",
+            credits = paste0("OSM / Cadastre, 2021\n", "Bondy, 2021"))
+dev.off()
+```
+
