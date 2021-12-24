@@ -62,12 +62,28 @@ https://cadastre.data.gouv.fr/data/etalab-cadastre/2021-10-01/geojson/communes/9
 bondy <- st_read(paste0(chemin,"limites.gpkg"), "bondy", quiet=F)
 bondy <- st_union(bondy)
 st_write(bondy,paste0(chemin,"logement.gpkg"), "bondy", delete_layer = T)
-rue <-  st_read( paste0(chemin,"bondy.gpkg"), "ruePrincipale", quiet = TRUE)
+ogrListLayers(paste0(chemin, "bondy.gpkg"))
+rue <-  st_read( paste0(chemin,"bondy.gpkg"), "rue", quiet = TRUE)
 st_write(rue,paste0(chemin,"logement.gpkg"), "rue", delete_layer = T)
 cadastre <- st_read(paste0(chemin,"cadastre-93010-parcelles.json"))
 cadastre <- st_transform(cadastre, 2154)
+cadastre <- st_read()
 st_write(cadastre,paste0(chemin,"logement.gpkg"), "parcelles", delete_layer = T)
 ```
+
+
+```{r}
+rue <- st_read(paste0(chemin, "01_OSM/rue.geojson"))
+sort(table(rue$highway))
+rue <- rue [rue$highway %in% c('motorway','primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary'),]
+rue <- rue [,"highway", drop = F]
+rue <- st_transform(rue, 2154)
+mf_map(bondy)
+mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "orange", "orange", "orange", "orange", "white"), lwd = 1.5, leg_pos = "n")
+st_write(rue, paste0(chemin, "logement.gpkg"), "rue", delete_layer = T)
+```
+
+
 
 
 ### Pru
@@ -76,6 +92,7 @@ Qpv, limites PRU (à dessiner)
 
 ```{r}
 qpv <- st_read(paste0(chemin, "limites.gpkg"), "qpv1")
+qpv <- st_intersection(bondy, qpv)
 st_write(qpv,paste0(chemin,"logement.gpkg"), "qpv", delete_layer = T)
 ```
 
@@ -100,7 +117,22 @@ st_write(bat, paste0(chemin, "logement.gpkg"), "bat", delete_layer = T)
 ```
 
 
-### Carto
+### Elements du fond de carte
+
+#### Chargement des couches
+
+```{r}
+library(rgdal)
+#readOGR(paste0(chemin, "logement.gpkg"))
+couche <- ogrListLayers(paste0(chemin, "logement.gpkg"))
+for (i in 1:length(couche)){
+    objet <- st_read(paste0(chemin, "logement.gpkg"), couche [i])
+    assign(couche [i], objet)
+    }
+```
+
+
+#### Carto
 
 
 ```{r}
@@ -108,15 +140,14 @@ mf_init(bondy, theme = "candy")
 mf_shadow(bondy, add = TRUE)
 fond <- function(){
   mf_map(bondy, add = T)
-mf_map(rue, col = "white", add = T)
+mf_map(qpv, col = "antiquewhite4", border = NA, add = T)
+mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "orange", "orange", "orange", "orange", "white"), lwd = 1.5, leg_pos = "n")
 mf_map(jardin, col = "chartreuse3", border = NA,add = T)
 mf_map(bat, col = "antiquewhite1", border = NA,add = T)
 }
 fond()
 mf_layout(title = "Fond de carte" )
 ```
-
-
 
 
 
@@ -139,15 +170,16 @@ st_write(data, paste0( chemin,"logement.gpkg"), "habitat", delete_layer = T )
 
 ## Zones denses
 
-On note les zones denses pour pouvoir zoomer et étudier ces zones en priorité
+On note les zones denses pour pouvoir zoomer et étudier ces zones en priorité.
 
 ```{r}
 # création d'une grille et du nb de points par carreau
 grille <- st_make_grid(bondy, cellsize = c(200,200))
 res <- st_intersects(grille, data)
 densite <- sapply(res, length)
-barplot(table(densite), main = "Nb d'adresses par carreau 200*200", xlab = "Nb d'adresses", ylab = "Occurences")
+barplot(table(densite), main = "Nb d'adresses par carreau 200*200", sub = "(152 adresses au total)", xlab = "Nb d'adresses", ylab = "Occurences")
 grilleDensite <- st_as_sf(data.frame(grille, densite))
+# On choisit de prndre uniquement les carreaux avec 5 adresses, cela fait 10 zones à zoomer
 grilleDensiteForte <- grilleDensite [grilleDensite$densite > 4,]
 st_write(grilleDensiteForte, paste0(chemin, "logement.gpkg"), "zoom", delete_layer = T)
 ```
@@ -162,7 +194,7 @@ mf_map(bondy, add = T)
 mf_choro(grilleDensiteForte, var = "densite", border = NA,
          leg_title = "nb d'adresses", add = T)
 mf_map(data$geometry, add = T)
-mf_layout(title = "152 lignes géocodées de l'inventaire social" )
+mf_layout(title = "152 lignes géocodées de l'inventaire social et 10 zones denses" , credits = "inventaire logements sociaux, Bondy, 2021")
 ```
 
 ## Jointure
@@ -176,6 +208,7 @@ ou jointure sur bâtiment ?
 ```{r}
 jointureSpatiale <- st_intersection(data, cadastre)
 pt <- data$geometry
+plot(pt)
 ```
 
 
@@ -188,6 +221,17 @@ data <- st_as_sf(data)
 ```
 
 
+Eviter duplication de parcelle / et de nom ?
+
+```{r}
+unik <- unique(data$id)
+# 53 parcelles uniques
+data <- data [data$id %in% unik,]
+```
+
+
+
+
 ### Zoom : points hors parcelles
 
 ```{r}
@@ -197,17 +241,9 @@ mf_export(x = bondy, filename = "../img/zoom.png",
 par(mfrow = c(2,5))
 for (i in 1:length(zoom$densite))
 {
-  mf_init(zoom$geom[[i]], theme = "barcelona")
+  mf_init(zoom$geom[i], theme = "barcelona")
   mf_shadow(bondy, add = TRUE)
   mf_map(cadastre, col = "antiquewhite1", border = "grey", add = TRUE)
-  mf_map(
-    rue,
-    type = "base",
-    col = "white",
-    lwd = 2,
-    add = TRUE
-  )
- 
   mf_map(
     data,
     type = "base",
@@ -215,6 +251,8 @@ for (i in 1:length(zoom$densite))
     col = "red",
     add = TRUE
   )
+  data$organisme [4]  <- "PRIVE"
+  mf_label(data, var = "organisme", col ="white", overlap = T, halo = T, cex = 1)
    mf_layout(title = paste("zoom ",i), credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
 }
 dev.off()
