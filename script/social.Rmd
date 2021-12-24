@@ -15,26 +15,154 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(cache = TRUE)
 # Passer la valeur suivante à TRUE pour reproduire les extractions.
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(eval = TRUE)
 knitr::opts_chunk$set(warning = FALSE)
 ```
 
 
 # Objet
 
-Carto de l'habitat social.
+Carto de l'habitat social à partir de l'inventaire logement social.
+Le cadastre (données majic 3 - 2021) permet de compléter les données.
 
-# Données spatiales
+
+# Environnement
+
+## Chemins
+
+```{r}
+if (Sys.getenv('HOME') == "/home/tachasa") {
+  chemin <- paste0(Sys.getenv('HOME'), "/00_DATA/")
+} else {
+  chemin <- "G:/03_SIG/03_Data/"
+}
+```
+
+## Librairies
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Préparation données
+
+Toutes les couches sont enregistrées dans logement.gpkg
+
+## Fond de carte
+
+### Classiques
+
+Limites de Bondy, rues principales, cadastre en geojson (Etalab)
+
+https://cadastre.data.gouv.fr/data/etalab-cadastre/2021-10-01/geojson/communes/93/93010/
+
+```{r}
+bondy <- st_read(paste0(chemin,"limites.gpkg"), "bondy", quiet=F)
+bondy <- st_union(bondy)
+st_write(bondy,paste0(chemin,"logement.gpkg"), "bondy", delete_layer = T)
+rue <-  st_read( paste0(chemin,"bondy.gpkg"), "ruePrincipale", quiet = TRUE)
+st_write(rue,paste0(chemin,"logement.gpkg"), "rue", delete_layer = T)
+cadastre <- st_read(paste0(chemin,"cadastre-93010-parcelles.json"))
+cadastre <- st_transform(cadastre, 2154)
+st_write(cadastre,paste0(chemin,"logement.gpkg"), "parcelles", delete_layer = T)
+```
+
+
+### Pru
+
+Qpv, limites PRU (à dessiner)
+
+```{r}
+qpv <- st_read(paste0(chemin, "limites.gpkg"), "qpv1")
+st_write(qpv,paste0(chemin,"logement.gpkg"), "qpv", delete_layer = T)
+```
+
+
+### Couches OSM
+
+couches OSM susceptibles d'être complétées :
+
+- Parcs et jardins (leisure = park)
+
+- Batiments publics (building = public)
+
+```{r}
+jardin <- st_read(paste0(chemin,"park.geojson"))
+bat <- st_read(paste0(chemin, "building.geojson"))
+jardin <- st_transform(jardin, 2154)
+# pb jardin multipolkygone, on fusionne
+jardin <- st_union(jardin)
+bat <- st_transform(bat, 2154)
+st_write(jardin, paste0(chemin, "logement.gpkg"), "jardin", delete_layer = T)
+st_write(bat, paste0(chemin, "logement.gpkg"), "bat", delete_layer = T)
+```
+
+
+### Carto
+
+
+```{r}
+mf_init(bondy, theme = "candy")
+mf_shadow(bondy, add = TRUE)
+fond <- function(){
+  mf_map(bondy, add = T)
+mf_map(rue, col = "white", add = T)
+mf_map(jardin, col = "chartreuse3", border = NA,add = T)
+mf_map(bat, col = "antiquewhite1", border = NA,add = T)
+}
+fond()
+mf_layout(title = "Fond de carte" )
+```
+
+
+
+
+
+### Inventaire habitat social
+
+Fichier d'adresse en jointure sur la couche de dessin du cadastre en opendata
 
 ## Récupération du géocodage
 
 ```{r}
-library(sf)
-data <- read.csv("G:/03_SIG/03_Data/logement.geocoded.csv")
+data <- read.csv(paste0(chemin, "logement.geocoded.csv"))
 str(data)
 data <- st_as_sf(data, coords =c("longitude", "latitude"), crs = 4326)
-plot(data)
+data <- st_transform(data, 2154)
+st_write(data, paste0( chemin,"logement.gpkg"), "habitat", delete_layer = T )
+```
 
+
+
+
+## Zones denses
+
+On note les zones denses pour pouvoir zoomer et étudier ces zones en priorité
+
+```{r}
+# création d'une grille et du nb de points par carreau
+grille <- st_make_grid(bondy, cellsize = c(200,200))
+res <- st_intersects(grille, data)
+densite <- sapply(res, length)
+barplot(table(densite), main = "Nb d'adresses par carreau 200*200", xlab = "Nb d'adresses", ylab = "Occurences")
+grilleDensite <- st_as_sf(data.frame(grille, densite))
+grilleDensiteForte <- grilleDensite [grilleDensite$densite > 4,]
+st_write(grilleDensiteForte, paste0(chemin, "logement.gpkg"), "zoom", delete_layer = T)
+```
+
+### Cartographie rapide
+
+```{r}
+zoom <- st_read(paste0(chemin, "logement.gpkg"), "zoom")
+mf_init(zoom, theme = "candy")
+mf_shadow(bondy, add = TRUE)
+mf_map(bondy, add = T)
+mf_choro(grilleDensiteForte, var = "densite", border = NA,
+         leg_title = "nb d'adresses", add = T)
+mf_map(data$geometry, add = T)
+mf_layout(title = "152 lignes géocodées de l'inventaire social" )
 ```
 
 ## Jointure
@@ -44,25 +172,83 @@ Problème des multiparcelles ?
 
 ou jointure sur bâtiment ?
 
+
 ```{r}
-cadastre <- st_read("G:/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json")
-cadastre <- st_transform(cadastre, 2154)
-data <- st_transform(data, 2154)
-st_write(data, "G:/03_SIG/03_Data/logement.gpkg", "habitat", delete_layer = T )
-st_write(cadastre, "G:/03_SIG/03_Data/logement.gpkg", "parcelles", delete_layer = T)
 jointureSpatiale <- st_intersection(data, cadastre)
+pt <- data$geometry
+```
 
 
-# carto pb
-zoom <- st_buffer (data [20,], 200)
-library(mapsf)
-bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
-# effacement des secteurs d'intervention voirie
-bondy <- st_union(bondy)
-rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
+On récupère la géométrie des parcelles
+
+```{r}
+dataSansGeom <- jointureSpatiale [, c("id", "organisme","Type.de.logement","nb.logements"),drop = T]
+data <- merge(dataSansGeom, cadastre [, c("id")], by = "id")
+data <- st_as_sf(data)
+```
 
 
-  mf_init(zoom, theme = "candy")
+### Zoom : points hors parcelles
+
+```{r}
+mf_export(x = bondy, filename = "../img/zoom.png", 
+          expandBB = c(0,0,0,0.55),
+          width = 1000, height = 500, res = 150)
+par(mfrow = c(2,5))
+for (i in 1:length(zoom$densite))
+{
+  mf_init(zoom$geom[[i]], theme = "barcelona")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(cadastre, col = "antiquewhite1", border = "grey", add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+ 
+  mf_map(
+    data,
+    type = "base",
+    border = NA,
+    col = "red",
+    add = TRUE
+  )
+   mf_layout(title = paste("zoom ",i), credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+}
+dev.off()
+```
+
+![](../img/zoom.png)
+
+
+Problème : les points sont hors des parcelles.
+
+### Idée : le tampon
+
+On crée un tampon autour des points
+
+
+```{r}
+dataBuffer <- st_buffer(data, 2)
+# le tampon de 2 m permet de récupérer autant de géométrie que d'adresses au départ
+jointureSpatiale <- st_intersection(cadastre, dataBuffer)
+#On récupère la géométrie des parcelles
+dataSansGeom <- jointureSpatiale [, c("id", "organisme","Type.de.logement","nb.logements"),drop = T]
+data <- merge(dataSansGeom, cadastre [, c("id")], by = "id")
+data <- st_as_sf(data)
+```
+
+
+```{r}
+mf_export(x = bondy, filename = "../img/zoomBuffer.png", 
+          expandBB = c(0,0,0,0.55),
+          width = 1000, height = 500, res = 150)
+par(mfrow = c(2,5))
+for (i in 1:length(zoom$densite))
+{
+  mf_init(zoom$geom[[i]], theme = "barcelona")
   mf_shadow(bondy, add = TRUE)
   mf_map(cadastre, col = "antiquewhite1", border = "grey", add = TRUE)
   mf_map(
@@ -73,50 +259,32 @@ rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet
     add = TRUE
   )
  mf_map(
-    data,
+    jointureSpatiale,
     type = "base",
-    pch - 8,
-    cex = 1.2,
     border = NA,
     col = "red",
     add = TRUE
   )
-
-   mf_layout(title = "Points hors des parcelles ", credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
-
+   mf_layout(title = paste("zoom ",i), credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+}
+dev.off()
 ```
 
-Problème : les points sont sur  les rues.
 
-Idée : le tampon
+![](../img/zoomBuffer.png)
+
+### Finalisation du fichier
 
 
-```{r}
-dataBuffer <- st_buffer(data, 2)
-# le tampon de 2 m permet de récupérer autant de géométrie que d'adresses au départ
-jointureSpatiale <- st_intersection(cadastre, dataBuffer)
-plot(zoom$geometry)
-plot(cadastre$geometry, add = T)
-plot(jointureSpatiale$geometry, add = T)
-```
-
-On récupère la géométrie des parcelles
-
-```{r}
-str(jointureSpatiale)
-dataSansGeom <- jointureSpatiale [, c("id", "organisme","Type.de.logement","nb.logements"),drop = T]
-data <- merge(dataSansGeom, cadastre [, c("id")], by = "id")
-data <- st_as_sf(data)
-```
 
 Rectification bailleurs
 
 
 ```{r}
-sort(names(table(logement$organisme)))
-logement$organisme [logement$organisme == 'BATIGEREEN IDF'] <- 'BATIGERE EN IDF'
-logement$organisme [logement$organisme == 'CDC HABIT AT SOCIAL'] <- 'CDC HABITAT SOCIAL'
-st_write(logement,  "G:/03_SIG/03_Data/logement.gpkg", "jointure", delete_layer = T)
+sort(names(table(data$organisme)))
+data$organisme [data$organisme == 'BATIGEREEN IDF'] <- 'BATIGERE EN IDF'
+data$organisme [data$organisme == 'CDC HABIT AT SOCIAL'] <- 'CDC HABITAT SOCIAL'
+st_write(data,  paste0(chemin,"logement.gpkg"), "jointure", delete_layer = T)
 ```
 
 
@@ -126,11 +294,11 @@ st_write(logement,  "G:/03_SIG/03_Data/logement.gpkg", "jointure", delete_layer 
 ## Autre donnée disponible : cadastre
 
 
-Récupération des couches cadastre via QGIS
+Récupération des couches cadastre via QGIS, notamment la couche parcelle_info dont
+le champs *proprietaire" contient de nombreuses informations par rapport aux propriétaires.
 
 ```{r}
-library(sf)
-cadastre <- st_read("G:/03_SIG/03_Data/03_SOCLE/cadastre.sqlite", "parcelle_info")
+cadastre <- st_read(paste0(chemin,"/cadastre.sqlite"), "parcelle_info")
 liste <- strsplit(cadastre$proprietaire, " - ")
 cadastre$proprio_nom <- sapply(liste, '[',2)
 tab <- table(cadastre$proprio_nom) 
@@ -144,15 +312,19 @@ names(data) [1] <- "Propriétaires"
 ```
 
 
+# Explorations donnée hors cartographie
+
+## Histogramme des bailleurs dans l'inventaire des logements sociaux
+
+
 ```{r}
-hist(tab)
-st_read("G:/03_SIG/03_Data/logement.gpkg", "jointure")
+logement <- st_read(paste0(chemin,"logement.gpkg"), "jointure")
 tab <- table(logement$organisme)
+hist(tab, main = "Nb d'adresses par bailleur", xlab = "Nb d'adresses", ylab = "Occurence")
 bailleurs <- names(tab) [-1]
 sort(bailleurs)
-# attention rectif données
+# construciton du motif pour les chercher dans le cadastre
 motif <-  NULL
-tmp
 for (i in 1:length(bailleurs)){
   tmp <- paste0("\'",
                bailleurs [i],
@@ -160,55 +332,32 @@ for (i in 1:length(bailleurs)){
                "|")
   motif <- paste0(motif, tmp)
 }
-bailleurs
-
 logementSocial <- cadastre [cadastre$proprietaire %in% bailleurs,]
 lg <- grep (motif, cadastre$proprietaire)
 cadastre [lg,]
 ```
 
+On récupère les bailleurs dans les logements sociaux
 
 
 
 # Cartographie
 
 
-fond de carte, couches nécessaires
 
-```{r}
-qpv <- st_read("G:/03_SIG/03_Data/limites.gpkg", "qpv1")
-bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
-rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
-```
 
+## Nombre de logements par bailleurs
 
 
 ```{r}
-library(mapsf)
-mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pru.png", 
+mf_export(x = bondy, filename = "../img/pru.png", 
           expandBB = c(0,0,0,0.3),
           width = 1000, res = 250)
   #mf_init(bondy, theme = "candy")
   mf_shadow(bondy, add = TRUE)
-  mf_map(bondy, add = TRUE)
-
-    mf_map(
-    qpv,
-    type = "base",
-    col = "antiquewhite1",
-    border = NA,
-    lwd = 2,
-    add = TRUE
-  )
-      mf_map(
-    rue,
-    type = "base",
-    col = "white",
-    lwd = 2,
-    add = TRUE
-  )
+fond()
   mf_map(
-    data,
+    logement,
     type = "choro",
     border = NA,
     var = "nb.logements",
@@ -221,12 +370,12 @@ mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pru.png",
  # start the inset
 mf_inset_on( fig = c(0.75, .95, 0.84, .99))
 # draw the histogram
-bks <- mf_get_breaks(x = data$nb.logements, nbreaks = 5, breaks = "quantile") 
+bks <- mf_get_breaks(x = logement$nb.logements, nbreaks = 5, breaks = "quantile") 
 pal <- hcl.colors(n = 5, palette = "Dark Mint", rev = TRUE)
 mf_theme("candy")
 fg <-mf_theme()$fg
 par(mar = c(0,0,0.8,0))
-hist(data$nb.logements, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
+hist(logement$nb.logements, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
      xlab="logements", ylab = "", main ="")
 axis(side = 1, at = bks, las = 2, tick = FALSE, line = -.9, 
   cex.axis = .7, col.axis = fg)
@@ -237,82 +386,22 @@ mf_inset_off()
    mf_layout(title = "Habitat social",
             credits = paste0("OSM / Inventaire parcs logements sociaux\n", "Bondy, 2021"))
 dev.off()
-
-
 ```
 
+![](../img/pru.png)
 
+## Carte des bailleurs
 
 ```{r}
 library(mapsf)
-
-
-mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pru.png", 
-          expandBB = c(0,0,0,0.3),
-          width = 1000, res = 250)
-  #mf_init(bondy, theme = "candy")
-  mf_shadow(bondy, add = TRUE)
-  mf_map(bondy, add = TRUE)
-  mf_map(
-    rue,
-    type = "base",
-    col = "white",
-    lwd = 2,
-    add = TRUE
-  )
-  mf_map(
-    data,
-    type = "choro",
-    border = NA,
-    var = "nb.logements",
-    leg_pos = "right",
-    add = TRUE
-  )
-
-#  mf_label(data, var = "organisme", overlap = F, halo = T, cex = 0.5)
-  
- # start the inset
-mf_inset_on( fig = c(0.75, .95, 0.84, .99))
-# draw the histogram
-bks <- mf_get_breaks(x = data$nb.logements, nbreaks = 5, breaks = "quantile") 
-pal <- hcl.colors(n = 5, palette = "Dark Mint", rev = TRUE)
-mf_theme("candy")
-fg <-mf_theme()$fg
-par(mar = c(0,0,0.8,0))
-hist(data$nb.logements, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
-     xlab="logements", ylab = "", main ="")
-axis(side = 1, at = bks, las = 2, tick = FALSE, line = -.9, 
-  cex.axis = .7, col.axis = fg)
-title("Nb logements", cex.main = .5, col.main = fg, 
-      font.main = 1, adj = 0)
-# close the inset
-mf_inset_off()
-   mf_layout(title = "Habitat social",
-            credits = paste0("OSM / Inventaire parcs logements sociaux\n", "Bondy, 2021"))
-dev.off()
-
-
-```
-
-
-
-```{r}
-library(mapsf)
-mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/pruOrganisme.png", 
+mf_export(x = bondy, filename = "../img/pruOrganisme.png", 
           expandBB = c(0,0,0,0.55),
           width = 1000, res = 150)
   #mf_init(bondy, theme = "candy")
   mf_shadow(bondy, add = TRUE)
-  mf_map(bondy, add = TRUE)
-  mf_map(
-    rue,
-    type = "base",
-    col = "white",
-    lwd = 2,
-    add = TRUE
-  )
+  fond()
   mf_typo(
-    data,
+    logement,
     border = NA,
     var = "organisme",
     cex = 0.5,
@@ -327,25 +416,19 @@ dev.off()
 
 ```
 
+![](../img/pruOrganisme.png)
+
 ## Gros propriétaires cadastre
 
 ```{r}
-data$Propriétaires[ order(data$surface)]
 data$surface <- st_area(data$geometry)/10000
 library(mapsf)
-mf_export(x = bondy, filename = "G:/03_SIG/05_Carte/grosProprioCadastre.png", 
+mf_export(x = bondy, filename = "../img/grosProprioCadastre.png", 
           expandBB = c(0,0,0,0.2),
           width = 2100,  height = 2970, res = 400)
   #mf_init(bondy, theme = "candy")
   mf_shadow(bondy, add = TRUE)
-  mf_map(bondy, add = TRUE)
-  mf_map(
-    rue,
-    type = "base",
-    col = "white",
-    lwd = 2,
-    add = TRUE
-  )
+  fond()
   mf_map(
     data,
     type = "typo",
@@ -385,3 +468,5 @@ mf_inset_off()
 dev.off()
 ```
 
+
+![](../img/grosProprioCadastre.png)

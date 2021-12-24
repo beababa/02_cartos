@@ -184,6 +184,8 @@ dataLabel <- dataLabel [-3,]
 # Cartographie
 
 
+## ADS portant sur les plus grosses parcelles
+
 ```{r}
 library(mapsf)
 bondy <- st_read("E:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
@@ -236,3 +238,11 @@ dev.off()
 
 
 ![](G:/03_SIG/05_Carte/ads.png)
+Cette carte n'a pas d'intérêt.
+Plutôt cartographier les constructions de plus de 3 logements.
+
+
+```{r}
+
+```
+
