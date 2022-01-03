@@ -30,19 +30,19 @@ Cartographie données ADS à la parcelle
 On reprend la version opendata du cadastre (juillet 2021) et le registre 2021 ADS
 
 
-```{r}
+```{r, eval = T}
 # pb lettre clé usb
 usb <- "G:"
-
-
+chemin1 <- "C:/Users/bmaranget/Documents"
+chemin <- "G:"
 ```
 
 
 
 
-```{r}
+```{r, eval = T}
 library(sf)
-geo <- st_read(paste0(usb,"/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json"))
+geo <- st_read(paste0(chemin,"/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json"))
 plot(head(geo$geometry))
 geo$loc <- paste0(geo$section,geo$numero)
 registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
@@ -55,14 +55,14 @@ registre <- registre [c(1:5358), noms]
 ## Premières analyses
 
 
-```{r}
+```{r, eval = T}
 library(RColorBrewer)
 tab <- table(registre$Type.d.autorisation, registre$année.du.dépôt)
+knitr::kable(tab [,seq (0,25, by = 5)])
 tab <- tab [c(3,4,9,11:13), c(3:25)]
 tabAVT <- tab [c(1,2),]
+tab
 # 3 graphiques
-
-getwd()
 png("../img/nbADS.png", width = 600, height = 800, res = 100)
 par(mfrow = c(3,1))
 barplot(tabAVT, beside = T, main = "type d'autorisation ADS, déclaration préalable et travaux", 
@@ -83,6 +83,39 @@ dev.off()
 ![](../img/nbADS.png)
 
 ## Traitement des données
+
+
+### Sur l'ensemble du registre, jointure
+
+
+#### Sections
+
+```{r}
+registre$section.cadastrale
+```
+
+
+
+
+#### Parcelles
+
+```{r}
+
+```
+
+
+#### Jointure
+
+```{r}
+
+```
+
+
+
+
+
+### Sur 2021
+
 
 ### Sections 
 
@@ -115,24 +148,6 @@ registre2021$n..parcelle <- vec
 registre2021$loc <- paste0(registre2021$section.cadastrale,registre2021$n..parcelle)
 ```
 
-### Promoteur
-
-
-```{r}
-liste <- strsplit(registre2021$Nom, ":") 
-registre2021$promoteur <- sapply(liste, `[`, 1)
-registre2021$Nom <- sapply(liste, `[`, 2)
-registre2021$promoteur
-```
-
-
-### Surface
-
-```{r}
-registre2021$surface <- as.numeric(gsub( " m²|lot .|(|)", "", registre2021$`surface.du.terrain.en.m²`))
-table(registre2021$surface, useNA = "always")
-hist(registre2021$surface)
-```
 
 
 
@@ -184,14 +199,12 @@ dataLabel <- dataLabel [-3,]
 # Cartographie
 
 
-## ADS portant sur les plus grosses parcelles
-
 ```{r}
 library(mapsf)
-bondy <- st_read("E:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
-rue <-  st_read( "E:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
+bondy <- st_read(paste0(chemin,"/03_SIG/03_data/limites.gpkg"), "bondy", quiet=F)
+rue <-  st_read( paste0(chemin, "/03_SIG/03_Data/03_SOCLE/bondy.gpkg"), "ruePrincipale", quiet = TRUE)
 
-mf_export(x = bondy, filename = "E:/03_SIG/05_Carte/ads.png", 
+mf_export(x = bondy, filename = paste0(chemin,"/03_SIG/05_Carte/ads.png"), 
           expandBB = c(0,0,0,0.3),
           width = 1000, res = 250)
   #mf_init(bondy, theme = "candy")
@@ -237,12 +250,92 @@ dev.off()
 ```
 
 
-![](G:/03_SIG/05_Carte/ads.png)
-Cette carte n'a pas d'intérêt.
-Plutôt cartographier les constructions de plus de 3 logements.
+![](C:/users/bmaranget/Documents/03_SIG/05_Carte/ads.png)
 
+
+
+
+Géolocalisation du registreLogement
 
 ```{r}
 
+tmp$section.cadastrale <-  substring(tmp$section.cadastrale,1,2)
+tmp$section.cadastrale
 ```
+
+
+
+On procède pareil pour les parcelles
+
+### Parcelles
+
+```{r}
+tmp$n..parcelle
+# Uniformisation des séparateurs
+tmp$n..parcelle <- gsub(";|-| |/", ",", tmp$n..parcelle)
+liste <- strsplit(tmp$n..parcelle,",")
+# récupération uniquement des premiers éléments
+vectmp <- NULL
+for (i in 1:length(liste)) {
+  vectmp <- liste [[i]][1]
+  vec <- c(vec,vectmp)
+}
+tmp$n..parcelle <- vec
+tmp$loc <- paste0(tmp$section.cadastrale,tmp$n..parcelle)
+tmp$loc
+```
+
+
+
+```{r}
+library(mapsf)
+bondy <- st_read(paste0(chemin,"/03_SIG/03_data/limites.gpkg"), "bondy", quiet=F)
+rue <-  st_read( paste0(chemin, "/03_SIG/03_Data/03_SOCLE/bondy.gpkg"), "ruePrincipale", quiet = TRUE)
+
+mf_export(x = bondy, filename = paste0(chemin,"/03_SIG/05_Carte/adsLogement.png"), 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 250)
+  mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(
+    tmp,
+    type = "choro",
+    border = NA,
+    var = "nb",
+    leg_pos = "n",
+    add = TRUE
+  )
+
+  mf_label(dataLabel, var = "promoteur", overlap = F, halo = T, cex = 0.5)
+  
+ # start the inset
+mf_inset_on( fig = c(0.75, .95, 0.84, .99))
+# draw the histogram
+bks <- mf_get_breaks(x = tmp$nb, nbreaks = 5, breaks = "quantile") 
+pal <- hcl.colors(n = 5, palette = "Dark Mint", rev = TRUE)
+mf_theme("candy")
+fg <-mf_theme()$fg
+par(mar = c(0,0,0.8,0))
+hist(tmp$nb, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
+     xlab="mois", ylab = "", main ="")
+axis(side = 1, at = bks, las = 2, tick = FALSE, line = -.9, 
+  cex.axis = .7, col.axis = fg)
+title("Nb logements", cex.main = .5, col.main = fg, 
+      font.main = 1, adj = 0)
+# close the inset
+mf_inset_off()
+   mf_layout(title = paste0("Nombre d'ADS pour logements > 3 :", length(tmp$nb)),
+            credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+dev.off()
+```
+
+
 

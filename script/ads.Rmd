@@ -25,6 +25,28 @@ knitr::opts_chunk$set(warning = FALSE)
 reprise de données ADS pour Operis - Oxalis
 
 
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "G:/"
+```
+
+
+
 # Conversion XLS CSV
 
 A ne faire qu'une fois pour pouvoir travailler sur le linux
@@ -41,7 +63,10 @@ for (i in 1:10) {
 }
 ```
 
-# Nettoyage du fichier 
+
+# Premiers traitements du fichier registre
+
+## Nettoyage du fichier 
 
 Pb d'encodage sur lg de titre, on ouvre avec libre office
 TODO retester avec un enregistrement en UTF-8
@@ -52,6 +77,86 @@ registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
 noms <- names(registre)[1:26]
 registre <- registre [c(1:5358), noms]
 ```
+
+## Les dates
+
+Pour les dates, on reprend la démarche DIA, on liste les champs à date. 
+On répare les anomalies puis on convertit (attention à l'export)
+
+```{r}
+# dates
+str(registre)
+registre$date.de.la.demande <-as.Date(registre$date.de.la.demande, origin = "1900-01-01")
+pb <- which(!(substring(registre$date.de.la.demande, 0,2)  %in% c("36","37", "38","39", "40","41","42","43","44")))
+registre$date.de.la.demande [pb]
+write.csv(registre$date.de.la.demande [pb], "data/pbDate.csv")
+equiv <- read.csv("data/pbDateOk.csv")
+equiv <- equiv [-26, c(1:3)]
+# conversion en chiffre csv
+equiv$ok <- as.Date(equiv$ok, format = "%d/%m/%y", origin = "")
+equiv$ok <- as.integer(equiv$ok)
+equiv$ok
+registre$date.de.la.demande [pb] <- equiv$ok
+```
+
+
+### Promoteur
+
+On reprend le premier élément
+
+```{r}
+liste <- strsplit(registre$Nom, ":") 
+registre$promoteur <- sapply(liste, `[`, 1)
+registre$Nom <- sapply(liste, `[`, 2)
+registre$Nom
+```
+
+
+### Surface
+
+```{r}
+registre$surface <- as.numeric(gsub( " m²|lot .|(|)", "", registre$`surface.du.terrain.en.m²`))
+table(registre$surface, useNA = "always")
+options(scipen = 100) #notatation scientifique
+hist(registre$surface  [registre$surface >10000] / 10000, main = "Répartition surface dans les ADS sup. 1 ha", xlab = "surface (ha)", ylab = "nb", col = "antiquewhite1", border = NA)
+```
+
+
+
+
+# Le nb de logement
+
+
+Requête : Permis de construire de + de 3 logemetns ou DP extension de + de 20 m²
+
+Extraction du nb de logements à partir de la colonne nature des travaux envisagés
+
+De plus, dans le fichier demandé, il faudra le nb de logements. Il est extrait
+de la colonne *nature des travaux envisagés* du fichier registre.
+
+```{r}
+test <- c("tototata", "toto", "tititata")
+grep("[to][ta]",test)
+registre$nature.des.travaux.envisagés
+# extraction du terme logement
+ind <- grep("log|lgt" & " [3-9] ",  registre$nature.des.travaux.envisagés)
+# 410 seulement 
+# repérage des lg où chiffre 3-9
+ind1 <- grep(" [3-9] ",registre$nature.des.travaux.envisagés [ind], value = F)
+# 135 obs...
+# indice de la position des chiffres
+ind2 <- regexpr("[3-9]", registre$nature.des.travaux.envisagés [ind1] )
+# extraction du nb et transformation en entier (il y a une virgule qui traine)
+tmp$nb  <- substring(tmp$nature.des.travaux.envisagés, ind2, ind2+1)
+tmp$nb <- as.integer(gsub(" |,", "", tmp$nb))
+tmp$section.cadastrale
+```
+
+
+
+
+
+
 
 Etablissement de la table d'équivalence
 
@@ -92,23 +197,41 @@ for (i in 1:58) {
 write.csv(df, "../data/premierJet.csv", fileEncoding = "UTF-8")
 ```
 
+
+
+
+
+
+
+
 # Les parcelles
 
 Les parcelles : section et numéro
 
-Le problème
+## Démarche
 
-Il y a deux colonnes qu'il faut concaténer mais pl sections et pl numéros
 
-sous problème
+### Constat
 
-- espace
-
-- séparateur
+Il y a deux colonnes qu'il faut concaténer mais pl sections et pl numéros, par exemple :
 
 ```{r}
-head(registre [, c("section.cadastrale","n..parcelle")],20)
+(test <- registre [8, c("section.cadastrale","n..parcelle")])
 ```
+
+
+La saisie est souvent faite pour que le numéro de section corresponde visuellement au numéro de cadastre. Donc, l'idée est d'éclater les sections et les parcelles et de récupérer les n éléments.
+
+
+### Méthode
+
+* Suppressions des vides, traitement avec le cadastre correspondance parcelle - adresse
+
+* On travaille en priorité sur les premiers éléments pour pouvoir produire des cartographies synthétiques (cf script cartoADS)
+
+* Puis, ré-intégration des vides (remplis) et des autres éléments 
+
+
 
 ## Repérer les lignes problèmatiques
 
@@ -120,22 +243,25 @@ Envoyer les lignes sans numéros de section pour vérif
 export <- registre [registre$section.cadastrale == "",]
 write.csv (export, "../data/registreSansSection.csv", fileEncoding = "UTF-8")
 95/5358
+registreF <- registre [registre$section.cadastrale != "",]
 ```
+
+5263 ADS avec section
 
 95 lignes sans numéro de section...(moins de 2 % des lignes) A voir avec Rabia
 
 La vérif est trop longue voir si on peut passer par des adresses
 
+#### Traitement des vides
+
 On importe les majic et l'edigeo dans qgis et on exporte en gpkg la table parcelleInfo
 
 
-
 ```{r}
-library(sf)
 export$adresse.du.chantier
 export$Numéro
 adresse <- export [, c("adresse.du.chantier", "Numéro")]
-cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
+cadastre <- st_read(paste0("../data/cadastre.gpkg"), "parcelleAdresse")
 cadastre <- cadastre [, c("geo_parcelle","proprietaire_info")]
 head(adresse)
 head(cadastre)
@@ -177,6 +303,56 @@ write.csv(extraction, "../data/exportPbPointParcelle.csv", fileEncoding =  "UTF-
 45 lignes à traiter plus tard
 
 On utilise les variables texte et texteCol
+
+
+## Extraction des premiers éléments uniquement
+
+
+Cela permet de pouvoir faire des cartographies.
+
+### Référence cadastrale
+
+
+```{r}
+registreF$section1 <- substring(registreF$section.cadastrale,1,2)
+registreF$n..parcelle1 <- substring(registreF$n..parcelle, 1,3)
+#Elimination de tous les caractères parasites sur les parcelles
+registreF$n..parcelle1 <- gsub(",|\\.| |\n|_|-|N","",registreF$n..parcelle1 )
+registreF$cadastre <- paste0(registreF$section1, registreF$n..parcelle1)
+```
+
+
+### Jointure cadastre / registreF
+
+
+```{r}
+# les clés
+cadastre$section <- substring (cadastre$geo_parcelle,10,11 )
+cadastre$section <- gsub("0","",cadastre$section)
+cadastre$parcelle <- substring (cadastre$geo_parcelle,13,15 )
+cadastre$parcelle <- gsub("0","",cadastre$parcelle)
+cadastre$ref <- paste0(cadastre$section, cadastre$parcelle)
+cadastre$ref
+adsCarto1 <- merge(cadastre, registreF, all.y = F, by.x = "ref", by.y = "cadastre")
+write_sf(adsCarto1, "../data/ads.gpkg", "adsCarto", delete_layer = T)
+```
+
+
+### Contrôle
+
+```{r}
+# contrôle 900 elts non repris (5263 - 4391), 1/5 quand même...
+# elements présents dans le registre mais pas dans le cadastre
+setdiff(registreF$cadastre,adsCarto1$cadastre)
+ind <- grep( "AL38",cadastre$ref,value = F)
+cadastre[ind,]
+registreF [registreF$référence == "AL38",]
+ind <- grep("AL38",registreF$cadastre)
+registreF [registreF$cadastre == "AL38",]
+registreF[ind,]
+```
+
+TODO pb
 
 ## Suprression des espaces
 
@@ -227,23 +403,3 @@ strsplit(test, " |/|,\.")
 ```
 
 
-# Les dates
-
-Pour les dates, on reprend la démarche DIA, on liste les champs à date. 
-On répare les anomalies puis on convertit (attention à l'export)
-
-```{r}
-# dates
-str(registre)
-registre$date.de.la.demande <-as.Date(registre$date.de.la.demande, origin = "1900-01-01")
-pb <- which(!(substring(registre$date.de.la.demande, 0,2)  %in% c("36","37", "38","39", "40","41","42","43","44")))
-registre$date.de.la.demande [pb]
-write.csv(registre$date.de.la.demande [pb], "data/pbDate.csv")
-equiv <- read.csv("data/pbDateOk.csv")
-equiv <- equiv [-26, c(1:3)]
-# conversion en chiffre csv
-equiv$ok <- as.Date(equiv$ok, format = "%d/%m/%y", origin = "")
-equiv$ok <- as.integer(equiv$ok)
-equiv$ok
-registre$date.de.la.demande [pb] <- equiv$ok
-```
