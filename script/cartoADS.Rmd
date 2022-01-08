@@ -34,7 +34,8 @@ On reprend la version opendata du cadastre (juillet 2021) et le registre 2021 AD
 # pb lettre clé usb
 usb <- "G:"
 chemin1 <- "C:/Users/bmaranget/Documents"
-chemin <- "G:"
+chemin2 <- "G:"
+chemin <- "Home/tachasa/00_DATA/"
 ```
 
 
@@ -42,7 +43,7 @@ chemin <- "G:"
 
 ```{r, eval = T}
 library(sf)
-geo <- st_read(paste0(chemin,"/03_SIG/03_Data/03_SOCLE/cadastre-93010-parcelles.json"))
+geo <- st_read(paste0(chemin,"03_SOCLE/cadastre-93010-parcelles.json"))
 plot(head(geo$geometry))
 geo$loc <- paste0(geo$section,geo$numero)
 registre <- read.csv("../data/ads1b.csv", encoding="UTF-8")
