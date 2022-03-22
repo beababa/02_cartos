@@ -24,6 +24,12 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Ouverture fichier pdf arrêté lecture numéro d'arrêté
 
+# Sources
+
+https://www.datanovia.com/en/blog/easy-image-processing-in-r-using-the-magick-package/
+
+https://pyimagesearch.com/2020/08/03/tesseract-ocr-for-non-english-languages/
+
 
 # Import
 
@@ -36,6 +42,9 @@ library(tictoc)
 ```
 Ne pas jouer
 
+
+## Lecture de tous les fichiers .pdf et  conversion en image
+
 ```{r, eval = FALSE}
 path <- dir (path = "C:/ARRETES", pattern = "*.PDF", full.names = TRUE)
 for (i in 1:length(path)){
@@ -43,6 +52,10 @@ for (i in 1:length(path)){
 }
 ```
 
+
+## Reconnaissance de l'écriture (ocr) et mise en liste
+
+tic toc sontlà pour mesurer le temps
 
 ```{r, eval = FALSE}
 #  Uniquement les premières pages
@@ -54,6 +67,12 @@ text_list <- map(images, ocr)
 toc()
 stext <- str_split(text_list, "\n")
 ```
+
+
+## Extraction des titres des arrêtés
+
+
+après A2021
 
 
 ```{r}
@@ -107,29 +126,20 @@ for (i in 1:length(stextSel)){
 head(loc)
 # sauvegarde du résulat
 write.csv2(loc, "lieux.csv")
+```
+
+## Extraction de la localisation
+
+
+```{r}
+loc <- read.csv2("../data/lieux.csv")
+str(loc)
 grep("Villa", loc [1], value = TRUE)
-
-locgeo <- geocode(loc, limit = 1, key = "place")
-
-m <- gregexpr("(?i)(?m)(?<=un\\b)(.+)(?=terre\\b)", x, perl=T)
-res <- regmatches(x, m)
-res <- unlist(res)
-res <- gsub("(^ +| +$)", "", res)
-
-res
-[1] "mot banni de notre"                            "tremblement de"                               
-[3] "mot engendre un mot, une étincelle embrase la"
-cat(paste("Ligne", 1:length(res), res, collapse="\n")
-    
-    
-vloc
-
 ```
 
 
-# géocodage
+# Géocodage
 
 ```{r}
 require(devtools)  
 devtools::install_github(repo = 'rCarto/photon') 
-loc <- 
