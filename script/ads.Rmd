@@ -86,17 +86,29 @@ On répare les anomalies puis on convertit (attention à l'export)
 ```{r}
 # dates
 str(registre)
-registre$date.de.la.demande <-as.Date(registre$date.de.la.demande, origin = "1900-01-01")
+# champs date.de.la.demande, date.de.la.décision (autorisation / refus / sans.suite /caduque/ouverture due chantier.date.affichagemairie)
+# on identifie les lignes pb par le début 36 - 44
+deb <- substring(registre$date.de.la.demande, 0,2)
+table(deb)
+testDate <- tail(registre$date.de.la.demande)
+as.Date(as.integer(testDate), origin = "1900-01-01")
+# les anomalies sont hors 36-44
 pb <- which(!(substring(registre$date.de.la.demande, 0,2)  %in% c("36","37", "38","39", "40","41","42","43","44")))
 registre$date.de.la.demande [pb]
-write.csv(registre$date.de.la.demande [pb], "data/pbDate.csv")
-equiv <- read.csv("data/pbDateOk.csv")
-equiv <- equiv [-26, c(1:3)]
+# correction plus facile sur un fichier csv
+write.csv(registre$date.de.la.demande [pb], "../data/pbDate.csv")
+pbResolu <- read.csv("../data/pbDateOk.csv")
+# pbResolu <- equiv [-26, c(1:3)]
 # conversion en chiffre csv
-equiv$ok <- as.Date(equiv$ok, format = "%d/%m/%y", origin = "")
-equiv$ok <- as.integer(equiv$ok)
-equiv$ok
-registre$date.de.la.demande [pb] <- equiv$ok
+pbResolu$ok <- as.Date(pbResolu$ok, format = "%d/%m/%y", origin = "")
+pbResolu$ok <- as.integer(pbResolu$ok)
+pbResolu$ok
+registre$date.de.la.demande [pb] <- pbResolu$ok
+table(substring(registre$date.de.la.demande, 0,2))
+# attention ne passer qu'une seule fois
+registre$date.de.la.demande <-as.Date(as.integer(registre$date.de.la.demande), origin = "1900-01-01")
+registre$d
+tail(registre [, c ("N..d.Archivage","date.de.la.demande")],20)
 ```
 
 
@@ -139,16 +151,15 @@ test <- c("tototata", "toto", "tititata")
 grep("[to][ta]",test)
 registre$nature.des.travaux.envisagés
 # extraction du terme logement
-ind <- grep("log|lgt" & " [3-9] ",  registre$nature.des.travaux.envisagés)
+ind <- grep("log|lgt [3-9] ",  registre$nature.des.travaux.envisagés)
 # 410 seulement 
-# repérage des lg où chiffre 3-9
-ind1 <- grep(" [3-9] ",registre$nature.des.travaux.envisagés [ind], value = F)
-# 135 obs...
 # indice de la position des chiffres
-ind2 <- regexpr("[3-9]", registre$nature.des.travaux.envisagés [ind1] )
+ind2 <- regexpr("[3-9]", registre$nature.des.travaux.envisagés [ind] )
 # extraction du nb et transformation en entier (il y a une virgule qui traine)
-tmp$nb  <- substring(tmp$nature.des.travaux.envisagés, ind2, ind2+1)
-tmp$nb <- as.integer(gsub(" |,", "", tmp$nb))
+nb  <- substring(registre$nature.des.travaux.envisagés [ind], ind2, ind2+1)
+nb <- as.integer(gsub(" |,", "", nb))
+registre$nb [ind])
+
 tmp$section.cadastrale
 ```
 
