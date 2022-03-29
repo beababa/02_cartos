@@ -1,0 +1,312 @@
+---
+title: "PRIR Martin Luther King"
+author: "B. Maranget"
+date: "20/01/2022"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Données cartographiques autour périmètre PRIR Blanqui MLK (Martin Luther King)
+
+Exploration du sharepoint Est Ensemble
+https://estensemblefr.sharepoint.com/sites/SIGterritorial/Documents%20partages
+
+```{r}
+library(sf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+# pb lettre clé usb
+usb <- "G:"
+chemin1 <- "C:/Users/bmaranget/Documents"
+chemin2 <- "G:"
+chemin <- "Home/tachasa/00_DATA/"
+chemin <-  "G:/03_SIG/03_Data/"
+chemin <- "D:/01_03_03_Data/"
+# stabilisation à prévoir sur le drive. penser à télécharger drive synchro.
+```
+
+
+# Zone d'étude
+
+```{r, eval = T}
+library(sf)
+zone <- st_read(paste0(chemin,"limites.gpkg"),"limites" )
+plot(zone$geometry)
+write_sf(zone, "../data/prir.gpkg", "limite", delete_layer = T)
+```
+
+2e zone
+
+```{r}
+zone <- st_read( "../data/prir.gpkg", "limite")
+zone$id
+plot(zone [1,])
+plot(zone [2,])
+zone <- zone [2,]
+```
+
+
+Cette 2e zone va permettre d'extraire le foncier.
+
+
+# Fond : rue et batiment
+
+Reprise BD TOPO
+
+
+```{r}
+bat <- st_read("D:/01_03_03_Data/03_SOCLE/BDTOPO/BATIMENT.shp")
+batSel <- st_intersection(bat, zone)
+plot(batSel$geometry)
+str(batSel)
+batSel <- batSel [,c("ID", "NB_LOGTS", "NB_ETAGES", "HAUTEUR")]
+st_write(batSel, "../data/prir.gpkg", "bat", delete_layer = T)
+```
+
+```{r}
+rue <- st_read("E:/03_SIG/03_Data/rues2021.gpkg", "rues2021")
+rueSel <- st_intersection(rue, zone)
+st_write(rueSel, "../data/prir.gpkg", "rue", delete_layer = T)
+```
+
+
+
+
+
+# Foncier (cadastre)
+
+## Première zone
+
+Avec informations sur les propriétaires
+
+```{r}
+cadastre <- st_read(paste0(chemin,"03_SOCLE/cadastre.sqlite"), "parcelle_info")
+cadastreSel <- st_intersection(cadastre, zone [[1]])
+cadastreSel$proprietaire_info
+write_sf(cadastreSel, "../data/prir.gpkg", "cadastre", delete_layer = T)
+```
+
+
+
+## Deuxième zone, plus étendue
+
+zone plus importante avec distinction 
+- les parcelles propriété de la ville, de Bondy Habitat 
+- et des autres institutionnels (département, EPT, autres bailleurs…) 
+- et de les distinguer des parcelles relevant de propriétaires privés individuels.
+
+```{r}
+cadastreSel <- st_intersection(cadastre, zone [[2]])
+head(cadastreSel$proprietaire)
+chaine <- strsplit(cadastreSel$proprietaire, "-")
+cadastreSel$nom_proprio <- sapply(chaine, "[",2)
+cadastreSel$nom_proprio
+agg <- aggregate(cadastreSel [, ("nom_proprio")], by = list(cadastreSel$nom_proprio), length)
+st_write(agg, "../data/prir.gpkg", "foncierEtendu", delete_layer = T)
+```
+
+gRecodager
+
+Les propriétaires de une parcelle sont des petits.
+
+```{r}
+tab <- table(agg$Group.1)
+head(sort(tab))
+# non tout le monde a au moins une parcelle puisqu'on a fait un aggregate !
+# M MME
+ind <- grep("M |MME ", agg$Group.1)
+agg$Group.1  [ind] <- "Individus privés"
+ind <- grep("COPRO", agg$Group.1)
+agg$Group.1  [ind] <- "Copro"
+tab <- table(agg$Group.1)
+tab
+nomsEtik <- names(tab)[tab < 2]
+nomsEtik
+dataEtik <- agg [agg$Group.1 %in% nomsEtik,]
+st_write(agg, "../data/prir.gpkg", "foncierEtendu", delete_layer = T)
+```
+
+
+Carto 
+
+
+```{r}
+library(mapsf)
+mf_map(agg,type ="typo", var="Group.1", leg_pos = 'n')
+mf_label(dataEtik, "Group.1", halo = T , overlap = F)
+```
+
+
+# Autres éléments métiers
+
+
+## Arbres
+
+```{r}
+arbres <- st_read(paste0(chemin,"Base_Arbre_Mission_2021/Base_Arbre_Mission_2021.shp"))
+arbreSel <- st_intersection(arbres, zone)
+write_sf(arbreSel, "../data/prir.gpkg", "arbre", delete_layer = T)
+```
+
+
+
+
+## Inventaire logement social
+
+```{r}
+habitat <- st_read(paste0(chemin, "logement.gpkg"), "habitat", quiet = T)
+habitatSel <- st_intersection(habitat, zone)
+write_sf(habitatSel, "../data/prir.gpkg", "habitat", delete_layer = T)
+```
+
+
+## Ads
+
+```{r}
+ads <- st_read("../data/ads.gpkg", "adsCarto", quiet = T)
+ads <- st_intersection(ads, limite [1])
+write_sf(ads, "../data/prir.gpkg", "ads", delete_layer = T)
+table(ads$nature.des.travaux.envisagés)
+ind <- grep("[0-9]", ads$nature.des.travaux.envisagés)
+ads$nature.des.travaux.envisagés [ind]
+tmp <- c(4,5,56,11,11,6,0,0,0,0,4,5,4,5,56,11,11,6,0,0,0,92,0,0,0,0,0,0,3,3,0,0,15,3,0,0,0,0,0,0) 
+# initialisation colonne nb
+ads$nb <- 1
+i <- 1
+for (i in 1:length(ind)){
+  ind [i]
+  ads$nb [ind [i]]
+  tmp [i]
+  ads$nb [ind [i]] <- tmp[i]
+}
+# On identifie les promoteurs, ceux qui ont fait une demande pour plus de 1 logements
+dataLabel <- ads [ads$nb > 1, c("Nom", "nb")]
+dataLabel <- unique(dataLabel)
+dataLabel <- dataLabel [dataLabel$Nom != 'JOVANOVIC', ]
+aggLabel <- aggregate(dataLabel, by = list (dataLabel$Nom), length)
+```
+
+
+
+## vélo
+
+
+```{r}
+velo <- st_read(paste0(chemin, "AMENAGEMENT_CYCLABLE.shp"), quiet = T)
+veloSel <- st_intersection(velo, zone)
+write_sf(veloSel, "../data/prir.gpkg", "velo", delete_layer = T)
+```
+
+
+
+## carto
+
+On va produire une carto par couche avec thématique :
+
+- vélo : juste le tracé
+- batiment : hauteur
+
+Récup de toutes les couches de prir.gpkg
+
+```{r}
+library(rgdal)
+ly <- ogrListLayers("../data/prir.gpkg")
+i <- 1
+for (i in 1:length(ly)){
+  tmp <- st_read("../data/prir.gpkg", ly [i])
+  assign(ly [i], tmp)
+}
+  
+```
+
+
+```{r}
+limite
+```
+
+
+17 couches
+
+
+tableau
+
+```{r}
+write.csv(ly, "../data/prir.csv",fileEncoding = "UTF-8")
+```
+
+
+```{r}
+library(mapsf)
+bondy <- st_read(paste0(chemin,"limites.gpkg"), "bondy", quiet=F)
+rue <-  st_read( paste0(chemin, "03_SOCLE/bondy.gpkg"), "ruePrincipale", quiet = TRUE)
+
+mf_export(x = bondy, filename = paste0("G:/03_SIG/05_Carte/prir.png"), 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 250)
+  mf_init(limite [1], theme = "candy")
+  mf_shadow(limite [1], add = TRUE)
+  mf_map(rue, add = TRUE)
+  mf_map(
+    rue,
+    type = "base",
+    col = "white",
+    lwd = 2,
+    add = TRUE
+  )
+  mf_map(
+    bat,
+    type = "choro",
+    border = NA,
+    var = "HAUTEUR",
+    leg_pos = "n",
+    add = TRUE
+  )
+plot(dataLabel$geom)
+  
+mf_label(aggLabel, var = "Nom", overlap = F, halo = T, cex = 0.5)
+  
+ # start the inset
+mf_inset_on( fig = c(0.75, .95, 0.84, .99))
+# draw the histogram
+bks <- mf_get_breaks(x = ads$nb, nbreaks = 5, breaks = "quantile") 
+pal <- hcl.colors(n = 5, palette = "Dark Mint", rev = TRUE)
+mf_theme("candy")
+fg <-mf_theme()$fg
+par(mar = c(0,0,0.8,0))
+hist(ads$année.du.dépôt, breaks = bks, col = pal, border = fg, axes = F, labels = "", 
+     xlab="nb", ylab = "", main ="")
+axis(side = 1, at = bks, las = 2, tick = FALSE, line = -.9, 
+  cex.axis = .7, col.axis = fg)
+title("Nb logements", cex.main = .5, col.main = fg, 
+      font.main = 1, adj = 0)
+# close the inset
+mf_inset_off()
+   mf_layout(title = paste0("Nombre d'ADS pour logements > 3 :", length(ads$nb)),
+            credits = paste0("OSM / sources internes\n", "Bondy, 2021"))
+dev.off()
+```
+
+
+
+
