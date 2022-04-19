@@ -1,0 +1,244 @@
+---
+title: "Fond de carte"
+author: "B. Maranget"
+date: "18/04/2022"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Le fond de carte OSM n'est pas manipulable, trop flou quand on zoome dessus.
+On constitue un fond de carte à partir d'éléments OSM qui sera plus facile
+à gérer.
+De plus, on ajoute les limites administratives des communes, de Paris et l'EPT.
+
+
+Les données sont dans fond.gpkg, la partie *préparation* permet de les constituer.
+Les chunks ne se rejouent donc pas, sauf si grosse modification sous OSM.
+
+# Environnement
+
+## Chemins
+
+Les données sont dans SIG/data car susceptibles de servir souvent.
+
+
+```{r, eval=TRUE}
+if (Sys.getenv('HOME') == "/home/sytachasa") {
+  chemin <- paste0(Sys.getenv('HOME'), "/00_DATA/")
+} else {
+  chemin <-  paste0(Sys.getenv('HOME'), "/EXTERNE/03_SIG/03_03_Data/")
+}
+```
+
+## Librairies
+
+```{r, eval=TRUE}
+library(sf)
+library(mapsf)
+# pourquoi rgdal ? pour la lecture des couches. sans doute pas nécessaire.
+library(rgdal)
+```
+
+
+
+
+
+
+
+# Préparation données
+
+Toutes les couches sont enregistrées dans fond.gpkg
+
+## Fond de carte
+
+
+### Limites administratives
+
+tag boundary=local_authority et admin_level=8
+
+```{r}
+data <- st_read(paste0(chemin, "01_OSM/boundaryLocalAuthority.geojson"))
+table(data$local_authority.FR)
+data <- data [data$local_authority.FR == 'EPT', c("name", "ref.FR.MGP")]
+commune <- st_read(paste0(chemin,"01_OSM/admin_level8.geojson"))
+str(commune)
+commune$dpt <- substring(commune$ref.INSEE,1,2)
+commune <- commune [commune$dpt == "93", c("name", "dpt", "ref.INSEE")]
+commune <- st_transform(commune, 2154)
+data <- st_transform(data, 2154)
+```
+
+
+```{r}
+bondy <- commune [commune$ref.INSEE == '93010',]
+plot(bondy)
+mf_init(bondy)
+mf_label(commune, var = "name")
+mf_label(data, var = "name", col = "red")
+mf_map(data, col = NA, border = "red", add = T)
+mf_map(commune, add = T)
+st_write(data,paste0(chemin,"fond.gpkg"), "ept", delete_layer = T)
+st_write(commune,paste0(chemin,"fond.gpkg"), "communes", delete_layer = T)
+```
+
+
+
+On veut que les noms de communes apparaissent dans la carte.
+La solution est de faire un buffer autour de bondy et d'intersecter avec les communes.
+
+```{r}
+zone <- st_buffer(bondy, 800)
+mf_map(zone)
+mf_map(bondy, add = T)
+noms <- st_intersection(communes, zone)
+mf_label(noms, var = "name")
+mf_map(communes, col = NA,  add = T)
+st_write(noms, paste0(chemin,"fond.gpkg"), "noms", delete_layer = T)
+```
+
+
+
+
+
+### Classiques
+
+Limites de Bondy, rues principales, cadastre en geojson (Etalab)
+
+https://cadastre.data.gouv.fr/data/etalab-cadastre/2021-10-01/geojson/communes/93/93010/
+
+```{r, eval=FALSE}
+bondy <- st_read(paste0(chemin,"limites.gpkg"), "bondy", quiet=F)
+bondy <- st_union(bondy)
+st_write(bondy,paste0(chemin,"fond.gpkg"), "bondy", delete_layer = T)
+cadastre <- st_read(paste0(chemin,"03_SOCLE/cadastreEtalab/cadastre-93010-parcelles.json"))
+cadastre <- st_transform(cadastre, 2154)
+st_write(cadastre,paste0(chemin,"fond.gpkg"), "parcelles", delete_layer = T)
+batCadastre <- st_read(paste0(chemin,"03_SOCLE/cadastreEtalab/cadastre-93010-batiments.json"))
+batCadastre <- st_transform(batCadastre, 2154)
+st_write(batCadastre,paste0(chemin,"fond.gpkg"), "batCadastre", delete_layer = T)
+```
+
+
+reprise de toutes les rues pour dégager les grands axes autoroute et nationale
+
+```{r, eval=FALSE}
+rue <- st_read(paste0(chemin, "01_OSM/rues.geojson"))
+sort(table(rue$highway))
+rue <- st_transform(rue, 2154)
+str(rue)
+rue <- rue [, c("name","highway")]
+rue <- st_cast(rue, "LINESTRING")
+st_write(rue, paste0(chemin, "fond.gpkg"),"rueNom", delete_layer = T)
+rue <- rue [rue$highway %in% c('motorway','primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'residential','service'),]
+rue <- rue [,"highway", drop = F]
+mf_map(bondy)
+summary(rue)
+
+mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "orange", "orange", "orange", "orange", "white"), lwd = 1.5, leg_pos = "n")
+st_write(rue, paste0(chemin, "fond.gpkg"), "rue", delete_layer = T)
+```
+
+
+Problème sur l'axe blum / 
+
+
+le canal
+
+```{r, eval=FALSE}
+canal <- st_read(paste0(chemin, "01_OSM/canal.geojson"))
+canal <- st_transform(canal, 2154)
+canal <- st_union(canal)
+st_write (canal, paste0(chemin, "fond.gpkg"), "canal", delete_layer = T)
+```
+
+
+### Pru
+
+Qpv, limites PRU (à dessiner)
+
+```{r, eval=FALSE}
+qpv <- st_read(paste0(chemin, "limites.gpkg"), "qpv1")
+qpv <- st_intersection(bondy, qpv)
+st_write(qpv,paste0(chemin,"fond.gpkg"), "qpv", delete_layer = T)
+```
+
+
+### Couches OSM
+
+couches OSM susceptibles d'être complétées :
+
+- Parcs et jardins (leisure = park)
+
+- Batiments publics (building = public)
+
+```{r, eval=FALSE}
+jardin <- st_read(paste0(chemin,"01_OSM/leisure.geojson"))
+bat <- st_read(paste0(chemin, "01_OSM/buildingPublic.geojson"))
+jardin <- st_transform(jardin, 2154)
+# pb jardin multipolkygone, on fusionne
+jardin <- st_union(jardin)
+jardin <- st_intersection(bondy, jardin)
+bat <- st_transform(bat, 2154)
+st_write(jardin, paste0(chemin, "fond.gpkg"), "jardin", delete_layer = T)
+st_write(bat, paste0(chemin, "fond.gpkg"), "bat", delete_layer = T)
+```
+
+
+### Elements du fond de carte
+
+#### Chargement des couches
+
+```{r, eval = TRUE}
+#readOGR(paste0(chemin, "logement.gpkg"))
+couche <- ogrListLayers(paste0(chemin, "fond.gpkg"))
+for (i in 1:length(couche)){
+    objet <- st_read(paste0(chemin, "fond.gpkg"), couche [i])
+    assign(couche [i], objet)
+}
+length(couche)
+```
+13 couches
+
+#### Carto
+
+
+```{r, eval = TRUE}
+mf_init(bondy, theme = "candy")
+
+# Création d'une fonction de fond de carte
+fond <- function(){
+  mf_map(communes, col = "bisque2", add = T)
+  
+  mf_label(noms, var = "name")
+  mf_shadow(bondy, col = "antiquewhite1", add = TRUE)
+  mf_map(ept, col = NA, border = "red", lwd = 2, add = T)
+  mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "burlywood", "burlywood", "burlywood", "burlywood", "bisque4"), lwd = 1.5, leg_pos = "n")
+mf_map(jardin, col = "chartreuse3", border = NA,add = T)
+
+mf_map(bat, col = "antiquewhite1", border = NA,add = T)
+
+mf_map(canal, col = "cadetblue1", lwd = 2, border = NA, add = T)
+mf_map(qpv, col = NA, border = "#990066", lwd = 1, add = T)
+}
+fond()
+mf_layout(title = "Fond de carte", credits = "OSM" )
+```
+
+
+

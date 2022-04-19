@@ -34,10 +34,10 @@ Les chunks ne se rejouent donc pas.
 ## Chemins
 
 ```{r, eval=TRUE}
-if (Sys.getenv('HOME') == "/home/tachasa") {
+if (Sys.getenv('HOME') == "/home/sytachasa") {
   chemin <- paste0(Sys.getenv('HOME'), "/00_DATA/")
 } else {
-  chemin <- "G:/03_SIG/03_Data/"
+  chemin <-  paste0(Sys.getenv('HOME'), "/EXTERNE/03_SIG/03_03_Data")
 }
 ```
 
@@ -46,6 +46,7 @@ if (Sys.getenv('HOME') == "/home/tachasa") {
 ```{r, eval=TRUE}
 library(sf)
 library(mapsf)
+# pourquoi rgdal ?
 library(rgdal)
 ```
 
@@ -148,14 +149,13 @@ st_write(bat, paste0(chemin, "logement.gpkg"), "bat", delete_layer = T)
 
 ```{r, eval = TRUE}
 #readOGR(paste0(chemin, "logement.gpkg"))
-couche <- ogrListLayers(paste0(chemin, "logement.gpkg"))
+couche <- ogrListLayers(paste0(chemin, "/logement.gpkg"))
 for (i in 1:length(couche)){
-    objet <- st_read(paste0(chemin, "logement.gpkg"), couche [i])
+    objet <- st_read(paste0(chemin, "/logement.gpkg"), couche [i])
     assign(couche [i], objet)
 }
 length(couche)
 ```
-
 13 couches
 
 #### Carto
