@@ -39,11 +39,7 @@ Les données sont dans SIG/data car susceptibles de servir souvent.
 
 
 ```{r, eval=TRUE}
-if (Sys.getenv('HOME') == "/home/sytachasa") {
-  chemin <- paste0(Sys.getenv('HOME'), "/00_DATA/")
-} else {
-  chemin <-  paste0(Sys.getenv('HOME'), "/EXTERNE/03_SIG/03_03_Data/")
-}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 ```
 
 ## Librairies
@@ -51,8 +47,6 @@ if (Sys.getenv('HOME') == "/home/sytachasa") {
 ```{r, eval=TRUE}
 library(sf)
 library(mapsf)
-# pourquoi rgdal ? pour la lecture des couches. sans doute pas nécessaire.
-library(rgdal)
 ```
 
 
@@ -143,13 +137,14 @@ sort(table(rue$highway))
 rue <- st_transform(rue, 2154)
 str(rue)
 rue <- rue [, c("name","highway")]
+# on supprime les points et on convertit tout en LINESTRING
+rue <- rue  [ !st_is(rue$geometry, "POINT"),]
 rue <- st_cast(rue, "LINESTRING")
 st_write(rue, paste0(chemin, "fond.gpkg"),"rueNom", delete_layer = T)
 rue <- rue [rue$highway %in% c('motorway','primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'residential','service'),]
 rue <- rue [,"highway", drop = F]
 mf_map(bondy)
 summary(rue)
-
 mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "orange", "orange", "orange", "orange", "white"), lwd = 1.5, leg_pos = "n")
 st_write(rue, paste0(chemin, "fond.gpkg"), "rue", delete_layer = T)
 ```
