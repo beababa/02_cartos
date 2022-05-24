@@ -1,0 +1,74 @@
+---
+title: "Base nationale batiments"
+author: "B. Maranget"
+date: "02/05/2022"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Filtrer et explorer base nationale des bâtiments dans la perspective d'une carto du
+logement social.
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/"
+```
+
+
+# Chargement des fichiers
+
+
+
+
+```{r}
+st_layers("/Users/bmaranget/Downloads/bnb-export-93.gpkg/bnb_export_93.gpkg")
+bat <- st_read("/Users/bmaranget/Downloads/bnb-export-93.gpkg/bnb_export_93.gpkg", "batiment",
+                 query = "SELECT * FROM \"batiment\" WHERE insee_code_commune LIKE \'93010\'")
+st_write(bat, "../data/bnb.gpkg", "bat", delete_layer = T)
+```
+
+
+```{r}
+
+adresse <- st_read("/Users/bmaranget/Downloads/bnb-export-93.gpkg/bnb_export_93.gpkg", "adresse",
+                 query = "SELECT * FROM \"adresse\" LIMIT 5")
+str(adresse)
+adresse <- st_read("/Users/bmaranget/Downloads/bnb-export-93.gpkg/bnb_export_93.gpkg", "adresse",
+                 query = "SELECT * FROM \"adresse\" WHERE etaban202111_code_insee  LIKE \'93010\'")
+st_write(adresse, "../data/bnb.gpkg", "adresse", delete_layer = T)
+```
+
+
+```{r}
+adresseBat <- st_read("/Users/bmaranget/Downloads/bnb-export-93.gpkg/bnb_export_93.gpkg", "rel_adresse_batiment_opendata ",
+                 query = "SELECT * FROM \"rel_adresse_batiment_opendata\" LIMIT 5")
+str(adresseBat)
+adresseBat <- st_read("/Users/bmaranget/Downloads/bnb-export-93.gpkg/bnb_export_93.gpkg", "rel_adresse_batiment_opendata ",
+                 query = "SELECT * FROM \"rel_adresse_batiment_opendata\" WHERE adr_etaban202111_code_insee LIKE \'93010\'")
+st_write(adresseBat, "../data/bnb.gpkg", "adresseBat", delete_layer = T)
+```

@@ -1,0 +1,122 @@
+---
+title: "commerces Enseigne"
+author: "B. Maranget"
+date: "09/05/2022"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Ouverture fichier pdf enseigne pour avoir une base pour les enseignes.
+
+
+# Import
+
+```{r}
+library(pdftools)
+library(tidyverse)
+library(tesseract)
+library(magick)
+library(tictoc)
+```
+Ne pas jouer
+
+```{r, eval = FALSE}
+# transformation en image
+pngfile <- pdftools::pdf_convert("../data/enseigne.PDF", dpi = 400)
+```
+
+
+```{r, eval = FALSE}
+# attention répertoire
+path <- dir (pattern = "*enseigne",full.names = TRUE)
+images <- map(path, magick::image_read)
+images
+tic()
+text_list <- map(images, image_ocr)
+toc()
+text_list
+stext <- unlist(str_split(text_list, "\n"))
+```
+
+
+On a une liste de 3 élements, on veut une seule liste avec seulement les lignes intéresssantes
+
+
+```{r}
+# élimination des petites lignes
+compterMots <- lengths(gregexpr("\\W+", stext)) + 1  
+df <- data.frame(stext, compterMots)
+df <- df [df$compterMots > 6,] 
+# ligne de titre
+df <- df [-1,]
+# on coupe sur le numéro de rue puis sur le code postal
+liste <- str_split(df$stext, "[1-9]")
+df$nom <- sapply (liste, "[",1)
+head(df)
+liste <- str_split(df$stext, "314|344")
+df$type <- sapply(liste, "[", 2)
+head(df,50)
+```
+
+On a le nom et le type, on cherche à récupérer l'adresse dans un 3e champs.
+
+
+```{r}
+cptNom <- nchar(df$nom)
+cptType <- nchar(df$type) 
+df$adresse <- substr(df$stext,cptNom,cptType)
+head(df,20)
+```
+
+
+```{r}
+liste <- str_split( df$adresse, "314|341|344")
+df$adresse2 <- sapply(liste, "[",1)
+head(df)
+df$adresse3 <- gsub (" 9|\\.", "", df$adresse2)
+```
+
+
+
+On cherche les mots clés pour le type, si le mot existe, alors on reprend le mot
+
+
+```{r}
+df$cle <- NA
+df$type [is.na(df$type)] <- "vide"
+cle <- c("cuir", "véhicules", "apide", "coiffure", "viande", "divers", "ssurance", "vide", "boissons", "super", "mentation", "immob", "pharm", "type", "administration", "domestiques", "blanchisserie", "boulangerie", "restauration", "bricolage")
+cleJuste <-  c("cuir", "automobiles", "rapide", "coiffure", "viande", "divers", "assurance", "vide", "boissons", "supermarchés", "alimentation", "immobillier", "pharmacie", "rapide","administration d'entreprises", "réparation", "blanchisserie", "boulangerie", "restauration", "bricolage")
+for (i in 1:length(cle)){
+  ind <- grep(cle [i], df$type, ignore.case = TRUE)
+  df$cle [ind] <- cleJuste [i]
+}
+head(df [, c("type","cle")],50)
+df [is.na(df$type),]
+names(df)
+df <- df [, c("stext", "nom", "adresse3", "cle")]
+write.csv(df, "../data/carole.csv", fileEncoding = "UTF-8")
+
+```
+
+
+Les modifications manuelles sont nombreuses et touchent principalement à des problèmes d'OCR.
+Faut-il forcer la résolution ?
+
+
+

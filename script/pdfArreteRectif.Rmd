@@ -1,7 +1,7 @@
 ---
-title: "OCR arrêté"
+title: "commerces Enseigne"
 author: "B. Maranget"
-date: "20/07/2021"
+date: "09/05/2022"
 output: 
   html_document: 
     number_sections: yes
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Ouverture fichier pdf arrêté lecture numéro d'arrêté
+Ouverture fichier pdf enseigne pour avoir une base pour les enseignes.
 
 
 # Import
@@ -37,36 +37,66 @@ library(tictoc)
 Ne pas jouer
 
 ```{r, eval = FALSE}
-path <- dir (path = "C:/ARRETES/MODIF/", pattern = "*.pdf", full.names = TRUE)
-for (i in 1:length(path)){
-  pngfile <- pdftools::pdf_convert(path[i], dpi = 100)
-}
+# transformation en image
+pngfile <- pdftools::pdf_convert("../data/enseigne.PDF", dpi = 400)
 ```
 
 
 ```{r, eval = FALSE}
 # attention répertoire
-path <- dir (pattern = "*Arretes",full.names = TRUE)
+path <- dir (pattern = "*enseigne",full.names = TRUE)
 images <- map(path, magick::image_read)
+images
 tic()
-text_list <- map(images, ocr)
+text_list <- map(images, image_ocr)
 toc()
-stext <- str_split(text_list, "\n")
-stext
+text_list
+stext <- unlist(str_split(text_list, "\n"))
 ```
+
+
+On a une liste de 3 élements, on veut une seule liste avec seulement les lignes intéresssantes
+
+```{r}
+compterMots <- lengths(gregexpr("\\W+", stext)) + 1  
+df <- data.frame(stext, compterMots)
+df <- df [df$compterMots > 6,] 
+df <- df [-1,]
+liste <- str_split(df$stext, "[1-9]")
+nom <- sapply (liste, "[",1)
+```
+
+
+
+
+
+Comment couper les lignes ? 
+
+```{r, eval = FALSE}
+test <- stext [[1]][6]
+test
+stext <- str_split(test , " AL | R | AV ")
+```
+
+
+On applique des coupures à toutes les chaines, " - ", puis le chiffre
+
 
 
 ```{r}
 # 232 textes 2 exemples
-images[91]
-(extr <- stext [[91]])
+images[1]
+(extr <- stext [[1]][1])
 # fonctions pour chercher chaine
+chercherNum <- function (chaine) {
+  lg_num <- grep("[0-9]",chaine, ignore.case = TRUE,value = FALSE)
+}
 chercherType <- function (chaine) {
   lg_type <- grep("A2021",chaine, ignore.case = TRUE,value = FALSE)
 }
 vLoc <- c("rue","allée","villa","chemin","avenue","place","voies","Esplanade")
 chercherLoc <- function (chaine) {
-  lg_loc <- grep("rue|allée|villa|chemin|avenue|place|voies|Esplanade",chaine, ignore.case = TRUE,value = FALSE)
+  lg_loc <- grep(" VL | AL | R | CH | RT | PL | V ",chaine, ignore.case = TRUE,value = FALSE)
 }
 premiereOccurence <- function(liste) {
   vecteur <-  NULL
@@ -77,7 +107,7 @@ premiereOccurence <- function(liste) {
   }
   return(vecteur)
 }
-liste <- lapply(stext, chercherType)
+liste <- lapply(stext, chercherLoc)
 liste
 # plusieurs occurences car réf VU
 lgType <- premiereOccurence(liste)

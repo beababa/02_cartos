@@ -1,0 +1,119 @@
+---
+title: "Iris traitement projet socio éducatif"
+author: "B. Maranget"
+date: "07/03/2022"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Exploitation des Iris pour les centres sociaux.
+
+besoin détecté : donner l'appartenance iris pour chaque adhérent.
+
+
+
+## Démarche
+
+
+solution 1 : fichier excel, une adresse un iris
+
+solution 2 : situation sur la carte
+
+
+
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "G:/"
+```
+
+
+
+# Données
+
+
+## adresse
+
+fichier adresse, mise en place téléchargement et dézippage car modif régulirèes
+
+```{r}
+url <- "https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-93.csv.gz"
+destfile <- "../data/adresse.gz"
+download.file(url, destfile)
+library(R.utils)
+R.utils::gunzip (destfile, "../data/adresse.csv", overwrite = T)
+data <- read.csv2("../data/adresse.csv", encoding = "UTF_8", dec = ".")
+head(data)
+adresse <- data [data$code_insee == "93010",]
+write.csv(adresse,"../data/adresse.csv", fileEncoding = "UTF-8")
+#géolocalisation
+adresse <- st_read("../data/iris.gpkg", "adresse")
+```
+
+
+
+TODO vectorisation avec R
+
+## iris
+
+```{r}
+url <- "https://data.iledefrance.fr/explore/dataset/iris/download/?format=geojson&timezone=Europe/Berlin&lang=fr"
+destfile <- "../data/iris.geojson"
+download.file(url, destfile)
+iris <- st_read(destfile)
+iris <- iris [iris$insee_com == "93010",]
+iris <- st_transform(iris, 2154)
+```
+
+
+# Traitement
+
+
+## Intersection spatiale
+
+
+```{r}
+inter <- st_intersection(iris, adresse)
+inter <- inter [inter$code_insee == "93010",c("nom_iris", "iris", "numero", "nom_voie", "code_insee")]
+st_write(inter, "../data/iris.gpkg", "inter", delete_layer = T)
+interCSV <- inter [, c(1:4), drop = T]
+interCSV
+write.csv(interCSV,"../data/interIrisAdresse.csv",row.names = F)
+```
+
+
+# Cartographie
+
+
+```{r}
+library(leaflet)
+```
+

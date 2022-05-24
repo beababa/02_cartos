@@ -1,0 +1,4063 @@
+
+{
+    "type": "FeatureCollection",
+    "generator": "JOSM",
+    "bbox": [
+        2.47772810000,
+        48.91195890000,
+        2.48198750000,
+        48.91420810000
+    ],
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "name": "Suzanne Buisson",
+                "public_transport": "stop_position"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48338700000,
+                    48.91434740000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47813570000,
+                            48.91350920000
+                        ],
+                        [
+                            2.47813000000,
+                            48.91348820000
+                        ],
+                        [
+                            2.47811490000,
+                            48.91349000000
+                        ],
+                        [
+                            2.47812050000,
+                            48.91351090000
+                        ],
+                        [
+                            2.47813570000,
+                            48.91350920000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "addr:housenumber": "2",
+                "addr:postcode": "93140",
+                "addr:street": "Avenue Suzanne Buisson",
+                "amenity": "post_office",
+                "atm": "yes",
+                "building": "yes",
+                "copy_facility": "yes",
+                "name": "Bondy La Noue Caillet",
+                "opening_hours": "Mo-Fr 09:00-18:00; Sa 09:00-12:00; PH off; 2021 Feb 06,2021 Feb 13 09:00-12:30",
+                "operator": "La Poste",
+                "phone:FR": "36 31",
+                "ref:FR:LaPoste": "17278A",
+                "source": "data.gouv.fr:LaPoste - 06/2015",
+                "stamping_machine": "yes",
+                "wheelchair": "yes"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47956640000,
+                            48.91425880000
+                        ],
+                        [
+                            2.47952280000,
+                            48.91410660000
+                        ],
+                        [
+                            2.47968860000,
+                            48.91408760000
+                        ],
+                        [
+                            2.47972190000,
+                            48.91410220000
+                        ],
+                        [
+                            2.47972370000,
+                            48.91410770000
+                        ],
+                        [
+                            2.47973330000,
+                            48.91410710000
+                        ],
+                        [
+                            2.47974410000,
+                            48.91411540000
+                        ],
+                        [
+                            2.47977480000,
+                            48.91423170000
+                        ],
+                        [
+                            2.47956640000,
+                            48.91425880000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47997020000,
+                            48.91349820000
+                        ],
+                        [
+                            2.47995660000,
+                            48.91344940000
+                        ],
+                        [
+                            2.47994050000,
+                            48.91345130000
+                        ],
+                        [
+                            2.47995410000,
+                            48.91350010000
+                        ],
+                        [
+                            2.47997020000,
+                            48.91349820000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "highway": "bus_stop",
+                "name": "Route d'Aulnay - Jean Moulin",
+                "public_transport": "platform",
+                "ref:FR:STIF": "19379",
+                "ref:FR:STIF:stop_id": "StopPoint:70:23081",
+                "route_ref": "616",
+                "source:wheelchair": "STIF 2019-01",
+                "STIF:zone": "3",
+                "wheelchair": "no"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48081670000,
+                    48.91229460000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "school",
+                "building": "yes",
+                "name": "Ecole élémentaire Noue Caillet",
+                "school:FR": "élémentaire"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48017110000,
+                            48.91185920000
+                        ],
+                        [
+                            2.48035240000,
+                            48.91183930000
+                        ],
+                        [
+                            2.48041250000,
+                            48.91208170000
+                        ],
+                        [
+                            2.48112580000,
+                            48.91199660000
+                        ],
+                        [
+                            2.48114840000,
+                            48.91208040000
+                        ],
+                        [
+                            2.48035910000,
+                            48.91218580000
+                        ],
+                        [
+                            2.48034060000,
+                            48.91214120000
+                        ],
+                        [
+                            2.48025550000,
+                            48.91213890000
+                        ],
+                        [
+                            2.48017110000,
+                            48.91185920000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47784660000,
+                            48.91245980000
+                        ],
+                        [
+                            2.47779340000,
+                            48.91246600000
+                        ],
+                        [
+                            2.47778510000,
+                            48.91242970000
+                        ],
+                        [
+                            2.47783670000,
+                            48.91242510000
+                        ],
+                        [
+                            2.47784660000,
+                            48.91245980000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "6"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48051950000,
+                    48.91233600000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "residential"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47984390000,
+                        48.91430700000
+                    ],
+                    [
+                        2.47967250000,
+                        48.91365940000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "addr:housenumber": "1",
+                "addr:street": "Rue Éric Tabarly",
+                "amenity": "school",
+                "name": "Collège privé La plume de l'éducation",
+                "operator:type": "private",
+                "ref:UAI": "0932717Y",
+                "school:FR": "collège"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48198420000,
+                    48.91236870000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48363160000,
+                    48.91454580000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48002430000,
+                            48.91354390000
+                        ],
+                        [
+                            2.48001520000,
+                            48.91351120000
+                        ],
+                        [
+                            2.47999860000,
+                            48.91351320000
+                        ],
+                        [
+                            2.48000780000,
+                            48.91354590000
+                        ],
+                        [
+                            2.48002430000,
+                            48.91354390000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48156710000,
+                            48.91197750000
+                        ],
+                        [
+                            2.48150910000,
+                            48.91199610000
+                        ],
+                        [
+                            2.48146150000,
+                            48.91192170000
+                        ],
+                        [
+                            2.48151800000,
+                            48.91190240000
+                        ],
+                        [
+                            2.48156710000,
+                            48.91197750000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48024950000,
+                            48.91339410000
+                        ],
+                        [
+                            2.48026430000,
+                            48.91344720000
+                        ],
+                        [
+                            2.48027910000,
+                            48.91344540000
+                        ],
+                        [
+                            2.48026420000,
+                            48.91339230000
+                        ],
+                        [
+                            2.48024950000,
+                            48.91339410000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48176180000,
+                            48.91235240000
+                        ],
+                        [
+                            2.48178610000,
+                            48.91234540000
+                        ],
+                        [
+                            2.48177490000,
+                            48.91232730000
+                        ],
+                        [
+                            2.48179320000,
+                            48.91227580000
+                        ],
+                        [
+                            2.48182340000,
+                            48.91228000000
+                        ],
+                        [
+                            2.48182940000,
+                            48.91226330000
+                        ],
+                        [
+                            2.48191320000,
+                            48.91228130000
+                        ],
+                        [
+                            2.48192990000,
+                            48.91230160000
+                        ],
+                        [
+                            2.48196020000,
+                            48.91229260000
+                        ],
+                        [
+                            2.48209950000,
+                            48.91248550000
+                        ],
+                        [
+                            2.48223860000,
+                            48.91268410000
+                        ],
+                        [
+                            2.48203790000,
+                            48.91274470000
+                        ],
+                        [
+                            2.48193170000,
+                            48.91259140000
+                        ],
+                        [
+                            2.48176180000,
+                            48.91235240000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48179410000,
+                    48.91408290000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47809390000,
+                            48.91398900000
+                        ],
+                        [
+                            2.47803920000,
+                            48.91399390000
+                        ],
+                        [
+                            2.47802970000,
+                            48.91395600000
+                        ],
+                        [
+                            2.47808390000,
+                            48.91395120000
+                        ],
+                        [
+                            2.47809390000,
+                            48.91398900000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "service",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48100270000,
+                        48.91350220000
+                    ],
+                    [
+                        2.48063770000,
+                        48.91227220000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "footway"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48011160000,
+                        48.91233030000
+                    ],
+                    [
+                        2.48008680000,
+                        48.91224110000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "community_centre",
+                "building": "public",
+                "name": "Maison de la Jeunesse et des Services Publics (MJSP)",
+                "operator": "ville de Bondy",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48106650000,
+                            48.91358000000
+                        ],
+                        [
+                            2.48134280000,
+                            48.91354880000
+                        ],
+                        [
+                            2.48134830000,
+                            48.91357630000
+                        ],
+                        [
+                            2.48142280000,
+                            48.91384110000
+                        ],
+                        [
+                            2.48138900000,
+                            48.91384520000
+                        ],
+                        [
+                            2.48131900000,
+                            48.91359110000
+                        ],
+                        [
+                            2.48107720000,
+                            48.91362090000
+                        ],
+                        [
+                            2.48107190000,
+                            48.91360130000
+                        ],
+                        [
+                            2.48106650000,
+                            48.91358000000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "tertiary",
+                "name": "Avenue Jean Moulin"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47829680000,
+                        48.91255200000
+                    ],
+                    [
+                        2.47798490000,
+                        48.91258460000
+                    ],
+                    [
+                        2.47794780000,
+                        48.91258640000
+                    ],
+                    [
+                        2.47790110000,
+                        48.91258860000
+                    ],
+                    [
+                        2.47781870000,
+                        48.91257890000
+                    ],
+                    [
+                        2.47775230000,
+                        48.91256350000
+                    ],
+                    [
+                        2.47768450000,
+                        48.91252380000
+                    ],
+                    [
+                        2.47761150000,
+                        48.91247090000
+                    ],
+                    [
+                        2.47724000000,
+                        48.91189730000
+                    ],
+                    [
+                        2.47670180000,
+                        48.91101000000
+                    ],
+                    [
+                        2.47635730000,
+                        48.91044210000
+                    ],
+                    [
+                        2.47631280000,
+                        48.91036870000
+                    ],
+                    [
+                        2.47628020000,
+                        48.91034570000
+                    ],
+                    [
+                        2.47624260000,
+                        48.91032650000
+                    ],
+                    [
+                        2.47620660000,
+                        48.91031890000
+                    ],
+                    [
+                        2.47616960000,
+                        48.91031430000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "service",
+                "lanes": "2",
+                "lit": "yes",
+                "maxspeed": "30",
+                "name": "Rue Germaine Tillion",
+                "sidewalk": "both",
+                "smoothness": "good",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "source:maxspeed": "Bing",
+                "surface": "asphalt"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47993250000,
+                        48.91362640000
+                    ],
+                    [
+                        2.47954000000,
+                        48.91239910000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47801450000,
+                            48.91306510000
+                        ],
+                        [
+                            2.47802080000,
+                            48.91308840000
+                        ],
+                        [
+                            2.47800740000,
+                            48.91308990000
+                        ],
+                        [
+                            2.47800110000,
+                            48.91306660000
+                        ],
+                        [
+                            2.47801450000,
+                            48.91306510000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2019"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47878630000,
+                            48.91313370000
+                        ],
+                        [
+                            2.47861050000,
+                            48.91315430000
+                        ],
+                        [
+                            2.47869030000,
+                            48.91344950000
+                        ],
+                        [
+                            2.47886610000,
+                            48.91342900000
+                        ],
+                        [
+                            2.47878630000,
+                            48.91313370000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "name": "Paul Renaud",
+                "public_transport": "stop_position"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48053710000,
+                    48.91076450000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48031340000,
+                            48.91221580000
+                        ],
+                        [
+                            2.48029800000,
+                            48.91221700000
+                        ],
+                        [
+                            2.48027950000,
+                            48.91221840000
+                        ],
+                        [
+                            2.48025550000,
+                            48.91213890000
+                        ],
+                        [
+                            2.48029130000,
+                            48.91213620000
+                        ],
+                        [
+                            2.48031340000,
+                            48.91221580000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing",
+                "source": "Bing",
+                "supervised": "no"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48149670000,
+                    48.91336530000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "2"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47960710000,
+                    48.91243010000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47785940000,
+                            48.91274390000
+                        ],
+                        [
+                            2.47788760000,
+                            48.91284800000
+                        ],
+                        [
+                            2.47795290000,
+                            48.91284030000
+                        ],
+                        [
+                            2.47795630000,
+                            48.91285280000
+                        ],
+                        [
+                            2.47794320000,
+                            48.91285440000
+                        ],
+                        [
+                            2.47794970000,
+                            48.91287810000
+                        ],
+                        [
+                            2.47796280000,
+                            48.91287660000
+                        ],
+                        [
+                            2.47796630000,
+                            48.91288950000
+                        ],
+                        [
+                            2.47790090000,
+                            48.91289720000
+                        ],
+                        [
+                            2.47794500000,
+                            48.91305990000
+                        ],
+                        [
+                            2.47801100000,
+                            48.91305210000
+                        ],
+                        [
+                            2.47801450000,
+                            48.91306510000
+                        ],
+                        [
+                            2.47800110000,
+                            48.91306660000
+                        ],
+                        [
+                            2.47800740000,
+                            48.91308990000
+                        ],
+                        [
+                            2.47802080000,
+                            48.91308840000
+                        ],
+                        [
+                            2.47802440000,
+                            48.91310190000
+                        ],
+                        [
+                            2.47795850000,
+                            48.91310960000
+                        ],
+                        [
+                            2.47800280000,
+                            48.91327300000
+                        ],
+                        [
+                            2.47806970000,
+                            48.91326520000
+                        ],
+                        [
+                            2.47807280000,
+                            48.91327660000
+                        ],
+                        [
+                            2.47805850000,
+                            48.91327830000
+                        ],
+                        [
+                            2.47806480000,
+                            48.91330170000
+                        ],
+                        [
+                            2.47807910000,
+                            48.91330000000
+                        ],
+                        [
+                            2.47808260000,
+                            48.91331300000
+                        ],
+                        [
+                            2.47801570000,
+                            48.91332080000
+                        ],
+                        [
+                            2.47805960000,
+                            48.91348270000
+                        ],
+                        [
+                            2.47812640000,
+                            48.91347490000
+                        ],
+                        [
+                            2.47813000000,
+                            48.91348820000
+                        ],
+                        [
+                            2.47811490000,
+                            48.91349000000
+                        ],
+                        [
+                            2.47812050000,
+                            48.91351090000
+                        ],
+                        [
+                            2.47813570000,
+                            48.91350920000
+                        ],
+                        [
+                            2.47813950000,
+                            48.91352340000
+                        ],
+                        [
+                            2.47807270000,
+                            48.91353130000
+                        ],
+                        [
+                            2.47809830000,
+                            48.91362570000
+                        ],
+                        [
+                            2.47795290000,
+                            48.91364210000
+                        ],
+                        [
+                            2.47771420000,
+                            48.91276060000
+                        ],
+                        [
+                            2.47785940000,
+                            48.91274390000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "residential"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47864140000,
+                        48.91377980000
+                    ],
+                    [
+                        2.47967250000,
+                        48.91365940000
+                    ],
+                    [
+                        2.47993250000,
+                        48.91362640000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48024580000,
+                            48.91351700000
+                        ],
+                        [
+                            2.48023410000,
+                            48.91347510000
+                        ],
+                        [
+                            2.48023120000,
+                            48.91347540000
+                        ],
+                        [
+                            2.48022470000,
+                            48.91345200000
+                        ],
+                        [
+                            2.48026430000,
+                            48.91344720000
+                        ],
+                        [
+                            2.48024950000,
+                            48.91339410000
+                        ],
+                        [
+                            2.48021020000,
+                            48.91339880000
+                        ],
+                        [
+                            2.48015350000,
+                            48.91319590000
+                        ],
+                        [
+                            2.48019410000,
+                            48.91319090000
+                        ],
+                        [
+                            2.48017940000,
+                            48.91313810000
+                        ],
+                        [
+                            2.48013910000,
+                            48.91314300000
+                        ],
+                        [
+                            2.48012040000,
+                            48.91307590000
+                        ],
+                        [
+                            2.47990540000,
+                            48.91310200000
+                        ],
+                        [
+                            2.47991940000,
+                            48.91315200000
+                        ],
+                        [
+                            2.47990080000,
+                            48.91315430000
+                        ],
+                        [
+                            2.47987670000,
+                            48.91315720000
+                        ],
+                        [
+                            2.47989090000,
+                            48.91320810000
+                        ],
+                        [
+                            2.47995820000,
+                            48.91319990000
+                        ],
+                        [
+                            2.47996660000,
+                            48.91322990000
+                        ],
+                        [
+                            2.47994170000,
+                            48.91323290000
+                        ],
+                        [
+                            2.47996160000,
+                            48.91330420000
+                        ],
+                        [
+                            2.47998800000,
+                            48.91330100000
+                        ],
+                        [
+                            2.47999880000,
+                            48.91333970000
+                        ],
+                        [
+                            2.47997220000,
+                            48.91334290000
+                        ],
+                        [
+                            2.47999200000,
+                            48.91341370000
+                        ],
+                        [
+                            2.48001680000,
+                            48.91341070000
+                        ],
+                        [
+                            2.48002530000,
+                            48.91344100000
+                        ],
+                        [
+                            2.48000030000,
+                            48.91344410000
+                        ],
+                        [
+                            2.47995660000,
+                            48.91344940000
+                        ],
+                        [
+                            2.47997020000,
+                            48.91349820000
+                        ],
+                        [
+                            2.48001020000,
+                            48.91349330000
+                        ],
+                        [
+                            2.48001520000,
+                            48.91351120000
+                        ],
+                        [
+                            2.48002430000,
+                            48.91354390000
+                        ],
+                        [
+                            2.48024580000,
+                            48.91351700000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47999200000,
+                            48.91341370000
+                        ],
+                        [
+                            2.47997220000,
+                            48.91334290000
+                        ],
+                        [
+                            2.47995750000,
+                            48.91334470000
+                        ],
+                        [
+                            2.47997730000,
+                            48.91341550000
+                        ],
+                        [
+                            2.47999200000,
+                            48.91341370000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "addr:postcode": "93140",
+                "amenity": "post_office",
+                "brand": "La Poste",
+                "name": "Bondy Corner Colis",
+                "opening_hours": "closed",
+                "post_office:type": "post_partner",
+                "ref:FR:LaPoste": "15498D",
+                "source": "LaPoste - 2021-01",
+                "wheelchair": "no"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48187200000,
+                    48.91332740000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "cycleway",
+                "oneway": "alternating"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48020020000,
+                        48.90846300000
+                    ],
+                    [
+                        2.48012490000,
+                        48.90936070000
+                    ],
+                    [
+                        2.48014680000,
+                        48.90988270000
+                    ],
+                    [
+                        2.48027440000,
+                        48.91032530000
+                    ],
+                    [
+                        2.48151280000,
+                        48.91213780000
+                    ],
+                    [
+                        2.48158940000,
+                        48.91227480000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing",
+                "kerb": "lowered"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48155920000,
+                    48.91227850000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47975760000,
+                            48.91373610000
+                        ],
+                        [
+                            2.47993020000,
+                            48.91371440000
+                        ],
+                        [
+                            2.48036610000,
+                            48.91366280000
+                        ],
+                        [
+                            2.48037270000,
+                            48.91368460000
+                        ],
+                        [
+                            2.48107190000,
+                            48.91360130000
+                        ],
+                        [
+                            2.48107720000,
+                            48.91362090000
+                        ],
+                        [
+                            2.48110550000,
+                            48.91372660000
+                        ],
+                        [
+                            2.48027890000,
+                            48.91382420000
+                        ],
+                        [
+                            2.48026510000,
+                            48.91378300000
+                        ],
+                        [
+                            2.48018330000,
+                            48.91379240000
+                        ],
+                        [
+                            2.48018780000,
+                            48.91381450000
+                        ],
+                        [
+                            2.48014950000,
+                            48.91381900000
+                        ],
+                        [
+                            2.48014390000,
+                            48.91379650000
+                        ],
+                        [
+                            2.47999510000,
+                            48.91381510000
+                        ],
+                        [
+                            2.48000240000,
+                            48.91383650000
+                        ],
+                        [
+                            2.47996360000,
+                            48.91384150000
+                        ],
+                        [
+                            2.47995700000,
+                            48.91382050000
+                        ],
+                        [
+                            2.47985380000,
+                            48.91383270000
+                        ],
+                        [
+                            2.47978630000,
+                            48.91383910000
+                        ],
+                        [
+                            2.47975760000,
+                            48.91373610000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48151350000,
+                            48.91264830000
+                        ],
+                        [
+                            2.48163250000,
+                            48.91263420000
+                        ],
+                        [
+                            2.48180910000,
+                            48.91328100000
+                        ],
+                        [
+                            2.48190650000,
+                            48.91326950000
+                        ],
+                        [
+                            2.48200970000,
+                            48.91364760000
+                        ],
+                        [
+                            2.48198870000,
+                            48.91365000000
+                        ],
+                        [
+                            2.48207290000,
+                            48.91395860000
+                        ],
+                        [
+                            2.48187640000,
+                            48.91398180000
+                        ],
+                        [
+                            2.48178570000,
+                            48.91364930000
+                        ],
+                        [
+                            2.48180250000,
+                            48.91364730000
+                        ],
+                        [
+                            2.48175660000,
+                            48.91347930000
+                        ],
+                        [
+                            2.48171270000,
+                            48.91331850000
+                        ],
+                        [
+                            2.48169700000,
+                            48.91332040000
+                        ],
+                        [
+                            2.48151350000,
+                            48.91264830000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing",
+                "kerb": "lowered"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48132930000,
+                    48.91195180000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "3"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47837080000,
+                    48.91261100000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47975760000,
+                            48.91373610000
+                        ],
+                        [
+                            2.47975280000,
+                            48.91371780000
+                        ],
+                        [
+                            2.48013110000,
+                            48.91367350000
+                        ],
+                        [
+                            2.48038530000,
+                            48.91364400000
+                        ],
+                        [
+                            2.48038760000,
+                            48.91365890000
+                        ],
+                        [
+                            2.48092520000,
+                            48.91359600000
+                        ],
+                        [
+                            2.48106650000,
+                            48.91358000000
+                        ],
+                        [
+                            2.48107190000,
+                            48.91360130000
+                        ],
+                        [
+                            2.48037270000,
+                            48.91368460000
+                        ],
+                        [
+                            2.48036610000,
+                            48.91366280000
+                        ],
+                        [
+                            2.47993020000,
+                            48.91371440000
+                        ],
+                        [
+                            2.47975760000,
+                            48.91373610000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "residential",
+                "name": "Avenue Léon Blum"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47878920000,
+                        48.91430000000
+                    ],
+                    [
+                        2.47875270000,
+                        48.91421170000
+                    ],
+                    [
+                        2.47869100000,
+                        48.91394810000
+                    ],
+                    [
+                        2.47864140000,
+                        48.91377980000
+                    ],
+                    [
+                        2.47862690000,
+                        48.91372020000
+                    ],
+                    [
+                        2.47860710000,
+                        48.91363930000
+                    ],
+                    [
+                        2.47860120000,
+                        48.91361500000
+                    ],
+                    [
+                        2.47829680000,
+                        48.91255200000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48151350000,
+                            48.91264830000
+                        ],
+                        [
+                            2.48151400000,
+                            48.91264330000
+                        ],
+                        [
+                            2.48163460000,
+                            48.91262830000
+                        ],
+                        [
+                            2.48163250000,
+                            48.91263420000
+                        ],
+                        [
+                            2.48151350000,
+                            48.91264830000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47978630000,
+                            48.91383910000
+                        ],
+                        [
+                            2.47985380000,
+                            48.91383270000
+                        ],
+                        [
+                            2.47986070000,
+                            48.91385370000
+                        ],
+                        [
+                            2.47979090000,
+                            48.91386130000
+                        ],
+                        [
+                            2.47978630000,
+                            48.91383910000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "addr:city": "Bondy",
+                "addr:housenumber": "26",
+                "addr:postcode": "93140",
+                "amenity": "pharmacy",
+                "dispensing": "yes",
+                "healthcare": "pharmacy",
+                "name": "Pharmacie Centrale de Bondy",
+                "opening_hours": "Mo-Sa 09:00-20:00",
+                "phone": "+33 1 48 47 51 88",
+                "ref:FR:FINESS": "930006820",
+                "source": "Le ministère des solidarités et de la santé - 08/2018"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48092990000,
+                    48.91361070000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48097120000,
+                            48.91233060000
+                        ],
+                        [
+                            2.48114270000,
+                            48.91295450000
+                        ],
+                        [
+                            2.48126890000,
+                            48.91341150000
+                        ],
+                        [
+                            2.48111750000,
+                            48.91342970000
+                        ],
+                        [
+                            2.48082290000,
+                            48.91234930000
+                        ],
+                        [
+                            2.48097120000,
+                            48.91233060000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "cycleway",
+                "oneway": "no"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48159720000,
+                        48.91210990000
+                    ],
+                    [
+                        2.48160660000,
+                        48.91206640000
+                    ],
+                    [
+                        2.48227180000,
+                        48.91186680000
+                    ],
+                    [
+                        2.48258690000,
+                        48.91177460000
+                    ],
+                    [
+                        2.48280490000,
+                        48.91172000000
+                    ],
+                    [
+                        2.48282630000,
+                        48.91171310000
+                    ],
+                    [
+                        2.48388450000,
+                        48.91139520000
+                    ],
+                    [
+                        2.48395820000,
+                        48.91134760000
+                    ],
+                    [
+                        2.48447860000,
+                        48.91120000000
+                    ],
+                    [
+                        2.48452620000,
+                        48.91120830000
+                    ],
+                    [
+                        2.48454120000,
+                        48.91122460000
+                    ],
+                    [
+                        2.48455950000,
+                        48.91125740000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48298760000,
+                    48.91402350000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "school",
+                "name": "groupe scolaire Noue Caillet",
+                "polling_station": "yes"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47884130000,
+                            48.91240910000
+                        ],
+                        [
+                            2.47871780000,
+                            48.91194060000
+                        ],
+                        [
+                            2.47942900000,
+                            48.91184920000
+                        ],
+                        [
+                            2.47940700000,
+                            48.91159960000
+                        ],
+                        [
+                            2.47939310000,
+                            48.91137920000
+                        ],
+                        [
+                            2.47989450000,
+                            48.91141370000
+                        ],
+                        [
+                            2.47994340000,
+                            48.91142460000
+                        ],
+                        [
+                            2.47999390000,
+                            48.91144480000
+                        ],
+                        [
+                            2.48004680000,
+                            48.91146970000
+                        ],
+                        [
+                            2.48024800000,
+                            48.91155660000
+                        ],
+                        [
+                            2.48038720000,
+                            48.91160000000
+                        ],
+                        [
+                            2.48039760000,
+                            48.91165030000
+                        ],
+                        [
+                            2.48073840000,
+                            48.91172460000
+                        ],
+                        [
+                            2.48092100000,
+                            48.91154170000
+                        ],
+                        [
+                            2.48126960000,
+                            48.91204980000
+                        ],
+                        [
+                            2.48120980000,
+                            48.91212540000
+                        ],
+                        [
+                            2.48030310000,
+                            48.91223640000
+                        ],
+                        [
+                            2.48029800000,
+                            48.91221700000
+                        ],
+                        [
+                            2.48027950000,
+                            48.91221840000
+                        ],
+                        [
+                            2.48008680000,
+                            48.91224110000
+                        ],
+                        [
+                            2.47978790000,
+                            48.91227620000
+                        ],
+                        [
+                            2.47979150000,
+                            48.91228930000
+                        ],
+                        [
+                            2.47968230000,
+                            48.91230140000
+                        ],
+                        [
+                            2.47966950000,
+                            48.91230880000
+                        ],
+                        [
+                            2.47884130000,
+                            48.91240910000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "name": "Route d'Aulnay - Jean Moulin",
+                "public_transport": "stop_position"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48093610000,
+                    48.91223930000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "zebra",
+                "highway": "crossing",
+                "kerb": "lowered"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48266790000,
+                    48.91179600000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48259410000,
+                    48.91369910000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "service"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47860710000,
+                        48.91363930000
+                    ],
+                    [
+                        2.47825480000,
+                        48.91367860000
+                    ],
+                    [
+                        2.47763160000,
+                        48.91374810000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48017940000,
+                            48.91313810000
+                        ],
+                        [
+                            2.48019410000,
+                            48.91319090000
+                        ],
+                        [
+                            2.48020870000,
+                            48.91318920000
+                        ],
+                        [
+                            2.48019400000,
+                            48.91313630000
+                        ],
+                        [
+                            2.48017940000,
+                            48.91313810000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48090540000,
+                            48.91345390000
+                        ],
+                        [
+                            2.48040670000,
+                            48.91351390000
+                        ],
+                        [
+                            2.48036070000,
+                            48.91334460000
+                        ],
+                        [
+                            2.48085910000,
+                            48.91328370000
+                        ],
+                        [
+                            2.48090540000,
+                            48.91345390000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing",
+                "source": "Bing",
+                "supervised": "no"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48121180000,
+                    48.91228930000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "access": "permissive",
+                "highway": "service"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47953890000,
+                        48.91765680000
+                    ],
+                    [
+                        2.47939090000,
+                        48.91762670000
+                    ],
+                    [
+                        2.47927230000,
+                        48.91759580000
+                    ],
+                    [
+                        2.47891560000,
+                        48.91633470000
+                    ],
+                    [
+                        2.47857360000,
+                        48.91602970000
+                    ],
+                    [
+                        2.47842210000,
+                        48.91541810000
+                    ],
+                    [
+                        2.47860250000,
+                        48.91531640000
+                    ],
+                    [
+                        2.47825040000,
+                        48.91400090000
+                    ],
+                    [
+                        2.47856770000,
+                        48.91396140000
+                    ],
+                    [
+                        2.47869100000,
+                        48.91394810000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48239290000,
+                    48.91353490000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47635730000,
+                    48.91044210000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48277250000,
+                    48.91396640000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "name": "Route d'Aulnay - Jean Moulin",
+                "public_transport": "stop_position"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48108830000,
+                    48.91159440000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47872540000,
+                            48.91262470000
+                        ],
+                        [
+                            2.47874450000,
+                            48.91262220000
+                        ],
+                        [
+                            2.47874690000,
+                            48.91263030000
+                        ],
+                        [
+                            2.47872790000,
+                            48.91263270000
+                        ],
+                        [
+                            2.47872540000,
+                            48.91262470000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "addr:city": "Bondy",
+                "addr:housenumber": "32",
+                "addr:postcode": "93140",
+                "addr:street": "Avenue Jean Moulin",
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47788780000,
+                            48.91249820000
+                        ],
+                        [
+                            2.47786510000,
+                            48.91241970000
+                        ],
+                        [
+                            2.47869430000,
+                            48.91232050000
+                        ],
+                        [
+                            2.47871480000,
+                            48.91240000000
+                        ],
+                        [
+                            2.47788780000,
+                            48.91249820000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "zebra",
+                "highway": "crossing",
+                "kerb": "lowered"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48159720000,
+                    48.91210990000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "2"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47785570000,
+                    48.91265770000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47787310000,
+                            48.91421810000
+                        ],
+                        [
+                            2.47784820000,
+                            48.91412180000
+                        ],
+                        [
+                            2.47777680000,
+                            48.91412970000
+                        ],
+                        [
+                            2.47780170000,
+                            48.91422610000
+                        ],
+                        [
+                            2.47787310000,
+                            48.91421810000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2019"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47849290000,
+                            48.91288890000
+                        ],
+                        [
+                            2.47854020000,
+                            48.91305110000
+                        ],
+                        [
+                            2.47878090000,
+                            48.91302280000
+                        ],
+                        [
+                            2.47889220000,
+                            48.91299000000
+                        ],
+                        [
+                            2.47887700000,
+                            48.91291400000
+                        ],
+                        [
+                            2.47881190000,
+                            48.91292300000
+                        ],
+                        [
+                            2.47880750000,
+                            48.91290920000
+                        ],
+                        [
+                            2.47868380000,
+                            48.91292610000
+                        ],
+                        [
+                            2.47866460000,
+                            48.91286540000
+                        ],
+                        [
+                            2.47849290000,
+                            48.91288890000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing",
+                "kerb": "lowered"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48045080000,
+                    48.91229280000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "traffic_calming": "table"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48169000000,
+                    48.91409520000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "community_centre",
+                "building": "public",
+                "name": "Maison France Services",
+                "operator": "ville de Bondy",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48142280000,
+                            48.91384110000
+                        ],
+                        [
+                            2.48143200000,
+                            48.91387250000
+                        ],
+                        [
+                            2.48126910000,
+                            48.91389270000
+                        ],
+                        [
+                            2.48121220000,
+                            48.91369460000
+                        ],
+                        [
+                            2.48110840000,
+                            48.91370550000
+                        ],
+                        [
+                            2.48111130000,
+                            48.91372600000
+                        ],
+                        [
+                            2.48110550000,
+                            48.91372660000
+                        ],
+                        [
+                            2.48107720000,
+                            48.91362090000
+                        ],
+                        [
+                            2.48131900000,
+                            48.91359110000
+                        ],
+                        [
+                            2.48138900000,
+                            48.91384520000
+                        ],
+                        [
+                            2.48142280000,
+                            48.91384110000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "service",
+                "lanes": "2",
+                "lit": "yes",
+                "maxspeed": "30",
+                "name": "Rue Odette Pain",
+                "sidewalk": "both",
+                "smoothness": "good",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "source:maxspeed": "Bing",
+                "surface": "asphalt"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48151720000,
+                        48.91344260000
+                    ],
+                    [
+                        2.48100270000,
+                        48.91350220000
+                    ],
+                    [
+                        2.47993250000,
+                        48.91362640000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "2"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47838130000,
+                    48.91309110000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "marketplace",
+                "name": "Suzanne Buisson"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48152070000,
+                            48.91438270000
+                        ],
+                        [
+                            2.48301410000,
+                            48.91420780000
+                        ],
+                        [
+                            2.48285100000,
+                            48.91404430000
+                        ],
+                        [
+                            2.48272230000,
+                            48.91403860000
+                        ],
+                        [
+                            2.48145200000,
+                            48.91419090000
+                        ],
+                        [
+                            2.48152070000,
+                            48.91438270000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47796280000,
+                            48.91287660000
+                        ],
+                        [
+                            2.47795630000,
+                            48.91285280000
+                        ],
+                        [
+                            2.47794320000,
+                            48.91285440000
+                        ],
+                        [
+                            2.47794970000,
+                            48.91287810000
+                        ],
+                        [
+                            2.47796280000,
+                            48.91287660000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47807280000,
+                            48.91327660000
+                        ],
+                        [
+                            2.47807910000,
+                            48.91330000000
+                        ],
+                        [
+                            2.47806480000,
+                            48.91330170000
+                        ],
+                        [
+                            2.47805850000,
+                            48.91327830000
+                        ],
+                        [
+                            2.47807280000,
+                            48.91327660000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "residential",
+                "name": "Avenue Suzanne Buisson"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47902910000,
+                        48.91439270000
+                    ],
+                    [
+                        2.47950920000,
+                        48.91434220000
+                    ],
+                    [
+                        2.47984390000,
+                        48.91430700000
+                    ],
+                    [
+                        2.47996230000,
+                        48.91429460000
+                    ],
+                    [
+                        2.48157800000,
+                        48.91410840000
+                    ],
+                    [
+                        2.48169000000,
+                        48.91409520000
+                    ],
+                    [
+                        2.48179410000,
+                        48.91408290000
+                    ],
+                    [
+                        2.48277250000,
+                        48.91396640000
+                    ],
+                    [
+                        2.48289700000,
+                        48.91395020000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48157800000,
+                    48.91410840000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "name": "Route d'Aulnay - Jean Moulin",
+                "public_transport": "stop_position"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48161330000,
+                    48.91235640000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "cycleway:left": "lane",
+                "highway": "tertiary",
+                "name": "Avenue Marx Dormoy"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48148880000,
+                        48.91214570000
+                    ],
+                    [
+                        2.48151280000,
+                        48.91213780000
+                    ],
+                    [
+                        2.48159720000,
+                        48.91210990000
+                    ],
+                    [
+                        2.48266790000,
+                        48.91179600000
+                    ],
+                    [
+                        2.48274860000,
+                        48.91177240000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "service",
+                "oneway": "yes"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47825480000,
+                        48.91367860000
+                    ],
+                    [
+                        2.47794780000,
+                        48.91258640000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47881290000,
+                            48.91512540000
+                        ],
+                        [
+                            2.47868220000,
+                            48.91513710000
+                        ],
+                        [
+                            2.47838840000,
+                            48.91405590000
+                        ],
+                        [
+                            2.47853450000,
+                            48.91403990000
+                        ],
+                        [
+                            2.47856060000,
+                            48.91413500000
+                        ],
+                        [
+                            2.47860900000,
+                            48.91412930000
+                        ],
+                        [
+                            2.47862720000,
+                            48.91419580000
+                        ],
+                        [
+                            2.47857880000,
+                            48.91420150000
+                        ],
+                        [
+                            2.47861870000,
+                            48.91434710000
+                        ],
+                        [
+                            2.47866690000,
+                            48.91434140000
+                        ],
+                        [
+                            2.47868450000,
+                            48.91440570000
+                        ],
+                        [
+                            2.47863630000,
+                            48.91441140000
+                        ],
+                        [
+                            2.47867620000,
+                            48.91455710000
+                        ],
+                        [
+                            2.47872390000,
+                            48.91455150000
+                        ],
+                        [
+                            2.47874210000,
+                            48.91461810000
+                        ],
+                        [
+                            2.47869450000,
+                            48.91462370000
+                        ],
+                        [
+                            2.47873430000,
+                            48.91476900000
+                        ],
+                        [
+                            2.47878380000,
+                            48.91476310000
+                        ],
+                        [
+                            2.47880190000,
+                            48.91482900000
+                        ],
+                        [
+                            2.47875230000,
+                            48.91483480000
+                        ],
+                        [
+                            2.47879220000,
+                            48.91498040000
+                        ],
+                        [
+                            2.47884110000,
+                            48.91497470000
+                        ],
+                        [
+                            2.47885920000,
+                            48.91504050000
+                        ],
+                        [
+                            2.47881030000,
+                            48.91504630000
+                        ],
+                        [
+                            2.47883130000,
+                            48.91512310000
+                        ],
+                        [
+                            2.47881290000,
+                            48.91512540000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "school"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47935290000,
+                    48.91220750000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "highway": "bus_stop",
+                "name": "Route d'Aulnay - Jean Moulin",
+                "public_transport": "platform",
+                "ref:FR:STIF": "37629",
+                "ref:FR:STIF:stop_id": "StopPoint:59:3672121",
+                "route_ref": "351;346",
+                "source:wheelchair": "STIF 2019-01",
+                "STIF:zone": "3",
+                "wheelchair": "yes"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48168160000,
+                    48.91236250000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "barrier": "gate"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47856770000,
+                    48.91396140000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "name": "Suzanne Buisson",
+                "public_transport": "stop_position"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48245830000,
+                    48.91358830000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "4"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48157830000,
+                    48.91343900000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47996160000,
+                            48.91330420000
+                        ],
+                        [
+                            2.47994170000,
+                            48.91323290000
+                        ],
+                        [
+                            2.47992720000,
+                            48.91323470000
+                        ],
+                        [
+                            2.47994710000,
+                            48.91330590000
+                        ],
+                        [
+                            2.47996160000,
+                            48.91330420000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47889070000,
+                            48.91218410000
+                        ],
+                        [
+                            2.47881150000,
+                            48.91219190000
+                        ],
+                        [
+                            2.47876060000,
+                            48.91201700000
+                        ],
+                        [
+                            2.47884180000,
+                            48.91200500000
+                        ],
+                        [
+                            2.47889070000,
+                            48.91218410000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47990080000,
+                            48.91315430000
+                        ],
+                        [
+                            2.47991940000,
+                            48.91315200000
+                        ],
+                        [
+                            2.47990540000,
+                            48.91310200000
+                        ],
+                        [
+                            2.47988680000,
+                            48.91310430000
+                        ],
+                        [
+                            2.47990080000,
+                            48.91315430000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2019",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47880750000,
+                            48.91290920000
+                        ],
+                        [
+                            2.47881190000,
+                            48.91292300000
+                        ],
+                        [
+                            2.47887700000,
+                            48.91291400000
+                        ],
+                        [
+                            2.47887350000,
+                            48.91290030000
+                        ],
+                        [
+                            2.47880750000,
+                            48.91290920000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "school"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47886700000,
+                            48.91235330000
+                        ],
+                        [
+                            2.47884790000,
+                            48.91227540000
+                        ],
+                        [
+                            2.47919410000,
+                            48.91223460000
+                        ],
+                        [
+                            2.47960450000,
+                            48.91218330000
+                        ],
+                        [
+                            2.47960390000,
+                            48.91217890000
+                        ],
+                        [
+                            2.47962380000,
+                            48.91217610000
+                        ],
+                        [
+                            2.47962860000,
+                            48.91219300000
+                        ],
+                        [
+                            2.47970650000,
+                            48.91218270000
+                        ],
+                        [
+                            2.47968270000,
+                            48.91210170000
+                        ],
+                        [
+                            2.47978690000,
+                            48.91208970000
+                        ],
+                        [
+                            2.47981530000,
+                            48.91218630000
+                        ],
+                        [
+                            2.47976480000,
+                            48.91219220000
+                        ],
+                        [
+                            2.47978790000,
+                            48.91227620000
+                        ],
+                        [
+                            2.47979150000,
+                            48.91228930000
+                        ],
+                        [
+                            2.47968230000,
+                            48.91230140000
+                        ],
+                        [
+                            2.47966850000,
+                            48.91225870000
+                        ],
+                        [
+                            2.47886700000,
+                            48.91235330000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "public",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48216020000,
+                            48.91180500000
+                        ],
+                        [
+                            2.48168220000,
+                            48.91194440000
+                        ],
+                        [
+                            2.48169970000,
+                            48.91197160000
+                        ],
+                        [
+                            2.48158740000,
+                            48.91200690000
+                        ],
+                        [
+                            2.48156710000,
+                            48.91197750000
+                        ],
+                        [
+                            2.48151800000,
+                            48.91190240000
+                        ],
+                        [
+                            2.48136170000,
+                            48.91167160000
+                        ],
+                        [
+                            2.48135570000,
+                            48.91167160000
+                        ],
+                        [
+                            2.48131080000,
+                            48.91160400000
+                        ],
+                        [
+                            2.48129330000,
+                            48.91157760000
+                        ],
+                        [
+                            2.48141890000,
+                            48.91154230000
+                        ],
+                        [
+                            2.48144000000,
+                            48.91157360000
+                        ],
+                        [
+                            2.48148140000,
+                            48.91163490000
+                        ],
+                        [
+                            2.48147990000,
+                            48.91163930000
+                        ],
+                        [
+                            2.48162280000,
+                            48.91185420000
+                        ],
+                        [
+                            2.48174910000,
+                            48.91181810000
+                        ],
+                        [
+                            2.48175810000,
+                            48.91182880000
+                        ],
+                        [
+                            2.48210700000,
+                            48.91172810000
+                        ],
+                        [
+                            2.48216020000,
+                            48.91180500000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "service",
+                "lit": "yes",
+                "maxspeed": "20",
+                "name": "Allée Marie-Madeleine Fourcade",
+                "sidewalk": "both",
+                "smoothness": "good",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016 + Bing",
+                "source:maxspeed": "Bing",
+                "surface": "asphalt"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47882780000,
+                        48.91248460000
+                    ],
+                    [
+                        2.47868740000,
+                        48.91194560000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "path"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48159720000,
+                        48.91210990000
+                    ],
+                    [
+                        2.48165620000,
+                        48.91216690000
+                    ],
+                    [
+                        2.48207730000,
+                        48.91226820000
+                    ],
+                    [
+                        2.48215380000,
+                        48.91230440000
+                    ],
+                    [
+                        2.48220070000,
+                        48.91237400000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "marked",
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48084330000,
+                    48.91122620000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "tertiary",
+                "name": "Avenue Henri Varagnat",
+                "surface": "asphalt"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48148880000,
+                        48.91214570000
+                    ],
+                    [
+                        2.48155920000,
+                        48.91227850000
+                    ],
+                    [
+                        2.48161330000,
+                        48.91235640000
+                    ],
+                    [
+                        2.48213110000,
+                        48.91317660000
+                    ],
+                    [
+                        2.48228990000,
+                        48.91341040000
+                    ],
+                    [
+                        2.48239290000,
+                        48.91353490000
+                    ],
+                    [
+                        2.48245830000,
+                        48.91358830000
+                    ],
+                    [
+                        2.48259410000,
+                        48.91369910000
+                    ],
+                    [
+                        2.48270610000,
+                        48.91379190000
+                    ],
+                    [
+                        2.48279220000,
+                        48.91386330000
+                    ],
+                    [
+                        2.48287030000,
+                        48.91392810000
+                    ],
+                    [
+                        2.48289700000,
+                        48.91395020000
+                    ],
+                    [
+                        2.48298760000,
+                        48.91402350000
+                    ],
+                    [
+                        2.48338700000,
+                        48.91434740000
+                    ],
+                    [
+                        2.48363160000,
+                        48.91454580000
+                    ],
+                    [
+                        2.48388450000,
+                        48.91480180000
+                    ],
+                    [
+                        2.48391740000,
+                        48.91486060000
+                    ],
+                    [
+                        2.48399600000,
+                        48.91500120000
+                    ],
+                    [
+                        2.48408140000,
+                        48.91519560000
+                    ],
+                    [
+                        2.48413430000,
+                        48.91540350000
+                    ],
+                    [
+                        2.48422500000,
+                        48.91581430000
+                    ],
+                    [
+                        2.48424500000,
+                        48.91589800000
+                    ],
+                    [
+                        2.48427140000,
+                        48.91600840000
+                    ],
+                    [
+                        2.48450210000,
+                        48.91686610000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "tertiary",
+                "name": "Avenue Jean Moulin"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48148880000,
+                        48.91214570000
+                    ],
+                    [
+                        2.48136790000,
+                        48.91217660000
+                    ],
+                    [
+                        2.48119220000,
+                        48.91220560000
+                    ],
+                    [
+                        2.48113990000,
+                        48.91221180000
+                    ],
+                    [
+                        2.48093610000,
+                        48.91223930000
+                    ],
+                    [
+                        2.48063770000,
+                        48.91227220000
+                    ],
+                    [
+                        2.48045080000,
+                        48.91229280000
+                    ],
+                    [
+                        2.48011160000,
+                        48.91233030000
+                    ],
+                    [
+                        2.48001140000,
+                        48.91234140000
+                    ],
+                    [
+                        2.47954000000,
+                        48.91239910000
+                    ],
+                    [
+                        2.47882780000,
+                        48.91248460000
+                    ],
+                    [
+                        2.47829680000,
+                        48.91255200000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48129960000,
+                            48.91238780000
+                        ],
+                        [
+                            2.48128840000,
+                            48.91235160000
+                        ],
+                        [
+                            2.48134890000,
+                            48.91234380000
+                        ],
+                        [
+                            2.48135800000,
+                            48.91238100000
+                        ],
+                        [
+                            2.48129960000,
+                            48.91238780000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "10"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48193430000,
+                    48.91300360000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "access": "permissive",
+                "highway": "service"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47842210000,
+                        48.91541810000
+                    ],
+                    [
+                        2.47836710000,
+                        48.91529120000
+                    ],
+                    [
+                        2.47820750000,
+                        48.91525330000
+                    ],
+                    [
+                        2.47787760000,
+                        48.91404760000
+                    ],
+                    [
+                        2.47825040000,
+                        48.91400090000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "wall": "no"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47989090000,
+                            48.91320810000
+                        ],
+                        [
+                            2.47987670000,
+                            48.91315720000
+                        ],
+                        [
+                            2.47986110000,
+                            48.91315910000
+                        ],
+                        [
+                            2.47987530000,
+                            48.91321000000
+                        ],
+                        [
+                            2.47989090000,
+                            48.91320810000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bus": "yes",
+                "highway": "bus_stop",
+                "name": "Route d'Aulnay - Jean Moulin",
+                "public_transport": "platform",
+                "ref:FR:STIF": "19050;37627",
+                "ref:FR:STIF:stop_id": "StopPoint:70:9499;StopPoint:59:5150463",
+                "route_ref": "616;234;546",
+                "source:wheelchair": "STIF 2019-01;STIF 2018-07",
+                "STIF:zone": "3",
+                "wheelchair": "no;yes"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48105430000,
+                    48.91218170000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "marked",
+                "highway": "crossing"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48424500000,
+                    48.91589800000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing",
+                "kerb": "lowered"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48136790000,
+                    48.91217660000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "tertiary",
+                "name": "Route d'Aulnay"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48148880000,
+                        48.91214570000
+                    ],
+                    [
+                        2.48132930000,
+                        48.91195180000
+                    ],
+                    [
+                        2.48108830000,
+                        48.91159440000
+                    ],
+                    [
+                        2.48084330000,
+                        48.91122620000
+                    ],
+                    [
+                        2.48053710000,
+                        48.91076450000
+                    ],
+                    [
+                        2.48024400000,
+                        48.91032770000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "building": "yes"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.47900500000,
+                            48.91258830000
+                        ],
+                        [
+                            2.47874450000,
+                            48.91262220000
+                        ],
+                        [
+                            2.47874690000,
+                            48.91263030000
+                        ],
+                        [
+                            2.47872790000,
+                            48.91263270000
+                        ],
+                        [
+                            2.47872540000,
+                            48.91262470000
+                        ],
+                        [
+                            2.47851500000,
+                            48.91265200000
+                        ],
+                        [
+                            2.47844480000,
+                            48.91271220000
+                        ],
+                        [
+                            2.47849290000,
+                            48.91288890000
+                        ],
+                        [
+                            2.47866460000,
+                            48.91286540000
+                        ],
+                        [
+                            2.47870670000,
+                            48.91285960000
+                        ],
+                        [
+                            2.47870040000,
+                            48.91283840000
+                        ],
+                        [
+                            2.47905030000,
+                            48.91275560000
+                        ],
+                        [
+                            2.47903440000,
+                            48.91270260000
+                        ],
+                        [
+                            2.47903920000,
+                            48.91270200000
+                        ],
+                        [
+                            2.47900500000,
+                            48.91258830000
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "highway": "residential",
+                "lanes": "2",
+                "lit": "yes",
+                "maxspeed": "30",
+                "name": "Avenue Jean Lebas",
+                "oneway": "yes",
+                "sidewalk": "both",
+                "smoothness": "good",
+                "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2016",
+                "source:maxspeed": "Bing",
+                "surface": "asphalt",
+                "zone:maxspeed": "FR:30"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.48119220000,
+                        48.91220560000
+                    ],
+                    [
+                        2.48121180000,
+                        48.91228930000
+                    ],
+                    [
+                        2.48149670000,
+                        48.91336530000
+                    ],
+                    [
+                        2.48151720000,
+                        48.91344260000
+                    ],
+                    [
+                        2.48169000000,
+                        48.91409520000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "crossing": "uncontrolled",
+                "crossing_ref": "zebra",
+                "highway": "crossing",
+                "kerb": "lowered"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48011160000,
+                    48.91233030000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "barrier": "gate"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.47939090000,
+                    48.91762670000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "bicycle_parking",
+                "capacity": "8"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48132860000,
+                    48.91224850000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "school"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    2.48084630000,
+                    48.91201010000
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "bicycle": "designated",
+                "foot": "designated",
+                "highway": "path"
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        2.47745130000,
+                        48.91393270000
+                    ],
+                    [
+                        2.47750820000,
+                        48.91392870000
+                    ],
+                    [
+                        2.47756180000,
+                        48.91393400000
+                    ],
+                    [
+                        2.47763690000,
+                        48.91395430000
+                    ],
+                    [
+                        2.47771470000,
+                        48.91395690000
+                    ],
+                    [
+                        2.47778980000,
+                        48.91395080000
+                    ],
+                    [
+                        2.47787430000,
+                        48.91392430000
+                    ],
+                    [
+                        2.47793870000,
+                        48.91388640000
+                    ],
+                    [
+                        2.47798160000,
+                        48.91385290000
+                    ],
+                    [
+                        2.47804870000,
+                        48.91381680000
+                    ],
+                    [
+                        2.47810360000,
+                        48.91379570000
+                    ],
+                    [
+                        2.47820150000,
+                        48.91378600000
+                    ],
+                    [
+                        2.47834640000,
+                        48.91376750000
+                    ],
+                    [
+                        2.47862690000,
+                        48.91372020000
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "amenity": "school",
+                "name": "École maternelle Jean Zay",
+                "operator": "ville de Bondy",
+                "polling_station": "yes",
+                "polling_station_ref": "04",
+                "ref:UAI": "0930414V",
+                "school:FR": "maternelle",
+                "source": "data.gouv.fr:Éducation Nationale - 05/2016"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            2.48131080000,
+                            48.91160400000
+                        ],
+                        [
+                            2.48123620000,
+                            48.91162450000
+                        ],
+                        [
+                            2.48153820000,
+                            48.91205890000
+                        ],
+                        [
+                            2.48266470000,
+                            48.91173100000
+                        ],
+                        [
+                            2.48259510000,
+                            48.91161920000
+                        ],
+                        [
+                            2.48247720000,
+                            48.91143910000
+                        ],
+                        [
+                            2.48242530000,
+                            48.91138860000
+                        ],
+                        [
+                            2.48239440000,
+                            48.91140450000
+                        ],
+                        [
+                            2.48234690000,
+                            48.91133120000
+                        ],
+                        [
+                            2.48220370000,
+                            48.91129790000
+                        ],
+                        [
+                            2.48165320000,
+                            48.91146170000
+                        ],
+                        [
+                            2.48168310000,
+                            48.91150390000
+                        ],
+                        [
+                            2.48144000000,
+                            48.91157360000
+                        ],
+                        [
+                            2.48131080000,
+                            48.91160400000
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

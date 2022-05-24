@@ -106,9 +106,9 @@ La solution est de faire un buffer autour de bondy et d'intersecter avec les com
 zone <- st_buffer(bondy, 800)
 mf_map(zone)
 mf_map(bondy, add = T)
-noms <- st_intersection(communes, zone)
+noms <- st_intersection(commune, zone)
 mf_label(noms, var = "name")
-mf_map(communes, col = NA,  add = T)
+mf_map(commune, col = NA,  add = T)
 st_write(noms, paste0(chemin,"fond.gpkg"), "noms", delete_layer = T)
 ```
 
@@ -206,10 +206,12 @@ st_write(bat, paste0(chemin, "fond.gpkg"), "bat", delete_layer = T)
 
 ```{r, eval = TRUE}
 #readOGR(paste0(chemin, "logement.gpkg"))
-couche <- ogrListLayers(paste0(chemin, "fond.gpkg"))
-for (i in 1:length(couche)){
-    objet <- st_read(paste0(chemin, "fond.gpkg"), couche [i])
-    assign(couche [i], objet)
+st_read(paste0(chemin, "fond.gpkg"))
+couche <- st_layers(paste0(chemin, "fond.gpkg"))
+tmp <- couche$name
+for (i in 1:length(tmp)){
+    objet <- st_read(paste0(chemin, "fond.gpkg"), tmp [i])
+    assign(tmp [i], objet)
 }
 length(couche)
 ```

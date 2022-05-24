@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="STB_SST" id="STB_SST">
+	<SimpleField name="timestamp" type="string"></SimpleField>
+	<SimpleField name="begin" type="string"></SimpleField>
+	<SimpleField name="end" type="string"></SimpleField>
+	<SimpleField name="altitudeMode" type="string"></SimpleField>
+	<SimpleField name="tessellate" type="int"></SimpleField>
+	<SimpleField name="extrude" type="int"></SimpleField>
+	<SimpleField name="visibility" type="int"></SimpleField>
+	<SimpleField name="drawOrder" type="int"></SimpleField>
+	<SimpleField name="icon" type="string"></SimpleField>
+</Schema>
+<Folder><name>STB_SST</name>
+  <Placemark>
+	<name>MAPA EHPAD Arthur GROUSSIER</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48348885059219,48.9113917130353,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>Logements LEON GROSSE - 33 rue fontaine</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48612428867921,48.9099692974414,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>GS La Noue Caillet</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.47958393690634,48.9122156296238,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>BONDY HABITAT La Noue Caillet - Résidence Germaine TILLON</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48059184856989,48.9133081754264,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>OPH 93 ex SEMIDEP</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.47827915236515,48.9110036753034,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>Maternelle Jean ZAY et logements</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48135366166862,48.9115578272325,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>Collège Jean ZAY</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48158127831157,48.9112880810048,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>PALAIS DES SPORTS</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48251913207576,48.911274906227,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>Hopital Jean VERDIER</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48740188280186,48.9091755982773,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>GS Olympe de Gouge</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48486148073847,48.9120547098253,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>Clinique VILLE EVRARD</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.4854896455532,48.9132179274491,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>CROUS</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48407940581521,48.9135271290469,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>IRD C</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48680146914753,48.9144552338712,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>IRD A et B</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48591762759992,48.9152485018781,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>Ecole Terre Sainte Blaise</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48288317441719,48.9166228988623,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>I3F LOT A</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48025766126135,48.9177904185351,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>I3F LOT B</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48066894967857,48.917723725795,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>I3F 13 rue Léon JOUHAUX</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48121517624765,48.9179992010045,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>I3F 6 rue Franc Aubier</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48209481249113,48.9170865329298,0</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<name>I3F 9 rue Rabelais</name>
+	<ExtendedData><SchemaData schemaUrl="#STB_SST">
+		<SimpleData name="tessellate">-1</SimpleData>
+		<SimpleData name="extrude">0</SimpleData>
+		<SimpleData name="visibility">-1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48331790335294,48.9167514541803,0</coordinates></Point>
+  </Placemark>
+</Folder>
+</Document></kml>
