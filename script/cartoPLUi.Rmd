@@ -39,7 +39,7 @@ https://www.geoportail-urbanisme.gouv.fr/map/#tile=1&lon=2.481895&lat=48.9060100
 usb <- "G:"
 chemin1 <- "C:/Users/bmaranget/Documents"
 chemin2 <- "G:"
-chemin3 <- "C:/Users/tachasa/Documents/EXTERNE/03_SIG/03_03_Data/"
+chemin3 <- "C:/Users/tachasa/Documents/03_SIG/03_03_Data/"
 chemin <- "Home/tachasa/00_DATA/"
 ```
 
@@ -151,6 +151,49 @@ mf_export(x = plui, filename = "../img/plui.png",
 mf_layout(title = "plui Bondy",
             credits = "Géoportail de l'Urbanisme/nBondy, 2022")
 dev.off()
+```
+
+# Identfification des couches diverses
+
+Il s'agit de constituer un dictionnaire des éléments des couches du PLUi afin de 
+pouvoir accéder à l'information plus vite.
+
+exemple : où sont les périmètres ABF ...
+
+
+TODO pourquoi ces noms ?
+
+
+
+
+```{r}
+rep <- paste0(chemin3, "06_URBA/200057875_PLUi_20210629/Donnees_geographiques")
+liste <- list.files(rep, pattern = "shp")
+liste
+bondy <- st_read (paste0(chemin3, "limites.gpkg"), "bondy")
+# on charge toutes les couches
+l <- liste [1]
+# initialisation
+categorie <- NA
+for (l in liste) { 
+  fic <- paste0(rep, "/", l)
+  tmp <- st_read(fic)
+  inter <- st_intersection(tmp, bondy)
+  # on extrait les libellés
+  tmp <- unique(inter$LIBELLE)
+  # on enlève du nom tous les caractères chiffres et l'extension
+  nom <- gsub('[0-9]|_|shp|\\.','',l)
+  categorieTmp <- data.frame(nom = nom, libelle=tmp)
+  categorie <- rbind(categorie, categorieTmp)
+  assign(nom, inter)
+  } 
+```
+
+6 fichiers, on extrait tous les libellés
+
+
+```{r}
+write.csv(categorie, "../data/categorieLibellePlui.csv")
 ```
 
 
