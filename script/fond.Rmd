@@ -226,7 +226,7 @@ fond <- function(){
   mf_shadow(bondy, col = "antiquewhite1", add = TRUE)
   mf_map(ept, col = NA, border = "red", lwd = 2, add = T)
   mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "burlywood", "burlywood", "burlywood", "burlywood", "bisque4"), lwd = 1.5, leg_pos = "n")
-mf_map(jardin, col = "chartreuse3", border = NA,add = T)
+mf_map(jardin, col = "#B0F2B6", border = NA,add = T)
 
 mf_map(bat, col = "antiquewhite1", border = NA,add = T)
 

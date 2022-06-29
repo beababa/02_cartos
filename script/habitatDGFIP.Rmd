@@ -43,13 +43,15 @@ library(mapsf)
 
 
 ```{r, eval = T}
-chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/"
+# on reprend variable HOME en fonction PC
+rep <- Sys.getenv("HOME")
+chemin <- paste0(rep,"/03_SIG/03_03_Data/")
 ```
 
 
 # Chargement des fichiers
 
-
+## Locaux commerciaux vacants
 
 
 ```{r}
@@ -73,8 +75,41 @@ names(agg) <- c("code","proprietaire", "nb")
 ```
 
 
+## Locaux d'habitation
 
-# Cadastre
+
+```{r}
+LH <- read.csv2("../data/LOC_HAB22_930_21930010000019_C010_22111.CSV", stringsAsFactors = F, colClasses = "character" ,fileEncoding = "Latin1", header = T, skip = 3)
+# encoding Latin 1 régle sans doute le pb
+head(LH)
+LH$code <- paste0(LH$Sect., LH$N..plan)
+agg <- aggregate(LH [, "code"], by = list (code = LH$code, proprio = LH$Propriétaire), length)
+# exploration
+str(agg)
+barplot(agg$x)
+agg [agg$x > 3,]
+```
+
+
+## Liste parcelles non baties
+
+```{r}
+PNB <- read.csv2("../data/NON_BAT22_930_21930010000019_C010_22111.CSV", stringsAsFactors = F, colClasses = "character" ,fileEncoding = "Latin1", header = T, skip = 2)
+str(PNB)
+# Pas un seul fichier qui donne les parcelles de la même façon !
+PNB$code <- gsub(" ","", PNB$Identifiant.de.la.parcelle)
+PNB$code
+agg <- aggregate(PNB [, "code"], by = list (code = PNB$code, proprio = PNB$Nom.du.propriétaire), length)
+# agrégation 106 sur 105
+table(PNB$Nature.du.changement)
+# Il semble intéressant de cartographier la nature des 
+# changements. donc on renomme PNB en agg pour faire la jointrue
+agg <- PNB
+```
+
+Concernant la nature des changements, une recherche rapide sur internet n'a pas permis de trouver à quoi correspondait le code.
+
+## Cadastre
 
 
 
@@ -92,21 +127,26 @@ str(cadastre)
 
 
 
+# Traitements
 
-
-# Jointure
+## Jointure
 
 
 ```{r}
 # pb d'espace
 cadastre$code <- gsub(" ", "", cadastre$code)
+agg$code <- gsub(" ", "", agg$code)
+cadastre$code
+agg$code
 data <- merge (agg, cadastre, by = ("code"))
 # 134 sur 267 .... pb !
+# 114 sur 115 pour le LH
+# 73 sir 106
 class(data)
 data <- st_as_sf(data)
 str(data)
-hist(data$nb)
-st_write(data, "../data/habitat.gpkg", "LCV", delete_layer = T)
+hist(data$x)
+st_write(data, "../data/habitat.gpkg", "PNB", delete_layer = T)
 ```
 
 
@@ -114,22 +154,30 @@ Etude des problèmes
 
 
 ```{r}
-# pb d'espace
-cadastre$code <- gsub(" ", "", cadastre$code)
-data <- merge (agg, cadastre, by = ("code"))
-data <- st_as_sf(data)
 # différence code entre agg et cadastre
 diff <- setdiff(agg$code, cadastre$code)
+# on cherche le motif dans cadastre
 ind <- grep( diff [1] ,cadastre$code )
-ind <- grep( "C" ,cadastre$code )
+ind <- grep( "^E0" ,cadastre$code )
 cadastre$code [ind]
 write.csv(diff, "../data/diff.csv")
 ```
 
 Uniquement 8 pb. petite vérif sur Arcopole. Efffectivement pb parcelles inconnue. il faut que je revoie ma version cadastre.
 
+
+Pour les propriétés non bâties, il manque 32 parcelles sur 106, un petit tiers.
+
+```{r}
+32/106
+```
+
+
+
 # Cartographie
 
+
+## Fond OSM ?
 
 ```{r}
 library(maptiles)
@@ -137,8 +185,14 @@ osm <- get_tiles(data, zoom = 15, crop = T)
 library(leaflet)
 ```
 
+Le fond OSM ne correspond vraiment pas.
+On reprend le fond créé.
 
-Etiquettes
+
+## LCV
+
+
+### Etiquettes
 
 ```{r}
 data <- st_read("../data/habitat.gpkg", "LCV")
@@ -170,7 +224,7 @@ mf_label(etikBH, var = "Group.1", lines = TRUE, overlap = TRUE)
 mf_label(etikBH, var = "Group.1", lines = TRUE, overlap = FALSE, pos = 2, offset = 15)
 etikPoly
 ```
-
+### Propriétaires les plus importants
 
 
 Histo des proprio les plus importants pour combler absence d'étiquettes
@@ -218,7 +272,7 @@ dev.off()
 ![](../img/LCV.png)
 
 
-Cartographie par propriétaires
+### Cartographie par propriétaires
 
 
 ```{r}
@@ -248,3 +302,49 @@ data
 ```
 
 
+## Carto LH
+
+### Etiquettes
+
+```{r}
+etik <- data [ data$x > 3,]
+etik
+```
+
+### zoom
+
+on zoome sur le nord
+
+```{r}
+pt <- data [data$x > 4,]
+zone <- st_buffer(st_centroid(pt), 100)
+```
+
+
+```{r}
+mf_export(data, width = 1000, height = 1000, res = 100, filename = "../img/LH.png", expandBB = c(10,10,30,10))
+mf_init(zone, theme = "candy")
+fond()
+mf_map(data, type = "typo", "x", add = T, border = NA)
+mf_label(etik, "proprio", overlap = F, lines = T, halo = T, cex = 0.5)
+mf_layout(title = "Locaux d'habitation", credits = "OSM / DGFIP" )
+dev.off()
+```
+
+Attention, pour les 67 et 28 il s'agit de la même parcelle...
+
+![](../img/LH.png)
+
+
+## Carto PNB
+
+```{r}
+mf_export(data, width = 1000, height = 1000, res = 100, filename = "../img/PNB.png", expandBB = c(10,10,30,10))
+mf_init(data, theme = "candy")
+fond()
+mf_map(data, type = "typo", "Nature.du.changement", add = T, border = NA)
+mf_layout(title = "Propriétés non bâties", credits = "OSM / DGFIP" )
+dev.off()
+```
+
+![](../img/PNB.png)
