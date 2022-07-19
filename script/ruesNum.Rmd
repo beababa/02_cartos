@@ -1,0 +1,107 @@
+---
+title: "Numéro de rues - Ban"
+author: "B. Maranget"
+date: "13/07/2022"
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Dans le cadre de la mise en place de la Ban, travail sur les numéros de rue
+
+- extraire les 1er et derniers numéros pour chaque rue afin de tracer des flèches
+indiquant le sens par rapport au canal de l'Ourcq.
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "G:/"
+```
+
+
+## Sources
+
+```{r}
+ban <- st_read("../data/adresse.gpkg")
+plot (ban$geom)
+```
+
+
+# Numéros min et max par rue
+
+
+
+
+```{r}
+ban <- ban [, c("nom_voie", "numero"), drop = F]
+lban <- split(ban, ban$nom_voie)
+data <-  lban [[1]]
+minMax <- function(data) {
+  mini <- data [ min(data$numero),]
+  # cela fonctionne pour le mini, mais pour le max... nécessité du test
+  maxi <- data [ data$numero == max(data$numero),]
+  try( ifelse( mini != maxi, rbind(mini, maxi), NA), silent = TRUE)
+  
+}
+
+liste <- lapply(lban, minMax)
+head(liste)
+# Seule la géométrie nous intéresse
+numero <- sapply(liste, "[",3)
+sapply(numero, length)
+pb <- which(sapply(numero, length) == 1)
+
+numeroOK <- numero [sapply(numero, length)!=1]
+numeroOK
+sapply(numero, 1)
+# la fonction st_make line fonctionne seulement avec les coordonnées...
+faireLigne <- function(data){
+  matrice <- st_coordinates(data)
+  st_linestring(matrice)
+}
+lignes <- lapply(numeroOK, faireLigne)
+head(lignes)
+lignes [1:5]
+# transformation en df (technique sapply ne fonctionne pas cause géométrie)
+i <-  1
+df <- NULL
+# attention pas NA sinon 1 lg
+for (i in 1:length(lignes)){
+  nom <- names(lignes) [[i]]
+  geom <- st_sfc (lignes [[i]])
+  df_tmp <- data.frame(nom, geom)
+  df <- rbind(df_tmp,df)
+}
+df_sf <- st_sf(df, crs = 2154 )
+st_write(df_sf, "../data/adresse.gpkg", layer = "numerosLg", delete_layer = T)
+```
+
