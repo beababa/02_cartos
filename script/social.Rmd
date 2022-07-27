@@ -63,11 +63,7 @@ La démarche adoptée est la suivante :
 ## Chemins
 
 ```{r, eval=TRUE}
-if (Sys.getenv('HOME') == "/home/tachasa") {
-  chemin <- paste0(Sys.getenv('HOME'), "/00_DATA/")
-} else {
   chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
-}
 ```
 
 ## Librairies

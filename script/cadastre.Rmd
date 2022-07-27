@@ -40,7 +40,7 @@ library(mapsf)
 
 
 ```{r, eval = T}
-chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/"
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 ```
 
 
@@ -210,7 +210,7 @@ data$categ2 <- NA
 # M MME
 ind1 <- grep("M |MME ", data$nom)
 data$categ2 [ind1] <- "Personne physique (M / MME)"
-ind2 <- grep("COPRO", data$nom)
+ind2 <- grep("COPRO|PROPRI", data$nom)
 data$categ2  [ind2] <- "Copropriété"
 # Il semble intéressant d'éclater la catégorie *personne morale non remarquable* en retirant les SCI
 ind3 <- grep("SCI|SOCIETE CIVILE IMMOBILIERE|SOCIETE CIVILE IMMOBILIERE|STE CIVILE IMMOBILIERE|S C I ", data$nom)
@@ -220,6 +220,14 @@ data$categ1 [data$nom == "inconnu"] <- "AUTRES"
 data$categ1 [c(ind1,ind2, ind3)] <- "AUTRES"
 ```
 
+```{r}
+table(data$categorie)
+table(data$categ2, data$categ1, useNA = "always")
+```
+
+On a 297 non attribués qui sont des commerces (=personnes morales non remarquables ?), mais également des bailleurs, CT et Etats, Etablissements publics institutionnels
+
+On va identifier tous ces acteurs, et les commerces seront désignés par défaut.
 
 
 ## Tables d'équivalence
@@ -230,7 +238,7 @@ data$categ1 [c(ind1,ind2, ind3)] <- "AUTRES"
 TODO
 
 ```{r}
-data$nom [ data$categorie == 0 && is.na(data$categ1)]
+data$nom [ is.na(data$categ1) & is.na(data$categ2)]
 
 ```
 
@@ -260,7 +268,7 @@ table(data$categ2,data$categ1, useNA = "always")
 
 
 
-## CT
+### CT
 
 
 ```{r}
@@ -290,11 +298,10 @@ cadastre$categorie [grep("Emph", cadastre$type)] <- "CT"
 # Extraction du 2e terme - nom proprio
 ```
 
-## Bailleurs sociaux
+### Bailleurs sociaux
 
 
-Le nom des bailleurs n'est pas orthographié à l'identique entre l'inventaire et le
-cadastre.
+Le nom des bailleurs n'est pas orthographié à l'identique entre l'inventaire et le cadastre.
 
 ```{r}
 bailleurs <- read.csv("../data/bailleurs.csv")
@@ -304,13 +311,29 @@ ind <- unlist(sapply(bailleurs, indBailleurs))
 write.csv(data$nom [ind], "../data/tableCorrespondance.csv", fileEncoding = "UTF-8")
 ```
 
+On extrait les noms et on leur attribue un type.
+
 
 Utilisation de la table de correspondance établie
 
 ```{r}
 table <- read.csv("../data/tableCorrespondanceRep.csv", fileEncoding = "UTF-8")
+table
+str(data)
+
+grep('ADEF', data$nom)
+data$nom [19]
+table [1,1]
+# on enlève les espaces déut et fin de phrase
+data$nom <- gsub('^\\s+|\\s+$', '',data$nom)
+table$nom <- gsub('^\\s+|\\s+$', '',table$nom)
+ # pour mémoire pmorale categorie / categ1 détail / categ2 autres
+# donc il faut remplir categ2 avec categorie
 jointure <- merge (data, table, by = "nom", all.x = T)
-jointure$nom <- jointure$categorie  [!is.na(jointure$categorie)]
+jointure$nom [!is.na(jointure$categorie.y)]
+table(jointure$categorie.y, useNA ="always")
+jointure$categ2 [!is.na(jointure$categorie.y)] <- jointure$categorie.y [!is.na(jointure$categorie.y)]
+table(jointure$categ2, useNA ="always")
 ```
 
 
@@ -319,10 +342,26 @@ jointure$nom <- jointure$categorie  [!is.na(jointure$categorie)]
 
 
 ```{r}
-liste <- c("SNCF", "RATP")
-ind <- unlist(sapply(liste, indBailleurs))
-data$categ1 [ind] <- "Etablissements publics et institutionnels"
+EPI <- c("SNCF", "RATP", "EAUX")
+chercher <- function(str) {grep(str, jointure$nom)}
+ind <- unlist(sapply(EPI, chercher))
+jointure$categ2 [ind] <- "Etablissements publics et institutionnels"
 ```
 
 
+
+# Categ 1 et 2
+
+```{r}
+jointure$nom [jointure$]
+```
+
+
+# Dernier contrôle
+
+
+```{r}
+jointure$nom  [is.na(jointure$categ2)]
+
+```
 
