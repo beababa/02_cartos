@@ -1,0 +1,212 @@
+---
+title: "PDF carte scolaire"
+author: "B. Maranget"
+date: "09/05/2022"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Ouverture fichier pdf enseigne pour avoir une base pour les enseignes.
+
+
+# Import
+
+```{r}
+library(pdftools)
+library(tidyverse)
+library(tesseract)
+library(magick)
+library(tictoc)
+```
+Ne pas jouer
+
+```{r, eval = FALSE}
+# transformation en image
+pngfile <- pdftools::pdf_convert("../data/carteSco.PDF", dpi = 400)
+```
+
+
+```{r, eval = FALSE}
+# attention répertoire
+path <- dir (pattern = "carteSco",full.names = TRUE)
+images <- map(path, magick::image_read)
+images [5]
+tic()
+text_list <- map(images, image_ocr)
+toc()
+text_list
+stext <- unlist(str_split(text_list, "\n"))
+tail(stext,50)
+```
+
+# Recodage
+
+## Reprise brute
+
+Le fichier doit être récupérable rapidement
+Pour chaque rue (majuscule), il y a des périmètres
+
+l'algo serait :
+cherche maj
+tant que périmètre, attribue à rue
+passe à la maj suivante
+
+En fait, on cherche les lg comprenant 4 maj, puis les lg avec périmètres
+
+et on construit df avec les indices et la rep.
+
+```{r}
+indRue <- grep("[A-Z]{4,}", stext)
+rues <- stext [ind]
+indPeri <- grep("Périmétre : ", stext)
+peri <- stext [indPeri]
+```
+
+On constitue un df avec la rue et le périmètre en utilisant les indices
+
+```{r}
+fairelgRue <- function (ind) {
+  nb1 <- indRue [ind]
+  nb2 <- indRue [ind+1]
+  rep (nb1, (nb2 - nb1) )
+} 
+lgRue <- fairelgRue(1:366)
+# on passe avec une lg en moins puisqu'il y a ind+1
+Rue <- stext [lgRue]
+Peri <- stext [4:1344]
+df <- data.frame(Rue, Peri)
+head(df,30)
+# on ne retient que les lignes de périmètre pour la colonne 2
+dfF <- df [grep("Périmétre : ", df$Peri),]
+head(dfF)
+write.csv(dfF,"../data/peri1.csv")
+Sellier <- dfF [grep ("Sel", df$Peri),]
+Sellier
+```
+
+
+## Petites améliorations
+
+rue
+
+```{r}
+data <- read.csv("../data/peri1.csv", fileEncoding = "UTF-8")
+data
+# on sépare le premier terme
+liste <- strsplit(data$Rue, " ")
+elem1 <- sapply(liste, "[",1)
+data$rueCourte <- elem1
+longueur <- nchar(data$rueCourte)
+data$rue <- substr(data$Rue, longueur + 2, 9999)
+data$rue
+ind <-  grep("Périmétre", data$rue)
+data <- data [-ind,]
+data$rue <- gsub("\\\\|/|\\{|\\}|\\||[a-z]|\\)|\\(|ERK", "", data$rue)
+write.csv(data,"../data/peri2.csv", fileEncoding = "UTF-8")
+
+```
+
+périmètre
+- suppression du 1er terme
+- maternelle / elementaire
+
+```{r}
+liste <- strsplit( data$Peri, "Maternelle |Elémentaire|Elementaire|Eleémentaire")
+ecoles <- sapply(liste, "[",2)
+ecoles
+ind <- which(is.na(ecoles))
+data$Peri [ind]
+data$ecoles <- ecoles
+data$ecoles [ind] <- data$Peri [ind]
+write.csv(data,"../data/peri3.csv", fileEncoding = "UTF-8")
+```
+
+# Automatisation de la correspondance
+
+correspondance nom rue entre le fichier rue et celui de la sectorisation.
+
+on essaie d'automatiser la correspondance
+
+```{r}
+library(sf)
+rue <- st_read("../data/voirie.gpkg", "rue")
+# on doit avoir une lignestring par rue, donc on fusionne
+rue <- aggregate(rue ["name"], by = list(rue$name), length)
+names(rue)[1:2] <- c("nom", "nb")
+```
+
+
+test sur Henri Sellier
+
+```{r}
+sellier <- data [grep("Sellier", data$ecoles),]
+sellier
+sellier$rueCourte [sellier$rueCourte == "DU"] <- "BELLAY"
+sellier$rueCourte [sellier$rueCourte == "CHARLES"] <- "MAGNE"
+
+rueCourte <- unique(sellier$rueCourte)
+rueCourte
+
+#initialisation
+rue$rueCourte <-  NA
+# essai avec laaply, cela ne marche pas, pas de modif de la donnee rue
+creerCle <- function(motif){
+  ind <- grep(motif, toupper(rue$name))
+  rue$rueCourte [ind] <- motif
+}
+creerCle(rueCourte [1])
+rue$rueCourte
+# solution boucle
+for (i in 1:length(rueCourte)) {
+  ind <- grep(rueCourte [i], toupper(rue$nom))
+  rue$rueCourte [ind] <- rueCourte [i]
+}
+rue$rueCourte
+```
+
+TODO variable globale locale dans la fonction
+
+Remarque : la jointure se fera de 1 à plusieurs.
+
+```{r}
+res <- merge(rue, sellier, by = "rueCourte", all.y = T)
+str(res)
+res <- res [, c("rueCourte", "nom", "nb", "ecoles")]
+st_write(res, "../data/sectorisation.gpkg", "sellier", delete_layer = T)
+```
+
+
+Cela semble pas mal même s'il faudra travailler manuellement les rues en périmètres
+
+Essai d'extraire les chiffres
+
+
+```{r}
+gsub("[a-zA-Z]|é","",data$ecoles)
+ind <- grep ("[0-9]", data$ecoles)
+data$ecoles [ind]
+strsplit("n°",data$ecoles)
+eclate <- strsplit(data$ecoles, "n°")
+borne1 <- sapply(eclate, "[",2)
+borne2 <- sapply(eclate, "[", 3)
+eclate <- strsplit(borne1, " et c") 
+borne1f <- sapply(eclate, "[",1)
+
+```
+
