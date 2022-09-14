@@ -30,6 +30,8 @@ sur la notion  public / privé autour du cadastre.
 Etats, CT, bailleurs, Etablissement publics et instituionnales, autres (copro, personne morale non remarquable, personne physique et absence de donnée ou mutation en cours)
 
 
+Version du cadastre de juillet 2022
+
 ```{r}
 library(sf)
 library(mapsf)
@@ -50,7 +52,7 @@ objectif : faire une carte de flux.
 étape 1 : matrice de flux
 
 ```{r}
-section <- st_read(paste0(chemin,"03_SOCLE/cadastre.sqlite"), "geo_section")
+section <- st_read(paste0(chemin,"03_SOCLE/cadastre2022.sqlite"), "geo_section")
 section$dest <- c(section$tex [-1],"")
 st_write (section, "../data/cadastre.gpkg", "section", delete_layer = T)
 pts <- st_centroid(section)
@@ -72,7 +74,7 @@ dev.off()
 La variable *propriétaire* contient toutes les informations intéressantes
 
 ```{r, eval = F}
-cadastre <- st_read(paste0(chemin,"03_SOCLE/cadastre.sqlite"), "parcelle_info")
+cadastre <- st_read(paste0(chemin,"03_SOCLE/cadastre2022.sqlite"), "parcelle_info")
 chaine <- strsplit(cadastre$proprietaire, " - ")
 # récupération du 2e terme
 cadastre$nom <- sapply(chaine, "[",2)
@@ -85,7 +87,23 @@ agg$nom <- gsub("^\\s+|\\s+$", "", agg$nom)
 st_write(agg, "../data/cadastre.gpkg", "agg", delete_layer = T)
 ```
 
-Le cadastre  :  7028 parcelles pour 5476 propriétaires.
+repères : gros mouvement de concentration !
+
+```{r}
+repere <- read.table("../data/cadastre.csv", header =  T, row.names = 1, sep = ";", fileEncoding = "UTF-8")
+class(repere)
+knitr::kable(repere)
+repere <- as.matrix(repere)
+repere <- t(repere)
+repere
+plot(repere, xlim = c(6500, 7500), ylim = c(4000,7000))
+panel.smooth(c(0,repere [1,1],8000), c(0,repere [1,2],8000))
+panel.smooth(c(0,repere [2,1],8000), c(0,repere [2,2],8000), col.smooth =  "blue")
+lines(c(0,8000),c(0,8000))
+#○rapports
+repere [,1] / repere [,2]
+```
+
 
 
 # Personnes morales : propriétaire
@@ -94,8 +112,8 @@ Il existe un fichier proprietaire dans la base sqlite, qui permet d'avoir les ca
 utilisées dans Arcopole *personnes morales*
 
 ```{r}
-proprio <- st_read(paste0(chemin,"03_SOCLE/cadastre.sqlite"), "proprietaire")
-# 20 164 proprio pour 7000 parcelles... c'est 15 M  de trop
+proprio <- st_read(paste0(chemin,"03_SOCLE/cadastre2022.sqlite"), "proprietaire")
+str(proprio)
 head(proprio)
 # Le champs personne morale est ccogrm
 table(proprio$ccogrm, useNA = "always")
@@ -123,7 +141,7 @@ jointure <- merge(agg, proprio, by = "nom", all.x = T)
 st_write(jointure, "../data/cadastre.gpkg", "pmorale", delete_layer = T)
 ```
 
-5477 en jointure seulement.
+5470 en jointure seulement.
 
 
 
@@ -133,8 +151,11 @@ https://www.collectivites-locales.gouv.fr/sites/default/files/migration/ffs_2020
 
 
 ```{r}
-cat <- c("p. morales non remarquables", "Etat", "région", "département", "commune"
-         , "office HLM", "p. morales SEM", "copro", "associés", "Etablissements publics ou organismes associés")
+cat <- c("p. morales non remarquables", 
+         "Etat", "région", "département", "commune"
+         , "office HLM", "p. morales SEM", 
+         "copro", "associés", "Etablissements publics ou organismes associés")
+
 ```
 
 
@@ -225,9 +246,24 @@ table(data$categorie)
 table(data$categ2, data$categ1, useNA = "always")
 ```
 
-On a 297 non attribués qui sont des commerces (=personnes morales non remarquables ?), mais également des bailleurs, CT et Etats, Etablissements publics institutionnels
+On a 303 non attribués qui sont des commerces (=personnes morales non remarquables ?), mais également des bailleurs, CT et Etats, Etablissements publics institutionnels
 
 On va identifier tous ces acteurs, et les commerces seront désignés par défaut.
+
+
+```{r}
+st_write(data,"../data/cadastre.gpkg","pmorale", delete_layer=T)
+```
+
+
+Pouraller vite : bailleurs sociaux
+
+```{r}
+
+```
+
+
+
 
 
 ## Tables d'équivalence

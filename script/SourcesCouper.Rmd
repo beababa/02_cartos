@@ -1,5 +1,5 @@
 ---
-title: "couper fichiers divers réguliers"
+title: "couper fichiers divers réguliers et maj gpkg"
 author: "B. Maranget"
 date: "10/09/2021"
 output: 
@@ -24,6 +24,9 @@ knitr::opts_chunk$set(warning = FALSE)
 
 couper bd topo via R plutôt que Qgis
 ban
+maj gpkg avant transmission (limites)
+
+également jointure pour ban
 
 
 # Import
@@ -38,9 +41,10 @@ library(units)
 
 ```{r}
 chemin <- "C:/Users/bmaranget/Documents/01_ARCHIVE/01_03_SIG/01_03_03_Data/"
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 ```
 
-
+# BD TOPO
 
 ```{r}
 data <- st_read("../../03_Data/03_SOCLE/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D093_2021-06-15/BDTOPO/1_DONNEES_LIVRAISON_2021-06-00164/BDT_3-0_SHP_LAMB93_D093-ED2021-06-15/TRANSPORT/TRONCON_DE_ROUTE.shp", quiet = T)
@@ -62,5 +66,79 @@ data <- data [data$code_insee == "93010",]
 head(data)
 adresse <- st_as_sf(data, coords = c("x", "y"), crs = 2154)
 st_write(adresse, "../data/adresse.gpkg", "ban", delete_layer = T)
+```
+
+
+# Lecture fichier
+
+
+```{r}
+#readOGR(paste0(chemin, "logement.gpkg"))
+st_read(paste0(chemin, "limites.gpkg"))
+couche <- st_layers(paste0(chemin, "limites.gpkg"))
+couche
+tmp <- couche$name
+for (i in 1:length(tmp)){
+    objet <- st_read(paste0(chemin, "limites.gpkg"), tmp [i])
+    assign(tmp [i], objet)
+}
+length(couche)
+
+```
+
+les couches
+
+```{r}
+library(mapsf)
+mf_map(limites2154)
+st_write(limites2154, "../data/limitesSocle.gpkg", "bondy", delete_layer = T)
+mf_map(communesEPT)
+st_write(communesEPT, "../data/limitesSocle.gpkg", "communesEPT", delete_layer = T)
+mf_map(EPT)
+st_write(EPT, "../data/limitesSocle.gpkg", "EPTidf", delete_layer = T)
+mf_map(eptOK3)
+st_write(eptOK3, "../data/limitesSocle.gpkg", "EPT", delete_layer = T)
+mf_map(iris2)
+st_write(iris2, "../data/limitesSocle.gpkg", "iris", delete_layer = T)
+mf_map(quartiers)
+st_write(quartiers, "../data/limitesSocle.gpkg", "quartiers", delete_layer = T)
+```
+
+```{r}
+couche <- st_layers("../data/limitesSocle.gpkg")
+couche
+```
+
+
+# BAN
+
+Pour la sauvegarde des périmètres, le fichier a été exporté de qgis sans les géométries, et la jointure sur une couche filtrée plante (pb couche virtuelle), bref c'est plus simple de la faire avec R.
+
+```{r}
+ban <- st_read(paste0(chemin, "03_SOCLE/adresse.gpkg"), "bondy")
+st_layers(paste0(chemin, "03_SOCLE/adresse.gpkg"))
+adressesSel <- read.csv("../data/adresssesCorriges.csv")
+data <- merge(ban,adressesSel, by = "id")
+data <- data [, c("numero.x", "nom_voie.x", "garder")]
+mf_map(data)
+st_write(data, "../data/plui.gpkg", "perimetre", delete_layer = T)
+```
+
+# RPLS (voir aussi foncier)
+
+
+```{r}
+data <- read.csv2("../data/PM_19_B_930.txt")
+head(data)
+data <- data [data$Nom.Commune..Champ.géographique.== 'BONDY',]
+# jointure cadastre
+st_layers("../data/cadastre.gpkg")
+cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
+head(cadastre)
+# les zéros sont dans code avec des zéros
+grep("!^0+([[:digit:]]+)", cadastre$code )
+("^.0+", "", "A0008")
+table(cadastre$code)
+
 ```
 

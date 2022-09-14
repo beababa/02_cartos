@@ -1,0 +1,56 @@
+---
+title: "Habitat répertoire 2013"
+author: "B. Maranget"
+date: "05/08/2022"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Après numérisation du sommaire (cf pdfNumerisation script), modification du tableau.
+Dessin des secteurs
+
+
+
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+# on reprend variable HOME en fonction PC
+rep <- Sys.getenv("HOME")
+chemin <- paste0(rep,"/03_SIG/03_03_Data/")
+```
+
+
+# Chargement des fichiers
+
+```{r}
+data <- read.csv("../data/bailleurInventaireCorrige.csv")
+secteurs <- unique(data$secteurs)
+write.csv(secteurs, "../data/secteursHabitat")
+```
+
