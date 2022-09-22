@@ -43,6 +43,7 @@ library(mapsf)
 
 ```{r, eval = T}
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <- "G:/Mon Drive/05_DATA"
 ```
 
 
@@ -73,8 +74,12 @@ dev.off()
 
 La variable *propriétaire* contient toutes les informations intéressantes
 
+
+
+
 ```{r, eval = F}
-cadastre <- st_read(paste0(chemin,"03_SOCLE/cadastre2022.sqlite"), "parcelle_info")
+# attention chemin 03/SOCLE/cadastre2022.sqlite pour travail en mairie
+cadastre <- st_read(paste0(chemin,"/01_SOCLE/cadastre/cadastre2022.sqlite"), "parcelle_info")
 chaine <- strsplit(cadastre$proprietaire, " - ")
 # récupération du 2e terme
 cadastre$nom <- sapply(chaine, "[",2)
@@ -88,6 +93,8 @@ st_write(agg, "../data/cadastre.gpkg", "agg", delete_layer = T)
 ```
 
 repères : gros mouvement de concentration !
+
+7089 à 5469
 
 ```{r}
 repere <- read.table("../data/cadastre.csv", header =  T, row.names = 1, sep = ";", fileEncoding = "UTF-8")
@@ -112,17 +119,18 @@ Il existe un fichier proprietaire dans la base sqlite, qui permet d'avoir les ca
 utilisées dans Arcopole *personnes morales*
 
 ```{r}
-proprio <- st_read(paste0(chemin,"03_SOCLE/cadastre2022.sqlite"), "proprietaire")
+# voir remarque paragraphe précedente
+proprio <- st_read(paste0(chemin,"/01_SOCLE/cadastre/cadastre2022.sqlite"), "proprietaire")
 str(proprio)
 head(proprio)
 # Le champs personne morale est ccogrm
 table(proprio$ccogrm, useNA = "always")
 # Beaucoup de propriétaires non catégorisés.
 # Le nom du proprio est ddenom
-proprio <- proprio [, c("ddenom", "ccogrm")]
-names(proprio) <-c("nom", "categorie")
+proprio <- proprio [, c("ddenom", "ccogrm", "dsiren")]
+names(proprio) <-c("nom", "categorie", "dsiren")
 length(proprio$categorie[is.na(proprio$nom)])
-# les propriétaires sans nom ne sont pas catégorisés : il y en 18 653
+# les propriétaires sans nom ne sont pas catégorisés : il y en 18 653 / 20 333 en 2022
 proprio <- proprio [!is.na(proprio$nom),]
 table(is.na(proprio$nom))
 # tous les proprio ont un nom.
@@ -136,7 +144,7 @@ proprio$nom <- gsub("^\\s+|\\s+$", "", proprio$nom)
 table(proprio$categorie, useNA = "always")
 proprio$nom
 proprio [proprio$categorie == 9,]
-# 19307 proprios répertoriés
+# 19307 / 19468 proprios répertoriés
 jointure <- merge(agg, proprio, by = "nom", all.x = T)
 st_write(jointure, "../data/cadastre.gpkg", "pmorale", delete_layer = T)
 ```
@@ -398,6 +406,91 @@ jointure$nom [jointure$]
 
 ```{r}
 jointure$nom  [is.na(jointure$categ2)]
+
+```
+
+
+
+# Pour étude Gallieni Canal
+
+
+## Sélection des parcelles qui touchent le canal  et l'avenue Galliéni
+
+
+Parcelles qui touchent celles de la ville de Paris et avec Gallieni dans le nom
+
+
+```{r}
+str(cadastre)
+ind <- grep("GALLIENI", cadastre$adresse)
+paris <- grep("VILLE DE PARIS", cadastre$proprietaire)
+plot(cadastre$geom  [paris])
+parcelleParis <- cadastre [paris,]
+parcelleParis [,c("adresse", "nom")]
+```
+On supprime les parcelles non mitoyennes
+
+```{r}
+union <- st_union(parcelleParis)
+plot(union)
+union_cast <- st_as_sf(st_cast(union, "POLYGON"))
+library(units)
+union_cast$aire <- drop_units(st_area(union_cast))
+plot(union_cast [union_cast$aire > 25000,])
+union_cast$aire <- st_area(union_cast)
+canal <- st_convex_hull(st_union(union_cast [union_cast$aire > 25000,]))
+plot(canal)
+inter <- st_intersection(cadastre, canal)
+plot(inter$geom, add = T)
+plot(cadastre$geom[ind], col = "red", add = T)
+```
+
+
+Il nous manque des parcelles, on fait une enveloppe de l'existant pour intersecter
+
+
+```{r}
+gallieni <- st_as_sf(cadastre$geom [ind])
+zone <- st_union(gallieni, canal)
+plot(zone)
+# on force en polygone, puis on unie encore pour avoir la fusion. enfin l'enveloppe.
+test <-  st_cast(zone, "POLYGON")
+test2 <-  st_union(test)
+zone <- st_convex_hull(test2)
+st_write(zone, "../data/etude.gpkg", "zone", delete_layer = T)
+inter <- st_intersection(cadastre, zone)
+png("../img/zone.png")
+mf_init(inter)
+mf_map(inter)
+mf_map(cadastre, col = "antiquewhite", add = T)
+mf_map(zone, col = NA, border = "red", lwd = 3, add = T)
+mf_layout("zone d'étude axe Galliéni - Canal", credits = "cadastre, 2022 \n DGST / Mairie de Bondy")
+dev.off()
+```
+
+![](../img/zone.png)
+
+
+## Données
+
+
+```{r}
+str(inter)
+inter
+str(proprio)
+proprio [,c("nom", "dsiren", "categorie")]
+jointure <- merge(inter, proprio, by = "nom", all.x = T)
+table(jointure$categorie)
+jointure <- jointure [, c("code", "contenance", "adresse", "nom", "dsiren", "categorie")]
+inter$nom <- gsub('^\\s+|\\s+$', '',inter$nom)
+st_write(jointure, "../data/etude.gpkg", "cadastre2022Extrait", delete_layer = T)
+write.csv2(jointure [, c("code", "contenance", "adresse", "nom", "categorie", "dsiren"), drop = T], "../data/zoneParcelles.csv", fileEncoding = "UTF-8")
+# recherche de la notion de gérant
+```
+
+carto sur les entreprises
+
+```{r}
 
 ```
 
