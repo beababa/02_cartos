@@ -133,6 +133,39 @@ write.csv2(jointure [, c("code", "contenance", "adresse", "nom", "categorie", "d
 
 carto sur les entreprises
 
+On peut isoler les SCI
+
+```{r}
+data <- st_read("../data/etude.gpkg", "cadastre2022Extrait")
+str(data$categorie)
+data$categorie [grep("SCI", data$nom)] <- "SCI" 
+table(data$categorie)
+data$categorie [grep("M |MME", data$nom)] <- "Particuliers" 
+data$categorie [data$categorie == "7"] <- "Copropriétaires"
+```
+
+
+```{r}
+agg <-  aggregate(data, by = list(data$categorie), length)
+mf_init(agg)
+mf_map(cadastre, border = "antiquewhite2", add = T)
+mf_map(jointure, type = "typo", var = "nom", border= NA, add = T)
+table(agg$Group.1)
+agg <- agg [, c("Group.1")]
+names(agg) [1] <- "categorie"
+```
+
+
+décodage personne morale
+
+```{r}
+nom <- c("p.morale non remarquable", "région", "dpt", "commune", "Etat", "Bailleurs sociaux", "SCI", "Particuliers", "Copro")
+categorie <- c("0", "2", "3", "4", "5", "9","SCI", "Particuliers", "Copro")
+df <- data.frame(nom, categorie)
+jointure <- merge(agg, df, by = "categorie", all.y = T)
+jointure
+```
+
 
 
 ```{r}
