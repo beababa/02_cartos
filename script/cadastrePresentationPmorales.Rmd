@@ -270,7 +270,7 @@ ind3 <- grep("SCI|SOCIETE CIVILE IMMOBILIERE|SOCIETE CIVILE IMMOBILIERE|STE CIVI
 data$categ2 [ind3] <-  "SCI"
 data$categ2 [data$nom == "inconnu"]  <- "Absence de données ou mutation en cours"
 data$categ1 [data$nom == "inconnu"] <- "AUTRES"
-data$categ1 [c(ind1,ind2, ind3)] <- "PRIVES"
+data$categ1 [c(ind1,ind2, ind3)] <- "PRIVE"
 ```
 
 
@@ -285,11 +285,22 @@ st_write(data,"../data/cadastre.gpkg","pmorale", delete_layer=T)
 
 ```{r}
 data <- st_read("../data/cadastre.gpkg", "pmorale", quiet = T)
-EPI <- c("SNCF", "RATP", "EAUX")
+EPI <- c("SNCF", "RATP", "EAUX","ENEDIS"| "SYNDICAT MIXTE")
 chercher <- function(str) {grep(str, data$nom)}
 ind <- unlist(sapply(EPI, chercher))
 data$categ2 [ind] <- "Etablissements publics et institutionnels"
-data$categ1 [ind] <- "Public"
+data$categ1 [ind] <- "PUBLIC"
+```
+
+
+
+### Association
+
+
+```{r}
+ind <- grep("ASSOCIATION", data$nom)
+data$categ2 [ind] <- "Association"
+data$categ1 [ind] <- "AUTRES"
 ```
 
 
@@ -356,13 +367,22 @@ Problème sur l'OPH départemental, il existe mais on arrive pas à le trouver..
 ## Jointure
 
 ```{r}
-jointure <- merge (data, listeBailleurs, by = "nom", all.x = T)
+data <- merge (data, listeBailleurs, by = "nom", all.x = T)
+```
+
+### Déductions
+
+
+### Les plus gros 
+
+```{r}
+tab <- table(data$nb_parcelles)
+extr <- data [data$nb_parcelles > 1 & data$categorie == '0' & is.na(data$categ1),]
+write.csv(extr  [, c("nom" ), drop = T], "../data/grosProprio.csv", fileEncoding = "UTF-8")
 ```
 
 
-
-### Equipements commerciaux
-
+#### Equipements commercia
 
 Il faudrait exploiter plusieurs sources pour établir une liste des commerces :
 
@@ -372,10 +392,20 @@ Il faudrait exploiter plusieurs sources pour établir une liste des commerces :
 
 - liste du service commerce
 
+On essaie pourtant d'abord de déduire du tableau des categorie / categ des statuts. Ainsi, les NA qui sont 0 (autres personnes remarquables)
 
 
 
-# Comparaison *categorie* et *categ1*
+```{r}
+res <- (data [is.na(data$categ1)  & data$categorie == "0" ,])
+res
+
+
+```
+
+
+
+# Comparaison *categorie* et *categ2*
 
 
 Recoupage des informations avec la donnée cadastrale
@@ -384,14 +414,23 @@ Recoupage des informations avec la donnée cadastrale
 knitr::kable(table(data$categorie, data$categ1, useNA = "always"))
 ```
 
-2 bailleurs hors catégorie 5
+1 bailleurs hors catégorie 5
 
-On a récupéré tous les propriétaires particuliers qui n'étaient pas des personnes morales.
+On a récupéré tous les propriétaires particuliers qui n'étaient pas des personnes morales (NA et PRIVES)
 
 Il y seulement 4 propriétaires inclassables...
 
 ```{r}
+data
 data [is.na(data$categ1)&is.na(data$categorie),]
+data$categ2 [data$nom == "SDC LES PEUPLIERS 210"] <- "SCI"
+data$categ1 [data$nom == "SDC LES PEUPLIERS 210"] <- "PRIVE"
+data$categ2 [data$nom == "LA MAISON DE SOS FEMMES 93|BONDY SCIENCES"] <- "Association"
+data$categ1 [data$nom == "LA MAISON DE SOS FEMMES 93|BONDY SCIENCES"] <- "AUTRES"
+data$categ2 [data$nom == "L"] <- "Commerce"
+data$categ1 [data$nom == "L"] <- "AUTRES"
+data$categ2 [data$nom == "VEES/GLORIA"] <- "Commerce"
+data$categ1 [data$nom == "VEES/GLORIA"] <- "AUTRES"
 ```
 
 

@@ -409,4 +409,11 @@ jointure$nom  [is.na(jointure$categ2)]
 
 ```
 
+# Enregistrement
 
+```{r}
+table (jointure$categ2, jointure$categorie)
+st_write(jointure, "../data/cadastre.gpkg", "pmorale", delete_layer = T)
+```
+
+5583 enregistrement
