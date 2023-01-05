@@ -1,0 +1,23 @@
+Column1;Var1;Freq;categorie
+1;Action sociale;4;Action sociale
+2;Action sociale|Santé|Séniors;1;Action sociale
+3;Action sociale|Séniors;1;Action sociale
+19;Seniors;2;Action sociale
+4;Commerce;1;Commerce
+5;Culte;3;Culte
+6;Culture;6;Culture
+13;Etablissements scolaires;22;École
+7;Éducation;1;Éducation
+9;Enfance|Jeunesse;1;Éducation
+10;Enfance|Loisirs;13;Éducation
+14;Jeunesse;1;Éducation
+15;Jeunesse|Services municipaux;2;Éducation
+16;Petite enfance;9;Éducation
+11;Environnement;14;Environnement
+17;Propreté;1;Environnement
+18;Santé;6;Santé
+20;Services municipaux;6;Services municipaux
+21;Services non municipaux;3;Services municipaux
+8;Enfance|Équipement sportif|Jeunesse;1;Sport
+12;Equipements sportifs;12;Sport
+22;Sports;3;Sport
