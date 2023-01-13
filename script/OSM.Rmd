@@ -1,5 +1,5 @@
 ---
-title: "Commerces"
+title: "OSM"
 author: "B. Maranget"
 date: "05/08/2021"
 output: 
@@ -22,13 +22,14 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Analyse des exports overpass pour logiques taggages
+Analyse des exports overpass pour logiques taggages au niveau commerces et vélo
 
 
 # Librairies et répertoire
 
 ```{r}
 library(sf)
+library(mapsf)
 ```
 
 # Données
@@ -44,9 +45,43 @@ sort(tab)
 
 ```{r}
 public <- st_read("../../03_Data/01_OSM/buildingPublic.geojson",  quiet = F, stringsAsFactors = F)
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+```
+
+
+```{r}
 str(public)
 tab <- table(public$amenity)
 sort(tab)
+```
+
+
+rqt overpass
+“~cycleway~".*"  or bicycle=designated   or highway=cycleway in bondy”
+
+
+```{r}
+velo <- st_read("../data/velo.geojson",  quiet = F, stringsAsFactors = F)
+head(velo)
+mf_map(velo)
+table(velo$bicycle, velo$highway, useNA = "always")
+```
+
+
+On distingue voie verte et pistes à 2 sens, piste sens unique et le reste (CS cyclable et bande cyclable)
+
+bicycle = designated
+highway = cycleway
+tous les autres...
+
+
+
+
+```{r}
+velo <- velo [, c("bicycle", "highway", "name", "cycleway")]
+velo$symbologie <- "autres voies (CS cyclable et bande cyclable)"
+velo$symbologie [velo$bicycle == "designated"] <- "voie verte (Canal de l'Ourcq) et piste double sens"
+velo$symbologie [highway= "cycleway"] <- "piste une voie"
 ```
 
 

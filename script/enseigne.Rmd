@@ -1,7 +1,7 @@
 ---
-title: "Commerces"
+title: "Dnseigne"
 author: "B. Maranget"
-date: "02/08/2021"
+date: "19/12/2022"
 output: 
   html_document: 
     number_sections: yes
@@ -22,13 +22,15 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Recodage commerces pour établir cartographie plus simple
+Cartographie du fichier des enseignes de Karina Arslane, à partir de son export
+
 
 
 # Librairies et répertoire
 
 ```{r}
 library(sf)
+library(mapsf)
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 ```
 
@@ -38,26 +40,63 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 
 
 ```{r}
-commerce <- st_read("../data/commerces.gpkg","commerces",  quiet = F, stringsAsFactors = F)
-tab <- table(commerce$Activité)
-categ <- c("alimentation", "loisir", "médical", "service")
-write.csv(tab, "../data/categorie.csv")
+enseigne <- read.csv2("../data/enseigne.csv", dec =",",fileEncoding = "UTF-8")
+#spatialisation du fichier
+enseignesf <- st_as_sf(enseigne, coords = c("Lon", "Lat"), crs = 4326, agr = "constant")
+enseigne2154 <- st_transform(enseignesf, st_crs = 2154)
+st_write(enseigne4326,"../data/enseigne.gpkg", "enseigne", fileEncoding = "UTF-8", delete_layer = T)
+```
+
+
+
+Nettoyage
+
+Quelques points en dehors de Bondy
+
+
+fond : limites admistratives IDF
+
+```{r}
+st_layers(paste0(chemin,"03_SOCLE/limites.gpkg"))
+fond <- st_read(paste0(chemin,"03_SOCLE/limites.gpkg"), "autourBondy")
+fond4326 <- st_transform(fond, crs  = 4326)
+bondy <- st_read(paste0(chemin,"03_SOCLE/limites.gpkg"), "limites4326")
+```
+
+
+
+```{r}
+horsBondy <- enseignesf [enseignesf$Ville != "BONDY",]
+mf_map(horsBondy)
+mf_label(horsBondy, var = "Ville")
+table(horsBondy$Ville)
+png("../img/enseigneHorsBondy.png")
+mf_map(fond4326, border = "Antiquewhite2", lwd = 2, col = "Antiquewhite1")
+mf_map(bondy, col = "red", add = T)
+mf_map(horsBondy [horsBondy$Ville != "LA VALETTE DU VAR",], add = T)
+#mf_label(horsBondy, var = "Ville", halo = T)
+mf_label(horsBondy, var = "Nom", halo = T, overlap = F, lines = T )
+mf_layout("Enseignes hors Bondy (13)", credits = "sources : OSM & fichier Enseignes", scale = F)
+dev.off()
 ```
 
 
 ```{r}
-categ <- read.csv2("../data/categorie_classe.csv")
-jointure <-  merge(commerce, categ, by.x = "Activité", by.y= "Var1")
-st_write(jointure [, c("Activité", "categorie", "Freq", "N.", "rue", "Enseigne")], "../data/commerces.gpkg", "jointure", delete_layer = TRUE, quiet = TRUE)
-names(jointure)
+enseigne <- enseignesf [enseignesf$Ville == "BONDY",]
+png("../img/enseigneBondy.png")
+mf_init(bondy)
+mf_map(fond4326, border = "Antiquewhite2", lwd = 2, col = "Antiquewhite1", add = T)
+mf_map(enseigne, add = T)
+mf_layout("Enseignes à Bondy (98)", credits = "sources : OSM & fichier Enseignes", scale = F)
+dev.off()
 ```
 
-# Cartographie
 
 
-On fait une carte typologique par catégorie d'enseigne.
+Sauvegarde
 
 ```{r}
+
 
 ```
 
