@@ -44,7 +44,8 @@ chemin <- "G:/Mon Drive/05_DATA/"
 
 
 ```{r}
-data <- read.csv2(paste0(chemin,"02_URBA/PM_21_NB_930.txt"), fileEncoding = "latin3")
+#02_URBA pour le drive 06 pour pc mairie
+data <- read.csv2(paste0(chemin,"06_URBA/PM_21_NB_930.txt"), fileEncoding = "latin3")
 data <- data [ data$Nom.Commune..Champ.géographique.== "BONDY",    ]
 str(data)
 st_layers("../data/cadastre.gpkg") 

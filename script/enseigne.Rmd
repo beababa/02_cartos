@@ -23,6 +23,10 @@ knitr::opts_chunk$set(warning = FALSE)
 # Objet
 
 Cartographie du fichier des enseignes de Karina Arslane, à partir de son export
+Constitution du .gpkg
+
+Compléments : fichier pmorale, distinction privé / public
+
 
 
 
@@ -43,8 +47,8 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 enseigne <- read.csv2("../data/enseigne.csv", dec =",",fileEncoding = "UTF-8")
 #spatialisation du fichier
 enseignesf <- st_as_sf(enseigne, coords = c("Lon", "Lat"), crs = 4326, agr = "constant")
-enseigne2154 <- st_transform(enseignesf, st_crs = 2154)
-st_write(enseigne4326,"../data/enseigne.gpkg", "enseigne", fileEncoding = "UTF-8", delete_layer = T)
+enseigne2154 <- st_transform(enseignesf,  2154)
+st_write(enseigne2154,"../data/enseigne.gpkg", "enseigne", fileEncoding = "UTF-8", delete_layer = T)
 ```
 
 
@@ -59,19 +63,19 @@ fond : limites admistratives IDF
 ```{r}
 st_layers(paste0(chemin,"03_SOCLE/limites.gpkg"))
 fond <- st_read(paste0(chemin,"03_SOCLE/limites.gpkg"), "autourBondy")
-fond4326 <- st_transform(fond, crs  = 4326)
-bondy <- st_read(paste0(chemin,"03_SOCLE/limites.gpkg"), "limites4326")
+bondy <- st_read(paste0(chemin,"03_SOCLE/limites.gpkg"), "limites2154")
 ```
 
 
 
 ```{r}
-horsBondy <- enseignesf [enseignesf$Ville != "BONDY",]
+enseigne <- st_read("../data/enseigne.gpkg", "enseigne")
+horsBondy <- enseigne [enseigne$Ville != "BONDY",]
 mf_map(horsBondy)
 mf_label(horsBondy, var = "Ville")
 table(horsBondy$Ville)
 png("../img/enseigneHorsBondy.png")
-mf_map(fond4326, border = "Antiquewhite2", lwd = 2, col = "Antiquewhite1")
+mf_map(fond, border = "Antiquewhite2", lwd = 2, col = "Antiquewhite1")
 mf_map(bondy, col = "red", add = T)
 mf_map(horsBondy [horsBondy$Ville != "LA VALETTE DU VAR",], add = T)
 #mf_label(horsBondy, var = "Ville", halo = T)
@@ -81,23 +85,21 @@ dev.off()
 ```
 
 
+![](../img/enseigneHorsBondy.png)
+
+
 ```{r}
-enseigne <- enseignesf [enseignesf$Ville == "BONDY",]
+enseigne <- st_read("../data/enseigne.gpkg", "enseigne")
+enseigne <- enseigne [enseigne$Ville == "BONDY",]
 png("../img/enseigneBondy.png")
 mf_init(bondy)
-mf_map(fond4326, border = "Antiquewhite2", lwd = 2, col = "Antiquewhite1", add = T)
+mf_map(fond, border = "Antiquewhite2", lwd = 2, col = "Antiquewhite1", add = T)
 mf_map(enseigne, add = T)
 mf_layout("Enseignes à Bondy (98)", credits = "sources : OSM & fichier Enseignes", scale = F)
 dev.off()
 ```
 
+![](../img/enseigneBondy.png)
 
-
-Sauvegarde
-
-```{r}
-
-
-```
 
 
