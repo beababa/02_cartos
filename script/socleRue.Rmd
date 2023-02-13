@@ -66,7 +66,21 @@ explode <- strsplit(rue$NOM_1_G, " ")
 rue$NATURE <- sapply(explode, "[",1)
 table(rue$NATURE)
 agg <- aggregate(rue$Longueur, by = list(rue$NATURE), sum )
-agg
+# extraction type rue / isolement
+motif <- agg$Group.1
+ch <- as.character(seq(1,17))
+motif <- motif [!(motif %in% ch)]
+motif <- motif [!motif%in% c("Sans", "D78")]
+motif
+motif <- paste0(motif, " |")
+motif [motif == "VLA |"] <- "VLA "
+motif <- paste(motif, collapse = "")
+
+nchar(motif)
+motif
+rue$NOM <- gsub(motif, "", rue$NOM_1_G)
+str(rue)
+
 ```
 
 
@@ -74,50 +88,8 @@ agg
 
 
 ```{r}
-liste <- rue [, c("NOM_1_G", "IMPORTANCE", "Longueur", "NATURE"), drop = T]
+liste <- rue [, c("NOM",  "Longueur", "NATURE"), drop = T]
 write.csv(liste [order (liste$"NOM_1_G" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
 ```
 
-
-# Zonage batiments et parcelle
-
-
-On discrétise à l'identique batiment (osm) et (parcelles p morales)
-
-en fait, on sélectionne bat et parcelle par rapport au point
-
-```{r}
-building <- location %>%
-   add_osm_feature(key = "building") %>%
-   osmdata_sf()
-```
-
-
-```{r}
-str(building$osm_polygons)
-inter <- st_intersection( building$osm_polygons [, c("name", "osm_id")], poi)
-# l'intersection renvoie un point et non pas un polygone dont je n'arrive pas à me débarasser...
-noms <- names (inter)
-inter <- st_drop_geometry(inter)
-class(inter)
-jointure <- merge (inter, building$osm_polygons [, "osm_id"] , by = "osm_id")
-jointure <- st_as_sf(jointure)
-st_write(jointure, "../data/poi.gpkg", "building", delete_layer = T)
-class(jointure)
-```
-
-
-```{r}
-st_layers("../data/cadastre.gpkg")
-cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
-cadastre <- st_transform(cadastre, 4326)
-inter <- st_intersection(cadastre, poi)
-inter <- st_drop_geometry(inter)
-str(inter)
-inter$geo_parcelle
-str(cadastre)
-cadastre$geo_parcelle
-jointure <- merge(cadastre [, c("adresse", "geo_parcelle")], inter, by = "geo_parcelle")
-st_write(jointure, "../data/poi.gpkg", "parcelle")
-```
 
