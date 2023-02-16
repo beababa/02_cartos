@@ -47,10 +47,21 @@ chemin <- "G:/Mon Drive/05_DATA/"
 
 # Données
 
+plusieurs fichiers rue car pb enregistrement gpkg dans qgis
+
+la bonne couche pour les rues sera toujours rue.gpkg rueCadastre
+
+la couche de départ peut être rue2023, rue2023c, rue cadastre
+
+le travail est effectué dans R et dans Qgis : difficulté d'un traitement reproductible,
+
+Dans Qgis, le tracé des rues est retouché pour qu'elle soient non cadastrées (notamment les rues longues)
+
+on finit par repartir de la couche finale rue.gpkg rueCadastre
 
 ```{r}
 #02_URBA pour le drive 06 pour pc mairie
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023")
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
 st_layers("../data/cadastre.gpkg") 
 cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
 pmorale <- st_read("../data/cadastre.gpkg", "pmoraleOpendata")
@@ -59,6 +70,8 @@ pmorale <- st_read("../data/cadastre.gpkg", "pmoraleOpendata")
 
 # Traitement
 
+Intersection rue et cadastre pour récupérer les rues non cadastrées
+On récupère en fait le nb d'intersection que l'on rend booléen
 
 ```{r}
 inter <- st_intersection(rue, cadastre)
@@ -70,21 +83,23 @@ table(rue$inter)
 # longueur rue non cadastré
 rueNonCadastre <- rue [rue$inter == 0,]
 sum(st_length(rueNonCadastre))
+# on met à jour le champs longueur également
+rue$Longueur <- st_length(rue)
 ```
 
-53 km de voirie non cadastrée.
+57 km de voirie non cadastrée.
 
 ```{r}
 rueCadastre <- rue [rue$inter != 0,]
 sum(st_length(rueCadastre))
 ```
 
-40 km de voirie cadastrée
+36 km de voirie cadastrée
 
 
 ```{r}
 table(rue$inter)
-rue$cadastre <- ifelse(rue$inter > 0, "non", "oui") 
+rue$cadastre <- ifelse(rue$inter == 0, "non", "oui") 
 tab  <- aggregate(st_length(rue), by = list(rue$cadastre), sum)
 st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
 ```
@@ -100,10 +115,44 @@ str(rue)
 ```
 
 
+Rectification à la main pour les rues cadastrées ou non
+
+```{r}
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
+# Ecrasement du fichier d'origine
+st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
+```
+
+Diff usage et logique (cadastré ou non)
+
+
+Récup de l'usage à partir de la delib de 2019 (sous Qgis)
+On essaie ensuite de trouver les incohérences : rues d'usage privées non cadastrées
+
+```{r}
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
+rue$incoherence [rue$cadastre == "non"& rue$usage == "privé"] <- "incohérence"
+table(rue$incoherence)
+sort(rue$NOM_1_G [rue$incoherence == "incohérence"])
+st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
+```
+
+export liste
+
+
+```{r}
+str(rue)
+write.csv(rue [ , c("NATURE", "NOM","Longueur", "NOMnumero", "cadastre", "usage", "incoherence"), drop = TRUE], "../data/ruePriveNonCadastre.csv",  fileEncoding = "UTF-8")
+```
+
+
 
 
 
 # Cartographie
+
+
+rue cadastrée / non cadastrée
 
 ```{r}
 png("../img/inter.png", width = 1000, height = 1200, res = 120)
@@ -139,37 +188,17 @@ dev.off()
 
 ![](../img/inter.png)
 
-## Jointure
+rue incohérente
+
 
 ```{r}
-jointure <- merge (cadastre, data, by = "code")
-table(jointure$Forme.juridique.abrégée..Propriétaire.s..parcelle, jointure$Groupe.personne..Propriétaire.s..parcelle.)
-mf_map(jointure, type = "typo", var = "Forme.juridique.abrégée..Propriétaire.s..parcelle.")
-mf_layout("Personnes morales", "sources : cadastre & personnes morales")
-```
-
-
-Recodage 
-
-```{r}
-write.csv(unique(jointure [,c("Forme.juridique.abrégée..Propriétaire.s..parcelle."), drop = T]), "../data/pmorale.csv", fileEncoding = "UTF-8")
-recodage <- read.csv("../data/pmoraleRecode.csv", fileEncoding = "UTF-8")
-data <- merge(jointure, recodage, by.x = "Forme.juridique.abrégée..Propriétaire.s..parcelle.", by.y = "code")
-mf_init(data)
+png("../img/incoherence.png", width = 1000, height = 1200, res = 120)
+mf_init(rue [rue$incoherence == "incohérence",])
 mf_map(cadastre, col = "antiquewhite2", border = "antiquewhite1", add = T)
-mf_map(data, type = "typo", var = "recodage", border = NA, add = T)
-mf_layout("Personnes morales", "sources : cadastre & personnes morales")
+mf_map(rue , type = "typo" , var = "incoherence", pal = c("darkorange1", "darkolivegreen2"), leg_pos = NA, add = T)
+mf_label(rue [rue$incoherence == "incohérence",], var = "NOM")
+# Add map layout
+mf_layout("Voirie non cadastrée et pourtant privée", "sources : cadastre 2022 & rues")
+dev.off()
 ```
-
-
-
-Enregistrement de données
-
-
-```{r}
-st_write(data, "../data/cadastre.gpkg", "pmoraleOpendata", fileEncoding = T, delete_layer = T)
-```
-
-
-
 
