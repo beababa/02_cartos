@@ -29,6 +29,9 @@ maj gpkg avant transmission (limites)
 également jointure pour ban
 
 
+également intersection rues secteurs (17/01/2023)
+
+
 # Import
 
 ```{r}
@@ -140,5 +143,86 @@ grep("!^0+([[:digit:]]+)", cadastre$code )
 ("^.0+", "", "A0008")
 table(cadastre$code)
 
+```
+
+
+# rue / secteur petite enfance
+
+
+```{r}
+st_layers(paste0(chemin, "03_SOCLE/rue.gpkg"))
+data <- st_read(paste0(chemin, "03_SOCLE/rue.gpkg"), "rue2023c")
+st_layers(paste0(chemin, "03_SOCLE/limites.gpkg"))
+secteur <- st_read(paste0(chemin, "03_SOCLE/limites.gpkg"), "secteurpetiteenfanceb")
+inter <- st_intersection(data [, c("NATURE", "NOM_1_G", "Longueur")], secteur)
+inter$longueurSecteur <- round(st_length(inter),0)
+inter$longueurSecteur <-  drop_units(inter$longueurSecteur)
+# si la longueur de la rue est identique à celle du secteur, on garde
+inter$comparaison <- ifelse(inter$longueurSecteur == inter$Longueur, "dans le secteur", "à vérifier")
+secteur
+mf_map(secteur)
+mf_map( inter[inter$longueurSecteur < 10,], col = "red", add = T)
+mf_label(secteur, var = "creche", halo = 1, col = "purple")
+mf_label(inter [inter$longueurSecteur < 10,], var = "NOM_1_G", overlap = F, lines = T)
+mf_layout("Rues de moins de 10 m dans secteur", credits = "OSM & IGN")
+
+mf_map( inter[inter$longueurSecteur < 10 & inter$comparaison == "à vérifier",], col = "red")
+mf_label(inter [inter$longueurSecteur < 10 & inter$comparaison == "à vérifier",], var = "NOM_1_G")
+
+mf_layout("Rues de moins de 10 m dans secteur à vérifier", credits = "OSM & IGN")
+```
+
+## Maj fichiers
+
+```{r}
+inter[inter$longueurSecteur < 10,]
+inter [grep("ROUSSEAU", inter$NOM_1_G),]
+inter[!rownames(inter)%in% c(378:381),]
+head(inter)
+test <- inter[!rownames(inter)%in% c(378:381),]
+test [grep("ROUSSEAU", test$NOM_1_G),]
+inter <- test
+inter [grep("MARGU", inter$NOM_1_G),]
+test <- inter[!rownames(inter)%in% c(80.1),]
+test [grep("MARGU", test$NOM_1_G),]
+inter <- test
+inter [grep("POTTIER", inter$NOM_1_G),]
+# on garde POTTIER
+inter [grep("R DES ECOLES", inter$NOM_1_G),]
+test <- inter[!rownames(inter)%in% c(79.1),]
+```
+
+Une mise à jour sous Qgis est sans doute plus rapide.
+
+Comment faire pour éviter les coupures aux frontières de Bondy ? (allée Potier, Rue st Louis, R. ST Louis)
+
+Faut-il retracer les zones ?
+
+```{r}
+st_write(inter, "../data/rue.gpkg", "ruePetiteEnfance")
+inter <- st_read("../data/rue.gpkg", "ruePetiteEnfanceModifie")
+inter <- inter [inter$comparaison!="à supprimer",]
+write.csv(inter [, c("NATURE", "NOM_1_G", "creche"), drop = TRUE], "../data/secteurPetiteEnfance.csv", fileEncoding = "UTF-8")
+```
+
+386 rues
+
+## Insertion de la grille
+
+
+```{r}
+grille <- st_read(paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille")
+interGrille <- st_intersection(inter, grille)
+write.csv(interGrille [, c("NATURE", "NOM_1_G", "case", "creche"), drop = TRUE], "../data/secteurPetiteEnfanceGrille.csv", fileEncoding = "UTF-8")
+```
+
+
+
+
+```{r}
+verif <-  inter [inter$comparaison == "à vérifier",]
+inter
+mf_label(inter [inter$longueurSecteur < 10 & inter$comparaison == "à vérifier",], var = "NOM_1_G")
+write.csv(inter [, c("NATURE", "NOM_1_G", "Longueur", "longueurSecteur", "creche", "comparaison"), drop=T],   "../data/ruePetiteEnfance.csv", fileEncoding = "UTF-8")
 ```
 

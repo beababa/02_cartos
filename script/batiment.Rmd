@@ -232,6 +232,8 @@ Faire une grille (A:F et 1:4) pour les adressages (carreaux de 500m)
 
 
 ```{r}
+poi <- st_read(paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi3")
+str(poi)
 grille <- st_make_grid(st_buffer(poi,500),  n= c(4,6) )
 grille <- st_as_sf(grille)
 mf_map(grille)
@@ -249,8 +251,7 @@ st_write(grille, paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille", delete_layer =
 
 
 ```{r}
-rues <- st_read(paste0(chemin,"08_VOIRIE/voirie.gpkg"), "couche_regroupe")
-rues <- st_transform(rues, 4326)
+rues <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023c")
 inter <- st_intersection(rues, grille)
 mf_map(grille)
 mf_map(poi, add = T)

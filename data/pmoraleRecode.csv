@@ -1,19 +1,19 @@
-"num","code","recodage"
-"1","SCI","privé"
-"2","EPA","public"
-"3","ETAT","public"
-"4","SA","privé"
-"5",,"privé"
-"6","COM","public"
-"7","DEPT","public"
-"8","EPIC","public"
-"9","ASS","public"
-"10","SC","public"
-"11","SAS","privé"
-"12","SARL","privé"
-"13","SIVU","public"
-"14","SNC","privé"
-"15","SIVO","public"
-"16","SEM","privé"
-"17","COLL","public"
-"18","SCPI","privé"
+﻿num;code;recodage;codeComplet
+1;SCI;privé;SCI
+2;EPA;public;Etablissement Public Administratif
+3;ETAT;public;ETAT
+4;SA;privé;SA
+5;;privé;
+6;COM;public;Commune
+7;DEPT;public;Départemetn
+8;EPIC;public;Etablissement Public Industriel ou Commercial
+9;ASS;public;Association
+10;SC;privé;Société Civile
+11;SAS;privé;SA simplifiée
+12;SARL;privé;SARL
+13;SIVU;public;SIVU
+14;SNC;privé;SNC
+15;SIVO;public;Syndicat Intercommunal
+16;SEM;public;SEM
+17;COLL;public;Collectivité
+18;SCPI;privé;SCPI

@@ -1,0 +1,95 @@
+---
+title: "rue base référentiel"
+author: "B. Maranget"
+date: "6/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Fichier rue, constitution grille et liste des rues dans graticules
+
+Egalement liste des rues dans delib
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(osmdata)
+library(tidyverse)
+```
+
+
+chemins
+
+```{r}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+```
+
+
+données
+
+```{r}
+st_layers(paste0(chemin, "03_SOCLE/rue.gpkg"))
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023c")
+str(rue)
+# maj longueur
+rue$Longueur <- round(st_length(rue$geom),0)
+sum(rue$Longueur)
+
+# verif doublon
+tab <- table(rue$NOM_1_G)
+tab [tab >1]
+# remplacementNONNumero
+num <- as.character(seq(1,17))
+rue$NOM_1_G [rue$NOM_1_G %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
+rue[!is.na(rue$NOMnumero),]
+# extraction type rue
+explode <- strsplit(rue$NOM_1_G, " ")
+rue$NATURE <- sapply(explode, "[",1)
+table(rue$NATURE)
+agg <- aggregate(rue$Longueur, by = list(rue$NATURE), sum )
+# extraction type rue / isolement
+motif <- agg$Group.1
+ch <- as.character(seq(1,17))
+motif <- motif [!(motif %in% ch)]
+motif <- motif [!motif%in% c("Sans", "D78")]
+motif
+motif <- paste0(motif, " |")
+motif [motif == "VLA |"] <- "VLA "
+motif <- paste(motif, collapse = "")
+
+nchar(motif)
+motif
+rue$NOM <- gsub(motif, "", rue$NOM_1_G)
+str(rue)
+
+```
+
+
+# Liste
+
+
+```{r}
+liste <- rue [, c("NOM",  "Longueur", "NATURE"), drop = T]
+write.csv(liste [order (liste$"NOM_1_G" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+```
+
+

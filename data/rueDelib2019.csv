@@ -1,0 +1,859 @@
+﻿Nbre;Intitulé;Noms;Commençant;Finissant;Classement;Voies;"Longueur en mètres
+environ";verif;;;
+70;Allée;Condorcet;Avenue Marie Curie;en impasse;01.07.2002;"V. P
+Appolonia";67;ok;;;
+207;Allée;Louise Michel;Avenue Marie Curie;en Impasse;01.07.2002;"V. P
+Appolonia";73;ok;;;
+208;Allée;Louise Weiss;Rue Edouard Vaillant;"Allée Louise
+Michel";01.07.2002;"V. P
+Appolonia";51;ok;;;
+281;Allée ;Poque;Avenue des Sciences;en Impasse;;V. P;103;ok;;;
+132;Place;Gauguin Paul;Rue Edouard Vaillant;sur une place;;V. P;32 m²;?;;;
+23;Rue;Baudelaire;"Avenue du
+Quatorze Juillet";"Rue François
+Villon";;"V. P
+( 3F )";108;ok;;;
+46;Rue;Caraque;Rue des Escholiers;"Avenue Léon
+Jouhaux";;"V. P
+( 3F )";150;supprimé;;;
+144;Rue;Grandgousier;Rue Caraque;Rue Caraque;;"V. P
+( 3F )";90;supprimé;;;
+308;Rue;Rol Tanguy;Rue Paul Renaud;"Rue Lucie
+Aubrac";;V.P;150;ok;;;
+309;Rue;Ronsard;Rue François Villon;"Avenue du
+Quatorze Juillet";;V. P;180;ok;;;
+274;Rue ;Picrochole;Avenue Léon Jouhaux;"Rue du Fer
+à Cheval";;"V. P
+( 3F )";100;supprimé;;;
+86;Rue du;"Domaine de
+Groslay";Chemin de Groslay;en Impasse;;V. P;37;?;;;
+224;Sente;Marie Laurencin;Rue Marguerite Duras;en Impasse;;V. P;60 m;ok;;;
+3;Square  ;Alcacer Do Sol;Rue René Dumont;"Sente Pierre
+Bourdieu";;V.P ;2130 m²;?;;;
+263;Allée          de la ;"Passe aux
+Daims";Rue Picrochole;"Rue du Fer
+à Cheval";;"V. P
+( 3F )";50;détruite;;;
+6;Allée;"Alexandre
+Marthe";"Rue Louis Auguste
+Blanqui";en Impasse;;V. P;118;ok;;;
+60;Allée;Charles Magne;Allée Corneille;Allée Boileau;;V. P;198;ok;;;
+164;Allée;"Dominique
+Ingres";Allée Manet;Allée Goya;;V. P;23;ok;;;
+105;Allée;"Eugéne
+Delacroix";Rue Raphaël;Allée Watteau;;V. P;45;ok;;;
+126;Allée;Gabrielle;Rue Edouard Vaillant;"Rue Edouard
+Vaillant";01.07.2002;"V. P
+Windsor";245;ok;;;
+170;Allée;Jean Courtade;"Avenue de la
+République";en Impasse;;V. P;87;ok;;;
+181;Allée;Joachim du Bellay;Allée Charles Magne;en Impasse;;V. P;74;ok;;;
+211;Allée;Manet Edouard;Rue Edouard Vaillant;en Impasse;;V. P;70;ok;;;
+222;Allée;Maria Deraimes;"Avenue  Geneviève
+Anthonioz de Gaulle";Allée Gabrielle;01.07.2002;"V. P
+Windsor";99;ok;;;
+226;Allée;Maryse Bastie ;"Avenue Geneviève
+Anthonioz de Gaulle";Allée Gabrielle;01.07.2002;"VP
+Windsor";87;ok;;;
+241;Allée;"Mignard
+(Nicolas )";Allée Millet;en Impasse;;V. P;22;ok;;;
+293;Allée;"Raffaéllo
+Raphael";Rue Edouard Vaillant;Place Gaugin;;V.P;40;ok;;;
+348;Allée;Victor Hugo;Avenue Marie Curie;en Impasse;01.07.2002;"V. P
+Appolonia";91;ok;;;
+359;Allée;"Watteau
+Antoine";Rue Edouard Vaillant;en Impasse;;V. P;85;ok;;;
+59;Allée ;"Charles
+Gounod";Rue de la Liberté;en Impasse;;V. P;93;ok;;;
+66;Allée ;"Claude
+Debussy";Rue Edouard Vaillant;en Impasse;;V. P;84;ok;;;
+124;Allée ;Gabriel Fauré;Rue de la Liberté;en Impasse;;V. P;135;ok;;;
+143;Allée ;Goya Francisco;Place Gaugin;en Impasse;;V. P;30;ok;;;
+152;Allée ;Hector Berlioz;Rue de la Liberté;en Impasse;;V. P;135;ok;;;
+242;Allée ;"Millet
+(Jean Francois )";Place Gaugin;en Impasse;;V. P;81;ok;;;
+123;Allée de ;Furci;"Rue Louis
+Auguste
+Blanqui";Rue Bordier;;"V. P
+Bondy
+Habitat";80;ok;;;
+76;Allée des;Dahlias;Route d’Aulnay;en Impasse;;V. P;126;ok;;;
+96;Allée des;Erables;Allée Surcouf;"Allée des
+Sycomores";;V. P;252;ok;;;
+115;Allée des;Fougères;Rue Henri Mouly;En Impasse;;V. P;78;ok;;;
+122;Allée des;Frênes;Rue du Verger;en Impasse;;V. P;100;ok;;;
+141;Allée des;Glaieuls;Rue François Martin;en Impasse;;V. P;74;ok;;;
+142;Allée des;Glycines;Rue François Martin;en Impasse;;V. P;75;ok;;;
+165;Allée des;Iris;Allée des Anémones;"Place des
+Fleurs";;V. P;75;ok;;;
+192;Allée des;Lauriers;Rue François Martin;"Rue Henri
+Mouly";;V. P;58;ok;;;
+259;Allée des;Paquerettes;Avenue Pasteur;"Allée des
+Paquerettes";;V. P;110;ok;;;
+270;Allée des;Pensées;Allée des Paquerettes;"Allée des
+Orchidées";;V. P ;70;ok;;;
+301;Allée des;Renoncules;"Avenue Henri
+Barbusse";"Place des
+Fleurs";;"V. P
+SCIC";190;ok;;;
+310;Allée des;Roses;Rue François Martin;en Impasse;;V. P;74;ok;;;
+328;Allée des;Sorbiers;Rue du Verger;en Impasse;;V. P;135;ok;;;
+13;Allée des ;Anémones;Avenue Pasteur;en Impasse;;"V.P
+ICADE
+PATRIMOINE";130;ok;;;
+22;Allée des ;Azalées;"Rue François
+Martin";en Impasse;;V. P;37;ok;;;
+40;Allée des ;Bouleaux;Allée Surcouf;en Impasse;;V. P;60;ok;;;
+161;Allée des ;Hortensias;Rue François Martin;en Impasse;;V. P;74;ok;;;
+201;Allée des ;Lilas;Avenue Pasteur;"Place des
+Fleurs";;"V. P
+SCIC";90;ok;;;
+254;Allée des ;Orchidées;Avenue Pasteur;"Avenue du
+Maréchal de
+Lattre de
+Tassigny";;V. P;200;ok;;;
+285;Allée des ;Primevères;"Avenue Henri
+Barbusse";"Place des
+Fleurs";;"V. P
+SCIC";340;ok;;;
+333;Allée des ;Sycomores;Rond Point du Verger;"Allée des
+Erables";;V. P;170;ok;;;
+342;Allée des ;Tulipes;Rue François Martin;"Rue Henri
+Mouly";;V. P;58;ok;;;
+82;"Allée
+de la";Devinière;Rue du Fer à Cheval;Rue Picrochole;;V. P ;100;ok;;;
+107;"Allée
+de la";Fauvette;Rue Edouard Vaillant;en Impasse;;V. P;172;ok;;;
+134;Avenue;"Geneviève Anthonioz
+de Gaulle";Avenue des Sciences;"Rue Edouard
+Vaillant";01.07.2002;"V. P
+Windsor
+Appolonia";360;ok;;;
+196;Avenue;Léon Jouhaux;Rond Point Léon Blum;"Rue du Fer
+à Cheval";20.01.1961;V. P;382;ok;;;
+223;Avenue;Marie Curie;Rue Edouard Vaillant;"Avenue
+Geneviève
+Anthonioz
+de Gaulle";01.07.2002;"V. P
+Appolonia";162;ok;;;
+150;Impasse;Haydn;Allée Louise Weiss;en Impasse;01.07.2002;"V. P
+Appolonia";33;ok;;;
+261;Impasse de la ;Parisienne;"Avenue de la
+Parisienne";en Impasse;;V. P;70;ok;;;
+327;"Impasse
+de la ";Solidarité;Rue de la Solidarité;en Impasse;;V. P;30;ok;;;
+356;"Impasse
+des";Violettes;Allée des Pensées;en Impasse;;"V. P
+SCIC";40;ok;;;
+52;"Impasse
+du";Castel;Rue David Léder;en Impasse;;V. P;70;ok;;;
+239;Passage ;Michelet;Rue Michelet;en Impasse;;V. P;100;ok;;;
+138;Place;"Georges
+Lyssandre";"Avenue Henri
+Barbusse";en Impasse;;"V. P
+Bondy
+Habitat
+(ophlm)";1150;ok;;;
+5;Rue;"Alexandra
+David Neel";"Rue Edouard
+Vaillant";en Impasse;;V. P;186;ok;;;
+117;Rue;François Martin;Route d’Aulnay;en Impasse;;V. P;379;ok;;;
+118;Rue;François Villon;Rue Baudelaire;en Impasse;;"V. P
+( 3F )";220;ok;;;
+130;Rue;Gaston Deferre;"Avenue Henri
+Barbusse";Rue Henri Alpy;;V. P;349;ok;;;
+148;Rue;"Guillaume
+Appolinaire";"Rue Louis
+Auguste
+Blanqui";Avenue Carnot;;V. P;426;ok;;;
+157;Rue;Henri Dunant;"Rue Louis
+Auguste
+Blanqui";en Impasse;11.01.2001;V. P;160;ok;;;
+158;Rue;Henri Mouly;Route d’Aulnay;en Impasse;;V. P;329;ok;;;
+166;Rue;Jacqueline Auriol;"Rue Louis
+Auguste
+Blanqui";Rue de l'Union;11.01.2001;"V. P
+Bondy
+Habitat
+(ophlm)";175;ok;;;
+177;Rue;"Jean-Paul
+Sartre";"Rue Louis Auguste
+Blanqui";"Rue Guillaume
+Apollinaire";;V. P;159;ok;;;
+209;Rue;Lucie Aubrac;Rue Paul Renaud;"Avenue Jean
+Moulin";;V. P;153;ok;;;
+221;Rue;Marguerite Duras;"Avenue  Geneviève
+Anthonioz de Gaulle";"Rue Edouard
+Vaillant";01.07.2002;"V. P
+Appolonia";160;ok;;;
+229;Rue;"Martin Luther
+King";"Rue Louis
+Auguste
+Blanqui";"Allée des
+Sylphes";11.01.2001;"V. P
+Bondy
+Habitat
+(ophlm)";389;ok;;;
+249;Rue;Neuve;"Avenue Henri
+Barbusse";Avenue Carnot;;V. P;60;ok;;;
+266;Rue;Paul Eluard;"Rue Louis Auguste
+Blanqui";Sente Blériot;;V. P;169;ok;;;
+291;Rue;Rabelais;"Rue de la Terre
+Saint Blaise";"Avenue Léon
+Jouhaux";;"V. P
+( 3F )";140;ok;;;
+300;Rue;René Dumont;"Rue Geneviève Anthonioz De
+Gaulle";"Rue Alexandra
+David Neel";;V. P;90;ok;;;
+313;Rue;"Rudyard
+Kipling";Rue Théodore Monod;en Impasse;;V. P ;60;ok;;;
+325;Rue;"Simone de
+Beauvoir";"Rue Martin Luther
+King";en Impasse;11.01.2001;"V. P
+Bondy
+Habitat
+(ophlm) ";185;ok;;;
+337;Rue;"Théodore
+Monod";"Avenue Geneviève
+Anthonioz de Gaulle";"Rue Alexandra
+David Neel";;V. P;95;ok;;;
+341;Rue;Trinquamelle;Avenue Léon Jouhaux;Rue Picrochole;;"V. P
+( 3F )";170;ok;;;
+153;Rue ;Hélène Boucher ;Rue des frères Darty;Allée Georges Sand ;;V. P;310;ok;;;
+1;Rue de l’;"Abbé Maurice
+Baurit";"Avenue Henri
+Barbusse";en Impasse;;V. P;112;ok;;;
+112;Rue des ;Floralies;Rue Paul Renaud;en Impasse;;V. P;105;ok;;;
+119;Rue des ;Francs Aubiers;Rue Caraque;"Avenue Léon
+Jouhaux";;"V. P
+( 3F )";220;ok;;;
+67;Rue du;Clos Vaillant;Rue Edouard Vaillant;en Impasse;22.12.2006;V.P;153;ok;;;
+108;Rue du;Fer à Cheval;Avenue Léon Jouhaux;en Impasse;;V. P;130;ok;;;
+282;Rue du ;Potager;Rue Frémin;"Avenue de
+Rosny";;"V. P
+Bondy
+Habitat
+(ophlm) ";56;ok;;;
+275;Sente;Pierre Bourdieu;"Avenue Geneviève
+Anthonioz de Gaulle";"Rue Alexandra
+David Neel";;V. P;107;ok;;;
+125;Villa;Gabriel Séaille;Avenue de Rosny;en Impasse;;V. P;97;ok;;;
+262;Villa;Parmentier;"Avenue de la
+République";en Impasse;;V. P;112;ok;;;
+53;Villa des;Cerises;Rue Robert Douvillez;en Impasse;;V. P;100;ok;;;
+228;Villa des;Marronniers;"Avenue de la
+République";en Impasse;;V. P;60;ok;;;
+41;Villa du;Bréchet;Rue Edouard Vaillant;en Impasse;;V. P;59;ok;;;
+43;Villa du ;Breuil;Rue du Breuil;en Impasse;;V. P;71;ok;;;
+2;Villa des ;Abeilles;Rue du Vieux Moulin;en Impasse;15.05.1961;V. C;38;;;;
+4;Place;Albert Thomas;"Avenue de la
+République";en Impasse;;"P. P
+Bondy
+Habitat
+(ophlm)";4 000 m2;;;;
+7;Allée;Alice;"Avenue Henri
+Barbusse";Allée Thérèse;15.05.1961;V. C;392;;;;
+8;Allée des;Alouettes;"Rue Edouard
+Vaillant";"Avenue des
+Sciences";15.05.1961;V. C;124;;;;
+9;Rue;Amédée Guyard;Rue Marcelin Berthelot;"Limite des
+Pavillons
+sous-Bois";15.05.1961;V. C;260;;;;
+10;Avenue;Anatole France;"Rue Louis Auguste
+Blanqui
+Limite des Pavillons
+sous-Bois";"Route de
+Villemomble
+Limite de
+Villemomble";07.11.1960;"R.D
+V.C";954;;;;
+11;Allée;Andréa;"Avenue Henri
+Barbusse";en Impasse;15.05.1961;V. C;267;;;;
+12;Rue;"Andréï
+Sakharov";"Avenue du
+Quatorze Juillet";"Avenue Henri
+Varagnat";;R.D 78;540;;;;
+14;Allée;Anne Frank;"Rue Auguste
+Pollissard";en Impasse;;V. C;98;;;;
+15;Rue;"Arthur
+Groussier";"Avenue
+Marx Dormoy";en Impasse;;V. C;280;;;;
+16;Rue;Arthur Rimbaud;"Rue Auguste
+Pollissard";Villa Fleury;;V. C;135;;;;
+17;Allée des;Arts;Avenue des Sciences;"Rue Edouard
+Vaillant";07.11.1960;V. C;119;;;;
+18;Rue;"Auguste
+Pollissard";Avenue Galliéni;"Rue Jules
+Guesde";;"R.D
+41 bis";277;;;;
+19;Pont d’;Aulnay;Route d’Aulnay;Route d’Aulnay;;"R.D
+41 bis";100;;;;
+20;Route d’;Aulnay;Avenue Galliéni;"Avenue Henri
+Varagnat";;"R.D
+41 bis";1346;;;;
+21;Rue de l’;Aviation;"Avenue Henri
+Barbusse";en Impasse;07.11.1960;V. C;354;;;;
+24;Rue;Baudin;Rue Roger Salengro;"Limite de Noisy
+le-Sec Rue
+des Maraîchers";07.11.1960;V. C;382               632                    250;;;;
+25;Rue ;Beauregard;Rue Roger Salengro;"Carrefour
+Michelet";07.11.1960;V. C;175;;;;
+26;Allée;Becquerel;"Avenue Anatole
+France";en Impasse;07.11.1960;V. C;175;;;;
+27;Rue du ;Bel air;"Avenue des
+Sciences";"Rue Edouard
+Vaillant";15.05.1961;V. C;151;;;;
+28;"Avenue
+de ";Belfort;Rue Etienne Dolet;Allée de l’Etoile;15.05.1961;V. C;546;;;;
+29;Rue;Béranger;Rue Robert Douvillez;Allée Pottier;12.04.1951;V. C;292;;;;
+30;Rue;Bernard de Jussieu;"Avenue Henri
+Barbusse";"Rue Louis
+Auguste
+Blanqui";15.05.1961;V. C;235;;;;
+31;Avenue ;Blériot;Sente Blériot;"Rue Edouard
+Vaillant";15.05.1961;V. C;185;;;;
+32;Sente ;Blériot;Rue de l’Union;en Impasse;15.05.1961;V. C;50;;;;
+33;Allée;Boileau;"Rue Louis Auguste
+Blanqui";en Impasse;15.05.1961;V. C;110;;;;
+34;Rue du;Bon air;"Chemin de
+Groslay";en Impasse;24.04.1961;V. C;310;;;;
+35;Pont de;Bondy;Route de Stains;"Limite de
+Bobigny";;"R.N
+186";60;;;;
+36;Rue de ;Bondy;Rue des Limites;"Avenue Anatole
+France";07.11.1960;V. C;37;;;;
+37;Rue;Bordier;"Rue Louis Auguste
+Blanqui";"Rue Edouard
+Vaillant";07.11.1960;V. C;369;;;;
+38;Rue;Borel;Rue des Ecoles;"Avenue
+Galliéni";;V. C;197;;;;
+39;Allée des;Bosquets;Allée de la Jardinière;"Rue du Quatre
+Septembre";07.11.1960;V. C;53;;;;
+42;Rue du;Breuil;Rue Michelet;"Rue Jules
+Guesde";07.11.1960;V. C;450;;;;
+44;Rue de la ;Butte;"Rue du Chemin de
+Fer Prolongée";"Route de
+Villemomble";15.05.1961;V. C;175;;;;
+45;Avenue;Cadéras;Rue Edouard Vaillant;"Impasse de
+la Liberté";07.11.1960;V. C;195;;;;
+47;Avenue;Carnot;Rue de la Liberté;Avenue Pasteur;07.11.1960;V. C;841;;;;
+48;Impasse;Carnot;Avenue Carnot;en Impasse;24.04.1961;V. C;66;;;;
+49;Place ;Carnot;"Avenue du Maréchal
+de Lattre de Tassigny";Avenue Pasteur;;P. Publique;300;;;;
+50;Villa;Carnot;Avenue Carnot;en Impasse;15.05.1961;V. C;140;;;;
+51;"Chemin
+des";Carrouges;Rue Etienne Dolet;Limite Rosny sous Bois;07.11.1960;V.C;320;;;;
+54;Rue;César Delaine;Rue Henri Douillot;"Rue de
+l’Aviation";15.05.1961;V. C;120;;;;
+55;Rue du;Chalet;"Avenue Henri
+Barbusse";"Rue de
+Préssensé";15.05.1961;V. C;250;;;;
+56;Rue du ;Champart;"Avenue de la
+République";en Impasse;07.11.1960;V. C;70;;;;
+57;Rue;"Charles
+Ferdinand";"Rue Louis
+Auguste
+Blanqui";Rue Noémie;15.05.1961;V. C;145;;;;
+58;Place;"Charles de
+Gaulle";Rue Roger Salengro;en Impasse;;P. PU;72;;;;
+61;Rue du ;Chemin de Fer;"Avenue Anatole
+France";"Limite de
+Villemomble";;V. C;82;;;;
+62;Rue du ;"Chemin de
+Fer Prolongée ";"Rue Saint
+Louis Prolongée";en Impasse;15.05.1961;V. C;450;;;;
+63;Allée des;Chênes;"Rue Louis
+Auguste Blanqui";en Impasse;15.05.1961;V. C;115;;;;
+64;Rue des;Cinq Ormes;Rue de Préssensé;"Avenue Henri
+Barbusse";12.04.1951;V. C;250;;;;
+65;Avenue;Clara Grandet;Avenue des Mésarmes;Route d'Aulnay;07.11.1960;V. C;205;;;;
+68;Rue ;Compagnon;Rue Georges Elie;"Rue Robert
+Douvillez";12.04.1951;V. C;190;;;;
+69;"Allée
+de la";Concorde;"Rue Louis
+Auguste
+Blanqui";Rue du Moleret;15.05.1961;V. C;220;;;;
+71;Rue du ;"Coq Gaulois
+(84 à 90)";Allée Thérèse;"Limite 
+Les Pavillons
+sous-Bois";07.11.1960;V. C;46;;;;
+72;Allée;Corneille;"Rue Louis
+Auguste Blanqui";"Rue Edouard
+Vaillant";15.05.1961;V. C;330;;;;
+73;Allée des ;Courts Sillons;"Rue Louis
+Auguste
+Blanqui";"Avenue
+Dumesnil";15.05.1961;V. C;190;;;;
+74;Rue de;Cronstadt;Allée Rulhière;Rue Michelet;07.11.1960;V. C;135;;;;
+75;Rue du;Cycle;Rue Henri Douillot;"en Impasse
+d'un côté et Rue
+de la Pompe
+de l'autre";15.05.1961;V. C;253;;;;
+77;Rue;David Léder;Rue Etienne Dolet;"Avenue Jules
+Ferry";15.05.1961;V. C;284;;;;
+78;Avenue;Denise;Rue Edouard Vaillant;en Impasse;15.05.1961;V. C;135;;;;
+79;Rue;Denys Cochin;Rue de Trémeuge;"Rue du
+Professeur
+Vaillant";15.05.1961.;V. C;250;;;;
+80;Rue;Désiré Léon;Rue Edouard Vaillant;"Avenue des
+Sciences";15.05.1961;V. C;130;;;;
+81;Allée des;"Deux
+Communes";Route de Villemomble;"Limite de
+Villemomble";;V.C;270;;;;
+83;Square  ;Diane Fossey;"Rue Geneviève Anthonioz De
+Gaulle";"Rue Edouard
+Vaillant";;P.P ;"250 m²
+environ";;;;
+84;"Place
+de la";Division Leclerc;Rue Roger Salengro;"Cours de la
+République";;P. Pu;900;;;;
+85;Square du ;"Dix Neuf Mars
+1962";Avenue Carnot;"Cours de la
+République";;V. C;148 m2;;;;
+87;Rue des ;"Droits de
+l’Homme";Rue Jean Jaurès;Rue du Breuil;07.11.1960;V. C;130;;;;
+88;Avenue;Dumesnil;"Avenue de
+l’Espérance";"Avenue Anatole
+France";15.05.1961;V. C;175;;;;
+89;Rue des;Ecoles;Avenue Galliéni;en Impasse;07.11.1960;V. C;173;;;;
+90;Place;Edith Piaf;Route de Villemomble;"Route de
+Villemomble";;P. PU;300 m²;;;;
+91;Rue ;"Edouard
+Vaillant";Rue Roger Salengro;"Avenue Anatole
+France";07.11.1960;V. C;1590;;;;
+92;Allée de l’;Egalité;Rue de l’Egalité;en Impasse;07.11.1960;V. C;70;;;;
+93;Rue de l’;Egalité;Carrefour Michelet;"Limite de Noisy
+le Sec";07.11.1960;V. C;179;;;;
+94;Rue;Emile Zola;"Avenue de la
+Villageoise";"Avenue du
+Quatorze Juillet";07.11.1960;V. C;92;;;;
+95;Rue;"Emmanuel
+Fairon";Avenue de Verdun;"Rue Robert
+Douvillez";28.06.1934;V. C;146;;;;
+97;Allée;Eric Tabarly;"Rue Jean-Marie
+Djibaou";en Impasse;;V. C;104;;;;
+98;Rue des;Escholiers;Avenue Léon Blum;"Rue des Francs
+Aubiers";;"V. C
+V.P";"270
+33";;;;
+99;"Avenue
+de l’";Espérance;Rue Edouard Vaillant;Rue Louis Auguste Blanqui;15.05.1961;V. C;270;;;;
+100;Allée de l’;Espéranto;"Avenue Henri
+Varagnat";en Impasse;;V. C;40;;;;
+101;Avenue de l’;Est;Rue Etienne Dolet;"Avenue de
+Belfort";15.05.1961;V. C;445;;;;
+102;Rue;Etienne Dolet;"Chemin des
+Carrouges";"Route de
+Villemomble";07.11.1960;V. C;590;;;;
+103;Allée de l’;Etoile;Rue Marcel Paul;"Route de
+Villemomble";15.05.1961;V. C;330;;;;
+104;Place ;Eudenon ;Rue Gargantua ;Mail Pantagruel;;P Pu;456 M²;;;;
+106;Rue;Eugène Masson;"Avenue Henri
+Barbusse";"Rue Louis
+Auguste
+Blanqui";07.11.1960;V. C;287;;;;
+109;Impasse;Fernand Pottier;Rue Arthur Rimbaud;en Impasse;15.05.1961;V. C;132;;;;
+110;Place des;Fleurs;Allée des Iris;"Allée des
+Primevères";;"P.P
+SCIC";850 m2;;;;
+111;Villa;Fleury;Avenue Galliéni;en Impasse;15.05.1961;V. C;150;;;;
+113;Rue;Fontaine;Allée de la Jardinière;"Avenue des 
+Mésarmes";07.11.1960;V. C;452;;;;
+114;"Pont
+de la";Forêt;Chemin du Pont;"Avenue du
+Quatorze Juillet";07.11.1960;V. C;80;;;;
+116;Rue;François Collet;Rue Edouard Vaillant;en Impasse;15.05.1961;V. C;190;;;;
+120;Rue de la;Fraternité;Carrefour Michelet;Rue Baudin;07.11.1960;V. C;184;;;;
+121;Rue ;Frémin;Avenue Galliéni;"Rue Philéas
+Collardeau";07.11.1960;V. C;230;;;;
+127;Rue ;Gargantua ;Rues des Escholiers ;Avenue Léon Blum;;VC;100;;;;
+128;Avenue;Galliéni;"Limite de Noisy le Sec
+(Avenue de Rosny)";"Ville des
+Pavillons
+sous-Bois";;R.N. 3;1 445;;;;
+129;Place;Gambetta;Avenue Galliéni;"Rue Jules
+Guesde";;P. Pu;300 m2;;;;
+131;Rue;Gatine;Avenue Galliéni;"Rue Jules
+Guesde";07.11.1960;V. C;165;;;;
+133;Rue des ;Gazelles;Rue Robert Douvillez;en Impasse;12.04.1951;V. C;161;;;;
+135;Impasse;"Georges
+Brassens";Avenue de Metz;en Impasse;;V. C;60;;;;
+136;Rue;Georges Elie;Rue Robet Douvillez;"Avenue de
+Verdun";12.04.1951;V. C;341;;;;
+137;Rue;Georges Graff;Rue Edouard Vaillant;en Impasse;15.05.1961;V. C;172;;;;
+139;Allée ;Geoges Sand ;Rue des Frères Darty ;Gallièni;;VC;303;;;;
+140;Rue ;Germaine Tillon ;Avenue Jean moulin;Rue Odette  Pain ;;VC;130;;;;
+145;Allée du;Gros Buisson;Route de Villemomble;en Impasse;;V. C;162;;;;
+146;"Chemin
+de";Groslay;"Place Saint Just
+Rond-Point
+Bondy / Bobigny";Rue du Verger;07.11.1960;V. C;542;;;;
+147;Avenue;Gueugnon;Route d’Aulnay;"Avenue des
+Mésarmes";07.11.1960;V. C;210;;;;
+149;Rue;Guy de Maupassant;Avenue Henri Barbusse;Rue Louis Auguste Blanqui;15.05.1961;V. C;220;;;;
+151;Allée;Hannah Arendt;Avenue Pasteur ;Avenue Galliéni;;VC;72;;;;
+154;Rue;Henri Alpy;"Rue Louis
+Auguste
+Blanqui";"Avenue Henri
+Barbusse";07.11.1960;V. C;325;;;;
+155;Avenue;Henri Barbusse;Rue Jules Guesde;"Ville des Pavillons
+sous-Bois";;"R.D
+10";1 355;;;;
+156;Rue;Henri Douillot;Rue de Préssensé;"Ville des Pavillons
+sous-Bois";07.11.1960;V. C;392;;;;
+159;Avenue;Henri Varagnat;Route d’Aulnay;"Ville d’Aulnay
+sous Bois";;"R.D
+41 bis";810;;;;
+160;Allée des;Hêtres;Route de Villemomble;en Impasse;15.05.1961;V. C;185;;;;
+162;"Square
+du";Huit Mai 1945;"Cours de la
+République";Avenue Carnot;07.11.1960;V. C;150;;;;
+163;"Avenue
+de l’";Idéal;"Rue Louis
+Auguste
+Blanqui";"Rue Edouard
+Vaillant";07.11.1960;V. C;270;;;;
+167;Impasse;Jacques Brel;Avenue de Metz;en Impasse;;V. C;160;;;;
+168;"Allée
+de la";Jardinière;"Avenue du
+Quatorze Juillet";Rue Fontaine;07.11.1960;V. C;257;;;;
+169;"Impasse
+de la";Jardinière;Allée de la Jardinière;en Impasse;07.11.1960;V. C;29;;;;
+171;Rue;"Jean-Jacques
+Rousseau";Chemin de Groslay;"Avenue Jean
+Moulin";22.05.1963;V. C;191;;;;
+172;Rue;Jean Jaurès;Rue Jules Guesde;"Carrefour
+Michelet";07.11.1960;V. C;460;;;;
+173;Avenue;Jean Lebas;"Avenue Suzanne
+Buisson";"Avenue Jean
+Moulin";20.01.1961;V. C;211;;;;
+174;Rue ;"Jean-Marie
+Djibaou";Avenue Marx Dormoy;"Avenue Maurice
+Benhamou";;V. C;120;;;;
+175;Rue;Jean Monnet;Avenue de Metz;en Impasse;;V. C;385;;;;
+176;Avenue;Jean Moulin;"Rue Jean-Jacques
+Rousseau";"Carrefour d'Aulnay
+et de l'Avenue
+Henri Varagnat";20.01.1961;V. C;561;;;;
+178;Rue ;Jean Pierre Levy;Avenue Jean Moulin;Rue Odette Pain ;;VC;135;;;;
+179;Impasse;Jean Wiener;Rue Marcel Paul;en Impasse;;V. C;37;;;;
+180;"Allée de
+la Villa";Jeannette;"Rue Louis
+Auguste
+Blanqui";en Impasse;22.05.1963;V. C;162;;;;
+182;Rue;Joé Carman;Avenue de Metz;Rue du Midi;07.11.1960;V. C;191;;;;
+183;Allée;José Marti;Rue Andeï Sakharov;"Allée Simon
+Bolivar";;V. C;125;;;;
+184;Rue;Jules Auffret;"Avenue Henri
+Barbusse";"Avenue de
+Verdun";15.05.1961;V. C;340;;;;
+185;Avenue ;Jules Ferry;Route de Villemomble;"Ville de
+Noisy le Sec";07.11.1960;V. C;377;;;;
+186;Rue;Jules Guesde;Avenue Galliéni;"Avenue Henri
+Barbusse";;"R.D
+10";693;;;;
+187;Rue ;Jules Lecomte;Rue du Verger ;"en Impasse
+des deux côtés";17.11.1975;V. C;197;;;;
+188;Rue;Jules Lelong;"Rue du Sergent
+Bobillot";en Impasse;;V. C;111;ok;;;
+189;Rue ;Julie Victoire Daubié;Rue Georges Sand ;"Avneue Delattre de
+Tassigny ";;VC;60;;;;
+190;Chemin;Latéral;Route d’Aulnay;"Chemin de
+Groslay";13.02.1961;V. C;576;;;;
+191;Rue;Laug;Rue Borel;Rue des Ecoles;;V. C;105;;;;
+193;Villa;Lavigne;Avenue Carnot;en Impasse;15.05.1961;V. C;60;;;;
+194;Allée ;Léon;Allée Thérèse;en Impasse;07.11.1960;V. C;145;;;;
+195;Avenue;Léon Blum;Avenue Jean Moulin;"Rond Point
+Léon Jouhaux";20.01.1961;V. C;588;;;;
+197;Allée des ;Lettres;"Rue du Chemin
+de Fer Prolongée";"Route de
+Villemomble";15.05.1961;V. C;193;;;;
+198;Rue du;Levant;Avenue de l’Idéal;en Impasse;07.11.1960;V. C;300;;;;
+199;Rue de la;Liberté;Place de la République;en Impasse;07.11.1960;V. C;478;;;;
+200;"Impasse
+de la";Liberté;Rue Cadéras;en Impasse;07.11.1960;V. C;62;;;;
+202;Rue des;Limites;Rue du Chemin de Fer;Rue de Bondy;07.11.1960;V. C;104;;;;
+203;Rue du;Lion;Rue de la Liberté;"Rue Edouard
+Vaillant";07.11.1960;V. C;155;;;;
+204;Rue;"Louis
+Auguste
+Blanqui";Rue Roger Salengro;"Avenue
+Anatole
+France";07.11.1960;V. C;1 646;;;;
+205;Rue;"Louis Léon
+Collignon";Rue Louis Auguste Blanqui;Rue de la Solidarité;23.06.1934;V. C;195;;;;
+206;Allée;Louise;"Allée des Courts
+Sillons";en Impasse;15.05.1961;V. C;65;;;;
+210;Villa;Madeleine;Rue Edouard Vaillant;en Impasse;15.05.1961;V. C;110;;;;
+212;Rue des;Maraîchers;Avenue de Rosny;"Ville de
+Noisy le Sec";;V. C;142;;;;
+213;Rue;Marcel Dassault;"Chemin des
+Carrouges";en Impasse;07.11.1960;V. C;365;;;;
+214;Rue;Marcel Paul;Rue Jean Monnet;Avenue de Metz;;V. C;260;;;;
+215;Allée;Marcel Sembat;"Avenue Henri
+Barbusse";en Impasse;15.05.1961;V. C;310;;;;
+216;Rue;"Marcelin
+Berthelot";Rue Béranger;"Rue Amédée
+Guyard";12.04.1951;V. C;100;;;;
+217;"Chemin
+de la ";Mare à la Veuve;Rue Marcel Dassault;"Rue Etienne
+Dolet";;V. C;610;;;;
+218;"Chemin
+de la ";"Mare à la Veuve
+Prolongée";Rue David Léder;"Rue Etienne
+Dolet";;V. C;483;;;;
+219;Avenue du ;"Maréchal
+de Lattre
+de Tassigny";Avenue Galliéni;Avenue Pasteur;07.11.1960;V. C;330;;;;
+220;Avenue;Marguerite;Avenue Galliéni;en Impasse;15.05.1961;V. C;135;;;;
+225;Square ;Marie Laurencin;Rue Marguerite Duras;en Impasse;;P. Pu;100 m²;;;;
+227;Place des;Marronniers;"Rue Paul Vaillant
+Couturier";Allée Rulhière;;P. Pu;700 m2;;;;
+230;Avenue;Marx Dormoy;"Carrefour Route
+d'Aulnay et de
+l'Avenue Henri
+Varagnat";Avenue de la Villageoise;21.01.1977;V.C;540;;;;
+231;Avenue;"Maurice
+Benhamou";Voie Promenade;en Impasse;;V. C;230;;;;
+232;Rue de ;Meaux;"Avenue Henri
+Varagnat";"Avenue Léon
+Blum";24.04.1961;V. C;310;;;;
+233;Place;Mendès France;Avenue de Metz;Rue Marcel Paul;;P. Pu;20;;;;
+234;"Chemin
+de ";Merlan;Avenue Jules Ferry;en Impasse;07.11.1960;V. C;98;;;;
+235;"Avenue
+des";Mésarmes;Avenue Gueugnon;en Impasse;07.11.1960;V. C;230;;;;
+236;"Avenue
+de";Metz;Rue Etienne Dolet;"Rue Jean
+Monnet";07.11.1960;V. C;180;;;;
+237;Carrefour;Michelet;"Rue Beauregard et
+Rue Jean Jaurès";"Rue de la Fraternité
+Rue de l’Egalité";;P. Pu;380 m²;;;;
+238;Rue;Michelet;"Carrefour Beauregard
+et Rue Jean Jaurès";"Avenue de
+Rosny";07.11.1960;V. C;375;;;;
+240;Rue du;Midi;Avenue de l’Est;"Rue Joé
+Carman";07.11.1960;V. C;310;;;;
+243;Rue du;Moleret;Allée de la Concorde;"Rue François
+Collet";15.05.1961;V. C;40;;;;
+244;Allée ;Molière;"Rue Louis
+Auguste
+Blanqui";"Ville des
+Pavillons
+sous Bois";07.11.1960;V. C;87;;;;
+245;Allée ;Monplaisir;Route de Villemomble;en Impasse;;V. C;165;;;;
+246;Allée du;Moulin;Rue Roger Salengro;en Impasse;15.05.1961;V. C;95;;;;
+247;Allée;Mozart;Rue Paul Renaud;en Impasse;;V. C;100;;;;
+248;Avenue de;Nancy;Route de Villemomble;Avenue de l’Est;07.11.1960;V. C;188;;;;
+250;Place ;"Nicole
+Neuburger";"Avenue Henri
+Barbusse";en Impasse;;P. Pu;600 m²;;;;
+251;Rue;Noémie;"Rue Louis
+Auguste Blanqui";Rue Henri Alpy;15.05.1961;V. C;260;;;;
+252;Rue ;Odette Pain ;Avenue Léon Blum ;Avenue Jean Lebas ;;VC;208;;;;
+253;Place du ;Onze Novembre      1918;Hotel de Ville;"Rue Jules
+Guesde";;P. Pu;6 060 m2;;;;
+255;Allée de l’;Orme;Avenue de Belfort;"Route de
+Villemomble";07.11.1960;V. C;282;;;;
+256;Allée;Pablo Néruda;Allée Simon Bolivar;en Impasse;;V. C;105;;;;
+257;Allée de la;Paix;"Rue Louis Auguste
+Blanqui";"Allée de la
+Concorde";15.05.1961;V. C ;226;;;;
+258;Rue de ;Panurge;Rue des Escholiers ;Avenue Léon Blum;;VC;115;;;;
+260;"Avenue
+de la ";Parisienne;Avenue Marx Dormoy;"Voie
+Promenade";07.11.1960;V. C;244;;;;
+264;Avenue;Pasteur;Avenue Galliéni;"Rue Jules
+Guesde";07.11.1960;V. C;697;;;;
+265;Square ;Pasteur;Avenue Galliéni;"Rue des Ecoles
+Chemin du Pont";;D.P.C;2 100 m2;;;;
+267;Rue;Paul Renaud;Route d’Aulnay;"Rue Jean
+Jacques
+Rousseau";22.05.1963.;V. C;238;;;;
+268;Rue;"Paul Vaillant
+Couturier";Rue Roger Salengro;Rue Frémin;07.11.1960;V. C;308;;;;
+269;Rue;Pauline Roger;Allée de l’Orme;Allée de l’Etoile;07.11.1960;V. C;208;;;;
+271;Rue des ;Peupliers;Route de Villemomble;en Impasse;07.11.1960;V. C;185;;;;
+272;Rue;"Philéas
+Collardeau";Avenue de Rosny;Rue Frémin;07.11.1960;V. C;200;;;;
+273;Rue de la;Philosophie;Route de Villemomble;"Rue du Chemin
+de Fer
+Prolongée";15.05.1961;V. C;198;;;;
+276;Rue;"Pierre
+Brossolette";"Avenue Henri
+Barbusse";en Impasse;07.11.1960.;V. C;120;;;;
+277;Rue de;Plaisance;Avenue de l’Idéal;Allée Racine;07.11.1960;V. C;165;;;;
+278;"Avenue
+des ";Platanes;Route de Villemomble;en Impasse;15.05.1961;V. C;193;;;;
+279;"Chemin
+du";Pont;Avenue Galliéni;Pont de la Forêt;07.11.1960;V. C;219;;;;
+280;"Rampe
+du";Pont;"Rond-Point
+Jules Ferry";"Rue Etienne
+Dolet";;V. C;110;;;;
+283;Allée;Pottier;Rue Béranger;Allée Thérèse;;V. C;150;;;;
+284;Rue de ;Pressensé;Avenue de Verdun;"Rue de
+l’Aviation";15.05.1961;V. C;165;;;;
+286;Rue du ;"Professeur
+Vaillant";"Avenue Henri
+Barbusse";"Rue Louis
+Auguste
+Blanqui";07.11.1960;V. C;245;;;;
+287;Rue du ;Progrès;Rue Edouard Vaillant;"Rue Louis
+Auguste
+Blanqui";15.05.1961;V. C;277;;;;
+288;Voie;Promenade;Avenue Marx Dormoy;"Avenue du
+Quatorze Juillet";;D.P.C;640;;;;
+289;Avenue du;Quatorze Juillet;Pont de la Forêt;"Ville d'Aulnay
+Sous Bois ";07.11.1960;V. C;1 121;;;;
+290;Rue du ;Quatre Septembre;"Avenue du
+Quatorze Juillet";"Avenue de la
+Parisienne";07.04.1925;V. C;375;;;;
+292;Allée ;Racine;"Rue Louis
+Auguste
+Blanqui";"Rue Edouard
+Vaillant";15.05.1961;V. C;310;;;;
+294;Rue;Raoul;"Avenue Henri
+Barbusse";"Rue Louis
+Auguste
+Blanqui";07.11.1960;V. C;232;;;;
+295;Allée;Raspail;Rue Henri Douillot;Allée Thérèse;15.05.1961;V. C;295;;;;
+296;"Allée
+de la";Régale;Rue Béranger;en Impasse;12.04.1951;V. C;125;;;;
+297;"Allée
+du ";Rendez-vous;Rue Henri Douillot;"Ville des
+Pavillons
+sous Bois";15.05.1961;V. C;413;;;;
+298;Rue;René Char;Route de Villemomble;en Impasse;;V. C;425;;;;
+299;Impasse;René Claire;Rue Jean Monnet;en Impasse;;V. C;40;;;;
+302;"Avenue
+de la ";République;"Rue Louis
+Auguste
+Blanqui";"Place de la
+République";07.11.1960;V. C;847;;;;
+303;Cours        de la;République;"Place de la Division
+Leclerc";"Rue Louis
+Auguste
+Blanqui";;V. C;284;;;;
+304;"Place
+de la ";République;"Rond-Point de la
+République";"Rue de la
+Liberté";;P. Pu;5950 m²;;;;
+305;Rue;Robert Bonnet;Avenue de Verdun;"Rue Robert
+Douvillez";15.05.1961;V. C;196;;;;
+306;Rue ;Robert Douvillez;"Ville des Pavillons
+sous Bois";en Impasse;12.04.1951;V. C;340;;;;
+307;Rue;Roger Salengro;Rue Jules Guesde;"Place de la
+République";;V. C;955;;;;
+311;Avenue de ;Rosny;"Avenue Galliéni
+Limite Noisy Le Sec";"Ville de Noisy
+le Sec";;"R.N
+186";535;;;;
+312;Avenue;Rouget de l’Isle;Rue Edouard Vaillant;Rue de l’Union;15.05.1961;V. C;135;;;;
+314;Allée ;Ruhlière;Rue du Breuil;"Rue Philéas
+Collardeau";07.11.1960;V. C;155;;;;
+315;Rue;Saint Louis;"Avenue Anatole
+France";Rue des Limites;;V. C;120;;;;
+316;Rue;"Saint Louis
+Prolongée";Route de Villemomble;"Avenue Anatole
+France";15.05.1961;V. C;350;;;;
+317;Rue ;Sainte Barbe;Rue Jean Jaurès;en Impasse;;V. C;142;;;;
+318;Ruelle;Sainte Barbe;Rue Sainte Barbe;Rue du Breuil;;V.C;56;;;;
+319;Allée ;San Martin;Allée Pablo Néruda;"Allée Simon
+Bolivar";;V. C;127;;;;
+320;Allée;Sautereau;"Allée de la Pompe
+sur Pavillons
+sous Bois";"en Impasse et
+en Limite de la
+Rue Amédée
+Guyard";;"V. C
+V. P";55;;;;
+321;Avenue des;Sciences;"Avenue Anatole
+France";en Impasse;07.11.1960;V. C;467;;;;
+322;Rue ;Serge Ravanel;Avenue Jean Moulin  ;Impasse ;;VC;55;;;;
+323;Rue du;Sergent Bobillot;Rue Roger Salengro;"Rue du Vieux
+Moulin";07.11.1960;V. C;312;;;;
+324;Allée;Simon Bolivar;Allée Pablo Néruda;en Impasse;;V. C;180;;;;
+326;"Rue
+de la";Solidarité;"Rue Louis Auguste
+Blanqui";"Rue Edouard
+Vaillant";15.05.1961;V. C;350;;;;
+329;Route de;Stains;Avenue Galliéni;"Pont de Bondy
+Ville de Bobigny
+Place Saint Just";;"R.N
+186";120;;;;
+330;Allée ;Surcouf;Avenue Jules Ferry;en Impasse;15.05.1961;V. C;50;;;;
+331;Rue ;Suzanne Blin ;Avenue Suzanne Buisson ;Rue Odette Pain ;;VC;130;;;;
+332;Avenue;"Suzanne
+Buisson";"Avenue Henri
+Varagnat";"Avenue Léon
+Blum";20.01.1961;V. C;307;;;;
+334;Allée des;Sylphes;Rue Edouard Vaillant;"Rue Martin
+Luther King";;V. C;35;;;;
+335;"Rue
+de la";"Terre Saint
+Blaise";"Avenue Henri
+Varagnat";"Rue des
+Escholiers";;V. C;320;;;;
+336;Allée;Thérèse;Allée du Rendez-Vous;"Rue du Coq
+Gaulois";15.05.1961;V. C;340;;;;
+338;Villa ;Thorel;"Rue Auguste
+Pollissard";en Impasse;;"V. C
+V. P";60 et 20;;;;
+339;Allée des;Tilleuls;Rue Pauline Roger;"Route de
+Villemomble";15.05.1961;V. C;190;;;;
+340;Rue de ;Trémeuge;"Avenue Henri
+Barbusse";"Rue Louis
+Auguste
+Blanqui";15.05.1961;V. C;285;;;;
+343;Rue de l’;Union;Rue Jacqueline Auriol;Sente Blériot;15.05.1961;V. C;165;;;;
+344;Rue de;Varsovie;Route de Villemomble;"Chemin de la
+Mare à la
+Veuve
+Prolongée";07.11.1960;V. C;419;;;;
+345;"Avenue
+de";Verdun;Avenue Galliéni;"Rue de
+Pressensé";07.11.1960;V. C;632;;;;
+346;Rue du ;Verger;Chemin de Groslay;"Rond Point
+du Verger";17.11.1975;V. C;60;;;;
+347;Rue de ;Versailles;"Avenue Henri
+Varagnat";"Avenue Léon
+Blum";24.05.1961;V. C;305;;;;
+349;Place;"Victor
+Schoelcher";Allée José Marti;Allée San Martin;;P. PU;30 m²;;;;
+350;Rue du;Vieux Château;Rue Edouard Vaillant;en Impasse;15.05.1961;V. C;105;;;;
+351;Rue du ;Vieux Moulin;Rue Baudin;"en Impasse
+Ville de
+Noisy le Sec";07.11.1960;V. C;305;;;;
+352;Allée des ;Vignes;Chemin de Groslay;en Impasse;;V. C;127;;;;
+353;"Avenue
+de la";Villageoise;Avenue Marx Dormoy;"Avenue du
+Quatorze Juillet";07.11.1960;V. C;300;;;;
+354;"Avenue
+de la";Villégiature;"Avenue du Quatorze
+Juillet";"Avenue de la
+Parisienne";07.11.1960;V. C;336;;;;
+355;Route de ;Villemomble;"Rond Point
+Jules Ferry";"Avenue Anatole
+France Limite
+Ville de
+Villemomble";07.11.1960;V. C;1 565;;;;
+357;Voie;Promenade;"Avenue du Quatorze
+Juillet";"Avenue Marx
+Dormoy";;V. C;645;;;;
+358;Allée ;Voltaire;Rue Jules Auffret;"Rue Pierre
+Brossolette";15.05.1961;V. C;50;;;;
+360;Rue;Yvonne;"Rue Paul Vaillant
+Couturier";en Impasse;07.11.1960;V. C;255;;;;
+;;;;;;;;;;;
+·;R.N;;Routes Nationales ;;;;2160 m;;;;
+·;R.D;;"Routes
+Départementales ";;;;6075 m;;;;
+·;V.C;;Voies Communales ;;;;57785 m;;;;
+·;V. P;;Voies Privées ;;;;16262 m;;;;
+·;P. Pu.;;Places Publiques ;;;;16138 m²;;;;
+·;P.P;;Places Privées ;;;;5 100 m²;;;;
+·;D.P.C;;"Domaines Privées
+de la Commune";;;;2740 m;;;;
+;;;;;;;;;;;
+;;;;;;;;;;;
