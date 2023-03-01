@@ -206,4 +206,37 @@ st_write (jointure, "../data/etude.gpkg", "enseigne")
 ```
 
 
+# Utilisation API
+
+```{r}
+library(httr)
+library(jsonlite)
+```
+
+opendata infogreffe
+
+
+```{r}
+res <-  GET( "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=bondy")
+data <- fromJSON(rawToChar(res$content))
+names(data)
+
+data <- data$records
+data <- na.omit(data [!is.na(data$geometry), ])
+class(data$geometry) [1]
+data$coords <- data$geometry [2]
+
+split(data$coords [[1]] [1], ",")
+data$X <- sapply(data$coords, "[",1)
+data$X
+
+# data$geometry est composé de type et coordinates
+data$forme <- substr(data$geometry, 1,5)
+
+# spatialisation
+st_as_sf(data, )
+library(sf)
+library(mapsf)
+mf_map(data)
+```
 

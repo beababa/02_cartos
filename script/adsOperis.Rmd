@@ -1,0 +1,160 @@
+---
+title: "Recup fichier ads operis"
+author: "B. Maranget"
+date: "27/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+reprise de données ADS d' Operis pour maj RIL.
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+```
+
+
+
+# données
+
+Pb d'encodage sur lg de titre, on ouvre avec libre office
+TODO retester avec un enregistrement en UTF-8
+
+```{r}
+ads <- read.csv2(paste0(chemin, "2023_02_exportADS.csv"), fileEncoding = "cp1252")
+str(ads)
+st_layers("../data/cadastre.gpkg")
+cadastre <- st_read("../data/cadastre.gpkg", "parcelle_info")
+str(cadastre)
+st_layers(paste0(chemin2, "rue2023.gpkg"))
+rue <- st_read(paste0(chemin2, "rue2023.gpkg"), "rue__ruecadastre")
+st_layers("../data/limitesSocle.gpkg")
+zone <- st_read("../data/limitesSocle.gpkg", "quartier2")
+mf_map(zone)
+```
+
+
+
+
+# Les parcelles
+
+pl parcelles possibles, par exemple :
+
+```{r}
+str(ads)
+ads [3, c("Parcelles")]
+# attention à l'espace égalemetn
+cadastre$code <- gsub("^ ","", cadastre$code)
+cadastre$section <- substring(cadastre$code,1,2)
+cadastre$section <- gsub("0", "", cadastre$section)
+tail(cadastre$section)
+cadastre$parcelle <- substring(cadastre$code, 3,10)
+cadastre$parcelle <- as.integer(cadastre$parcelle)
+cadastre$parcelle
+cadastre$code2 <- paste0(cadastre$section, cadastre$parcelle)
+cadastre$code2
+ads$Parcelles <- gsub(" ","", ads$Parcelles)
+```
+
+Eclatement et recup de la première parcelle et du nb de parcelles
+
+```{r}
+liste <- strsplit( ads$Parcelles, ",")
+ads$code2 <- sapply(liste, "[",1)
+nb <- sapply(liste, length)
+nb[160]
+liste[160]
+table(nb)
+```
+
+On va traiter à part les multi parcelles un par un ?
+
+```{r}
+fusion <- unlist(liste[[160]])
+cadastreSelFus <- st_union( cadastre [cadastre$code2 %in% fusion,])
+mf_map(cadastreSelFus)
+mf_label( cadastre [cadastre$code2 %in% fusion,] , "code2")
+mf_map(cadastre, col = NA, border = "black", add = T)
+cadastre [160,]
+mf_label(rue, "NOM_1_G")
+```
+
+
+
+# Jointure attributaire
+
+ads$code2 et cadastre$code2
+
+```{r}
+data <- merge(cadastre, ads, by = "code2")
+(length(ads$code2) - length(data$code2))/length((ads$code2))
+st_write(data,"../data/ads.gpkg", "fevrier2023", delete_layer = T)
+```
+
+26 % total non repris...
+
+# Carto
+
+
+
+
+
+```{r}
+length(zone$nom)
+for (i in 1:length(zone$nom)) {
+  png(paste0("../img/", zone$nom [i], ".png"), res = 100)
+  mf_init(zone [i, ])
+  mf_map(cadastre,col = "antiquewhite1",border = NA,add = T)
+    mf_map(
+      data,
+      type = "typo",
+      var = "Phase.courante",
+      border = NA,
+      add = T
+    )
+    mf_label(
+      data,
+      "code2",
+      overlap = F,
+      halo = T,
+      cex = 0.5
+    )
+    mf_layout("ADS Operis pointage", credits = "Mairie de Bondy / DGST")
+    dev.off()
+}
+
+```
+
