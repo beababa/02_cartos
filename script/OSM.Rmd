@@ -24,12 +24,15 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Analyse des exports overpass pour logiques taggages au niveau commerces et vélo
 
+utilisation librairie osmdata plutôt que rqt overpass
 
 # Librairies et répertoire
 
 ```{r}
 library(sf)
 library(mapsf)
+library(osmdata)
+library(tidyverse)
 ```
 
 # Données
@@ -85,4 +88,105 @@ velo$symbologie [highway= "cycleway"] <- "piste une voie"
 ```
 
 
+accroches vélo
+
+```{r}
+town <- 'Bondy' 
+location <- town %>% opq()
+parkingVelo <- location %>%
+   add_osm_feature(key = "amenity", 
+                   value = ("bicycle_parking")) %>% osmdata_sf()
+```
+
+
+
+La requete relève toutes les géométries
+
+```{r}
+poly <- parkingVelo$osm_polygons
+parkingVelo$osm_points
+mf_map(parkingVelo$osm_polygons)
+```
+
+
+```{r}
+
+extraction <- function (cle) {
+  # initialisation variables, mettre les valeurs désirées
+  champs <- c("amenity", "capacity")
+  osm <- NULL
+      # indice des géométries à extraire
+  nb <- sapply(cle, length)
+  # length renvoie un chiffre différent de zéro ms pas le nb de lg
+  ind <- which(nb != "0")
+  # on élimine tjrs les 3 premiers
+  ind <- ind[-c(1, 2, 3)]
+  # somme des géométries : pb du count df dans une liste
+ # lapply(cle , count)
+    # on extrait les centroides de toutes les géométries
+  # on sélectionne les seuls champs intéressants
+  i <- 1
+  for (i in 1:length (ind)) {
+    centroides <- st_centroid(cle [[ind [i]]])
+    # pb des champs
+    champsReels <- names(centroides)
+    champsARajouter <- setdiff(champs, champsReels)
+    centroides [champsARajouter] <- "inexistant"
+    osm <- rbind(osm, centroides [, champs])
+  }
+      return(osm)
+}
+res <- extraction(parkingVelo)
+res$capacity
+sum(to.int(res$capacity))
+sum(as.integer(res$capacity), na.rm = TRUE)
+knitr::kable(res [is.na(res$amenity),])
+table(res$amenity, res$capacity, useNA = "always")
+``` 
+
+
+Il y a des champs vides. On vérifie avec une rqt overpass
+
+
+```{r}
+data <- st_read("../data/bicycleparkingOverpass.geojson") 
+sum(as.integer(data$capacity), na.rm = T)
+tab <- table(data$amenity, data$capacity, useNA = "always")
+knitr::kable(tab)
+write.csv(tab,"../data/tab.csv")
+```
+
+IL y a 10 de différence
+Les 16 point sans bicycle_parking
+mais une capacité de 10
+
+
+```{r}
+diff <- setdiff(res$geometry [res$capacity == "10"], data$geometry [data$capacity == "10"])
+diff <- st_as_sf(diff, epsg = "4326")
+diff <- st_transform(diff, 2154)
+plot(diff)
+mf_init(st_buffer(diff, 1000))
+fond()
+mf_map(diff, add = T)
+diff
+data <- st_centroid(data)
+data$capacity <- as.integer(data$capacity)
+data <- data [, c("amenity", "capacity")]
+st_write(data, "../data/velo.gpkg", "parking", delete_layer = T)
+```
+
+le pt est en dehors de bondy
+
+
+Cartographie
+
+
+```{r}
+data <- st_read("../data/velo.gpkg", "parking")
+data  <- st_transform(data, 2154)
+mf_init(bondy)
+S
+mf_map(data, type = "prop", var = "capacity", border = NA)
+```
 
