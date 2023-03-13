@@ -91,6 +91,23 @@ st_write(zone, "../data/ril.gpkg", "zonesDeSortie", delete_layer = T)
 ```
 
 
+cheminement
+
+http://map.vroom-project.org/?
+
+```{r}
+ril <- read.csv("../data/ril.csv", fileEncoding = "UTF-8")
+rilRoutage <- cbind(ril [, c("numero", "type_voie", "libelle")])
+
+rilRoutage <- sapply(rilRoutage, paste)
+sapply(rilRoutage, paste)
+
+write.csv(rilRoutage, "../data/rilRoutage.csv", fileEncoding = "UTF-8")
+```
+
+
+
+
 
 
 # Les parcelles
