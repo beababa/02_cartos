@@ -50,7 +50,7 @@ Les types étiquettes sont sur le calque Blocs éclairage avec attribut et les t
 
 
 ```{r}
-chemin <- "D:/03_SIG/03_03_Data/14_CANALISATIONS/"
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/14_CANALISATIONS/")
 epEntites <- st_read(paste0(chemin,"/ep.gpkg"), "entites" ,quiet = T)
 epPoint <- st_read(paste0(chemin,"/ep.gpkg"), "point" ,quiet = T)
 epLigne <- st_read(paste0(chemin,"/ep.gpkg"), "lignes" ,quiet = T)
@@ -87,11 +87,19 @@ table(epPoint$Layer)
 
 
 ```{r}
-armoire <- read.csv2("D:/09_TELETRAVAIL/Ville de Bondy_EcP_Armoire.csv", fileEncoding = "CP1252")
-candelabre <-  read.csv2("D:/09_TELETRAVAIL/Ville de Bondy_EcP_Candélabre.csv", fileEncoding = "CP1252")
-slt <- read.csv2("D:/09_TELETRAVAIL/Ville de Bondy_SLT.csv", fileEncoding = "CP1252")
-armoireTxt <- read.csv("D:/09_TELETRAVAIL/detailArmoire.csv", fileEncoding = "UTF-8")
-candelabreTxt <- read.csv("D:/09_TELETRAVAIL/detailCandelabre.csv", fileEncoding = "UTF-8")
+armoire <- read.csv2(paste0(chemin,"Ville de Bondy_EcP_Armoire.csv"), fileEncoding = "CP1252", dec = ".")
+str(armoire)
+candelabre <-  read.csv2(paste0(chemin, "Ville de Bondy_EcP_Candélabre.csv"), fileEncoding = "CP1252", dec = ".")
+# 3799 => 3561
+str(candelabre)
+table(is.na(candelabre$X), useNA = "always")
+candelabre <- candelabre [!is.na(candelabre$X), ]
+# 3799 => 3561
+slt <- read.csv2(paste0(chemin, "Ville de Bondy_EcP_Candélabre.csv"), fileEncoding = "CP1252", dec =".")
+str(slt)
+slt <- slt [!is.na(slt$X), ]
+armoireTxt <- read.csv(paste0(chemin,"detailArmoire.csv"), fileEncoding = "UTF-8")
+candelabreTxt <- read.csv(paste0(chemin,"detailCandelabre.csv"), fileEncoding = "UTF-8")
 ```
 
 Le nb d'élément est différent... attention sur les jointures.
@@ -131,5 +139,17 @@ data <- data [ind,]
 #1133
 st_write(data, "../data/ep.gpkg", "candelabre2021", delete_layer = T)
 table(data$Text)
+```
+
+spatialisation epsg 3949 
+
+
+```{r}
+armoire2023 <- st_as_sf(armoire, coords = c("X", "Y"), crs = 3949)
+st_write(armoire2023, "../data/ep.gpkg", "armoire2023", delete_layer = T)
+candelabre2023 <- st_as_sf(candelabre, coords = c("X", "Y"), crs = 3949)
+slt <- st_as_sf(slt, coords = c("X", "Y"), crs = 3949)
+st_write(candelabre2023, "../data/ep.gpkg", "candelabre2023", delete_layer = T)
+st_write(slt, "../data/ep.gpkg", "slt", delete_layer = T)
 ```
 
