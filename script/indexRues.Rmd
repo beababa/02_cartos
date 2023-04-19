@@ -1,0 +1,66 @@
+---
+title: "Index rues"
+author: "B. Maranget"
+date: "13/07/2022"
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Mise en place d'une table d'index
+
+- supprimer les doublons
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "G:/"
+```
+
+
+## Sources
+
+```{r}
+index <- read.csv("../data/indexFinalRueSecteurPetiteEnfance.csv")
+```
+
+
+# doublons
+
+
+
+
+```{r}
+index <- index [!duplicated(index$NOM_1_G),]
+write.csv(index, "../data/indexFinalRueSecteurPetiteEnfanceSansDoublons.csv")
+```
+

@@ -1,0 +1,543 @@
+NOM_1_G,case,creche
+1,3B,Cabane des petits
+10,3B,Cabane des petits
+11,3B,Cabane des petits
+12,3B,Cabane des petits
+13,3B,Cabane des petits
+14,3B,Cabane des petits
+15,3B,Cabane des petits
+16,3D,Crèche Arc en Ciel
+17,2E,Maison de la petite enfance
+17,3E,Maison de la petite enfance
+2,3B,Cabane des petits
+3,3B,Cabane des petits
+4,3B,Cabane des petits
+5,3B,Cabane des petits
+6,3B,Cabane des petits
+7,3B,Cabane des petits
+8,3B,Cabane des petits
+9,3B,Cabane des petits
+ALL ALEXANDRE MARTHE,3C,Cabane des petits
+ALL ALICE,4C,Crèche Arc en Ciel
+ALL ANDREA,4C,Crèche Arc en Ciel
+ALL ANNE FRANK,2D,Crèche Arc en Ciel
+ALL ANNE SYLVESTRE,2F,Maison de la petite enfance
+ALL ANNE SYLVESTRE,3F,Maison de la petite enfance
+ALL BECQUEREL,4B,Cabane des petits
+ALL BOILEAU,4B,Cabane des petits
+ALL BOILEAU,4C,Cabane des petits
+ALL C GOUNOD,3B,Cabane des petits
+ALL CLAUDE DEBUSSY,3B,Cabane des petits
+ALL CORNEILLE,4B,Cabane des petits
+ALL CORNEILLE,4C,Cabane des petits
+ALL DE FURCI,2C,Cabane des petits
+ALL DE FURCI,3C,Cabane des petits
+ALL DE LA CONCORDE,3B,Cabane des petits
+ALL DE LA CONCORDE,3C,Cabane des petits
+ALL DE LA DEVINIERE,3F,Maison de la petite enfance
+ALL DE LA FAUVETTE,3B,Cabane des petits
+ALL DE LA FAUVETTE,3C,Cabane des petits
+ALL DE LA JARDINIERE,3E,Maison de la petite enfance
+ALL DE LA PAIX,3B,Cabane des petits
+ALL DE LA PAIX,4B,Cabane des petits
+ALL DE LA PAIX,4C,Cabane des petits
+ALL DE LA REGALE,4C,Crèche Arc en Ciel
+ALL DE LA REGALE,4D,Crèche Arc en Ciel
+ALL DE LA VILLA JEANNETTE,3B,Cabane des petits
+ALL DE LA VILLA JEANNETTE,3C,Cabane des petits
+ALL DE L'EGALITE,2C,Cabane des petits
+ALL DE L'ETOILE,3A,Cabane des petits
+ALL DE L'ETOILE,3B,Cabane des petits
+ALL DE L'ORME,2A,Cabane des petits
+ALL DE L'ORME,2B,Cabane des petits
+ALL DE L'ORME,3B,Cabane des petits
+ALL DES ALOUETTES,4B,Cabane des petits
+ALL DES ANEMONES,3D,Crèche Arc en Ciel
+ALL DES ARTS,4B,Cabane des petits
+ALL DES AZALEES,2D,Maison de la petite enfance
+ALL DES BOSQUETS,3E,Maison de la petite enfance
+ALL DES BOULEAUX,2F,Maison de la petite enfance
+ALL DES CHENES,4B,Cabane des petits
+ALL DES CHENES,4C,Cabane des petits
+ALL DES COLOMBES,3B,Cabane des petits
+ALL DES COQUELICOTS,3A,Cabane des petits
+ALL DES COQUELICOTS,3B,Cabane des petits
+ALL DES COURTS SILLONS,4B,Cabane des petits
+ALL DES DAHLIAS,2D,Maison de la petite enfance
+ALL DES ERABLES,2F,Maison de la petite enfance
+ALL DES FOUGERES,2E,Maison de la petite enfance
+ALL DES FRENES,2F,Maison de la petite enfance
+ALL DES GLAIEULS,2D,Maison de la petite enfance
+ALL DES GLYCINES,2D,Maison de la petite enfance
+ALL DES HETRES,2B,Cabane des petits
+ALL DES HORTENSIAS,2D,Maison de la petite enfance
+ALL DES IRIS,3D,Crèche Arc en Ciel
+ALL DES LAURIERS,2D,Maison de la petite enfance
+ALL DES LAURIERS,2E,Maison de la petite enfance
+ALL DES LETTRES,4A,Cabane des petits
+ALL DES LETTRES,4B,Cabane des petits
+ALL DES LILAS,3D,Crèche Arc en Ciel
+ALL DES ORCHIDEES,3D,Crèche Arc en Ciel
+ALL DES PAQUERETTES,3D,Crèche Arc en Ciel
+ALL DES PINSONS,3A,Cabane des petits
+ALL DES PRIMEVERES,3C,Crèche Arc en Ciel
+ALL DES PRIMEVERES,3D,Crèche Arc en Ciel
+ALL DES RENONCULES,3C,Crèche Arc en Ciel
+ALL DES RENONCULES,3D,Crèche Arc en Ciel
+ALL DES ROSES,2D,Maison de la petite enfance
+ALL DES SORBIERS,2F,Maison de la petite enfance
+ALL DES SYCOMORES,2F,Maison de la petite enfance
+ALL DES SYLPHES,3B,Cabane des petits
+ALL DES TILLEULS,3B,Cabane des petits
+ALL DES TULIPES,2D,Maison de la petite enfance
+ALL DES TULIPES,2E,Maison de la petite enfance
+ALL DES VIGNES,2F,Maison de la petite enfance
+ALL DU GROS BUISSON,3A,Cabane des petits
+ALL DU GROS BUISSON,3B,Cabane des petits
+ALL DU MOULIN,2B,Cabane des petits
+ALL DU MUGUET,3A,Cabane des petits
+ALL DU RENDEZ VOUS,4C,Crèche Arc en Ciel
+ALL ESPERANTO,3E,Maison de la petite enfance
+ALL ESPERANTO,3F,Maison de la petite enfance
+ALL GABRIEL FAURE,3B,Cabane des petits
+ALL GABRIELLE,3B,Cabane des petits
+ALL GABRIELLE,4B,Cabane des petits
+ALL GEORGES SAND,2D,Crèche Arc en Ciel
+ALL GEORGES SAND,3D,Crèche Arc en Ciel
+ALL HANNAH ARENDT,3D,Crèche Arc en Ciel
+ALL HECTOR BERLIOZ,3B,Cabane des petits
+ALL JEAN COURTADE,2B,Cabane des petits
+ALL JOACHIM DU BELLAY,4B,Cabane des petits
+ALL JOSE MARTI,3F,Maison de la petite enfance
+ALL LEON,4D,Crèche Arc en Ciel
+ALL LOUISE,4B,Cabane des petits
+ALL MARCEL SEMBAT,4C,Crèche Arc en Ciel
+ALL MARIA DERAIMES,3B,Cabane des petits
+ALL MARIE LAURENCIN,3B,Cabane des petits
+ALL MARYSE BASTIE,4B,Cabane des petits
+ALL MOLIERE,4B,Crèche Arc en Ciel
+ALL MOLIERE,4C,Crèche Arc en Ciel
+ALL MONTPLAISIR,3A,Cabane des petits
+ALL MONTPLAISIR,3B,Cabane des petits
+ALL MOZART,2E,Maison de la petite enfance
+ALL PABLO NERUDA,3F,Maison de la petite enfance
+ALL PAUL LAFARGUE,2B,Cabane des petits
+ALL PAUL LAFARGUE,3B,Cabane des petits
+ALL POQUE,4B,Cabane des petits
+ALL POTTIER,4D,Crèche Arc en Ciel
+ALL RACINE,4B,Cabane des petits
+ALL RASPAIL,4D,Crèche Arc en Ciel
+ALL RULHIERE,1C,Crèche Arc en Ciel
+ALL RULHIERE,2C,Crèche Arc en Ciel
+ALL SAN MARTIN,3F,Maison de la petite enfance
+ALL SIMON BOLIVAR,3F,Maison de la petite enfance
+ALL SURCOUF,2B,Cabane des petits
+ALL THERESE,4C,Crèche Arc en Ciel
+ALL THERESE,4D,Crèche Arc en Ciel
+ALL VICTOR HUGO,3B,Cabane des petits
+ALL VOLTAIRE,3C,Crèche Arc en Ciel
+AV ALBERT THOMAS,4C,Crèche Arc en Ciel
+AV ANATOLE FRANCE,4A,Cabane des petits
+AV ANATOLE FRANCE,4B,Cabane des petits
+AV BLERIOT,3B,Cabane des petits
+AV BLERIOT,3C,Cabane des petits
+AV CADERAS,3B,Cabane des petits
+AV CARNOT,2C,Crèche Arc en Ciel
+AV CARNOT,3C,Crèche Arc en Ciel
+AV CARNOT (A PARTIR DE 56 / 59),2B,Cabane des petits
+AV CARNOT (A PARTIR DE 56 / 59),2C,Cabane des petits
+AV CLARA GRANDET,2E,Maison de la petite enfance
+AV CLARA GRANDET,3E,Maison de la petite enfance
+AV DE BELFORT,2A,Cabane des petits
+AV DE BELFORT,3A,Cabane des petits
+AV DE BELFORT,2B,Cabane des petits
+AV DE LA PARISIENNE,3E,Maison de la petite enfance
+AV DE LA REPUBLIQUE,2B,Cabane des petits
+AV DE LA REPUBLIQUE,2C,Cabane des petits
+AV DE LA VILLAGEOISE,3E,Maison de la petite enfance
+AV DE LA VILLEGIATURE,3E,Maison de la petite enfance
+AV DE L'ESPERANCE,4B,Cabane des petits
+AV DE L'EST,2A,Cabane des petits
+AV DE L'EST,3A,Cabane des petits
+AV DE L'EST,2B,Cabane des petits
+AV DE L'IDEAL,4B,Cabane des petits
+AV DE METZ,2A,Cabane des petits
+AV DE METZ,3A,Cabane des petits
+AV DE NANCY,2B,Cabane des petits
+AV DE ROSNY (à partir 195 / 204),1C,Crèche Arc en Ciel
+AV DE ROSNY (à partir 195 / 204),1D,Crèche Arc en Ciel
+AV DE ROSNY (JUSQU'AU 187 / 202 ),1C,Cabane des petits
+AV DE VERDUN,4C,Crèche Arc en Ciel
+AV DE VERDUN,3D,Crèche Arc en Ciel
+AV DE VERDUN,4D,Crèche Arc en Ciel
+AV DENISE,3B,Cabane des petits
+AV DES MESARMES,3D,Maison de la petite enfance
+AV DES MESARMES,3E,Maison de la petite enfance
+AV DES PLATANES,2B,Cabane des petits
+AV DES SCIENCES,4B,Cabane des petits
+AV DU QUATORZE JUILLET,3E,Maison de la petite enfance
+AV DUMESNIL,4B,Cabane des petits
+AV GALLIENI IMPAIRS,1D,Maison de la petite enfance
+AV GALLIENI IMPAIRS,2D,Maison de la petite enfance
+AV GALLIENI IMPAIRS,3D,Maison de la petite enfance
+AV GALLIENI IMPAIRS,4D,Maison de la petite enfance
+AV GALLIENI PAIR,1D,Crèche Arc en Ciel
+AV GALLIENI PAIR,2D,Crèche Arc en Ciel
+AV GALLIENI PAIR,3D,Crèche Arc en Ciel
+AV GENEVIEVE ANTHONIOZ DE GAULLE,3B,Cabane des petits
+AV GENEVIEVE ANTHONIOZ DE GAULLE,4B,Cabane des petits
+AV GUEUGNON,2D,Maison de la petite enfance
+AV GUEUGNON,3D,Maison de la petite enfance
+AV HENRI BARBUSSE,3C,Crèche Arc en Ciel
+AV HENRI BARBUSSE,3C,Crèche Arc en Ciel
+AV HENRI BARBUSSE,4C,Crèche Arc en Ciel
+AV HENRI VARAGNAT,2E,Maison de la petite enfance
+AV HENRI VARAGNAT,3E,Maison de la petite enfance
+AV HENRI VARAGNAT,3F,Maison de la petite enfance
+AV JEAN LEBAS,2E,Maison de la petite enfance
+AV JEAN MOULIN,2E,Maison de la petite enfance
+AV JULES FERRY,2B,Cabane des petits
+AV LEON BLUM,2E,Maison de la petite enfance
+AV LEON BLUM,2F,Maison de la petite enfance
+AV LEON JOUHAUX,2F,Maison de la petite enfance
+AV LEON JOUHAUX,3F,Maison de la petite enfance
+AV MAL DE LATTRE DE TASSIGNY,3C,Crèche Arc en Ciel
+AV MAL DE LATTRE DE TASSIGNY,3D,Crèche Arc en Ciel
+AV MARGUERITE,3D,Maison de la petite enfance
+AV MARIE CURIE,3B,Cabane des petits
+AV MARX DORMOY,2E,Maison de la petite enfance
+AV MARX DORMOY,3E,Maison de la petite enfance
+AV MAURICE BENHAMOU,2E,Maison de la petite enfance
+AV MAURICE BENHAMOU,3E,Maison de la petite enfance
+AV PASTEUR,3C,Crèche Arc en Ciel
+AV PASTEUR,3D,Crèche Arc en Ciel
+AV ROUGET DE LISLE,3B,Cabane des petits
+AV SUZANNE BUISSON,2E,Maison de la petite enfance
+AV SUZANNE BUISSON,3E,Maison de la petite enfance
+CH DE LA MARE A LA VEUVE,1A,Cabane des petits
+CH DE LA MARE A LA VEUVE,2A,Cabane des petits
+CH DES CARROUGES,2A,Cabane des petits
+CHE DE GROSLAY,1D,Maison de la petite enfance
+CHE DE GROSLAY,2E,Maison de la petite enfance
+CHE DE GROSLAY,2F,Maison de la petite enfance
+CHE DE LA MARE A LA VEUVE PROLONGEE,2A,Cabane des petits
+CHE DE LA MARE A LA VEUVE PROLONGEE,2B,Cabane des petits
+CHE DE MONTREUIL A CLAYE,1A,Cabane des petits
+CHE DE MONTREUIL A CLAYE,1B,Cabane des petits
+CHE DU MERLAN,1B,Cabane des petits
+CHE DU MERLAN,2B,Cabane des petits
+CHE DU PONT,3D,Maison de la petite enfance
+CHE LATERAL,1D,Maison de la petite enfance
+CHE LATERAL,2D,Maison de la petite enfance
+CITE DES SAULES,3C,Crèche Arc en Ciel
+CRS DE LA REPUBLIQUE,2C,Crèche Arc en Ciel
+D78,2F,Maison de la petite enfance
+IMP CARNOT,2C,Cabane des petits
+IMP DE LA JARDINIERE,3E,Maison de la petite enfance
+IMP DE LA JARDINIERE,3E,Maison de la petite enfance
+IMP DE LA LIBERTE,3B,Cabane des petits
+IMP DE LA PARISIENNE,3E,Maison de la petite enfance
+IMP DE LA SOLIDARITE,3B,Cabane des petits
+IMP DES VIOLETTES,3D,Crèche Arc en Ciel
+IMP DU CASTEL,2A,Cabane des petits
+IMP DU CASTEL,2B,Cabane des petits
+IMP FERNAND POTTIER,2D,Crèche Arc en Ciel
+IMP GEORGES BRASSENS,3A,Cabane des petits
+IMP JACQUES BREL,2A,Cabane des petits
+IMP JEAN WIENER,3A,Cabane des petits
+IMP RENE CLAIR,3A,Cabane des petits
+MAIL MARIE-MADELEINE FOURCADE,2E,Maison de la petite enfance
+MAIL PANTAGRUEL,2F,Maison de la petite enfance
+MAIL PANTAGRUEL,3F,Maison de la petite enfance
+NA,3A,Cabane des petits
+NA,2B,Cabane des petits
+NA,2B,Cabane des petits
+NA,3C,Crèche Arc en Ciel
+NA,3D,Maison de la petite enfance
+NA,3D,Maison de la petite enfance
+NA,3D,Crèche Arc en Ciel
+NA,2E,Maison de la petite enfance
+NA,2E,Maison de la petite enfance
+NA,2E,Maison de la petite enfance
+NA,2E,Maison de la petite enfance
+NA,2F,Maison de la petite enfance
+NA,2F,Maison de la petite enfance
+NA,2F,Maison de la petite enfance
+PAS DES DEUX VILLES,2E,Maison de la petite enfance
+PAS DU VERCORS,2E,Maison de la petite enfance
+PAS DU VERCORS,2F,Maison de la petite enfance
+PAS MICHELET,1C,Cabane des petits
+PAS MICHELET,2C,Cabane des petits
+PL ALBERT THOMAS,2C,Cabane des petits
+PL ARTHUR RIMBAUD,2D,Crèche Arc en Ciel
+PL CHARLES DE GAULLE,2C,Crèche Arc en Ciel
+PL DE LA DIVISION LECLERC,2C,Crèche Arc en Ciel
+PL DE LA GARE,2B,Cabane des petits
+PL DE LA REPUBLIQUE,2B,Cabane des petits
+PL DES ECOLES,3C,Crèche Arc en Ciel
+PL DES ECOLES,3C,Cabane des petits
+PL DES FLEURS,3D,Crèche Arc en Ciel
+PL DU 11 NOVEMBRE 1918,2C,Crèche Arc en Ciel
+PL DU 11 NOVEMBRE 1918,3C,Crèche Arc en Ciel
+PL DU 11 NOVEMBRE 1918,2D,Crèche Arc en Ciel
+PL EUDEMON,2F,Maison de la petite enfance
+PL GEORGES LYSSANDRE,3C,Crèche Arc en Ciel
+PL NICOLE NEUBURGER,3C,Crèche Arc en Ciel
+PL NICOLE NEUBURGER,4C,Crèche Arc en Ciel
+PL NICOLE NEUBURGER,3D,Crèche Arc en Ciel
+PL NICOLE NEUBURGER,4D,Crèche Arc en Ciel
+PL SCHOELCHER,3F,Maison de la petite enfance
+QUAI HUBERTINE AUCLERT,1D,Maison de la petite enfance
+QUAI HUBERTINE AUCLERT,2D,Maison de la petite enfance
+QUAI HUBERTINE AUCLERT,3D,Maison de la petite enfance
+QUAI HUBERTINE AUCLERT,3E,Maison de la petite enfance
+R ALEXANDRA DAVID NEEL,3B,Cabane des petits
+R AMEDEE GUYARD,4D,Crèche Arc en Ciel
+R ANDREI SAKHAROV,2F,Maison de la petite enfance
+R ANDREI SAKHAROV,3F,Maison de la petite enfance
+R ANDREI SAKHAROV,4F,Maison de la petite enfance
+R ARTHUR GROUSSIER,3D,Maison de la petite enfance
+R ARTHUR GROUSSIER,3E,Maison de la petite enfance
+R ARTHUR RIMBAUD,2D,Crèche Arc en Ciel
+R AUGUSTE POLISSARD,2C,Crèche Arc en Ciel
+R AUGUSTE POLISSARD,2D,Crèche Arc en Ciel
+R BAUDIN,1C,Cabane des petits
+R BAUDIN,2C,Cabane des petits
+R BEAUREGARD IMPAIR,2C,Crèche Arc en Ciel
+R BEAUREGARD PAIRS,2C,Cabane des petits
+R BERANGER,4D,Crèche Arc en Ciel
+R BERNARD DE JUSSIEU,4C,Crèche Arc en Ciel
+R BORDIER,2B,Cabane des petits
+R BORDIER,3B,Cabane des petits
+R BORDIER,3C,Cabane des petits
+R BOREL,3D,Maison de la petite enfance
+R CESAR DELAINE,4C,Crèche Arc en Ciel
+R CHARLES FERDINAND,3C,Crèche Arc en Ciel
+R CHARLES MAGNE,4B,Cabane des petits
+R COMPAGNON,3D,Crèche Arc en Ciel
+R COMPAGNON,4D,Crèche Arc en Ciel
+R DAVID LEDER,2B,Cabane des petits
+R DE BONDY,4A,Cabane des petits
+R DE CRONSTADT,1C,Crèche Arc en Ciel
+R DE LA BUTTE,4A,Cabane des petits
+R DE LA BUTTE,4B,Cabane des petits
+R DE LA FRATERNITE,2C,Cabane des petits
+R DE LA LIBERTE,2B,Cabane des petits
+R DE LA LIBERTE,3B,Cabane des petits
+R DE LA PHILOSOPHIE,4A,Cabane des petits
+R DE LA PHILOSOPHIE,4B,Cabane des petits
+R DE LA SOLIDARITE,3B,Cabane des petits
+R DE LA SOLIDARITE,3C,Cabane des petits
+R DE LA TERRE SAINT-BLAISE,2F,Maison de la petite enfance
+R DE LA TERRE SAINT-BLAISE,3F,Maison de la petite enfance
+R DE L'ABBE MAURICE BAURIT,3C,Crèche Arc en Ciel
+R DE L'AVIATION,4C,Crèche Arc en Ciel
+R DE L'EGALITE,2C,Cabane des petits
+R DE L'UNION,3B,Cabane des petits
+R DE MEAUX,3E,Maison de la petite enfance
+R DE MEAUX,2F,Maison de la petite enfance
+R DE MEAUX,3F,Maison de la petite enfance
+R DE PANURGE,2F,Maison de la petite enfance
+R DE PARIS,1D,Crèche Arc en Ciel
+R DE PLAISANCE,4B,Cabane des petits
+R DE PRESSENSE,4C,Crèche Arc en Ciel
+R DE TREMEUGE,4C,Crèche Arc en Ciel
+R DE VARSOVIE,2B,Cabane des petits
+R DE VERSAILLES,2E,Maison de la petite enfance
+R DE VERSAILLES,3E,Maison de la petite enfance
+R DENYS COCHIN,3C,Crèche Arc en Ciel
+R DENYS COCHIN,4C,Crèche Arc en Ciel
+R DES 5 ORMES,4C,Crèche Arc en Ciel
+R DES DROITS DE L'HOMME,2C,Crèche Arc en Ciel
+R DES ECOLES,3D,Maison de la petite enfance
+R DES ESCHOLIERS,2F,Maison de la petite enfance
+R DES FLORALIES,2E,Maison de la petite enfance
+R DES FRANCS AUBIERS,2F,Maison de la petite enfance
+R DES FRANCS AUBIERS,3F,Maison de la petite enfance
+R DES FRERES DARTY,2C,Crèche Arc en Ciel
+R DES FRERES DARTY,3C,Crèche Arc en Ciel
+R DES FRERES DARTY,2D,Crèche Arc en Ciel
+R DES GAZELLES,3D,Crèche Arc en Ciel
+R DES GAZELLES,4D,Crèche Arc en Ciel
+R DES PEUPLIERS,2B,Cabane des petits
+R DESIRE LEON,4B,Cabane des petits
+R DU 4 SEPTEMBRE,3E,Maison de la petite enfance
+R DU BEL AIR,4B,Cabane des petits
+R DU BON AIR,2F,Maison de la petite enfance
+R DU BREUIL,2C,Crèche Arc en Ciel
+R DU BREUIL,2D,Crèche Arc en Ciel
+R DU CHALET,4C,Crèche Arc en Ciel
+R DU CHAMPART,2C,Cabane des petits
+R DU CHEMIN DE FER PROLONGEE,3A,Cabane des petits
+R DU CHEMIN DE FER PROLONGEE,4A,Cabane des petits
+R DU CHEMIN DE FER PROLONGEE,3B,Cabane des petits
+R DU CHEMIN DE FER PROLONGEE,4B,Cabane des petits
+R DU CLOS VAILLANT,2B,Cabane des petits
+R DU CYCLE,4D,Crèche Arc en Ciel
+R DU FER A CHEVAL,3F,Maison de la petite enfance
+R DU LEVANT,3B,Cabane des petits
+R DU LEVANT,4B,Cabane des petits
+R DU LION,2B,Cabane des petits
+R DU MIDI,2A,Cabane des petits
+R DU MIDI,2B,Cabane des petits
+R DU MOLERET,3B,Cabane des petits
+R DU POTAGER,1C,Crèche Arc en Ciel
+R DU POTAGER,1D,Crèche Arc en Ciel
+R DU PROFESSEUR VAILLANT,3C,Crèche Arc en Ciel
+R DU PROFESSEUR VAILLANT,4C,Crèche Arc en Ciel
+R DU PROGRES,4B,Cabane des petits
+R DU SERGENT BOBILLOT,1B,Cabane des petits
+R DU SERGENT BOBILLOT,2B,Cabane des petits
+R DU VERGER,2F,Maison de la petite enfance
+R DU VIEUX CHATEAU,2B,Cabane des petits
+R DU VIEUX MOULIN,1B,Cabane des petits
+R DU VIEUX MOULIN,2B,Cabane des petits
+R DU VIEUX MOULIN,2C,Cabane des petits
+R EDOUARD VAILLANT,2B,Cabane des petits
+R EDOUARD VAILLANT,3B,Cabane des petits
+R EDOUARD VAILLANT,4B,Cabane des petits
+R EMILE ZOLA,3E,Maison de la petite enfance
+R EMMANUEL FAIRON,3D,Crèche Arc en Ciel
+R EMMANUEL FAIRON,4D,Crèche Arc en Ciel
+R ERIC TABARLY,2E,Maison de la petite enfance
+R ERIC TABARLY,3E,Maison de la petite enfance
+R ETIENNE DOLET,2A,Cabane des petits
+R ETIENNE DOLET,2B,Cabane des petits
+R EUGENE MASSON,4B,Crèche Arc en Ciel
+R EUGENE MASSON,4C,Crèche Arc en Ciel
+R EUGENE VARLIN,2F,Maison de la petite enfance
+R FONTAINE,3D,Maison de la petite enfance
+R FONTAINE,3E,Maison de la petite enfance
+R FRANCOIS COLLET,3B,Cabane des petits
+R FRANCOIS MARTIN,2D,Maison de la petite enfance
+R FRANCOIS VILLON,3E,Maison de la petite enfance
+R FRANCOISE HERITIER,2D,Maison de la petite enfance
+R FREMIN,1C,Crèche Arc en Ciel
+R FREMIN,2C,Crèche Arc en Ciel
+R FREMIN,1D,Crèche Arc en Ciel
+R GARGANTUA,2F,Maison de la petite enfance
+R GASTON DEFFERRE,3C,Crèche Arc en Ciel
+R GATINE,2D,Crèche Arc en Ciel
+R GEORGES ELIE,3D,Crèche Arc en Ciel
+R GEORGES ELIE,4D,Crèche Arc en Ciel
+R GEORGES GRAFF,4B,Cabane des petits
+R GERMAINE TILLION,2E,Maison de la petite enfance
+R GISELE HALIMI,2D,Maison de la petite enfance
+R GUILLAUME APOLLINAIRE,2C,Crèche Arc en Ciel
+R GUILLAUME APOLLINAIRE,3C,Crèche Arc en Ciel
+R GUY DE MAUPASSANT,4C,Crèche Arc en Ciel
+R HELENE BOUCHER,2D,Crèche Arc en Ciel
+R HELENE BOUCHER,3D,Crèche Arc en Ciel
+R HENRI ALPY,3C,Crèche Arc en Ciel
+R HENRI DOUILLOT,4C,Crèche Arc en Ciel
+R HENRI DOUILLOT,4D,Crèche Arc en Ciel
+R HENRI DUNANT,3B,Cabane des petits
+R HENRI DUNANT,3C,Cabane des petits
+R HENRI MOULY,2E,Maison de la petite enfance
+R HENRI ROL TANGUY,2E,Maison de la petite enfance
+R HENRY ESPAULLARD,1C,Cabane des petits
+R JACQUELINE AURIOL,3B,Cabane des petits
+R JACQUELINE AURIOL,3C,Cabane des petits
+R JEAN JACQUES ROUSSEAU,2E,Maison de la petite enfance
+R JEAN JAURES,2C,Crèche Arc en Ciel
+R JEAN JAURES,2D,Crèche Arc en Ciel
+R JEAN MONNET,3A,Cabane des petits
+R JEAN PIERRE LEVY,2E,Maison de la petite enfance
+R JEAN-MARIE TJIBAOU,3E,Maison de la petite enfance
+R JOE CARMAN,2A,Cabane des petits
+R JULES AUFFRET,3C,Crèche Arc en Ciel
+R JULES AUFFRET,3D,Crèche Arc en Ciel
+R JULES GUESDE,2C,Crèche Arc en Ciel
+R JULES GUESDE,2C,Crèche Arc en Ciel
+R JULES GUESDE,3C,Crèche Arc en Ciel
+R JULES GUESDE,1D,Crèche Arc en Ciel
+R JULES GUESDE,2D,Crèche Arc en Ciel
+R JULES LECOMTE,2F,Maison de la petite enfance
+R JULES LELONG,2B,Cabane des petits
+R JULIE VICTOIRE DAUBIE,2D,Crèche Arc en Ciel
+R JULIE VICTOIRE DAUBIE,3D,Crèche Arc en Ciel
+R LAUG,3D,Maison de la petite enfance
+R LOUIS AUGUSTE BLANQUI,4B,Cabane des petits
+R LOUIS AUGUSTE BLANQUI,2C,Cabane des petits
+R LOUIS AUGUSTE BLANQUI,3C,Cabane des petits
+R LOUIS AUGUSTE BLANQUI,4C,Cabane des petits
+R LOUIS AUGUSTE BLANQUI IMPAIR,2C,Crèche Arc en Ciel
+R LOUIS AUGUSTE BLANQUI IMPAIR,3C,Crèche Arc en Ciel
+R LOUIS AUGUSTE BLANQUI IMPAIR,4C,Crèche Arc en Ciel
+R LOUIS LEON COLLIGNON,3B,Cabane des petits
+R LOUIS LEON COLLIGNON,3C,Cabane des petits
+R LUCIE AUBRAC,2E,Maison de la petite enfance
+R LUCIEN CHAPELAIN,3E,Maison de la petite enfance
+R MARCEL DASSAULT,2A,Cabane des petits
+R MARCEL DASSAULT,3A,Cabane des petits
+R MARCEL PAUL,3A,Cabane des petits
+R MARCELLIN BERTHELOT,4D,Crèche Arc en Ciel
+R MARGUERITE DURAS,3B,Cabane des petits
+R MARTIN LUTHER KING,3B,Cabane des petits
+R MARTIN LUTHER KING,3C,Cabane des petits
+R MICHELET,1C,Crèche Arc en Ciel
+R MICHELET,2C,Crèche Arc en Ciel
+R NADIA MURAD,2D,Maison de la petite enfance
+R NEUVE,3C,Crèche Arc en Ciel
+R NOEMIE,3C,Crèche Arc en Ciel
+R ODETTE PAIN,2E,Maison de la petite enfance
+R PAUL ELUARD,3C,Cabane des petits
+R PAUL RENAUD,2E,Maison de la petite enfance
+R PAUL VAILLANT COUTURIER,2C,Crèche Arc en Ciel
+R PAULINE ROGER,3A,Cabane des petits
+R PAULINE ROGER,2B,Cabane des petits
+R PAULINE ROGER,3B,Cabane des petits
+R PHILEAS COLLARDEAU,1C,Crèche Arc en Ciel
+R PHILEAS COLLARDEAU,2C,Crèche Arc en Ciel
+R PIERRE BROSSOLETTE,3C,Crèche Arc en Ciel
+R PIERRE DE RONSARD,3E,Maison de la petite enfance
+R RABELAIS,3F,Maison de la petite enfance
+R RAOUL,4C,Crèche Arc en Ciel
+R RENE CHAR,3A,Cabane des petits
+R RENE CHAR,3B,Cabane des petits
+R ROBERT BONNET,3D,Crèche Arc en Ciel
+R ROBERT BONNET,4D,Crèche Arc en Ciel
+R ROBERT DOUVILLEZ,4D,Crèche Arc en Ciel
+R ROGER PANNEQUIN,2E,Maison de la petite enfance
+R ROGER SALENGRO,2C,Crèche Arc en Ciel
+R ROGER SALENGRO (A PARTIR DE 31 et 68),2B,Cabane des petits
+R ROGER SALENGRO (A PARTIR DE 31 et 68),2C,Cabane des petits
+R RUDYARD KIPLING,3B,Cabane des petits
+R SAINTE-BARBE,2C,Crèche Arc en Ciel
+R SAINT-LOUIS PROLONGEE,3A,Cabane des petits
+R SAINT-LOUIS PROLONGEE,4A,Cabane des petits
+R SIMONE DE BEAUVOIR,3B,Cabane des petits
+R SIMONE VEIL,2D,Maison de la petite enfance
+R SUZANNE BLIN,2E,Maison de la petite enfance
+R TRINQUAMELLE,2F,Maison de la petite enfance
+R YVONNE (37 et 39 uniquement),2C,Cabane des petits
+R YVONNE (JUSQU'AU 31 / 36),2C,Crèche Arc en Ciel
+R. ARETHA FRANKLIN,2D,Maison de la petite enfance
+RLE SAINTE-BARBE,2C,Crèche Arc en Ciel
+RPE DU PONT,2B,Cabane des petits
+RPT DU VERGER,2F,Maison de la petite enfance
+RPT JOUHAUX,2F,Maison de la petite enfance
+RTE D'AULNAY,2D,Maison de la petite enfance
+RTE D'AULNAY,2E,Maison de la petite enfance
+RTE DE STAINS,1D,Maison de la petite enfance
+RTE DE VILLEMOMBLE,3A,Cabane des petits
+RTE DE VILLEMOMBLE,2B,Cabane des petits
+RTE DE VILLEMOMBLE,3B,Cabane des petits
+SEN BLERIOT,3B,Cabane des petits
+SEN BLERIOT,3C,Cabane des petits
+SEN RENE CHAR,3A,Cabane des petits
+SQ DU 8 MAI 1945,2C,Crèche Arc en Ciel
+VLA CARNOT,2C,Cabane des petits
+VLA DES ABEILLES,1B,Cabane des petits
+VLA DES CERISES,4D,Crèche Arc en Ciel
+VLA DES MARRONNIERS,2B,Cabane des petits
+VLA DES MARRONNIERS,2C,Cabane des petits
+VLA DU BRECHET,2B,Cabane des petits
+VLA DU BREUIL,2C,Crèche Arc en Ciel
+VLA FLEURY,2D,Crèche Arc en Ciel
+VLA GABRIEL SEAILLES,1C,Crèche Arc en Ciel
+VLA LAVIGNE,2C,Cabane des petits
+VLA MADELEINE,2B,Cabane des petits
+VLA MADELEINE,3B,Cabane des petits
+VLA PARMENTIER,2C,Cabane des petits
+VLA THOREL,2D,Crèche Arc en Ciel
