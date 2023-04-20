@@ -51,8 +51,9 @@ Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
 ```{r}
 st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
 # nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rueCadastre")
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
 str(rue)
+# attention suppression
 file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
 st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
 st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherenc")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
@@ -65,10 +66,13 @@ tab <- table(rue$NOM_1_G)
 tab [tab >1]
 # carto pour voir pb
 select <- rue [rue$NOM_1_G %in% names (tab [tab > 1]), ]
-mf_init(st_buffer(select [1,], 10))
-mf_map(select [c(1:2),], add = T)
+mf_init(st_buffer(select [1,], 100))
+fond()
+mf_map(select [c(1:2),], lwd= 2, col = "red",add = T)
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+mf_label(rue, "NOM" , overlap = F, lines = T)
 
-select
+
 # Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
 
 # remplacementNONNumero
