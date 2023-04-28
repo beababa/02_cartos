@@ -1,0 +1,81 @@
+---
+title: "ril : pb extraction fichier"
+author: "B. Maranget"
+date: "27/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Export borne à incendie pour forcer format marché
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/08_VOIRIE/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+```
+
+
+
+# données
+
+
+
+```{r}
+bi <- st_read(paste0(chemin, "eauPotable.gpkg"), "biVF")
+str(bi)
+# formatage
+bi <- bi [, c("numero", "numero_voi", "num_voi_e", "rue_emplac", "commentaire", "inc_pannea",
+              "accessibilite", "sig_type_i")]
+names(bi)
+bi <- bi [, c(9,4,5,6,7,3,10,2)]
+names(bi) [1:8] <- c("id", "numero_voi", "num_voie_e", "rue", "commentaire", "panneau", "accessibilite", "type") 
+st_write(bi, "../data/borneIncendie.geojson", delete_layer = T)
+
+bi$numero
+bi$numero_voi
+bi$num_voie_e
+bi$rue_emplac
+bi$commentaire
+bi$inc_pannea
+bi$accessibilite
+bi$sig_type_i
+
+
+
+
+
+
+
+

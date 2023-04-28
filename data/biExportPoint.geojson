@@ -1,0 +1,14 @@
+{
+"type": "FeatureCollection",
+"name": "biExportPoint",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::2154" } },
+"features": [
+{ "type": "Feature", "properties": { "id": 44, "numero_voi": "30", "num_voie_e": null, "rue": "JULES AUFFRET / VERDUN (AV)", "commentair": null, "panneau": "Oui", "accessibil": "Oui", "type": "Bouche incendie 100" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 662716.829099997878075, 6867224.782400000840425 ] ] } },
+{ "type": "Feature", "properties": { "id": 50, "numero_voi": "40", "num_voie_e": null, "rue": "PASTEUR (AV)", "commentair": "NON CONFORME SELON VEOLIA 21", "panneau": "Non", "accessibil": "Oui", "type": "Bouche incendie 100" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 662257.886100001633167, 6867265.793600000441074 ] ] } },
+{ "type": "Feature", "properties": { "id": 95, "numero_voi": "43", "num_voie_e": null, "rue": "VERDUN (AV DE) / PRESSENCE / CINQ ORMES", "commentair": null, "panneau": "Non", "accessibil": "Oui", "type": "Bouche incendie 100" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 662857.931699998676777, 6867095.2010000012815 ] ] } },
+{ "type": "Feature", "properties": { "id": 158, "numero_voi": "36", "num_voie_e": null, "rue": "PASTEUR (AV)", "commentair": null, "panneau": "Oui", "accessibil": "Oui", "type": "Bouche incendie 100" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 662397.987499997019768, 6867406.058200001716614 ] ] } },
+{ "type": "Feature", "properties": { "id": 188, "numero_voi": "6", "num_voie_e": "6", "rue": "VERDUN (AV DE)", "commentair": null, "panneau": "pas nécessaire", "accessibil": "Oui", "type": "Poteau incendie 100" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 662635.464900001883507, 6867333.383400000631809 ] ] } },
+{ "type": "Feature", "properties": { "id": 190, "numero_voi": "6", "num_voie_e": null, "rue": "VERDUN (AV DE)", "commentair": "caserne des pompiers", "panneau": "pas d'accès", "accessibil": "Oui", "type": "Bouche incendie 100" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 662630.105200000107288, 6867309.770199999213219 ] ] } },
+{ "type": "Feature", "properties": { "id": 224, "numero_voi": null, "num_voie_e": "31", "rue": "PASTEUR (AV)", "commentair": null, "panneau": "Oui", "accessibil": "Oui", "type": "Bouche incendie 100" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 662326.155799999833107, 6867360.278000000864267 ] ] } }
+]
+}
