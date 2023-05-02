@@ -102,6 +102,23 @@ str(rue)
 ```
 
 
+suppression des articles dans le nom des rues pour l'index
+
+```{r}
+rue$NOM
+motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE ")
+rue$NOM2 <- gsub(motif, "", rue$NOM)
+rue$NOM2
+```
+
+enregistrement
+
+```{r}
+st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
+```
+
+
+
 # Liste
 
 
