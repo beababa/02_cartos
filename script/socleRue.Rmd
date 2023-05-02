@@ -40,7 +40,9 @@ library(tidyverse)
 chemins
 
 ```{r}
+Sys.getenv()
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <- "D:/03_SIG/03_03_Data/"
 ```
 
 
