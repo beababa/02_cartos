@@ -24,7 +24,11 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Fichier rue, constitution grille et liste des rues dans graticules
 
+La grille est dans socleBat
+
 Egalement liste des rues dans delib
+
+on coupe avec les quartiers et différentes autres géométries
 
 ## Librairies
 
@@ -77,17 +81,25 @@ mf_label(rue, "NOM" , overlap = F, lines = T)
 
 # Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
 
+
+# extraction tableau rue numero
+num <- rue[!is.na(rue$NOMnumero),]
+num <- num [order (as.integer(num$NOM)), c("NATURE", "NOMnumero"), drop = T]
+write.csv(num, "../data/numRue.csv", fileEncoding = "UTF-8")
 # remplacementNONNumero
 num <- as.character(seq(1,17))
-rue$NOM_1_G [rue$NOM_1_G %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
+rue$NOM_1_G [rue$NOM %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
 rue[!is.na(rue$NOMnumero),]
 # extraction type rue
 explode <- strsplit(rue$NOM_1_G, " ")
 rue$NATURE <- sapply(explode, "[",1)
 table(rue$NATURE)
+rue$Longueur <- length(rue)
 agg <- aggregate(rue$Longueur, by = list(rue$NATURE), sum )
+knitr::kable(agg)
 # extraction type rue / isolement
 motif <- agg$Group.1
+motif
 ch <- as.character(seq(1,17))
 motif <- motif [!(motif %in% ch)]
 motif <- motif [!motif%in% c("Sans", "D78")]
@@ -108,9 +120,9 @@ suppression des articles dans le nom des rues pour l'index
 
 ```{r}
 rue$NOM
-motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE ")
+motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE|^D\'")
 rue$NOM2 <- gsub(motif, "", rue$NOM)
-rue$NOM2
+rue$NOM2 <- gsub("^ ", "", rue$NOM2)
 ```
 
 enregistrement
@@ -129,4 +141,25 @@ liste <- rue [, c("NOM",  "Longueur", "NATURE"), drop = T]
 write.csv(liste [order (liste$"NOM_1_G" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
 ```
 
+
+# Intersections diverses
+
+
+Les quartiers
+
+```{r}
+quartier <- st_read(paste0(chemin, "03_SOCLE/limites.gpkg"), "quartiers")
+nom <- names (table(quartier$nom)) 
+raccourci <- c("MVeuve",  "Mainguy","Saule", "Merisiers" ,"NC-TSB")
+equiv <- data.frame(nom, raccourci)
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+inter <- st_intersection(rue, quartier)
+interSansGeom <- st_drop_geometry(inter)
+interSansGeom <- interSansGeom [, c("NATURE", "NOM2", "nom", "raccourci")]
+# equiv
+jointure <- merge(interSansGeom, equiv, by = "nom" )
+jointure <- jointure  [, c("NATURE", "NOM2", "raccourci")]
+names(jointure ) <- c("NATURE", "NOM", "QUARTIER")
+write.csv(jointure [ order (jointure$NOM), ], "../data/listeRueQuartier.csv", fileEncoding= "UTF-8")
+```
 
