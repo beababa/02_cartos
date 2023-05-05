@@ -24,12 +24,14 @@ knitr::opts_chunk$set(warning = FALSE)
 
 exploitation du fichier opendata mv_immeubles_2022_03_09.csv, point immeuble fibre
 
-	
+récupération dans C:\Users\bmaranget\Documents\01_ARCHIVE\fibre\Fibre Bondy DSI des kmz
+(Bondy V5.kmz)
 
 
 ```{r}
 library(sf)
 library(mapsf)
+library(rgdal)
 ```
 
 
@@ -39,7 +41,11 @@ library(mapsf)
 ```{r, eval = T}
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
-chemin <- paste0(rep,"/03_SIG/03_03_Data/10_HABITAT/")
+chemin <- paste0(rep,"/01_ARCHIVE/02_fibre/01_DSI/01_plans/Bondy V5.kmz")
+st_read(chemin)
+
+data <- readOGR(chemin, "Filaire")
+
 ```
 
 
