@@ -1,0 +1,68 @@
+---
+title: "Numéro de rues - Ban / Bal"
+author: "B. Maranget"
+date: "13/07/2022"
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Dans le cadre de la mise en place de la Ban, travail sur les numéros de rue
+
+extraire les pt rues bal
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Data
+
+
+```{r}
+chemin <- "C:/Users/bmaranget/Downloads/"
+chemin1 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/21_PORTAIL/"
+data <- read.csv2(paste0(chemin, "adresses-93.csv"), dec = ".")
+data <- data [data$code_postal == 93140, ]
+str(data)
+data <- st_as_sf(data, coords = c("x", "y"), crs = 2154)
+data <- data [, c("numero", "nom_voie")]
+mf_map(data)
+```
+
+
+## Intersections
+
+```{r}
+st_layers(paste0(chemin1, "limites.gpkg"))
+quartier <- st_read(paste0(chemin1, "limites.gpkg"), "quartiers")
+mf_map(quartier)
+inter <- st_intersection(data, quartier)
+st_write(inter,paste0(chemin2,"BAL.shp" ), fileEncoding = "UTF-8", delete_layer = T)
+write.csv(st_drop_geometry(inter), "../data/ptQuartier.csv", fileEncoding = "UTF-8")
+```
+

@@ -1,0 +1,202 @@
+---
+title: "cimetiere"
+author: "B. Maranget"
+date: "12/06/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+identification tombes du cimetière
+
+Sous Qgis, on crée les polygones des sépultures et un chemin qui permet de les numéroter.
+
+on extrait les sommets du chemin afin de pouvoir récupérer les allées dont on garde le sens.
+
+on intersecte le chemin et les sépultures afin de récupérer les pts sépultures.
+
+puis on replace les sépultures sur les allées et on calcule la distance à partir de chaque point zéro de l'allée.
+
+La dernière opération (intersection pt sépultures et allée) ne fonctionne pas sous Qgis
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(rgdal)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+# on reprend variable HOME en fonction PC
+rep <- Sys.getenv("HOME")
+st_layers("../data/cimetiere.gpkg")
+
+```
+
+
+```{r}
+allee <- st_read("../data/cimetiere.gpkg", "lgAllee")
+sep <- st_read("../data/cimetiere.gpkg", "ptSepulture")
+ptAllee  <- st_read("../data/cimetiere.gpkg", "ptAllee")
+chemin <- st_read("../data/cimetiere.gpkg", "chemin")
+requiem <- st_read("../data/cimetiere.gpkg", "requiem")
+```
+
+
+# Prétraitement 
+
+
+TO DO trouver comment extraire les sommets sous R
+
+st_reverse points devient ligne
+st_node ajoute des noeuds aux intersections
+... tout simplement st_cast
+
+
+```{r}
+pt <- st_cast(chemin, "POINT")
+mf_map(chemin)
+mf_map(pt, add = T)
+pt$id <- rownames(pt)
+mf_label(pt, var = "id", halo = T)
+```
+
+
+repérage des lignes allée
+
+On voit qu'il faut joindre les pts 2 à 2
+
+```{r}
+allee <- rep(LETTERS[1:13], each = 2)
+pt$allee <- allee
+```
+
+
+
+
+intersection chemin - tombe + centroid
+
+```{r}
+sep <- st_centroid(st_intersection(requiem, chemin))
+```
+
+# Traitement
+
+
+```{r}
+# bizarre les pts n'appartiennent pas à la lg
+st_intersection(sep, allee)
+st_touches(sep, allee)
+st_contains(allee, sep)
+# allee dans le bon ordre
+allee <- allee [order (allee$allée),]
+# necessite d'y mettre une distance
+accroch <- st_is_within_distance(sep, allee, 1)
+# verif toutes les sépultures liées à une allée
+serie <- sapply(accroch, length)
+lg <- which(serie == 0)
+mf_map(allee)
+mf_label(allee, var ="allée",add =T)
+mf_map(sep, add = T)
+mf_map(requiem, add = T)
+```
+
+# Traitement
+
+verif nb de tombes par allée
+
+```{r}
+table(unlist(accroch))
+```
+
+
+
+```{r}
+sep$allee <- unlist(accroch)
+lettre <- LETTERS[1:10]
+sep$alleeL <- LETTERS[sep$allee]
+```
+
+
+
+Mesure de la distance entre le pt 0 de l'allée et le pt Sepulture
+
+
+```{r}
+impairs <- seq(1, 20, by = 2)
+pairs
+ptAllee
+ptAlleeDep <- ptAllee [impairs,c("allée")]
+# verif graphique
+mf_map(ptAlleeDep, add =T, col = "red")
+# fonction pour classer les pts
+mesurer <- function (allee){
+  selSep <-  sep [sep$alleeL == LETTERS [allee],]
+  mat <- st_distance(ptAlleeDep [ptAlleeDep$allée == LETTERS [allee],], selSep )
+  dist <- as.vector (mat)
+  selSep$dist <- dist
+  selSep <- selSep [order(selSep$dist),]
+  seq <- (1:length(selSep$id))
+  selSep$num  <- seq
+  selSep <- selSep[, c("id", "alleeL", "num")]
+  return(selSep)
+}
+# boucle car la liste difficile à manipuler
+res <- NULL
+for (i in 1:10){
+  tmp <- mesurer (i)
+  res <- rbind(tmp, res)
+}
+st_write(res, "../data/cimetiere.gpkg", "ptSepultureID", delete_layer = T)
+```
+
+# intégration dans le dessin des tombes
+
+
+```{r}
+
+jointureSpatiale <- st_within(res, requiem, sparse = T)
+lg <- unlist(jointureSpatiale)
+res$lg <- lg
+res <- st_drop_geometry(res)
+requiem$lg <- rownames(requiem)
+joint <- merge(requiem, res, by = "lg")
+mf_map(joint, col="green", add = T)
+mf_label(joint, var = "num")
+```
+
+
+
+shape final
+
+```{r}
+joint <- joint [order(joint$alleeL, joint$num),]
+joint$lg <- seq(1:39)
+joint
+joint$E_ID <- paste0("bondy@",joint$lg)
+joint$ALLEE <- joint$alleeL
+joint$DIVISION <- "AA"
+joint$EMPLACEMEN <- joint$num
+st_write(joint [, c("E_ID", "Text", "DIVISION", "SECTION", "ALLEE", "EMPLACEMEN")],"../data/bondy.shp")
+```
+
+
