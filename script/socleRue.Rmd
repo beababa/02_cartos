@@ -25,6 +25,8 @@ knitr::opts_chunk$set(warning = FALSE)
 Fichier rue, constitution grille et liste des rues dans graticules
 
 La grille est dans socleBat
+Le fichier est grille dans bondy.gpkg
+st_write(grille, paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille", delete_layer = T)
 
 Egalement liste des rues dans delib
 
@@ -59,6 +61,7 @@ st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
 # nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
 rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
 str(rue)
+#386 rues au 16/06
 # attention suppression
 file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
 st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
@@ -161,5 +164,19 @@ jointure <- merge(interSansGeom, equiv, by = "nom" )
 jointure <- jointure  [, c("NATURE", "NOM2", "raccourci")]
 names(jointure ) <- c("NATURE", "NOM", "QUARTIER")
 write.csv(jointure [ order (jointure$NOM), ], "../data/listeRueQuartier.csv", fileEncoding= "UTF-8")
+```
+
+
+
+La grille
+
+```{r}
+grille <- st_read(paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille")
+mf_map(grille)
+mf_map(rue, add = T)
+```
+
+```{r}
+
 ```
 
