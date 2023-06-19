@@ -49,7 +49,7 @@ library(rgdal)
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
 st_layers("../data/cimetiere.gpkg")
-
+chemin <- "D:/03_SIG/03_03_Data/08_VOIRIE/cimetiere.gpkg"
 ```
 
 
@@ -58,7 +58,7 @@ allee <- st_read("../data/cimetiere.gpkg", "lgAllee")
 sep <- st_read("../data/cimetiere.gpkg", "ptSepulture")
 ptAllee  <- st_read("../data/cimetiere.gpkg", "ptAllee")
 chemin <- st_read("../data/cimetiere.gpkg", "chemin")
-requiem <- st_read("../data/cimetiere.gpkg", "requiem")
+requiem <- st_read("../data/cimetiere.gpkg", "requiem")# le dessin des sépultures
 ```
 
 
@@ -71,12 +71,31 @@ st_reverse points devient ligne
 st_node ajoute des noeuds aux intersections
 ... tout simplement st_cast
 
+```{r}
+mf_map(chemin)
+chemin$num <- rownames(chemin)
+mf_label(chemin, var = "num")
+```
+
+
+
+choix du chemin 
+
+
+```{r}
+chemin <- chemin [3,]
+```
+
+
 
 ```{r}
 pt <- st_cast(chemin, "POINT")
-mf_map(chemin)
+mf_init(chemin)
+mf_map(requiem, add = T, col = "green")
+mf_map(chemin, add = T)
 mf_map(pt, add = T)
 pt$id <- rownames(pt)
+
 mf_label(pt, var = "id", halo = T)
 ```
 
