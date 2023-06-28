@@ -83,7 +83,7 @@ choix du chemin
 
 
 ```{r}
-chemin <- chemin [3,]
+chemin <- chemin [5,]
 ```
 
 
@@ -95,8 +95,7 @@ mf_map(requiem, add = T, col = "green")
 mf_map(chemin, add = T)
 mf_map(pt, add = T)
 pt$id <- rownames(pt)
-
-mf_label(pt, var = "id", halo = T)
+#mf_label(pt, var = "id", halo = T)
 ```
 
 
@@ -105,10 +104,77 @@ repérage des lignes allée
 On voit qu'il faut joindre les pts 2 à 2
 
 ```{r}
-allee <- rep(LETTERS[1:13], each = 2)
+fin <- length(pt$id)/2
+allee <- rep(LETTERS[1:fin], each = 2)
 pt$allee <- allee
+mf_label(pt, var = "allee", col= "red", halo = T)
 ```
 
+éclatement allées
+
+```{r}
+allee <- st_cast(chemin, do_split = T, "")
+chemin
+pt
+allee
+mf_map(allee)
+
+faireLg <- function (allee){
+  pt <- pt [pt$allee == allee,]
+  lg <- st_cast(st_union(pt$geom [1], pt$geom [2]), "LINESTRING")
+  lg <- st_as_sf(data.frame(allee,lg))
+}
+
+pt
+lgA <- faireLg ("A")
+lgB <- faireLg ("B")
+lg <- rbind(lgA, lgB)
+class(lg)
+mf_map(lg)
+lg
+lgB <- faireLg ("B")
+class(lg)
+
+lg <- lapply(LETTERS[1:fin], faireLg)
+lg [[1]]
+
+lg
+
+do.call(rbind, lg)
+
+
+  library (dplyr)
+  df <- ldply (lg, data.frame)
+
+i <- 12
+df <- NULL
+tmp <- NULL
+for (i in 1:15) {
+  allee <- LETTERS[i]
+  tmp <- faireLg(allee)
+  df <- rbind(df, tmp)
+}
+df
+tail(df)
+mf_map(df)
+st_is_valid(df)
+lgL
+st_make_valid(lgL)
+lgL <- faireLg("L")
+lgL
+str(lgA)
+`st_crs<-`()
+df <- st_sf(df)
+plot(df)
+class(df)
+str(df)
+tmp <- faireLg(LETTERS[1:fin])
+str(df)
+mf_map(df)
+mf_map(df$geometry [[2]], lwd = 2, col = "blue")
+df$allee
+st_sfc
+```
 
 
 
@@ -116,6 +182,23 @@ intersection chemin - tombe + centroid
 
 ```{r}
 sep <- st_centroid(st_intersection(requiem, chemin))
+
+
+st_linestring()
+
+p1 <- structure(c(0, 1, 3, 2, 1, 0, 0, 0, 2, 4, 4, 0), .Dim = c(6L, 2L))
+p2 <- structure(c(1, 1, 2, 1, 1, 2, 2, 1), .Dim = c(4L, 2L))
+st_polygon(list(p1, p2))
+mls <- st_cast(nc$geometry[[4]], "MULTILINESTRING")
+st_sfc(cast_all(mls))
+mpt <- st_cast(nc$geometry[[4]], "MULTIPOINT")
+st_sfc(cast_all(mpt))
+pl <- st_cast(nc$geometry[[4]], "POLYGON")
+st_sfc(cast_all(pl))
+ls <- st_cast(nc$geometry[[4]], "LINESTRING")
+st_sfc(cast_all(ls))
+pt <- st_cast(nc$geometry[[4]], "POINT")
+
 ```
 
 # Traitement
@@ -123,9 +206,9 @@ sep <- st_centroid(st_intersection(requiem, chemin))
 
 ```{r}
 # bizarre les pts n'appartiennent pas à la lg
-st_intersection(sep, allee)
-st_touches(sep, allee)
-st_contains(allee, sep)
+st_intersection(sep, chemin)
+st_touches(sep, chemin)
+st_contains(allee, chemin)
 # allee dans le bon ordre
 allee <- allee [order (allee$allée),]
 # necessite d'y mettre une distance
