@@ -1,0 +1,147 @@
+---
+title: "verif PLUi M2"
+author: "B. Maranget"
+date: "18/07/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Production cartes de verif pour M2
+
+
+# Données
+
+Les données sont coupées dans QGIS
+
+AF dans R
+
+
+```{r, eval = T}
+# pb lettre clé usb
+usb <- "G:"
+chemin <- "C:/Users/bmaranget/Documents"
+chemin2 <- "G:"
+chemin <- "Home/tachasa/00_DATA/"
+```
+
+INFO_SURF
+
+TA
+
+
+```{r, eval = T}
+library(sf)
+st_layers("../data/pluiM2.gpkg")
+info_surf <- st_read("../data/pluiM2.gpkg", "info_surf")
+ta <- info_surf [info_surf$LIBELLE == 'Taxe d\'amenagement',]
+er <- st_read("../data/pluiM2.gpkg", "emplacementreserve")
+er
+```
+
+
+
+
+# Cartographie
+
+
+```{r}
+library(mapsf)
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy", quiet=F)
+
+
+mf_export(x = bondy, filename = paste0("../img/ta.png"), 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 200)
+  mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_typo(
+    ta,
+    pal = c("orange", "yellow"),
+    border = NA,
+    var = "TXT",
+    leg_pos = "topright",
+    leg_title = "Montant (%)",
+    add = TRUE
+  )
+
+mf_layout(title = "Taxe d'aménagement M2 juillet 2022",
+            credits = "Plui M2\nBondy,  juillet 2023")
+dev.off()
+```
+
+
+![](../img/ta.png)
+
+INFO_SURF / ER
+
+
+```{r}
+library(mapsf)
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy", quiet=F)
+mf_export(x = bondy, filename = "../img/er.png", 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 200)
+  mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    er,
+    col = "green",
+    type = "base",
+    border = NA,
+    add = T
+  )
+  mf_label(er, var="TXT", overlap = F, lines = T,  cex =0.6, bg = "white", halo = T)
+  
+
+mf_layout(title = "Emplacements réservés M2 juillet 2022",
+            credits = "Plui M2\nBondy,  juillet 2023")
+dev.off()
+
+# carto pour chaque emplacement réservé avec affichage en titre de l'emplacement, fond de carte cadastre.
+st_layers ("../data/cadastre.gpkg")
+cadastre <- st_read("../data/cadastre.gpkg", "parcelle_info")
+nb <- length(er$LIBELLE)
+for (i in 1:nb){
+  mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT [i]," .png"), 
+          width = 800, height = 800, res = 100)
+  mf_init(st_buffer(er$geom [i],50), expandBB = rep(0,4))
+  mf_map(bondy, col = "cornsilk", add = T, border = NA)
+  #mf_shadow(bondy, add = TRUE)
+  mf_map(cadastre, col = "bisque2", border = "white", add = T)
+  mf_map(
+    er,
+    col = NA,
+    type = "base",
+    border = "green",
+    lwd = 2,
+    add = T
+  )
+ 
+  #mf_label(cadastre, var = "code", overlap = F, cex = 0.6)
+  er$LIBELLE <- gsub("\n",  " ",er$LIBELLE,)
+  mf_layout(credits = "Cadastre 2022, Plui M2\nJuillet 2023")
+  mf_title(txt = paste0(er$TXT [i], " : ",  er$LIBELLE [i]), pos = "left", bg ="darkorchid", cex = 0.8, line = 2)
+  dev.off()
+    }
+```
+
+
+![](../img/er.png)

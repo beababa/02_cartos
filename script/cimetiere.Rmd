@@ -38,7 +38,7 @@ La dernière opération (intersection pt sépultures et allée) ne fonctionne pa
 ```{r}
 library(sf)
 library(mapsf)
-library(rgdal)
+#library(rgdal)
 ```
 
 
@@ -83,7 +83,7 @@ choix du chemin
 
 
 ```{r}
-chemin <- chemin [5,]
+chemin <- chemin [6,]
 ```
 
 
@@ -103,102 +103,50 @@ repérage des lignes allée
 
 On voit qu'il faut joindre les pts 2 à 2
 
+Mais pas toujours... faire attention au moment du dessin
+
+
 ```{r}
-fin <- length(pt$id)/2
+fin <- (length(pt$id)/2)
 allee <- rep(LETTERS[1:fin], each = 2)
 pt$allee <- allee
 mf_label(pt, var = "allee", col= "red", halo = T)
 ```
 
-éclatement allées
+dans le cas où le dessin est mauvais, on supprime :
+
+
+C'est le cas de la section S où on a carrément pris une rangée en plus
 
 ```{r}
-allee <- st_cast(chemin, do_split = T, "")
-chemin
-pt
-allee
-mf_map(allee)
+mf_label(pt, var = "id", col = "red", halo = T)
+pt <- pt [!pt$id %in% c("6.2", "6.3","6.4", "6.5", "6.6"),]
 
+```
+
+
+
+éclatement allées
+fonction pour faire lg à partir de deux points
+
+```{r}
 faireLg <- function (allee){
   pt <- pt [pt$allee == allee,]
   lg <- st_cast(st_union(pt$geom [1], pt$geom [2]), "LINESTRING")
   lg <- st_as_sf(data.frame(allee,lg))
 }
-
-pt
-lgA <- faireLg ("A")
-lgB <- faireLg ("B")
-lg <- rbind(lgA, lgB)
-class(lg)
-mf_map(lg)
-lg
-lgB <- faireLg ("B")
-class(lg)
-
 lg <- lapply(LETTERS[1:fin], faireLg)
-lg [[1]]
-
-lg
-
-do.call(rbind, lg)
-
-
-  library (dplyr)
-  df <- ldply (lg, data.frame)
-
-i <- 12
-df <- NULL
-tmp <- NULL
-for (i in 1:15) {
-  allee <- LETTERS[i]
-  tmp <- faireLg(allee)
-  df <- rbind(df, tmp)
-}
-df
-tail(df)
-mf_map(df)
-st_is_valid(df)
-lgL
-st_make_valid(lgL)
-lgL <- faireLg("L")
-lgL
-str(lgA)
-`st_crs<-`()
-df <- st_sf(df)
-plot(df)
-class(df)
-str(df)
-tmp <- faireLg(LETTERS[1:fin])
-str(df)
-mf_map(df)
-mf_map(df$geometry [[2]], lwd = 2, col = "blue")
-df$allee
-st_sfc
+allee <- do.call(rbind, lg)
+allee
+mf_map(allee)
 ```
 
-
+On a des allées
 
 intersection chemin - tombe + centroid
 
 ```{r}
-sep <- st_centroid(st_intersection(requiem, chemin))
-
-
-st_linestring()
-
-p1 <- structure(c(0, 1, 3, 2, 1, 0, 0, 0, 2, 4, 4, 0), .Dim = c(6L, 2L))
-p2 <- structure(c(1, 1, 2, 1, 1, 2, 2, 1), .Dim = c(4L, 2L))
-st_polygon(list(p1, p2))
-mls <- st_cast(nc$geometry[[4]], "MULTILINESTRING")
-st_sfc(cast_all(mls))
-mpt <- st_cast(nc$geometry[[4]], "MULTIPOINT")
-st_sfc(cast_all(mpt))
-pl <- st_cast(nc$geometry[[4]], "POLYGON")
-st_sfc(cast_all(pl))
-ls <- st_cast(nc$geometry[[4]], "LINESTRING")
-st_sfc(cast_all(ls))
-pt <- st_cast(nc$geometry[[4]], "POINT")
-
+sep <- st_centroid(st_intersection(requiem, allee))
 ```
 
 # Traitement
@@ -206,20 +154,25 @@ pt <- st_cast(nc$geometry[[4]], "POINT")
 
 ```{r}
 # bizarre les pts n'appartiennent pas à la lg
-st_intersection(sep, chemin)
-st_touches(sep, chemin)
-st_contains(allee, chemin)
-# allee dans le bon ordre
+st_intersection(sep, allee)
+st_touches(sep, allee)
+st_contains(sep, allee)
+# allee dans le bon ordre (nécessaire uniquement si chemin paps dans le bon ordre)
 allee <- allee [order (allee$allée),]
 # necessite d'y mettre une distance
 accroch <- st_is_within_distance(sep, allee, 1)
 # verif toutes les sépultures liées à une allée
+# 
 serie <- sapply(accroch, length)
 lg <- which(serie == 0)
-mf_map(allee)
-mf_label(allee, var ="allée",add =T)
-mf_map(sep, add = T)
+mf_init(chemin)
 mf_map(requiem, add = T)
+mf_map(allee, col = "red",add = T)
+mf_label(allee, var ="allee")
+mf_map(sep, add = T)
+
+
+
 ```
 
 # Traitement
@@ -233,8 +186,9 @@ table(unlist(accroch))
 
 
 ```{r}
-sep$allee <- unlist(accroch)
-lettre <- LETTERS[1:10]
+tmp  <- unlist(accroch)
+sep
+lettre <- LETTERS[1:10]qg
 sep$alleeL <- LETTERS[sep$allee]
 ```
 
@@ -244,10 +198,9 @@ Mesure de la distance entre le pt 0 de l'allée et le pt Sepulture
 
 
 ```{r}
-impairs <- seq(1, 20, by = 2)
-pairs
-ptAllee
-ptAlleeDep <- ptAllee [impairs,c("allée")]
+impairs <- seq(1, length(sep$id), by = 2)
+pt
+ptAlleeDep <- pt [impairs,c("allee")]
 # verif graphique
 mf_map(ptAlleeDep, add =T, col = "red")
 # fonction pour classer les pts
@@ -264,6 +217,7 @@ mesurer <- function (allee){
 }
 # boucle car la liste difficile à manipuler
 res <- NULL
+i <- 1
 for (i in 1:10){
   tmp <- mesurer (i)
   res <- rbind(tmp, res)
@@ -275,7 +229,6 @@ st_write(res, "../data/cimetiere.gpkg", "ptSepultureID", delete_layer = T)
 
 
 ```{r}
-
 jointureSpatiale <- st_within(res, requiem, sparse = T)
 lg <- unlist(jointureSpatiale)
 res$lg <- lg

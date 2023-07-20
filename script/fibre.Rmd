@@ -32,6 +32,7 @@ récupération dans C:\Users\bmaranget\Documents\01_ARCHIVE\fibre\Fibre Bondy DS
 library(sf)
 library(mapsf)
 library(rgdal)
+library(dplyr)
 ```
 
 
@@ -41,67 +42,60 @@ library(rgdal)
 ```{r, eval = T}
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
-fic <- paste0(rep,"/01_ARCHIVE/02_fibre/01_DSI/01_plans/testV5.kmz")
-st_read(fic)
+rep2 <- "/03_SIG/03_03_Data/22_VIDEOSURVEILLANCE/" 
+zip <-  paste0(rep,"/01_ARCHIVE/02_fibre/03_DSI/01_plans/testV5.kmz")
+outDir <- paste0(rep, "/01_ARCHIVE/02_fibre/03_DSI/01_plans/")
+test <- unzip(outDir, outDir)
 
-ogrListLayers(fic)
-data <- readOGR(chemin, "Filaire")
 
 ```
 
-
-# Download .shp data
-u_shp <- "http://coagisweb.cabq.gov/datadownload/biketrails.zip"
-download.file(u_shp, "biketrails.zip")
-unzip("biketrails.zip")
-u_kmz <- "http://coagisweb.cabq.gov/datadownload/BikePaths.kmz"
-download.file(u_kmz, "BikePaths.kmz")
-
-# Read file formats
-biketrails_shp <- st_read("biketrails.shp")
-if(Sys.info()[1] == "Linux") # may not work if not Linux
-  biketrails_kmz <- st_read("BikePaths.kmz")
-u_kml = "http://www.northeastraces.com/oxonraces.com/nearme/safe/6.kml"
-download.file(u_kml, "bikeraces.kml")
-bikraces <- st_read("bikeraces.kml")
-
+Pour ouvrir le kmz, il suffit de décompresser...
 
 
 # Chargement des fichiers
 
 ajout 12/7
-Comme le kmz est illisible, on ouvre la v4 sous qgis et on enregistre pt lg poly
-dans des .gpkg
 on cherche surtout les chambres / armoires (points)
 
 
 ```{r}
-chemin <- paste0(rep, "/03_SIG/03_03_Data/22_VIDEOSURVEILLANCE/")
-fic <- paste0(chemin,"point.gpkg")
-couches <- st_layers(paste0(chemin,"point.gpkg"))
+v5 <- paste0(rep,"/01_ARCHIVE/02_fibre/03_DSI/01_plans/bondy5.kml")
+FO <- paste0(rep,"/01_ARCHIVE/02_fibre/03_DSI/01_plans/implantatationCamerasFO.kml")
+```
+
+
+
+
+
+```{r}
 # boucle d'ouverture
-concatenerCouches <- function (fic){
+concatenerCouchesGeom <- function (fic){
   couches <- st_layers(fic)
+  couches
   fin <- length(couches$name)
 tmp <- NULL
-data <- NULL
+i <- 1
 for (i in 1:fin){
+  # erreur
+  ifelse (i == 23, i <- i+1,i)# il y a une couche en erreur la 23e
   tmp <- st_read(fic, couches$name [i])
-  tmp <- st_transform(tmp,  4326)
-  tmp$description <- couches$name [i]
+  # ajout champs
+  tmp$Description <- couches$name [i]
   data <- rbind(data, tmp)
 } 
-return(data)
+data <- st_transform(data, 4326)
+# un seul gpkg et les géométries se trient toutes seules
 }
-fic <- paste0(chemin,"ligne.gpkg")
-lg <- concatenerCouches(fic)
-mf_map(lg)
 
-
-
-st_write(data,"../data/fo.gpkg", "point")
-st_write(lg,"../data/fo.gpkg", "lg")
 ```
+
+```{r}
+data <- NULL
+data <- concatenerCouchesGeom(v5)
+data <- concatenerCouchesGeom(FO)
+```
+
 
 
 vérif
@@ -109,19 +103,79 @@ pas de doublons
 géométrie valide
 
 ```{r}
-table(duplicated(data$geom))
-anyDuplicated(data$geom)
+table(duplicated(data$geometry))
+anyDuplicated(data$geometry)
+unique(data$geometry)
+data <- data [!duplicated(data$geometry),]
+# suppression des doublons
 ```
 
+
+suprression lg 0 et polygon 0
+
 ```{r}
-st_length(lg$geom)
-lg$longueur <- st_length(lg$geom)
+table(st_is_valid(data))
+data$type <- st_geometry_type(data)
+st_length(data$geometry [st_geometry_type(data$geometry)!= "POINT"])
+data$longueur <- st_length(data$geom)
+data$aire <- st_area(data)
 library(units)
-lg$longueur <- drop_units(lg$longueur)
+data$longueur <- drop_units(data$longueur)
+data$aire <- drop_units(data$aire)
 ind <- which(lg$longueur == 0)
 lg <-  lg [-ind,]
 mf_map(lg)
+data
+dataReste <- data [(data$longueur ==  0 || data$aire == 0),]
+mf_map(dataReste)
+tail(dataReste)
+table(st_geometry_type(dataReste$geometry))
+data$source <- "kml"
 ```
+
+
+enregistrement
+
+```{r}
+str(data)
+st_write(data [, c("Name", "Description", "source")], "../data/KML.gpkg", "kml", delete_layer = TRUE)
+```
+
+
+
+
+paramétrage export
+
+
+```{r}
+fic <-paste0(rep,rep2, "export.gpkg")
+couches <- st_layers(fic)
+fin <- length(couches$name)
+i <- 1
+for (i in 1:fin){
+  tmp <- st_read(fic, couches$name [i])
+  # ajout champs
+  assign(couches$name [i], tmp)
+} 
+reseauFO <- reseau
+chambres <- export__chambres1
+st_write(reseauFO, "../data/export.gpkg", "reseauFO")
+st_write(armoireElectrique, "../data/export.gpkg", "armoireElectrique")
+st_write(armoireFeuTricolore, "../data/export.gpkg", "armoireFeuTricolore")
+st_write(bondy_boityes_proto,"../data/export.gpkg", "bondy_boityes_proto")
+st_write(bondy_cablecd93_proto,"../data/export.gpkg", "bondy_cablecd93_proto")
+st_write(chambres, "../data/export.gpkg", "chambres")
+st_write(reseauEP, "../data/export.gpkg", "reseauEP")
+st_write(batiments, "../data/export.gpkg", "batiment")
+```
+
+
+derniere verif
+
+```{r}
+st_layers("../data/export.gpkg")
+```
+
 
 
 
