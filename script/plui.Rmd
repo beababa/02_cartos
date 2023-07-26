@@ -27,31 +27,49 @@ Production cartes de verif pour M2
 
 # Données
 
-Les données sont coupées dans QGIS
-
-AF dans R
+## filtrage des données
 
 
-```{r, eval = T}
-# pb lettre clé usb
-usb <- "G:"
+
+```{r}
 chemin <- "C:/Users/bmaranget/Documents"
 chemin2 <- "G:"
 chemin <- "Home/tachasa/00_DATA/"
+fic <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/200057875_PLUi_20230627/Donnees_geographiques/"
 ```
+
+```{r}
+nom <- list.files(fic, ".shp")
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+nomF <- c("info_lin", "info_surf", "pres_lin" , "pres_pct", "pres_surf", "zone")
+i <- 1
+df <- NULL
+for (i in 1:6){
+  tmp <- st_read(paste0(fic, nom [i]))
+  inter <- st_intersection(tmp, bondy)
+  assign(nomF [i], inter)
+  lib <- unique(inter [,1, drop = T])
+  origine <- nomF [i]
+  dfTmp <- data.frame(lib,origine)
+  df <- rbind(dfTmp, df)
+  st_write(inter, "../data/pluiM2.gpkg", nomF [i], delete_layer = T)
+}
+write.csv(df, "../data/libPLUiM2.csv", fileEncoding = "UTF-8")
+```
+
+
 
 INFO_SURF
 
-TA
+TA, ER
 
 
 ```{r, eval = T}
 library(sf)
 st_layers("../data/pluiM2.gpkg")
-info_surf <- st_read("../data/pluiM2.gpkg", "info_surf")
 ta <- info_surf [info_surf$LIBELLE == 'Taxe d\'amenagement',]
-er <- st_read("../data/pluiM2.gpkg", "emplacementreserve")
-er
+er <- st_read("../data/pluiM2.gpkg", "ER")
+#17 er sans légende
 ```
 
 
@@ -145,3 +163,173 @@ for (i in 1:nb){
 
 
 ![](../img/er.png)
+zone archéologique
+
+attention l'intersection prend les parcelles mitoyennes.
+utilisation du whithin sparse avec un which pour les num de lignes fonctionne bien
+
+```{r}
+
+
+
+archeo <- info_surf [info_surf$LIBELLE == 'Site archeologique',]
+dedans <- as.vector(st_within(cadastre, archeo, sparse = F))
+dedans <- which(dedans ==TRUE)
+dedans <- cadastre [dedans,]
+cadZa <- cadastre [dedans, ]
+
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy", quiet=F)
+mf_export(x = bondy, filename = "../img/archeo.png", 
+          expandBB = c(0,0,0,0.0),
+          width = 1000, height = 1000 ,res = 150)
+  mf_init(archeo, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+  mf_map(
+    archeo,
+    col = NA,
+    type = "base",
+    border = "green",
+    lwd = 3,
+    add = T
+  )
+
+mf_label(cadZa,, var = "code", halo = T, cex = 0.5, overlap = F)  
+mf_layout(title = archeo$LIBELLE,
+            credits = "Plui M2\nBondy,  juillet 2023")
+dev.off()
+```
+
+
+RCU
+
+```{r}
+rcu <- info_surf [substring(info_surf$LIBELLE, 1,4) == "Zone", ]
+dedans <- as.vector(st_within(cadastre, rcu, sparse = F))
+dedans <- which(dedans ==TRUE)
+dedans <- cadastre [dedans,]
+cadZa <- cadastre [dedans, ]
+mf_export(x = rcu, filename = "../img/rcu.png", 
+          expandBB = c(0,0,0,0.0),
+          width = 1000, height = 1000 ,res = 150)
+  mf_init(rcu, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+  mf_map(
+    rcu,
+    col = NA,
+    type = "base",
+    border = "green",
+    lwd = 3,
+    add = T
+  )
+
+mf_label(cadZa,, var = "code", halo = T, cex = 0.5, overlap = F)  
+mf_layout(title = rcu$LIBELLE,
+            credits = "Plui M2\nBondy,  juillet 2023")
+dev.off()
+```
+
+
+PPCOA (ancien sursis à statuerr)
+
+
+```{r}
+ppcoa <- info_surf [substring(info_surf$LIBELLE, 1,5) == "PPCOA", ]
+mf_export(x = rcu, filename = "../img/ppcoa.png", 
+          expandBB = c(0,0,0,0.0),
+          width = 1000, height = 1000 ,res = 150)
+  mf_init(ppcoa, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+  mf_map(
+    ppcoa,
+    var = "LIBELLE",
+    col = NA,
+    type = "typo",
+    border = "green",
+    lwd = 3,
+    add = T
+  )
+
+mf_layout(title = "PPCOA",
+            credits = "Plui M2\nBondy,  juillet 2023")
+dev.off()
+
+
+# verif
+ppcoa <- ppcoa [3,]
+ppcoa
+dedans <- as.vector(st_within(cadastre, ppcoa, sparse = F))
+dedans <- which(dedans ==TRUE)
+dedans <- cadastre [dedans,]
+cadZa <- cadastre [dedans, ]
+```
+
+
+pb AJ12
+
+
+```{r}
+AJ12 <- cadastre [cadastre$code == "AJ0012",]
+AJ12 <- cadastre [3774,]
+ppcoa
+mf_init(st_buffer(AJ12, 30))
+mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+mf_map(ppcoa,  border = "green",  col = NA,  lwd = 5,add = TRUE)
+mf_label(AJ12, var = "code", cex = 1.5)
+mf_layout("PPCOA et parcelle AJ12 : inclusion", credits = "Bondy / DGST\nPLUi M2, juillet 2023")
+```
+
+
+pb I41
+
+```{r}
+I41   <- cadastre [cadastre$code == " I0041",]
+grep("I0041", cadastre$code)
+I41 <- cadastre [1233,]
+lineaire <- pres_lin [substring(pres_lin$LIBELLE, 10, 14) == "actif", ]
+arbre <- pres_lin [substring(pres_lin$LIBELLE, 14, 19)== "arbres",]
+mf_init(st_buffer(I41, 10))
+mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+mf_map(lineaire,  col = "red",    lwd = 5,add = TRUE)
+mf_map(arbre, col = "green", lty = 2, lwd = 5, add = T)
+mf_label(I41, var = "code", cex = 1.5)
+mf_layout("linéaire actif à créer et parcelle I41 : demande de continuation", credits = "Bondy / DGST\nPLUi M2, juillet 2023")
+```
+
+
+
+
+
+PPR
+
+```{r}
+ppr <- info_surf [substring(info_surf$LIBELLE, 1,3) == "PPR", ]
+mf_init(AG0162)
+mf_map(AG0162)
+  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+  mf_map(ppr, border = "green",  color = NA, lwd = 3,add = T)
+# verif
+dedans <- as.vector(st_within(cadastre, ppr, sparse = F))
+dedans <- which(dedans ==TRUE)
+AG0162 <- cadastre [3303,]
+
+```
+
+
+IVoisinage de bureau
+
+
+```{r}
+bureau <- pres_surf [substring(pres_surf$LIBELLE, 1,3) == "Per", ]
+mff_init(bureau)
+  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+  mf_map(bureau, border = "green",  col = NA, lwd = 3,add = T)
+```
+
+
+
