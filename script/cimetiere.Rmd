@@ -35,6 +35,13 @@ puis on replace les sépultures sur les allées et on calcule la distance à par
 La dernière opération (intersection pt sépultures et allée) ne fonctionne pas sous Qgis
 
 
+Simplification : éviter la phase allée
+on intersecte, on numérote tous les centroïdes et on supprime les centroides qui n'intersectent
+
+le problème est que l'indexation n'est pas conservée
+
+
+
 ```{r}
 library(sf)
 library(mapsf)
@@ -49,14 +56,14 @@ library(mapsf)
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
 st_layers("../data/cimetiere.gpkg")
-chemin <- "D:/03_SIG/03_03_Data/08_VOIRIE/cimetiere.gpkg"
+rep <- "D:/03_SIG/03_03_Data/08_VOIRIE/cimetiere.gpkg"
 ```
 
 
 ```{r}
-allee <- st_read("../data/cimetiere.gpkg", "lgAllee")
-sep <- st_read("../data/cimetiere.gpkg", "ptSepulture")
-ptAllee  <- st_read("../data/cimetiere.gpkg", "ptAllee")
+#allee <- st_read("../data/cimetiere.gpkg", "lgAllee")
+#sep <- st_read("../data/cimetiere.gpkg", "ptSepulture")
+#ptAllee  <- st_read("../data/cimetiere.gpkg", "ptAllee")
 chemin <- st_read("../data/cimetiere.gpkg", "chemin")
 requiem <- st_read("../data/cimetiere.gpkg", "requiem")# le dessin des sépultures
 ```
@@ -89,13 +96,14 @@ chemin <- chemin [6,]
 
 
 ```{r}
+# caster un hemin en pt permet de garder l'indexation à chaque vertex
 pt <- st_cast(chemin, "POINT")
 mf_init(chemin)
 mf_map(requiem, add = T, col = "green")
 mf_map(chemin, add = T)
 mf_map(pt, add = T)
 pt$id <- rownames(pt)
-#mf_label(pt, var = "id", halo = T)
+mf_label(pt, var = "id", halo = T)
 ```
 
 
@@ -115,26 +123,50 @@ mf_label(pt, var = "allee", col= "red", halo = T)
 
 dans le cas où le dessin est mauvais, on supprime :
 
+Que le dessin soit mauvais, c'est inévitable quand la numérotation ne suit pas un ordre logique dans l'espace.
+
+L'automatisation serait de repérer les allées sans pt sépulture.
 
 C'est le cas de la section S où on a carrément pris une rangée en plus
+
+
 
 ```{r}
 mf_label(pt, var = "id", col = "red", halo = T)
 pt <- pt [!pt$id %in% c("6.2", "6.3","6.4", "6.5", "6.6"),]
+#logiquement le pt origine est le pt impair.
+pt$origine <- c("oui", "non")
+fin <- length(pt$num)
+```
 
+
+intersection chemin - tombe + centroid
+
+```{r}
+ptSep <- st_centroid(st_intersection(requiem$geom, chemin))
 ```
 
 
 
+TO DO : lister tous les autres cas.
+
+automatisation : intégration dans la fonction de la suppression des lignes qui n'ont pas de sépulture
+
+
 éclatement allées
-fonction pour faire lg à partir de deux points
+fonction pour faire lg à partir de deux points en distinguant les pts origine pour chq allée
 
 ```{r}
+allee <- "A"
 faireLg <- function (allee){
   pt <- pt [pt$allee == allee,]
   lg <- st_cast(st_union(pt$geom [1], pt$geom [2]), "LINESTRING")
+  # automatisation
+  st_within(ptSep, lg,1)
+  ifelse (st_within(ptSep))
   lg <- st_as_sf(data.frame(allee,lg))
 }
+
 lg <- lapply(LETTERS[1:fin], faireLg)
 allee <- do.call(rbind, lg)
 allee
@@ -143,24 +175,20 @@ mf_map(allee)
 
 On a des allées
 
-intersection chemin - tombe + centroid
 
-```{r}
-sep <- st_centroid(st_intersection(requiem, allee))
-```
 
 # Traitement
 
 
 ```{r}
 # bizarre les pts n'appartiennent pas à la lg
-st_intersection(sep, allee)
-st_touches(sep, allee)
-st_contains(sep, allee)
+st_intersection(ptSep, allee)
+st_touches(ptSep, allee)
+st_contains(ptSep, allee)
 # allee dans le bon ordre (nécessaire uniquement si chemin paps dans le bon ordre)
 allee <- allee [order (allee$allée),]
 # necessite d'y mettre une distance
-accroch <- st_is_within_distance(sep, allee, 1)
+accroch <- st_is_within_distance(ptSep, allee, 1)
 # verif toutes les sépultures liées à une allée
 # 
 serie <- sapply(accroch, length)
@@ -255,3 +283,31 @@ st_write(joint [, c("E_ID", "Text", "DIVISION", "SECTION", "ALLEE", "EMPLACEMEN"
 ```
 
 
+SIMPLIFICATION
+
+En fait, l'intersection ne préserve pas l' ordre. il faudrait constituer un graphe (pt origine et destination)
+c'est la distance par rapport à un pt origine pour chq allée qui permet de régler le problème.
+
+
+
+```{r}
+pt <- st_centroid(st_intersection(chemin, requiem$geom))
+inter <- st_intersection(chemin, requiem)
+inter$id <- rownames(inter)
+inter$id
+mf_map(pt, col = "red", add = T)
+pt$id <- seq(1, length(pt$num))
+st_within(pt, requiem)
+mf_init(chemin)
+mf_map(requiem  [2857,], col= "blue", add = T)   
+mf_label(pt, var = "id",  col = "black", halo = T)
+mf_label(inter, var = "id", col = "green")
+```
+
+matrice de distance pour constituer le graphe ?
+
+```{r}
+st_distance(pt)
+```
+
+TO DO piste ?
