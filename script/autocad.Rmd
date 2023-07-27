@@ -22,15 +22,16 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Récupérer les données autocad
+Récupérer les données autocad et la donnée liée à la fibre.
+à savoir :
+- 
+
+les projections sont lambert II
+
+mais également traiter des geosjon avec les pb de "consistent type"
 
 
-
-
-# Import 2021
-
-Avec R on n'est pas parvenu à lire le dxf. on l'a ouvert avec Qgis et passer en .gpkg
-
+# Librairies, chemins, données
 
 ```{r}
 library(sf)
@@ -40,129 +41,161 @@ library(units)
 
 
 
+```{r}
+cheminCAD <-  paste0( "D://03_SIG/03_01_Archive/02_AUTOCAD/")
+chemin <- c("C:/Users/tachasa/02_carto/script")
+chemin <- c("C:/Users/tachasa/02_cartos/script/")
+getwd()
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+rue <- st_read("../data/rueOSM.geojson", query = "SELECT name FROM rueOSM")
+```
 
-Il y a quelque chose de très cohérent autour des candélabres.
-Des points type étiquettes et des valeurs. Les fid sont distants de 10
-Les types étiquettes sont sur le calque Blocs éclairage avec attribut et les textes sur calque 0.
+```{r}
+getwd()
+setwd(chemin)
+#rmq le geojson rue OSM ne comprend que les rues MLK-blanqui
+rue <- st_read("../data/rue2023.geojson", query = "SELECT name FROM rue2023")
+# le query permet de sélectionner uniquement la colonne name
+```
 
 
+```{r}
+setwd(cheminCAD)
+chemin <- c("C:/users/tachasa/02_carto/script/")
+```
+
+
+
+# Exploration différents formats
+
+
+
+
+## DXF
+
+quand la conversion est impossible dans R
 ogr2ogr -dim XYZM -progress --config OGR_GEOMETRY_ACCEPT_UNCLOSED_RING NO test.gpkg _CF-Verdun.dxf
 
 
 ```{r}
-chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_01_Archive/02_AUTOCAD/")
-setwd(chemin)
-list.files(".", pattern = ".dxf")
-fic <- st_read("test4.gpkg")
+fic <-list.files(".", pattern = ".dxf")
+fic <- fic[c(4,5,8,15,16)]
+fic
+ficDest <- c("elie", "verdun", "benhamou", "lebas", "gare")
+fin <- NULL
+ficFin <- NULL
+i <- 1
+for (i in 1:5){
+#gdal_utils(util = "vectortranslate",
+ #          source = fic [i],
+  #         destination = paste0(i,".dxf"),
+   #        options = c("-dim", "XY", "-skipfailures"))
+  tmp <-st_read(paste0(i, ".dxf"))
+  table(tmp$Layer)
+  tmp <- tmp [tmp$Layer %in% sel$fin,1]
+  tmpCouche <- tmp [,1, drop = T]
+  ficFin <- rbind(tmp, ficFin)
+  fin <- c(tmpCouche, fin)
+  assign(ficDest [i], tmp)
+}
+
+st_bbox(elie)
+st_bbox(verdun)
+st_bbox(benhamou)
+st_bbox(lebas)
+st_bbox(gare)
+st_bbox(ficFin)
+bondy27561 <-st_transform(bondy, 3947)
+st_crs(benhamou) <- 2154 
+benhamou2154 <- st_transform(benhamou, 2154)
+mf_map(bondy)
+mf_map(ficFin)
+mf_map(benhamou, add = T)
+
+st_bbox(bondy)
+st_bbox(bondy27561)
+st_bbox(rue)
+tab <- table(fin)
+setwd("C:/Users/tachasa/02_cartos/")
+getwd()
+write.csv(tab,"data/couchesCAD.csv", fileEncoding = "UTF-8")
+# on rajoute une colonne sel
+couchesCAD <- read.csv("data/couchesCAD.csv")
+str(couchesCAD)
+sel <- couchesCAD [couchesCAD$Sel == "O",]
+# sel représente toutes les couches intéressantes
+
 st_layers(fic)
 fic <- st_zm(fic)
 st_zm(fic)
-fic <- st_set_crs(fic, "2154")
+st_crs(fic) <- 27561
+fic <- st_transform (fic, 2154)
+```
+
+extraction des données fibre uniquement
+
+```{r}
+fic <- fic [fic$Layer %in% c("CF-TOPO-TELECOM", "OBJET_TELECOM"),]
 mf_map(fic)
+```
+
+
+## geoJSON
+
+A l'étape carto, un msg d'erreur renvoie "consistent type".
+cela signifie que la geometry collection de geosjon pose pb.
+une solution consiste à isoler les points puisqu'ils ne peuvent pas être castés en lg (étape obligatoire pour avoir une géométrie affichable)
+
+```{r}
+rue <- ficFin
+mf_map(rue)
+table(st_geometry_type(rue$geometry))
+rueLG <- rue [st_geometry_type (rue$geometry) != "POINT",]
+rueLG <- st_cast(rueLG, "LINESTRING")
+table(st_geometry_type(rueLG))
+rueLG <- st_transform(rueLG, 2154)
+mf_map(rueLG)
+setwd(chemin)
+st_write (rueLG, "../data/bbox.gpkg", "test", delete_layer = T)
+
+```
+
+### Carto
+
+
+```{r}
+mf_init(fic)
+mf_map(bondy, col = "wheat", add = T)
+mf_map(rueLG, add = T)
+mf_label(rueLG, var = "name", halo = T, overlap = F)
+mf_map(fic, add = T)
+
+
 fic
-table(fic$Layer)
-fic <- fic [fic$Layer == "CF-TOPO-TELECOM",]
-mf_map(fic)
-fic
-epEntites <- st_read(paste0(chemin,"/ep.gpkg"), "entites" ,quiet = T)
-epPoint <- st_read(paste0(chemin,"/ep.gpkg"), "point" ,quiet = T)
-epLigne <- st_read(paste0(chemin,"/ep.gpkg"), "lignes" ,quiet = T)
+bondy
 ```
 
-Echantillon sur zone MLK / Blanqui
+
+# Bbox
+
+On met les bbox semblables dans le même fichier
 
 ```{r}
-zone <- st_read("../data/prir.gpkg", "limite")
-epPointSel <- st_intersection(epPoint, zone)
-write_sf(epPointSel, "../data/prir.gpkg", "epPoint", delete_layer = T)
-epEntiteSel <- st_intersection(epEntites, zone)
-write_sf(epEntiteSel, "../data/prir.gpkg", "epEntites", delete_layer = T)
-# pas d'armoire electrique dans la zone
-epLigneSel <- st_intersection(epLigne, zone)
-write_sf(epLigneSel, "../data/prir.gpkg", "epLigne", delete_layer = T)
-```
+res <-(st_union(st_as_sfc(gare), st_as_sfc(verdun) ))
+mf_map(res)
 
-```{r}
-plot(epLigneSel)
-plot(epPointSel$geom)
+table(sapply(res, length))
+st_crs(gare)
+st_crs(benhamou)
+st_crs(verdun)
+st_bbox_by_feature = function(x) {
+  x = st_geometry(x)
+  f <- function(y) st_as_sfc(st_bbox(y))
+  do.call("c", lapply(x, f))
+}
+mf_map(st_union(st_as_sfc(benhamou)))
+mf_map(benhamou)
 ```
 
 
 ```{r}
-str(epEntites)
-str(epLigne)
-table(epEntites$Layer)
-table(epLigne$Layer)
-table(epPoint$Layer)
-```
-
-# Import 2023
-
-
-```{r}
-armoire <- read.csv2(paste0(chemin,"Ville de Bondy_EcP_Armoire.csv"), fileEncoding = "CP1252", dec = ".")
-str(armoire)
-candelabre <-  read.csv2(paste0(chemin, "Ville de Bondy_EcP_Candélabre.csv"), fileEncoding = "CP1252", dec = ".")
-# 3799 => 3561
-str(candelabre)
-table(is.na(candelabre$X), useNA = "always")
-candelabre <- candelabre [!is.na(candelabre$X), ]
-# 3799 => 3561
-slt <- read.csv2(paste0(chemin, "Ville de Bondy_EcP_Candélabre.csv"), fileEncoding = "CP1252", dec =".")
-str(slt)
-slt <- slt [!is.na(slt$X), ]
-armoireTxt <- read.csv(paste0(chemin,"detailArmoire.csv"), fileEncoding = "UTF-8")
-candelabreTxt <- read.csv(paste0(chemin,"detailCandelabre.csv"), fileEncoding = "UTF-8")
-```
-
-Le nb d'élément est différent... attention sur les jointures.
-
-Les coordonnées sont en Lambert étendu.mais elles existent pour les candelabre en 2154
-
-Clés identifiés :
-- jointure candelabre / NOM_CANDELABRE et candelabresf / NUMERO
-
-# Spatialisation
-
-
-```{r}
-candelabresf <- st_as_sf(candelabreTxt, coords = c("COORD.X", "COORD.Y"), crs = 4326)
-st_write(candelabresf, "../data/ep.gpkg", "candelabreFev2023", delete_layer = T)
-table(candelabresf$NUMERO)
-table(candelabre$NOM_CANDELABRE)
-```
-
-
-Pas de jointure via le nom. le nom des fichiers ne correspondeent pas. 
-
-Examen de ep point calque 0, peut-on récupérer les noms des candelabres avec un buffer ?
-
-
-```{r}
-#recup pt calque0 416 M => 35 M
-data <- epPoint [epPoint$Layer == '0',]
-# longueur du text
-data$long <- sapply(data$Text, nchar)
-table(data$long)
-data <- data [data$long %in% seq(5,9),]
-# 13 500
-# filtre uniquement commençant par 2 chiffres
-ind <- grep("^[0-9]{2}",data$Text)
-data <- data [ind,]
-#1133
-st_write(data, "../data/ep.gpkg", "candelabre2021", delete_layer = T)
-table(data$Text)
-```
-
-spatialisation epsg 3949 
-
-
-```{r}
-armoire2023 <- st_as_sf(armoire, coords = c("X", "Y"), crs = 3949)
-st_write(armoire2023, "../data/ep.gpkg", "armoire2023", delete_layer = T)
-candelabre2023 <- st_as_sf(candelabre, coords = c("X", "Y"), crs = 3949)
-slt <- st_as_sf(slt, coords = c("X", "Y"), crs = 3949)
-st_write(candelabre2023, "../data/ep.gpkg", "candelabre2023", delete_layer = T)
-st_write(slt, "../data/ep.gpkg", "slt", delete_layer = T)
-```
-
