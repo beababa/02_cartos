@@ -70,9 +70,48 @@ st_layers("../data/pluiM2.gpkg")
 ta <- info_surf [info_surf$LIBELLE == 'Taxe d\'amenagement',]
 er <- st_read("../data/pluiM2.gpkg", "ER")
 #17 er sans légende
+erOK <- read.csv("../data/er.csv", fileEncoding = "UTF-8")
+er <- merge(er, erOK, by = "TXT" )
+er [,c("LIBELLE.x", "LIBELLE.y")]
+er$LIBELLE <- er$LIBELLE.y
+str(er)
+st_write(er [, c("TXT", "LIBELLE")],  "../data/pluiM2.gpkg", "ER", delete_layer = T)
 ```
 
 
+Intersections ER parcelles : vérification (pb bretelle A3)
+
+```{r}
+er <- st_read("../data/pluiM2.gpkg", "ER")
+inter <- st_intersection(cadastre [, "code"], er)
+mf_map(inter)
+inter$surface <- round(st_area(inter),0)
+# agregation pour avoir tableau récapitulatif
+aggregate(inter$code, by = list(inter$LIBELLE, inter$TXT), length)
+liste <- unique (inter$TXT)
+df <- NULL
+i <- 1
+for (i in (1:length(liste))){
+  tmpCode <- inter$code [inter$TXT == liste [i]]
+  tmpCode <- toString(tmpCode)
+  lg <- data.frame(liste [i], tmpCode)
+  df <- rbind(lg, df)  
+}
+df
+write.csv(df, "../data/df.csv", fileEncoding = "UTF-8")
+```
+
+Une comparaison avec le tableau des ER amène à de nombreux pb notamment de parcelles manquantes
+
+```{r}
+erreur <- read.csv("../data/erreursER.csv", fileEncoding = "UTF-8")
+names(erreur)
+names(cadastre)
+cadastre$code <- gsub(" ", "", cadastre$code)
+jointure <- merge(erreur, cadastre, by.y = "code", by.x = "parcelles.manquantes") 
+erreur$parcelles.manquantes
+jointure
+```
 
 
 # Cartographie
@@ -137,6 +176,7 @@ dev.off()
 st_layers ("../data/cadastre.gpkg")
 cadastre <- st_read("../data/cadastre.gpkg", "parcelle_info")
 nb <- length(er$LIBELLE)
+i <-1
 for (i in 1:nb){
   mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT [i]," .png"), 
           width = 800, height = 800, res = 100)
@@ -149,16 +189,17 @@ for (i in 1:nb){
     col = NA,
     type = "base",
     border = "green",
-    lwd = 2,
+    lwd = 4,
     add = T
   )
- 
+ mf_map(inter, col = "brown2", border = "chocolate4", add = T)
+ sel <- inter [inter$LIBELLE == er$LIBELLE [i],]
+ mf_label(sel, var = "code", overlap = F)
   #mf_label(cadastre, var = "code", overlap = F, cex = 0.6)
-  er$LIBELLE <- gsub("\n",  " ",er$LIBELLE,)
-  mf_layout(credits = "Cadastre 2022, Plui M2\nJuillet 2023")
-  mf_title(txt = paste0(er$TXT [i], " : ",  er$LIBELLE [i]), pos = "left", bg ="darkorchid", cex = 0.8, line = 2)
+    mf_layout(credits = "Cadastre 2022, Plui M2\nJuillet 2023")
+  mf_title(txt = paste0(er$TXT [i], " : ",  er$LIBELLE [i]), pos = "left", bg ="coral2", cex = 0.8, line = 2)
   dev.off()
-    }
+}
 ```
 
 

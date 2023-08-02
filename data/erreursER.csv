@@ -1,0 +1,16 @@
+"emplacement réservés TXT","intersection (st_intersection)","verif","type erreur"
+"ERE1"," A0224","OK",
+"ERD2"," Z0009","OK",
+"ERD1"," P0023,  P0024,  P0025,  P0026,  P0027","P27 en trop","trop de parcelles"
+"ERBd9"," I0075,  I0076,  I0078,  I0079,  I0084,  I0086,  I0097,  I0099","I84 I99 en trop","trop de parcelles"
+"ERBd8","AU0072, AU0163, AU0175, AU0176, AU0194, AU0195","AU0072, AU0163, AU0194, AU196 en trop et manque I97","trop et pas assez de parcelles"
+"ERBd7"," G0168,  G0172","G0167 manque et K1 en trop","trop et pas assez de parcelles"
+"ERBd6"," G0169","Manque G137,G138,G0168","pas assez de parcelles"
+"ERBd5"," G0033,  G0137,  G0138,  G0168,  G0169","K109 uniquement","trop et pas assez de parcelles"
+"ERBd4","AJ0070, AJ0071, AJ0072, AJ0098","AJ0070, AJ0098 en trop","trop de parcelles"
+"ERBd3","AM0042, AM0043, AM0044, AM0046, AM0297, AM0298","toutes les parcelles hors AM0043 sont en trop","trop de parcelles"
+"ERBd2","AT0066, AU0004, AU0005, AU0095, AU0096, AU0097, AU0114, AU0115, AU0117, AU0119, AU0140","AT0066 en trop","trop de parcelles"
+"ERBd12"," C0192","manque C0199","pas assez de parcelles"
+"ERBd11"," E0086,  F0101,  F0115,  G0161,  K0001,  L0002,  L0129,  L0130,  L0002,  L0050,  L0058,  L0139,  H0140,  H0387,  H0388,  H0389,  H0390,  H0391,  H0392,  I0041,  I0080,  I0081,  J0177,  J0179,  J0181,  J0215,  J0299,  J0300,  J0301,  K0002,  K0003,  K0024,  K0032,  K0058,  K0101,  K0105,  K0107,  K0109,  K0117,  K0119,  L0002,  L0006,  L0007,  L0044,  L0072,  L0074,  L0076,  L0082,  L0086","manque H0376 et 377 L045 en trop :   H0387  H0388  H0389  H0390  H0391  H0392 ","trop et pas assez de parcelles"
+"ERBd10"," K0002,  K0109","K0002 en trop","trop de parcelles"
+"ERBd1","AZ0235, AZ0236, AZ0237","OK",
