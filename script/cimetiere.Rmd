@@ -32,8 +32,8 @@ on intersecte le chemin et les sépultures afin de récupérer les pts sépultur
 
 puis on replace les sépultures sur les allées et on calcule la distance à partir de chaque point zéro de l'allée.
 
-La dernière opération (intersection pt sépultures et allée) ne fonctionne pas sous Qgis
 
+Remarque 1
 
 Simplification : éviter la phase allée
 on intersecte, on numérote tous les centroïdes et on supprime les centroides qui n'intersectent
@@ -41,6 +41,12 @@ on intersecte, on numérote tous les centroïdes et on supprime les centroides q
 le problème est que l'indexation n'est pas conservée
 
 
+Remarque 2
+
+Parfois le dessin s'avère complexe, donc on numérote les allées cf section AE
+la numérotation suit bien l'ordre de création des chemins et correspond au fid.
+
+![](../img/AE.png)
 
 ```{r}
 library(sf)
@@ -49,10 +55,10 @@ library(mapsf)
 ```
 
 
-# Chemin data
+# Chemin data et data
 
 
-```{r, eval = T}
+```{r}
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
 st_layers("../data/cimetiere.gpkg")
@@ -61,16 +67,16 @@ rep <- "D:/03_SIG/03_03_Data/08_VOIRIE/cimetiere.gpkg"
 
 
 ```{r}
-#allee <- st_read("../data/cimetiere.gpkg", "lgAllee")
-#sep <- st_read("../data/cimetiere.gpkg", "ptSepulture")
-#ptAllee  <- st_read("../data/cimetiere.gpkg", "ptAllee")
 chemin <- st_read("../data/cimetiere.gpkg", "chemin")
-requiem <- st_read("../data/cimetiere.gpkg", "requiem")# le dessin des sépultures
+requiem <- st_read("../data/cimetiere.gpkg", "requiem") # le dessin des sépultures
+section <- st_read("../data/cimetiere.gpkg", "section")
 ```
 
 
-# Prétraitement 
+# Prétraitement : du chemin au point de départ allée
 
+
+## Extraction des sommets sous R : recherche
 
 TO DO trouver comment extraire les sommets sous R
 
@@ -78,40 +84,68 @@ st_reverse points devient ligne
 st_node ajoute des noeuds aux intersections
 ... tout simplement st_cast
 
+
+## Autour du chemin
+
+### Identification
+
 ```{r}
 mf_map(chemin)
 chemin$num <- rownames(chemin)
 mf_label(chemin, var = "num")
 ```
 
+### Lien section chemin
 
-
-choix du chemin 
 
 
 ```{r}
-chemin <- chemin [6,]
+chemin <- st_intersection(chemin, section)
+chemin
+# verif aucun chemin sur plusieurs section sinon on retrace les chemins... cas sectop, RS
 ```
 
 
+### choix du chemin 
+
 
 ```{r}
-# caster un hemin en pt permet de garder l'indexation à chaque vertex
-pt <- st_cast(chemin, "POINT")
+chemin <- chemin [6:21,]
+chemin
+```
+
+### point chemin
+
+```{r}
+# caster un chemin en pt permet de garder l'indexation à chaque vertex
+ptChemin <- st_cast(chemin, "POINT")
 mf_init(chemin)
 mf_map(requiem, add = T, col = "green")
 mf_map(chemin, add = T)
-mf_map(pt, add = T)
-pt$id <- rownames(pt)
-mf_label(pt, var = "id", halo = T)
+mf_map(ptChemin, add = T)
+mf_label(chemin, var ="num", col= "red", halo = T)
 ```
 
 
-repérage des lignes allée
+Chemins et points correspondent normalement, l'ordre des points chemin est conservé
 
-On voit qu'il faut joindre les pts 2 à 2
+
+## l'allée
+
+On a besoin d'identifier les allées pour mesurer la distance point origine allée - pt sépulture
+
+2 cas :
+
+- le st_cast sur un chemin allée fixe uniquement le point d'origine
+
+- sur un chemin couvrant plusieurs allées, on voit qu'il faut joindre les pts 2 à 2
 
 Mais pas toujours... faire attention au moment du dessin
+
+
+###  repérage des lignes allée avec les points de départ
+
+
 
 
 ```{r}
@@ -120,6 +154,21 @@ allee <- rep(LETTERS[1:fin], each = 2)
 pt$allee <- allee
 mf_label(pt, var = "allee", col= "red", halo = T)
 ```
+
+
+ptAlleeDep si 2 points pour une allée
+
+```{r}
+impairs <- seq(1, length(sep$id), by = 2)
+pt
+ptAlleeDep <- pt [impairs,c("allee")]
+# cas où pl chemins
+
+# verif graphique
+mf_map(ptAlleeDep, add =T, col = "red")
+```
+
+
 
 dans le cas où le dessin est mauvais, on supprime :
 
@@ -138,20 +187,6 @@ pt <- pt [!pt$id %in% c("6.2", "6.3","6.4", "6.5", "6.6"),]
 pt$origine <- c("oui", "non")
 fin <- length(pt$num)
 ```
-
-
-intersection chemin - tombe + centroid
-
-```{r}
-ptSep <- st_centroid(st_intersection(requiem$geom, chemin))
-```
-
-
-
-TO DO : lister tous les autres cas.
-
-automatisation : intégration dans la fonction de la suppression des lignes qui n'ont pas de sépulture
-
 
 éclatement allées
 fonction pour faire lg à partir de deux points en distinguant les pts origine pour chq allée
@@ -177,8 +212,30 @@ On a des allées
 
 
 
-# Traitement
+## pt sépulture
 
+
+### Création du point : intersection chemin - tombe + centroid
+
+```{r}
+ptSep <- st_centroid(st_intersection(requiem$geom, chemin))
+ptSep <- st_as_sf(ptSep)
+```
+
+Même si on a extrait le ptSep de l'allée, nous n'aurons pas l'allée.
+
+### Récupération de l'allée du point (st_within)
+
+dans le cas où il y avait un chemin par allée, on recopie chemin et allee
+
+```{r}
+allee <- chemin
+allee$num <- as.integer(allee$num)
+str(allee)
+ptAllee <-  ptChemin
+```
+
+A quelle allée appartient le pt sépulture (withdin)
 
 ```{r}
 # bizarre les pts n'appartiennent pas à la lg
@@ -187,69 +244,117 @@ st_touches(ptSep, allee)
 st_contains(ptSep, allee)
 # allee dans le bon ordre (nécessaire uniquement si chemin paps dans le bon ordre)
 allee <- allee [order (allee$allée),]
+
 # necessite d'y mettre une distance
+# attention cas AE, les allées sont déjà faites
 accroch <- st_is_within_distance(ptSep, allee, 1)
+# verif du chiffre des derniers ptSep
+tail(unlist(accroch))
+# verif du nombre
 # verif toutes les sépultures liées à une allée
 # 
 serie <- sapply(accroch, length)
+# lg doit être vide
 lg <- which(serie == 0)
+# rajout champs de l'allee dans le ptSep
+accroch <- unlist(accroch)
+ptSep$allee <- accroch
+# pb -1 pt Se
 mf_init(chemin)
 mf_map(requiem, add = T)
 mf_map(allee, col = "red",add = T)
 mf_label(allee, var ="allee")
-mf_map(sep, add = T)
-
-
-
+mf_label(ptSep, var ="allee")
+mf_map(ptSep, add = T)
 ```
 
-# Traitement
 
-verif nb de tombes par allée
+TO DO : lister tous les autres cas.
+
+automatisation : intégration dans la fonction de la suppression des lignes qui n'ont pas de sépulture
+
+
+# Traitement : mesurer la distance pt sepulture - pt  départ allée
+
+
+## Vérifications
+
+### verif nb de tombes par allée
+
+Cela permet un contrôle rapide
 
 ```{r}
 table(unlist(accroch))
 ```
 
+### Verif que les points ne sont pas ordonnée
 
+C'est quelque chose de si troublant que l'on refait la verif à chaque fois !
 
 ```{r}
 tmp  <- unlist(accroch)
-sep
-lettre <- LETTERS[1:10]qg
-sep$alleeL <- LETTERS[sep$allee]
+ptSep$num <- rownames(ptSep)
+mf_init(chemin)
+mf_map(requiem, add = T)
+mf_label(ptSep, var = "num", col = "red", halo = T, cex= 0.5,overlap = T, add = T)
 ```
 
 
 
-Mesure de la distance entre le pt 0 de l'allée et le pt Sepulture
+## Mesure de la distance entre le pt 0 de l'allée et le pt Sepulture
+
+
+Il faut que les ptSep et les pt aient une variable commune
+
+### variable pt
+
 
 
 ```{r}
-impairs <- seq(1, length(sep$id), by = 2)
-pt
-ptAlleeDep <- pt [impairs,c("allee")]
-# verif graphique
-mf_map(ptAlleeDep, add =T, col = "red")
-# fonction pour classer les pts
-mesurer <- function (allee){
-  selSep <-  sep [sep$alleeL == LETTERS [allee],]
-  mat <- st_distance(ptAlleeDep [ptAlleeDep$allée == LETTERS [allee],], selSep )
+ptAllee
+ptSep
+```
+
+
+
+```{r}
+nb <- 16
+# fonction pour classer les pts en fonction distance
+mesurer <- function (nb){
+  selSep <-  ptSep [ptSep$allee ==  nb,]
+  mf_map(selSep)
+  mf_map(ptAllee[ptAllee$allee == nb,], col = "red")
+  mf_map(requiem, add = T, col = NA)
+  mf_map(selSep, add = T)
+  mat <- st_distance(ptAllee [ptAllee$allee == nb,], selSep )
   dist <- as.vector (mat)
   selSep$dist <- dist
   selSep <- selSep [order(selSep$dist),]
-  seq <- (1:length(selSep$id))
+  seq <- (1:length(selSep$dist))
   selSep$num  <- seq
-  selSep <- selSep[, c("id", "alleeL", "num")]
+  selSep
+  selSep <- selSep[, c( "allee", "num"), drop = F]
   return(selSep)
 }
 # boucle car la liste difficile à manipuler
+length(allee$num)
 res <- NULL
-i <- 1
-for (i in 1:10){
+i <- min(allee$num)
+max(allee$num) <- 16
+allee
+
+
+i <- 17
+for (i in min(allee$num):max(allee$num)){
+  print(i)
   tmp <- mesurer (i)
   res <- rbind(tmp, res)
 }
+class(res)
+res <- mesurer(16)
+mf_init(chemin)
+mf_map(requiem, add = T)
+mf_label(res, var = "num")
 st_write(res, "../data/cimetiere.gpkg", "ptSepultureID", delete_layer = T)
 ```
 
@@ -311,3 +416,10 @@ st_distance(pt)
 ```
 
 TO DO piste ?
+
+
+
+```{r}
+
+```
+
