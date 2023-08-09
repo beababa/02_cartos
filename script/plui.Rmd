@@ -30,12 +30,27 @@ library(mapsf)
 ```
 
 
+Les couches de bases se trouvent dans trois .gpkg, limitesSocle, cadastre, et plui
+
+le cadastre est issu des couches de sqlite cadastre2022
+
 ```{r}
 #bondy <- st_read("../data/limitesSocle.gpkg", "bondy", quiet=F)
 # plutôt limites
 st_layers("../data/limitesSocle.gpkg")
 st_layers ("../data/cadastre.gpkg")
+st_layers("../data/pluiM2.gpkg")
 cadastre <- st_read("../data/cadastre.gpkg", "parcelle_info")
+bondy <- st_read("../data/cadastre.gpkg", "commune")
+```
+
+
+# Problèmes limites cadastrales
+
+les limites de la commune sont différentes seleon la source.
+Notamment à l'est et au sud est
+
+```{r}
 bondy <- st_read("C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/cadastre2022.sqlite", "geo_commune")
 bondy2 <- st_read("../data/limitesSocle.gpkg", "bondy")
 bondy3 <- st_read("../data/limitesSocle.gpkg", "admin_express_IGN")
@@ -105,6 +120,7 @@ write.csv(df, "../data/libPLUiM2.csv", fileEncoding = "UTF-8")
 
 on refait la manip avec la limite communale cadastre, horreur ! 24 <> 34 !
 
+Du coup, on mesure les aires... 12 anomalies
 
 ```{r}
 operis <- read.csv("../data/libPLUiM2_zonageOperis.csv", header = F)
@@ -143,7 +159,7 @@ dev.off()
 
 ...effet de bord donc !
 
-## INFO_SURF
+# INFO_SURF
 
 TA, ER
 
@@ -205,7 +221,7 @@ jointureManquant <- st_as_sf(jointureManquant)
 
 
 
-## Espaces paysagers
+# Espaces paysagers
 
 pres_surf Espace paysager...
 pres_pct Alignement d'arbres...
@@ -569,39 +585,45 @@ mff_init(bureau)
 
 # ICPE BASIAS BAZOL
 
+On a plusieurs sources operis, georisque/infoterre et le géoportail93
+
 Dans Operis, un recensement de :
 
 
 ```{r}
-operis <- read.csv("../data/icpeBasiasBazolOperis.csv")
+operis <- read.csv("../data/icpeOperis.csv")
 table(operis$Source.de.la.donnée)
 table(operis$type)
+icpeOperis <- operis [operis$type == 'ICPE',]
+icpeOperis$clé
 ```
 89 au total
 2 BASOL / 65 BAZIAS / 22 ICPE
 
+On a rajouté une colonne source, clé, et type afin de pouvoir mieux manipuler
+la donnée.
 
-Au départ 19 ICPE (Installations classées pour la protection de l'environnement (ICPE) soumises à autorisation ou à enregistrement (en fonctionnement ou en cessation d'activité))
 
-On les télécharge sur géorisque
+Sur géorique, au départ 19 ICPE (Installations classées pour la protection de l'environnement (ICPE) soumises à autorisation ou à enregistrement (en fonctionnement ou en cessation d'activité))
 
 La consigne d'Operis est de les replacer correctement. Poser une question par rapport à ces différentes sources.
 
 
-Sur le géoportail93, on a BRGM / BASOL et BASIAS
+Sur le géoportail93, on a BRGM (brgm) / BASOL et BASIAS
 
 Sur infoterre (brgm), on a BASOL => georisque et BASIAS (anciens sites industriels) 2 sites uniquement
 
 Suite à lecture du géoportail généalogie, on a plus de données dans le BASIAS retravaillé du géoportail93 (59)
 
+Pas d'ICPE sur le géoportail ?
 
-On privilégie les ICPE par respect pour la consigne.
+On privilégie les ICPE par respect pour la consigne.22 pour Operis. 19 pour géorisque. et pe des ICPE dans la BASIAS du géoportail ?
 
 
 # ICPE
 
 
-## Géorisques
+## Géorisques : pb géocadage
 
 ```{r}
 icpe <- st_read("../data/InstallationsClassees_France.shp")
@@ -619,13 +641,44 @@ Pb géocodage, donc on enregistre et on géocode à nouveau
 - 34 étienne Dolet
 
 ```{r}
-data <- read.csv("../data/icpe.geocoded.csv")
+data <- read.csv("../data/icpe.nomgeocoded.csv")
+plus <- read.csv("../data/icpeOperisComplement.geocoded.csv")
+# ok il y en a 19
 data <- st_as_sf(data, coords = c("longitude", "latitude"), crs = 4326)
-icpe <- st_transform(data, 2154)
+icpeGeo <- st_transform(data, 2154)
+str(icpeGeo)
+data <- st_as_sf(plus, coords = c("longitude", "latitude"), crs = 4326)
+comp <- st_transform(data,2154)
+comp <- comp [,c("nom_ets", "adresse")]
+icpeGeo <- icpeGeo [, c("nom_ets", "adresse")]
+icpeGeo
+comp
+icpe <- rbind(icpeGeo, comp)
+```
+
+## Comparaison operis - georisque
+
+il y a 3 éléments en plus
+
+```{r}
+op <- gsub(" ", "", icpeOperis$clé)
+geo <- gsub(" ", "", icpeGeo$nom_ets)
+sort(icpeGeo$nom_ets)
+sort(icpeOperis$clé)
+setdiff(op,geo)
+```
+
+Donc BIONAZ CEMEXBETON et EQUIIOM BETON sont en plus.
+
+On repart du fichier géocodé de géorisque, auquel on rajoute ces 3 éléments.
+
+
+
+```{r}
 inter <- st_intersection(cadastre, icpe)
 ```
 
-Uniquement 7 intersections...
+Uniquement 10 intersections...
 On étudie les 12 autres graphiquement avant de se repérer par rapport aux adresses parcelles.
 
 ```{r}
@@ -651,7 +704,7 @@ dev.off()
 
 ```
 
-
+![](../img/icpe.png)
 pb i = 8 et 9
 
 ```{r}
@@ -672,6 +725,23 @@ i <- grep("CERTAS", icpe$nom_ets)
 dev.off()
 ```
 
+![](../img/icpeCERTAS.png)
+
+Sous Qgis, on déplace les points sur la parcelle.
+
+```{r}
+st_write(icpe, "../data/pluiM2.gpkg", "icpe", delete_layer = T)
+icpe <-st_read("../data/pluiM2.gpkg", "icpeModifie")
+```
+
+Attention, hésitations sur :
+- STPS déchet ?
+- SAS PROTEC pb particulier pas p morale
+- masques de france : aller vérifier l'adressage
+- cemex bétons et equiom même parcelle ?
+- buznaganiaru et didi ? même parcelle 35 et 37 rue de Varsovie
+
+
 ## Géoportail 93
 
 Le géocodage est-il meilleur ?
@@ -681,6 +751,7 @@ basiasGeoportail <- st_read("../data/2023-08-08_basias___anciens_sites_industrie
 basolGeoportail <- st_read("../data/2023-08-08_sites_et_sols_pollues__ou_potentiellement_pollues__en_seine_saint_denis.geojson")
 ```
 
+On retrouve les 2 BASOL mais pas les ICPE.
 
 Je n'ai pas les ICPE...
 
