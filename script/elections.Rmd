@@ -1,5 +1,5 @@
 ---
-title: "Ouverture liste parents rpe"
+title: "Import fichier excel Elections"
 author: "B. Maranget"
 date: "9/07/2021"
 output: 
@@ -46,37 +46,7 @@ for (i in 1:30) {
 }
 data$bureau
 head(data)
-write.csv2(data, "../../03_Data/decoupagePropre.csv")
+write.csv2(data, "../../03_03_Data/decoupagePropre.csv")
 ```
 
-# Repérer les noms sans adresse mail
-
-
-```{r}
-# lignes vides
-fin <- data [!is.na(data$Nom),]
-# liste parents sans adresse mail
-pasMail <- fin [is.na(fin$Mail)==T,]
-# liste parents avec adresse mail
-mail <- fin [!is.na(fin$Mail),]
-# concaténation des mails
-liste <- mail$Mail
-fin <- ""
-for (i in 1:155) {
-  tmp <- paste0(liste [i], ";")
-  fin <- paste0(fin, tmp)
-}
-
-```
-
-
-
-
-# Export
-
-```{r}
-write.csv2(mail, "rpe.csv")
-write.csv2(pasMail, "pb.csv")
-write(fin, "liste.txt")
-```
 

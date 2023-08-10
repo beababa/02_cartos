@@ -1,0 +1,52 @@
+---
+title: "Import fichier excel Elections"
+author: "B. Maranget"
+date: "9/07/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Ouverture fichier excel issu extraction .pdf rue - bureau
+
+
+# Import
+
+```{r}
+library(xlsx)
+data <- NA
+i <- 1
+for (i in 1:21) {
+  tmp <- read.xlsx("../data/decoupage.xls", startRow=2, header = TRUE,sheetIndex = i, encoding = "UTF-8")
+  data <- rbind(data, tmp)
+}
+data <- data [!is.na(data$Rue),]
+lg <- (grep("Bureau",data$Périmètre.géographique))
+nom <- data [lg, 1]
+data$bureau <-  NA
+lg [31] <- 376
+i <- 1
+for (i in 1:30) {
+  data$bureau [c(lg[i]:(lg[i+1]-1))] <- nom [i]
+}
+data$bureau
+head(data)
+write.csv2(data, "../../03_03_Data/decoupagePropre.csv")
+```
+
+

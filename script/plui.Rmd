@@ -224,8 +224,8 @@ jointureManquant <- st_as_sf(jointureManquant)
 # Espaces paysagers
 
 pres_surf Espace paysager...
-pres_pct Alignement d'arbres...
-pres_lin arbre remarquable
+pres_lin Alignement d'arbres...
+pres_pct arbre remarquable
 
 
 ```{r}
