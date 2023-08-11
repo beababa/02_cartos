@@ -604,7 +604,7 @@ On a rajouté une colonne source, clé, et type afin de pouvoir mieux manipuler
 la donnée.
 
 
-Sur géorique, au départ 19 ICPE (Installations classées pour la protection de l'environnement (ICPE) soumises à autorisation ou à enregistrement (en fonctionnement ou en cessation d'activité))
+Sur géorisque, au départ 19 ICPE (Installations classées pour la protection de l'environnement (ICPE) soumises à autorisation ou à enregistrement (en fonctionnement ou en cessation d'activité))
 
 La consigne d'Operis est de les replacer correctement. Poser une question par rapport à ces différentes sources.
 
