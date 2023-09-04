@@ -31,7 +31,7 @@ Commissariat Général au Développement Durable
 	en août 2022
 
 
-
+carto bailleurs et parcellaires pour Zem en août 2023
 
 
 ```{r}
@@ -56,17 +56,37 @@ Il y a un premier fichier en opendata, et l'autre comportant le nom des bailleur
 
 
 ```{r}
-RPLS <- read.csv2("../data/RPLS2019_detail_IDF_DEP_93.csv", fileEncoding = 'UTF-8', stringsAsFactors = F,  header = T)
+RPLS <- read.csv2(paste0(chemin,"RPLS2019_detail_IDF_DEP_93.csv"), 
+                  #fileEncoding = 'UTF-8', 
+                  stringsAsFactors = F,  header = T)
 RPLS <- RPLS [RPLS$CODEPOSTAL == 93140,]
 str(RPLS)
 ```
 
+9390 pts
 
 ```{r}
-RPLSbailleurs <- read.csv2(paste0(chemin,"rpls2021_geolocalise_loi_depcom93010.csv"))
+RPLSbailleurs <- read.csv2(paste0(chemin,"rpls2021_geolocalise_loi_depcom93010.csv")
+                           , fileEncoding = "latin1"
+                           #, fileEncoding = "UTF-8"
+                           )
+#encodage latin1 attention.
+tab <- table(RPLSbailleurs$NOMVOIE, useNA = "always")
+names(tab)
+# au niveau des étages, verif. 
+tab <- table(RPLSbailleurs$ETAGE)
+barplot(tab, las =2, main = "nb d'appartements par étage")
+# 9649 pts, il vaut mieux travailler sans l'encodage car nb  voies diffèreent
+# meme nb de voies, 
+# nb d'appartements par étage.
+
 str(RPLSbailleurs)
-tab <- table(RPLSbailleurs$RS)
-hist(tab)
+tab <- table(RPLSbailleurs$RS, useNA = "always")
+tab
+# l'encodage n'a pas fonctionné, on le fait à la main.
+RPLSbailleurs$RS <- gsub("Ã©", "é", RPLSbailleurs$RS)
+RPLSbailleurs$RS <- gsub("Ã¨", "è", RPLSbailleurs$RS)
+RPLSbailleurs$RS <- gsub("Ã\u008e", "I", RPLSbailleurs$RS)
 par(mar = c(15,4,4,4))
 barplot(tab, las = 2)
 # recodage : bcp de petits bailleurs
@@ -77,7 +97,10 @@ RPLSbailleurs$type [RPLSbailleurs$RS %in% noms] <- "Petits bailleurs < 200"
 noms <- names(tab)[tab>200] 
 noms
 RPLSbailleurs$type <- ifelse(RPLSbailleurs$type == "", RPLSbailleurs$RS, RPLSbailleurs$type)
-table(RPLSbailleurs$type)
+tab <- sort(table(RPLSbailleurs$type))
+barplot((tab), names.arg = names((tab)) , las = 2)
+# On enlève OPH Bondy pour voir répartition autres bailleurs
+tab <- tab [-7]
 ```
 
 
@@ -89,6 +112,8 @@ table(RPLSbailleurs$type)
 
 ```{r}
 RPLS <- RPLSbailleurs
+table(RPLS$type)
+# cle sur l'adresse
 RPLS$cle <- paste0(RPLS$NUMVOIE, RPLS$TYPVOIE, RPLS$NOMVOIE)
 aggNbAppart <- aggregate(RPLS$cle, by = list(RPLS$cle), length)
 ```
@@ -100,6 +125,32 @@ aggNbAppart <- aggregate(RPLS$cle, by = list(RPLS$cle), length)
 
 ```{r}
 aggEtageMax <- aggregate(RPLS$ETAGE, by = list(RPLS$cle), max)
+table(aggEtageMax$x)
+```
+
+un seul appt au 15e ?
+
+attention le champs n'est pas numérique !
+
+
+```{r}
+str(RPLS$ETAGE)
+tab <- table(RPLS$ETAGE)
+tab
+names(tab)
+# cellules vides et RC à zéro
+RPLS$ETAGE <- gsub("00|RC", "0", RPLS$ETAGE)
+table(etage)
+# traitement des cellules vides
+ind <- which(etage=="")
+RPLS$ETAGE [ind] <- "0"
+RPLS$ETAGE <- as.integer(RPLS$ETAGE)
+```
+
+
+```{r}
+aggEtageMax <- aggregate(RPLS$ETAGE, by = list(RPLS$cle), max)
+table(aggEtageMax$x)
 ```
 
 
@@ -111,40 +162,37 @@ joint <- merge(aggNbAppart, aggEtageMax, by = "Group.1")
 names(joint) <- c("cle", "appartement", "etage")
 geo <- unique( RPLS [,c("cle", "PATRIMOINE",  "RS", "type" ,"X", "Y") ])
 joint2 <- merge(joint, geo, by ="cle")
+# joint2, joint une différence de 9
 str(joint)
 str(geo)
 str(joint2)
 #spatialisation
+joint2
+# si long lat
 data <- st_as_sf(joint2, 
-                 coords = c(x = "longitude", y = "latitude"), 
-                 crs = 4326)
-data <- st_transform(data, crs = 2154)
+                 coords = c(x = "latitude", y = "longitude"), 
+                 crs = 2154)
+#data <- st_transform(data, crs = 2154)
 data <- st_as_sf(joint2, 
                  coords = c(x = "X", y = "Y"), 
                  crs = 2154)
-data
-plot(data)
-# adresse hors bondy
-limite <- st_read("../data/limitesSocle.gpkg", "bondy")
-st_layers("../data/limitesSocle.gpkg")
-dataBondy <-  st_intersection(data, limite)
-setdiff(data$cle, dataBondy$cle)
-dataBondy$etage <- as.numeric(dataBondy$etage)
-table(dataBondy$etage, useNA = "always")
-dataBondy$etage [is.na(dataBondy$etage )] <- c(1,4,4)
-dataBondy
+data$etage
+plot(data$etage)
+tab <- table(data$etage, useNA = "always")
 ```
 
 1 logement social au dessus de la poste, nx bâtiments avec nb étages différents...arrondis à 4
 
 7 lgts sans étage pour Bondy
 
+
+
 Enregistrement data
 
 ```{r}
-str(dataBondy)
-dataBondy <- dataBondy [, c(1:5)]
-st_write(dataBondy, "../data/RPLS.gpkg", "rpls2021RS", delete_layer = T)
+str(data)
+data <- data [, c(1:6)]
+st_write(data, "../data/RPLS.gpkg", "rpls2021RS", delete_layer = T)
 ```
 
 
@@ -152,17 +200,22 @@ st_write(dataBondy, "../data/RPLS.gpkg", "rpls2021RS", delete_layer = T)
 # Cartpgraphie
 
 
+```{r}
+rpls <- st_read("../data/RPLS.gpkg", "rpls2021RS")
+```
 
 
 
 ```{r}
-mf_export(data, width = 1000, height = 1000, res = 100, filename = "../img/RPLS.png", expandBB = c(10,10,30,10))
-mf_init(dataBondy)
+st_layers("../data/cadastre.gpkg")
+cadastre <- st_read("../data/cadastre.gpkg", "proprio")
+mf_export(rpls, width = 1000, height = 1000, res = 100, filename = "../img/RPLS.png", expandBB = c(10,10,30,10))
+mf_init(data)
 mf_theme("candy")
-fond()
+mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
 #plot_tiles(osm)
 #mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
-mf_map(dataBondy,  type = "choro", var = "etage", breaks = c(0,2,4,8,16), add = T)
+mf_map(data,  type = "choro", var = "etage", breaks = c(0,2,4,8,16), add = T)
 
 #mf_label(etik, var = "Group.1", overlap = TRUE, lines = TRUE, halo = T, pos = 2 , offset = 5 )
 #• pb connecteru
@@ -171,8 +224,8 @@ mf_map(dataBondy,  type = "choro", var = "etage", breaks = c(0,2,4,8,16), add = 
 #barplot(base$x, names.arg = base$proprio, cex.names = 0.8, las = 2, col = "lightblue3", border = NA)
 #barplot(data$nb[data$nb > 5, drop = T], names.arg = data$proprietaire.x [data$nb > 5], las = 2, cex.names =  0.8,  col = "lightblue3", border = NA)
 #mf_inset_off()
-mf_layout(title = "RPLS 2019, nombre d'étages", 
-          credits ="DGST, Mairie de Bondy\n sources : RPLS, 2019")
+mf_layout(title = "RPLS 2021, nombre d'étages", 
+          credits ="DGST, Mairie de Bondy\n sources : RPLS, 2021")
 
 dev.off()
 ```
@@ -183,15 +236,16 @@ dev.off()
 
 
 ```{r}
+
 mf_export(data, width = 1000, height = 1000, res = 100, filename = "../img/RPLSBailleurs.png", expandBB = c(10,10,40,10))
-mf_init(dataBondy)
+mf_init(data)
 mf_theme("candy")
-fond()
+#fond()
 #plot_tiles(osm)
-#mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
+mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
 library("RColorBrewer")
 
-mf_map(dataBondy,  type = "typo", var = "type", border = NA, cex = 1, add = T, pal = brewer.pal(n = 7, name = "Set2"))
+mf_map(data,  type = "typo", var = "type", border = NA, cex = 1, add = T, pal = brewer.pal(n = 7, name = "Set2"))
 
 #mf_label(etik, var = "Group.1", overlap = TRUE, lines = TRUE, halo = T, pos = 2 , offset = 5 )
 #• pb connecteru
@@ -201,7 +255,174 @@ mf_map(dataBondy,  type = "typo", var = "type", border = NA, cex = 1, add = T, p
 #barplot(data$nb[data$nb > 5, drop = T], names.arg = data$proprietaire.x [data$nb > 5], las = 2, cex.names =  0.8,  col = "lightblue3", border = NA)
 #mf_inset_off()
 mf_layout(title = "RPLS 2021, bailleurs", 
-          credits ="DGST, Mairie de Bondy, déc. 2022\n sources : OSM & RPLS 2021")
+          credits ="DGST, Mairie de Bondy, août 2023\n sources : cadastre & RPLS 2021")
 
 dev.off()
 ```
+
+
+```{r}
+table(data$type)
+```
+
+
+Vérifier cité sud.
+
+
+# Croisement parcellaire
+
+
+2 solutions : 
+
+
+- st_intersects et on récupère le champs nb d'intersection
+
+- st_intersection et on récupère la géométrie polygone
+
+
+attention, la version du cadastre doit comporter un code pour chaque parcelle
+
+
+```{r}
+table(cadastre$code == "")
+```
+
+
+
+```{r}
+i <- st_intersects(cadastre, data, sparse = T)
+j <- sapply(i, length)
+table(j)
+cadastre$inter <- j
+tmp <- cadastre [cadastre$inter != 0,] 
+# verif champs vide
+table(tmp$code==0)
+```
+
+J'ai la bonne géométrie
+mais il manque l'info du rpls... donc jointure également en enlevant le pt du RPLS
+
+Du coup la carte sera catégorisée sur le nom des propriétaires.
+
+```{r}
+tab <- table(tmp$proprio)
+names(tab)
+#recodage COPRO / PARTICULIER
+ind <- grep("COPRO", tmp$proprio)
+tmp$proprio2 [ind] <-  "COPRO"
+ind <- grep("M |MME ", tmp$proprio)
+tmp$proprio2 [ind] <-  "Particulier"
+# extraction pour recodage
+write.csv(unique(tmp [,c("proprio", "proprio2"), drop = T]), "../data/proprio.csv")
+# jointure attributaire pour recodage
+ref <- read.csv("../data/proprioModifie.csv")
+cadastreRPLS <- merge(tmp [, c("proprio", "code")], ref, by = "proprio" ) 
+```
+
+
+autre solution à ne pas jouer
+
+```{r}
+inter <- st_intersection(cadastre, dataBondy)
+inter <- inter [, c("proprio", "code", "RS", "type"),drop =T]
+
+# pb NA
+class(tmp)
+tmp$code
+tmp <- tmp [!is.na(tmp$code),]
+plot(tmp)
+#jointure
+joint <- merge(cadastre [, c("code")],tmp, by= "code")
+```
+
+
+
+
+pb couleurs
+
+
+un choix simple consiste à ne colorier que les parcelles et à faire un point noir.
+
+
+```{r}
+tab <- table(cadastreRPLS$proprio2)
+# ordonner la donnée en fonction de son importance
+tab <- sort(tab)
+# on va créer une palette bailleurs sociaux / commune ETAT / autres
+write.csv(tab, "../data/proprioLeg.csv")
+couleur <- read.csv("../data/proprioLegModifie.csv")
+couleur <- couleur [order(couleur$type),]
+names(couleur) <- c("proprio2", "nb", "type")
+couleur
+# jointure pour clé de tri
+cadastreRPLS <- merge(cadastreRPLS, couleur, by = "proprio2")
+cadastreRPLS <- cadastreRPLS [order(cadastreRPLS$proprio2),]
+head(cadastreRPLS)
+```
+
+4 rouges / 9 bleues / 3 gris
+
+https://www.datanovia.com/en/fr/blog/comment-concevoir-une-belle-palette-de-couleurs-dans-r/
+
+```{r}
+
+col1 <- colorRampPalette(brewer.pal(4, "Blues"))(4)
+col2 <- colorRampPalette(brewer.pal(8, "Reds"))(9)
+col3 <- colorRampPalette(brewer.pal(8, "Greens"))(3)
+palette <- c(col1, col2, col3)
+palette
+# test couleur
+png("../img/couleurProprioCadastre.png")
+barplot(couleur$nb, col = palette, names.arg = couleur$proprio2, las = 2)
+dev.off()
+couleur$ordre <- seq(1:16)
+```
+
+![](../img/couleurProprioCadastre.png)
+
+```{r}
+cadastreRPLScouleur <- merge(cadastreRPLS, couleur, by="proprio2" )
+```
+
+
+
+
+```{r}
+mf_export(data, width = 3000, height = 3000, res = 300, filename = "../img/RPLSBailleursParcelle.png", expandBB = c(10,10,60,10))
+mf_init(data)
+mf_theme("candy")
+#plot_tiles(osm)
+mf_map(cadastre, col = "ivory2", border = NA, add = T)
+mf_map(cadastreRPLScouleur,  type = "typo", var = "ordre", border = NA, cex = 1, add = T, pal = palette, leg_pos= NA)
+mf_map(data, type = "prop", inches = 0.1,col = NA,var = "appartement"  , add = T)
+
+#mf_label(etik, var = "Group.1", overlap = TRUE, lines = TRUE, halo = T, pos = 2 , offset = 5 )
+#• pb connecteru
+#( data, pos = "right")
+#par(mar = c(0,2,0,0))
+#barplot(base$x, names.arg = base$proprio, cex.names = 0.8, las = 2, col = "lightblue3", border = NA)
+#barplot(data$nb[data$nb > 5, drop = T], names.arg = data$proprietaire.x [data$nb > 5], las = 2, cex.names =  0.8,  col = "lightblue3", border = NA)
+#mf_inset_off()
+mf_legend(type="typo", val=couleur$proprio2, pal = palette, border = NA, title = "Type de propriétaires", pos = "right")
+mf_layout(title = "RPLS 2021, bailleurs", 
+          credits ="DGST, Mairie de Bondy, août 2023\n sources : cadastre & RPLS 2021")
+
+dev.off()
+```
+
+
+Problème au Nord et au sud, ouverture sous Qgis
+
+
+```{r}
+st_write(cadastreRPLS, "../data/rpls.gpkg", "bailleurParcelle", delete_layer = T)
+```
+
+
+# Modifications sur quelques points RPLS
+
+Quelques points sont non cadastrés, on les déplace dans QGIS et on reproduit le traitement d'intersection
+
+
+
+

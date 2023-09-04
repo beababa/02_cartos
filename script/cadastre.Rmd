@@ -74,12 +74,29 @@ dev.off()
 
 La variable *propriétaire* contient toutes les informations intéressantes
 
+il faut éclater le champs propriétaire | et -, ce qu'on sauvegarde ds le cadastre original
+
+```{r}
+# attention chemin 03/SOCLE/cadastre2022.sqlite pour travail en mairie
+cadastre <- st_read(paste0(chemin,"/03_SOCLE/cadastre2022.sqlite"), "parcelle_info")
+str(cadastre)
+# 1er coupure et on récupère uniquement le 1er proprio
+tmp <- strsplit(cadastre$proprietaire, split= "\\|")
+proprio <- sapply(tmp, "[",1)
+# 2e coupure et on réucpère le nom
+tmp <- strsplit(proprio, split= "\\-")
+proprio <- sapply(tmp, "[",2)
+proprio <- gsub("^ | $",x =  proprio, "")
+cadastre$proprio <- proprio
+st_write(cadastre, "../data/cadastre.gpkg", "proprio", delete_layer = T)
+```
 
 
+si on fait juste l'éclatement en - cela fonctionne aussi
 
 ```{r, eval = F}
 # attention chemin 03/SOCLE/cadastre2022.sqlite pour travail en mairie
-cadastre <- st_read(paste0(chemin,"/01_SOCLE/cadastre/cadastre2022.sqlite"), "parcelle_info")
+cadastre <- st_read(paste0(chemin,"/03_SOCLE/cadastre2022.sqlite"), "parcelle_info")
 chaine <- strsplit(cadastre$proprietaire, " - ")
 # récupération du 2e terme
 cadastre$nom <- sapply(chaine, "[",2)
@@ -110,6 +127,11 @@ lines(c(0,8000),c(0,8000))
 #○rapports
 repere [,1] / repere [,2]
 ```
+
+
+# codage de la parcelle
+
+
 
 
 
