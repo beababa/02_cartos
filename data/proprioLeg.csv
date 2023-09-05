@@ -1,17 +1,19 @@
 Var1,Freq,type
-Est Ensemble Habitat,41,bailleur
-COPRO,33,autres
-Immobiliere 3F,28,bailleur
-Seine St Denis Habitat,8,bailleur
-Particulier,6,autres
-SGP,3,autres
-Bondy,2,CT
-Foncière,2,autres
-ICF La Sablière,2,bailleur
-VILOGIA,2,bailleur
 CDC Habitat,1,bailleur
 DPT,1,CT
+EE,1,CT
 ETAT,1,CT
 IRP,1,bailleur
 Logirep,1,bailleur
-Sequens,1,bailleur
+Sequano,1,autre
+SGP,1,autre
+Commune,2,CT
+Foncière,2,autre
+ICF La sablière,2,bailleur
+SCI,2,autre
+Vilogia,2,bailleur
+Particulier,4,autre
+Seine St Denis habitat,8,bailleur
+3F,28,bailleur
+COPRO,28,autre
+EE habitat,40,bailleur
