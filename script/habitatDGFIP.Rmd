@@ -48,6 +48,12 @@ rep <- Sys.getenv("HOME")
 chemin <- paste0(rep,"/03_SIG/03_03_Data/")
 ```
 
+cadastre
+
+```{r}
+cadastre <- st_read("../data/cadastre.gpkg", "proprio")
+```
+
 
 # Chargement des fichiers
 
@@ -70,7 +76,9 @@ gros <- names(tab [ tab > 5])
 # i exemple, rue Gaston Deferre, num porte différent
 LCV$proprietaire [LCV$code %in% gros]
 agg <- aggregate(LCV [, "code"], by = list (LCV$code, LCV$proprietaire), length)
-agg
+
+agg$code
+cadastre$code
 names(agg) <- c("code","proprietaire", "nb")
 ```
 
@@ -79,15 +87,37 @@ names(agg) <- c("code","proprietaire", "nb")
 
 
 ```{r}
-LH <- read.csv2("../data/LOC_HAB22_930_21930010000019_C010_22111.CSV", stringsAsFactors = F, colClasses = "character" ,fileEncoding = "Latin1", header = T, skip = 3)
+LH <- read.csv2("../data/LOC_HAB22_930_21930010000019_C010_22111.CSV", stringsAsFactors = F, colClasses = "character" , header = T, skip = 3, fileEncoding = "CP1252")
+# pb dernière colonne vide
 # encoding Latin 1 régle sans doute le pb
 head(LH)
-LH$code <- paste0(LH$Sect., LH$N..plan)
-agg <- aggregate(LH [, "code"], by = list (code = LH$code, proprio = LH$Propriétaire), length)
+names(table(LH$Motif.mise.a.jour))
+LH$Motif.mise.a.jour
+# pas de typo possible
+nb1 <- 2 - sapply(LH$Sect.,nchar)
+nb2 <- 3 - sapply(LH$N..plan,nchar)
+nb1zero <- ifelse(nb1 > 1, "0","")
+nb1zero
+nb2zero <- ifelse (nb2 == "", "", "0") 
+nb2zero <- ifelse (nb2 == "3", "00", )
+LH$code <- paste0(LH$Sect., nb1zero, nb2zero,LH$N..plan)
 # exploration
 str(agg)
+cadastre$code <- gsub("^ ", "", cadastre$code)
 barplot(agg$x)
 agg [agg$x > 3,]
+cadastre$code
+LH$code
+data <- merge(cadastre, LH, by = "code")
+agg <- aggregate(data [, "code"], by = list (code = data$code, proprio = data$Propriétaire), length)
+str(agg)
+# 442 liens puis 74
+mf_init(agg)
+mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
+table(agg$code.1)
+mf_map(agg, var = "code.1", type =  "typo", border= NA, add = T)
+mf_label(agg [agg$code.1 > 3,], var = "proprio")
+mf_layout("fichiers fonciers : mouvements sur locaux d'habitation", credits = "DGFIP, 2022\nMairie de Bondy, sept 2023")
 ```
 
 
