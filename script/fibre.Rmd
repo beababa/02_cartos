@@ -31,8 +31,6 @@ récupération dans C:\Users\bmaranget\Documents\01_ARCHIVE\fibre\Fibre Bondy DS
 ```{r}
 library(sf)
 library(mapsf)
-library(rgdal)
-library(dplyr)
 ```
 
 
@@ -43,12 +41,43 @@ library(dplyr)
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
 rep2 <- "/03_SIG/03_03_Data/22_VIDEOSURVEILLANCE/" 
+rep3 <-  "/03_SIG/03_03_Data/14_CANALISATIONS/ARCEP/"
 zip <-  paste0(rep,"/01_ARCHIVE/02_fibre/03_DSI/01_plans/testV5.kmz")
 outDir <- paste0(rep, "/01_ARCHIVE/02_fibre/03_DSI/01_plans/")
 test <- unzip(outDir, outDir)
 
 
 ```
+
+fichier opendata  avec les PM
+
+
+
+```{r}
+fibreImm <- read.csv(paste0(rep, rep3, "carte_fibre_immeubles_2023_T2_20230908.csv"))
+fibreImmB <- fibreImm [fibreImm$code_insee == '93010',]
+
+```
+
+
+Données saisies et un peu éparpillées partout
+
+
+dans data/voirie/fibre/batzone
+
+```{r}
+str(fibreImmB)
+fibreImmB_map <- st_as_sf(fibreImmB, coords = c("x","y"), crs = 4326)
+mf_map(fibreImmB_map [!fibreImmB_map$imb_etat %in% c( "deploye"),], type = "typo", var = "imb_etat" )
+mf_layout("Opendata carte fibre immeubles", credits = "ARCEP")
+table(fibreImmB_map$date_completude)
+fibreImmB_map$date_completude <- as.Date(fibreImmB_map$date_completude, format = "%Y")
+fibreImmB_map$date_completude <- format(fibreImmB_map$date_completude, "%Y")
+table(fibreImmB_map$annee)
+st_write(fibreImmB_map, "../data/fo.gpkg", "arcepImm", delete_layer = T)
+```
+
+Attention, il s'agit de points sur le batiment et non pas de pm.
 
 Pour ouvrir le kmz, il suffit de décompresser...
 

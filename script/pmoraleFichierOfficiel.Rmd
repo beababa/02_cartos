@@ -25,6 +25,11 @@ knitr::opts_chunk$set(warning = FALSE)
 https://www.data.gouv.fr/fr/datasets/fichiers-des-locaux-et-des-parcelles-des-personnes-morales/
 
 
+version 2022 : fichier des locaux (situation 2022).zip
+
+
+
+
 ```{r}
 library(sf)
 library(mapsf)
@@ -34,9 +39,9 @@ library(mapsf)
 # Chemin data
 
 
-```{r, eval = T}
+```{r}
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
-chemin <- "G:/Mon Drive/05_DATA/"
+#chemin <- "G:/Mon Drive/05_DATA/"
 ```
 
 
@@ -45,7 +50,7 @@ chemin <- "G:/Mon Drive/05_DATA/"
 
 ```{r}
 #02_URBA pour le drive 06 pour pc mairie
-data <- read.csv2(paste0(chemin,"06_URBA/PM_21_NB_930.txt"), fileEncoding = "latin3")
+data <- read.csv2(paste0(chemin,"06_URBA/personne morale opendata/PM_22_NB_930.txt"), fileEncoding = "latin3")
 data <- data [ data$Nom.Commune..Champ.géographique.== "BONDY",    ]
 str(data)
 st_layers("../data/cadastre.gpkg") 
@@ -88,9 +93,37 @@ Première jointure et carto
 jointure <- merge (cadastre, data, by = "code")
 mf_map(cadastre)
 mf_map(jointure, col = "red",add = T)
-mf_layout("première exploration Personne morale opendata", "source : cadastre 2022 & personne morale 2021")
+mf_layout("première exploration Personne morale opendata", "source : cadastre 2022 & personne morale 2022")
 ```
 
+pas mal 1396 éléments sur 1400...
+
+## Exploration des données
+
+### code de droit
+
+L fonctionnaire logé...
+
+```{r}
+str(jointure)
+barplot(table(jointure$Code.droit..Propriétaire.s..parcelle.))
+mf_map(jointure, type = "typo", var = "Code.droit..Propriétaire.s..parcelle.", border = NA)
+```
+
+G gérant, P propriétaire, S syndic coproprio Z gestionnaire d'un bien de l'Etat
+
+
+
+### forme juridique
+
+
+bailleurs sociaux peuvent être privés (SA HLM == code 5646) et publics 
+
+TODO
+
+```{r}
+
+```
 
 
 
@@ -178,13 +211,10 @@ mf_layout("Personnes morales", "sources : cadastre & personnes morales")
 Recodage 
 
 ```{r}
+str(data)
 write.csv(unique(jointure [,c("Forme.juridique.abrégée..Propriétaire.s..parcelle."), drop = T]), "../data/pmorale.csv", fileEncoding = "UTF-8")
-recodage <- read.csv("../data/pmoraleRecode.csv", fileEncoding = "UTF-8")
+recodage <- read.csv2("../data/pmoraleRecode.csv", fileEncoding = "UTF-8")
 data <- merge(jointure, recodage, by.x = "Forme.juridique.abrégée..Propriétaire.s..parcelle.", by.y = "code")
-mf_init(data)
-mf_map(cadastre, col = "antiquewhite2", border = "antiquewhite1", add = T)
-mf_map(data, type = "typo", var = "recodage", border = NA, add = T)
-mf_layout("Personnes morales", "sources : cadastre & personnes morales")
 ```
 
 
@@ -193,9 +223,61 @@ Enregistrement de données
 
 
 ```{r}
-st_write(data, "../data/cadastre.gpkg", "pmoraleOpendata", fileEncoding = T, delete_layer = T)
+st_write(data, "../data/cadastre.gpkg", "pmoraleOpendata2022", fileEncoding = T, delete_layer = T)
 ```
 
 
+Agrégation des données
+
+
+```{r}
+str(data)
+proprio <- unique(data$Dénomination..Propriétaire.s..parcelle.)
+agg <- aggregate(data [,"Dénomination..Propriétaire.s..parcelle."], list(data$Dénomination..Propriétaire.s..parcelle., data$recodage, data$codeComplet), length )
+agg
+names(agg)[1:4] <- c("proprio", "public/prive", "statut", "nb parcelles")
+st_write(agg, "../data/cadastre.gpkg", "pmoraleOpendata2022Agg", fileEncoding = T, delete_layer = T)
+```
+
+
+Affichage des plus gros propriétaires
+
+```{r}
+agg$aire <- st_area(agg)/10000
+library(units)
+agg$aire <- drop_units(agg$aire)
+agg [order (agg$aire, decreasing = T),]
+```
+
+
+```{r}
+plot(agg$aire, agg$`nb parcelles` , xlim = c(0,17), ylim = c(0,80),
+     main = "Relation surface et nb parcelles")
+etik <- agg [agg$aire > 2 & agg$`nb parcelles` > 5,]
+text(etik$aire, etik$`nb parcelles`, labels = etik$proprio, cex =0.5, pos = 1)
+model <- lm(agg$`nb parcelles`~agg$aire, agg)
+abline(model, col = "red", lwd = 2)
+
+
+plot(agg$aire, agg$`nb parcelles` , xlim = c(0,1), ylim = c(0,10),
+     main = "Relation surface et nb parcelles (inf. à 1 ha)")
+etik <- agg [agg$aire < 1 & agg$`nb parcelles` < 10,]
+text(etik$aire, etik$`nb parcelles`, labels = etik$proprio, cex =0.5, pos = 1)
+model <- lm(agg$`nb parcelles`~agg$aire, agg)
+abline(model, col = "red", lwd = 2)
+
+
+
+```
+
+remarque : nb parcelles pas variable continue...
+
+```{r}
+mf_init(data)
+mf_map(cadastre, col = "antiquewhite2", border = "antiquewhite1", add = T)
+mf_map(data, type = "typo", var = "recodage", border = NA, add = T)
+mf_layout("Personnes morales", "sources : cadastre 2022 & personnes morales 2022")
+knitr::kable(recodage [order(recodage$recodage), c("code", "recodage", "codeComplet")])
+```
 
 

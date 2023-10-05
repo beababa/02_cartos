@@ -452,6 +452,8 @@ Ajout septembre 2022, voir aussi le fichier des personnes morales en opendata ?
 https://www.data.gouv.fr/fr/datasets/fichiers-des-locaux-et-des-parcelles-des-personnes-morales/
 
 
+cf pmoraleFichierOfficiel
+
 ## Le travail du CEREMA
 
 Explorer également la documentation autour des fichiers fonciers du cerema

@@ -1,0 +1,215 @@
+---
+title: "rue base référentiel"
+author: "B. Maranget"
+date: "6/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Fichier rue, constitution grille et liste des rues dans graticules
+
+La grille est dans socleBat
+Le fichier est grille dans bondy.gpkg
+st_write(grille, paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille", delete_layer = T)
+
+Egalement liste des rues dans delib
+
+on coupe avec les quartiers et différentes autres géométries
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(osmdata)
+library(tidyverse)
+```
+
+
+chemins
+
+```{r}
+Sys.getenv()
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <- "D:/03_SIG/03_03_Data/"
+```
+
+
+données
+
+Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
+
+```{r}
+# pour le fond le cadastre
+cadastre <- st_read("../data/cadastre.gpkg", "proprio")
+# les rues
+st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
+# nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+# verif NOM
+rue$NOM_1_G
+#386 rues au 16/06
+# attention suppression
+file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherenc")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
+# maj longueur
+rue$Longueur <- round(st_length(rue$geom),0)
+sum(rue$Longueur)
+# verif doublon
+tab <- table(rue$NOM_1_G)
+tab [tab >1]
+# carto pour voir pb
+select <- rue [rue$NOM_1_G %in% names (tab [tab > 1]), ]
+mf_init(st_buffer(select [1,], 100))
+fond()
+mf_map(select [c(1:2),], lwd= 2, col = "red",add = T)
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+mf_label(rue, "NOM" , overlap = F, lines = T)
+mf_layout("Pb dessin rues", credits = "")
+# Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
+```
+
+
+Rue très petites numérotées
+
+```{r}
+rue$NOMnumero [!is.na(rue$NOMnumero)]
+# extraction tableau rue numero
+num <- rue[!is.na(rue$NOMnumero), drop =F]
+sel <- num [num$NOM2 == "MIGNARD",]
+mf_init(st_buffer(sel,10))
+mf_map(cadastre, add = T, lty=2)
+mf_map(num, add = T, col = "antiquewhite1", lwd = 4)
+mf_label(num, var = "NOM2", overlap = F, lines = T)
+mf_layout("petites rues", credits = "sept 2023")
+num <- num [order (as.integer(num$NOM)), c("NATURE", "NOMnumero"), drop = T]
+write.csv(num, "../data/numRue.csv", fileEncoding = "UTF-8")
+# remplacementNONNumero
+num <- as.character(seq(1,17))
+rue$NOM_1_G [rue$NOM %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
+rue[!is.na(rue$NOMnumero),]
+```
+
+
+```{r}
+# extraction type rue
+explode <- strsplit(rue$NOM_1_G, " ")
+rue$NATURE <- sapply(explode, "[",1)
+table(rue$NATURE)
+rue$Longueur <- length(rue)
+agg <- aggregate(rue$Longueur, by = list(rue$NATURE), sum )
+knitr::kable(agg)
+# extraction type rue / isolement
+motif <- agg$Group.1
+motif
+ch <- as.character(seq(1,17))
+motif <- motif [!(motif %in% ch)]
+motif <- motif [!motif%in% c("Sans", "D78")]
+motif
+motif <- paste0(motif, " |")
+motif [motif == "VLA |"] <- "VLA "
+motif <- paste(motif, collapse = "")
+
+nchar(motif)
+motif
+rue$NOM <- gsub(motif, "", rue$NOM_1_G)
+str(rue)
+
+```
+
+
+suppression des articles dans le nom des rues pour l'index
+
+```{r}
+rue$NOM
+motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE |^D\'")
+rue$NOM2 <- gsub(motif, "", rue$NOM)
+rue$NOM2 <- gsub("^ ", "", rue$NOM2)
+rue$NOM2
+```
+
+enregistrement
+
+```{r}
+st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
+```
+
+
+
+# Liste
+
+
+```{r}
+liste <- rue [, c("NOM",  "Longueur", "NATURE"), drop = T]
+write.csv(liste [order (liste$"NOM_1_G" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+```
+
+
+# Intersections diverses
+
+
+Les quartiers
+
+```{r}
+quartier <- st_read(paste0(chemin, "03_SOCLE/limites.gpkg"), "quartiers")
+nom <- names (table(quartier$nom)) 
+raccourci <- c("MVeuve",  "Mainguy","Saule", "Merisiers" ,"NC-TSB")
+equiv <- data.frame(nom, raccourci)
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+inter <- st_intersection(rue, quartier)
+interSansGeom <- st_drop_geometry(inter)
+interSansGeom <- interSansGeom [, c("NATURE", "NOM2", "nom", "raccourci")]
+# equiv
+jointure <- merge(interSansGeom, equiv, by = "nom" )
+jointure <- jointure  [, c("NATURE", "NOM2", "raccourci")]
+names(jointure ) <- c("NATURE", "NOM", "QUARTIER")
+write.csv(jointure [ order (jointure$NOM), ], "../data/listeRueQuartier.csv", fileEncoding= "UTF-8")
+```
+
+
+
+La grille
+
+```{r}
+grille <- st_read(paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille")
+mf_map(grille)
+mf_map(rue, add = T)
+```
+
+
+Intersection grille / rue
+
+
+```{r}
+inter <- st_intersection(rue, grille)
+inter <- inter [, c("NATURE",  "NOM2", "case"), drop = T]
+inter
+```
+
+Suprression des doublons rues
+
+
+```{r}
+inter
+```
+
+
+
