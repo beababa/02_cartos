@@ -1,0 +1,85 @@
+---
+title: "Eclairage public"
+author: "B. Maranget"
+date: "19/10/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+exploitation du fichier des candelabres du prestataire EQUANS (Frederic Drochon)
+
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+# on reprend variable HOME en fonction PC
+rep <- Sys.getenv("HOME")
+rep3 <-  "E:/03_SIG/03_03_Data/08_VOIRIE/"
+```
+
+
+
+
+
+```{r}
+candelabre <- read.csv(paste0(rep3, "BDD canevas POINT LUMINEUX_BONDY_GEOREF95-04-09-2020.csv"), dec = ",")
+names(candelabre)
+# projection CC49 3049 lambert93
+candelabre <- st_as_sf(candelabre, coords =  c("X", "Y"), crs=3949)
+candelabre <- st_transform(candelabre, 2154)
+```
+
+3548 candélabres
+
+```{r}
+unique(candelabre$LAMPE.MODELE)
+candelabre$LAMPE.MODELE [candelabre$LAMPE.MODELE == "shp"] <- "SHP"
+LAMPE.MODELE <- c("LED"   ,   "SHP"  ,    "FLUO" ,    "IM"   ,    "Halogene", ""      ,   "BF")
+equiv <- c("LED", "autre", "autre", "autre", "autre", "inconnu", "autre")
+ref <- data.frame(LAMPE.MODELE, equiv)
+candelabre <- merge(candelabre, ref, by =  "LAMPE.MODELE")
+st_write(candelabre,"../data/ep.gpkg", "candelabre2023", delete_layer=T)
+```
+
+
+```{r}
+rue <- st_read("../data/bondy.gpkg", "ruePrincipales")
+```
+
+
+```{r}
+mf_export(x = candelabre, width = 1000, "../img/candelabreLED2023.png", res = 200)
+mf_init(candelabre)
+mf_map(rue, add = T)
+mf_map(candelabre, type = "symb", var = "equiv", pch = c(16:18), pal = c("antiquewhite", "red", "blue"), cex =c(0.5, 0.8, 0.5), leg_pos = "topright", leg_title = "Type lampe", add=T)
+mf_layout("Candelabre LED", "Mairie de Bondy / DGST\nOctobre 2023\nEquans")
+dev.off()
+```
+
+
+
