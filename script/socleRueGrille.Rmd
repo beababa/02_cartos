@@ -25,8 +25,8 @@ knitr::opts_chunk$set(warning = FALSE)
 Fichier rue, constitution grille et liste des rues dans graticules
 
 La grille est dans socleBat
-Le fichier est grille dans bondy.gpkg
-st_write(grille, paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille", delete_layer = T)
+Le fichier est grille dans bondy.gpkg (ds 03_SOCLE)
+
 
 Egalement liste des rues dans delib
 
@@ -38,8 +38,6 @@ on coupe avec les quartiers et différentes autres géométries
 ```{r}
 library(sf)
 library(mapsf)
-library(osmdata)
-library(tidyverse)
 ```
 
 
@@ -62,10 +60,10 @@ cadastre <- st_read("../data/cadastre.gpkg", "proprio")
 # les rues
 st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
 # nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rueCadastre")
 # verif NOM
 rue$NOM_1_G
-#386 rues au 16/06
+#386 rues au 16/06 - 385 au 30/10/2023
 # attention suppression
 file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
 st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
@@ -73,7 +71,13 @@ st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage",
 # maj longueur
 rue$Longueur <- round(st_length(rue$geom),0)
 sum(rue$Longueur)
-# verif doublon
+# 94 982 m au 30/10/2023
+# 
+```
+
+verif doublon
+
+```{r}
 tab <- table(rue$NOM_1_G)
 tab [tab >1]
 # carto pour voir pb
@@ -88,25 +92,48 @@ mf_layout("Pb dessin rues", credits = "")
 ```
 
 
+correction en repérant le fid si nécessaire
+
+```{r, eval=FALSE}
+rue [rue$NOM_1_G == 'R JULES LELONG',]
+# c'est me fid 96 qui pose pb. on peut le supprimer. sous maps, rue nommée sergent bobillot
+rue [96,] 
+rue <- rue [-96,]
+
+```
+
+Enregistrement
+
+```{r}
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherenc")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
+```
+
+
+
 Rue très petites numérotées
+
+en principe 16
 
 ```{r}
 rue$NOMnumero [!is.na(rue$NOMnumero)]
 # extraction tableau rue numero
 num <- rue[!is.na(rue$NOMnumero), drop =F]
-sel <- num [num$NOM2 == "MIGNARD",]
+sel <- num [num$NOMnumero == "ALL MIGNARD",]
 mf_init(st_buffer(sel,10))
 mf_map(cadastre, add = T, lty=2)
 mf_map(num, add = T, col = "antiquewhite1", lwd = 4)
-mf_label(num, var = "NOM2", overlap = F, lines = T)
+mf_label(num, var = "NOMnumero", overlap = F, lines = T)
 mf_layout("petites rues", credits = "sept 2023")
 num <- num [order (as.integer(num$NOM)), c("NATURE", "NOMnumero"), drop = T]
 write.csv(num, "../data/numRue.csv", fileEncoding = "UTF-8")
 # remplacementNONNumero
-num <- as.character(seq(1,17))
+num <- as.character(seq(1,16))
 rue$NOM_1_G [rue$NOM %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
-rue[!is.na(rue$NOMnumero),]
+knitr::kable(rue[!is.na(rue$NOMnumero), c("NOM_1_G", "NOM")])
 ```
+
+aggrégation par type de rue
 
 
 ```{r}
@@ -120,19 +147,21 @@ knitr::kable(agg)
 # extraction type rue / isolement
 motif <- agg$Group.1
 motif
-ch <- as.character(seq(1,17))
-motif <- motif [!(motif %in% ch)]
+#ch <- as.character(seq(1,17))
+#motif <- motif [!(motif %in% ch)]
+# Suppression sans nom et D78
 motif <- motif [!motif%in% c("Sans", "D78")]
 motif
-motif <- paste0(motif, " |")
-motif [motif == "VLA |"] <- "VLA "
+# construction de la chaine
+motif <- paste0("^",motif, " |")
+# dernier élément
+motif [motif == "^VLA |"] <- "^VLA "
+# union de tous les termes
 motif <- paste(motif, collapse = "")
-
 nchar(motif)
 motif
 rue$NOM <- gsub(motif, "", rue$NOM_1_G)
 str(rue)
-
 ```
 
 
@@ -143,7 +172,7 @@ rue$NOM
 motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE |^D\'")
 rue$NOM2 <- gsub(motif, "", rue$NOM)
 rue$NOM2 <- gsub("^ ", "", rue$NOM2)
-rue$NOM2
+rue [, c("NOM2")]
 ```
 
 enregistrement
@@ -159,7 +188,7 @@ st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
 
 ```{r}
 liste <- rue [, c("NOM",  "Longueur", "NATURE"), drop = T]
-write.csv(liste [order (liste$"NOM_1_G" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+write.csv(liste [order (liste$"NOM" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
 ```
 
 
@@ -169,29 +198,75 @@ write.csv(liste [order (liste$"NOM_1_G" ),], "../data/listeRues.csv", fileEncodi
 Les quartiers
 
 ```{r}
-quartier <- st_read(paste0(chemin, "03_SOCLE/limites.gpkg"), "quartiers")
+quartier <- st_read("../data/limitesSocle.gpkg", "quartiers")
 nom <- names (table(quartier$nom)) 
 raccourci <- c("MVeuve",  "Mainguy","Saule", "Merisiers" ,"NC-TSB")
 equiv <- data.frame(nom, raccourci)
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
-inter <- st_intersection(rue, quartier)
-interSansGeom <- st_drop_geometry(inter)
-interSansGeom <- interSansGeom [, c("NATURE", "NOM2", "nom", "raccourci")]
 # equiv
-jointure <- merge(interSansGeom, equiv, by = "nom" )
-jointure <- jointure  [, c("NATURE", "NOM2", "raccourci")]
-names(jointure ) <- c("NATURE", "NOM", "QUARTIER")
-write.csv(jointure [ order (jointure$NOM), ], "../data/listeRueQuartier.csv", fileEncoding= "UTF-8")
+jointure <- merge(quartier, equiv, by = "nom" )
+inter <- st_intersection(rue, jointure)
+inter <- inter [, c("NATURE", "NOM_1_G", "NOM2", "raccourci")]
+# enregistrement csv
+interSansGeom <- st_drop_geometry(inter)
+#write.csv(jointure [ order (jointure$NOM2), ], "../data/listeRueQuartier.csv", fileEncoding= "UTF-8")
 ```
 
+
+Y a t il des doublons ?
+
+```{r}
+inter$id <- rownames(inter)
+doublons <- inter [grep("\\.", inter$id),]
+```
+
+65 doublons, dont CARNOT (pour test)
+
+Du coup, on  applique la même solution que pour le croisement grille - rue (fonction)
+
+```{r}
+inter$NOM <- paste(inter$NATURE, inter$NOM2)
+names(inter)
+doublons <- inter [grep("\\.", inter$id),]
+# 65 doublons
+liste <- unique (doublons$NOM)
+# 58 rues en doublons
+fin <- NULL
+for (l in liste){
+  sel <- inter [inter$NOM == l,]
+  sel$raccourci2 <- paste(sel$raccourci, collapse = " ")
+  # on ne retient que la 1e lg
+  sel <- sel [1,]
+  fin <- rbind(sel, fin)
+}
+# contrôle sur une rue carnot
+doublons [doublons$NOM2 == "CARNOT",]
+inter [inter$NOM2 == "CARNOT",]
+fin [fin$NOM2 == "CARNOT",]
+# enregistrement
+partie1 <- inter [-(grep("\\.", inter$id)),]
+head(partie1)
+head(fin)
+# 58
+names(partie1)
+names(fin)
+tot <- merge(partie1 [, c("NOM", "NATURE", "NOM2", "raccourci")], fin [, c("NOM", "raccourci2"), drop = T], by = "NOM", all.x = T)
+names(tot)
+head (tot)
+tot$raccourci [!is.na(tot$raccourci2)] <- tot$raccourci2  [!is.na(tot$raccourci2)]
+write.csv(tot [,c("NOM", "NATURE", "NOM2", "raccourci"), drop = T],  "../data/interRueQuartier.csv", fileEncoding = "UTF-8")
+```
 
 
 La grille
 
+longueur du carreau 673 m (pour refléter la grille des panneaux (6*4 sur l'aire de Bondy)
+
 ```{r}
+sqrt(st_area(grille))
 grille <- st_read(paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille")
 mf_map(grille)
 mf_map(rue, add = T)
+mf_layout("grille 6*4, 673 m environ", credits = "Mairie de Bondy \ DGST")
 ```
 
 
@@ -201,15 +276,63 @@ Intersection grille / rue
 ```{r}
 inter <- st_intersection(rue, grille)
 inter <- inter [, c("NATURE",  "NOM2", "case"), drop = T]
-inter
 ```
 
 Suprression des doublons rues
 
+L'idée est de garder une seule occurence et d'aligner toutes les références
+
+
+
 
 ```{r}
-inter
+inter$id <- rownames(inter)
+inter$NOM <- paste(inter$NATURE, inter$NOM2)
+names(inter)
+doublons <- inter [grep("\\.", inter$id),]
+# 163 doublons
+liste <- unique (doublons$NOM)
+fin <- NULL
+for (l in liste){
+  sel <- inter [inter$NOM == l,]
+  sel$case2 <- paste(sel$case, collapse = " ")
+  # on ne retient que la 1e lg
+  sel <- sel [1,]
+  fin <- rbind(sel, fin)
+}
+# contrôle sur une rue Liberté
+doublons [doublons$NOM2 == "LIBERTE",]
+inter [inter$NOM2 == "LIBERTE",]
+fin [fin$NOM2 == "LIBERTE",]
+# enregistrement
+partie1 <- inter [-(grep("\\.", inter$id)),]
+head(partie1)
+head(fin)
+# 385
+names(partie1)
+names(fin)
+tot <- merge(partie1 [, c("NOM", "NATURE", "NOM2", "case")], fin, by = "NOM", all.x = T)
+names(tot)
+head(tot)
+# 385
+tot <- tot [ , c("NOM2.x", "NATURE.x", "case.x", "NOM")]
+names(tot) <- c("NOM2","NATURE", "case", "NOM")
+write.csv(tot, "../data/interRueGrille.csv", fileEncoding = "UTF-8")
 ```
 
+jointure carreau quartier
 
+
+```{r}
+rueGrille <- read.csv("../data/interRueGrille.csv", fileEncoding = "UTF-8")
+rueQuartier <- read.csv("../data/interRueQuartier.csv", fileEncoding = "UTF-8")
+head(rueGrille)
+head(rueQuartier)
+# même nb de rues
+setdiff(rueGrille$NOM, rueQuartier$NOM)
+rueGrilleQuartier <-  merge(rueGrille [, c("NOM", "case", "NATURE", "NOM2")], rueQuartier [, c("raccourci", "NOM")], by = "NOM")
+rueGrilleQuartier <- rueGrilleQuartier [rueGrilleQuartier$NOM!="Sans Sans nom",]
+rueGrilleQuartier <- rueGrilleQuartier [rueGrilleQuartier$NOM!="Sans Sans nom",]
+write.csv(rueGrilleQuartier, "../data/interRueGrilleQuartier.csv", fileEncoding = "UTF-8")
+```
 
