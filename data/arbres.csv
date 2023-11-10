@@ -1,0 +1,98 @@
+,rue,quartier,type_taille
+1,Rue du 4 septembre ,nord,rideau
+2,Avenue du quatorze juillet,nord,rideau
+3,Rue des écoles,nord,rideau
+4,avenue marguerite ,nord,rideau
+5,Avenue de la république ,centre,rideau
+6,Rue Baudin ,centre,rideau
+7,Rue de la fraternité  ,centre,rideau
+8,Rue de l'égalité ,centre,rideau
+9,Rue Michelet,centre,rideau
+10,Rue Paul vaillant couturier ,centre,rideau
+11,Place Charles de gaulle ,centre,rideau
+12,Avenue pasteur ,centre,rideau
+13,Avenue mal De lattre de Tassigny,centre,rideau
+14,Rue jean Jaurès,centre,rideau
+15,Rue Etienne Dolet ,sud,rideau
+16,Allée de la régale   ,sud,rideau
+17,rue Emmanuel fairon,sud,rideau
+18,rue des limites ,sud,rideau
+19,avenue des sciences,sud,rideau
+20,allée racine,sud,rideau
+21,école jules ferry primaire ,sud,rideau
+22,rue de la solidarité ,sud,rideau
+23,Allée de la jardinière,nord,libre
+24,Rue Lucien chapelain,nord,libre
+25,Rue de Meaux,nord,libre
+26,Impasse Maurice Benhamou,nord,libre
+27,Avenue Marx Dormoy,nord,libre
+28,Avenue léon blum,nord,libre
+29,Rue de panurge ,nord,libre
+30,Rue des escholiers ,nord,libre
+31,Avenue Suzanne buisson ,nord,libre
+32,Chemin latéral,nord,libre
+33,Rue Paul Renaud,nord,libre
+34,Avenue Gueugnon,nord,libre
+35,avenue des mésarmes,nord,libre
+36,Avenue Clara grandet ,nord,libre
+37,Rue fontaine,nord,libre
+38,Avenue Léon Jouhaux,nord,libre
+39,Avenue jean moulin ,nord,libre
+40,Avenue jean lebas ,nord,libre
+41,Rue germaine tillion,nord,libre
+42,Rue du verger ,nord,libre
+43,Rue jules Lecomte,nord,libre
+44,Rue Lucie Aubrac ,nord,libre
+45,Rue Henri Rol Tanguy,nord,libre
+46,Rue pierre de Ronsard ,nord,libre
+47,Rue Odette pain ,nord,libre
+48,Rue de panurge ,nord,libre
+49,Avenue Henri varagnat,nord,libre
+50,avenue de l'idéal,est,libre
+51,Rue du levant ,est,libre
+52,Rue de plaisance ,est,libre
+53,Allée corneille,est,libre
+54,Allée Thérèse ,est,libre
+55,Rue robert douvillez,est,libre
+56,Rue Charles Ferdinand,est,libre
+57,Rue Noémie,est,libre
+58,Rue Gaston Defferre,est,libre
+59,Rue jules auffret    ,est,libre
+60,Rue césar delaine ,est,libre
+61,Avenue de l'espérance,est,libre
+62,Rue de l'union ,est,libre
+63,Rue Georges Elie,est,libre
+64,Rue des 5 ormes ,est,libre
+65,Villa thorel,centre ouest,libre
+66,Rue Arthur Rimbaud,centre ouest,libre
+67,Allée Georges Sand  ,centre ouest,libre
+68,Rue du sergent Bobillot,centre ouest,libre
+69,Avenue Carnot,centre ouest,libre
+70,Rue du breuil ,centre ouest,libre
+71,Allée Hannah Arendt   ,centre ouest,libre
+72,Avenue mal De lattre de Tassigny,centre ouest,libre
+73,Rue Phileas Collardeau  ,centre ouest,libre
+74,Rue fremin ,centre ouest,libre
+75,Rue des frères Darty,centre ouest,libre
+76,Rue Julie victoire daubié  ,centre ouest,libre
+77,Allée des arts ,sud,libre
+78,Rue Edouard vaillant ,sud,libre
+79,Rue désiré Léon,sud,libre
+80,Avenue marie curie ,sud,libre
+81,Rue marguerite duras ,sud,libre
+82,Rue alexandra David Neel  ,sud,libre
+83,Allée Théodore Monod ,sud,libre
+84,Avenue Geneviève Anthonioz De Gaulle ,sud,libre
+85,Allé louise Michel,sud,libre
+86,Voie tram train ,sud,libre
+87,Rue de la liberté ,sud,libre
+88,Rue du lion ,sud,libre
+89,Avenue jules ferry ,sud,libre
+90,Rampe du pont ,sud,libre
+91,Rue de Varsovie,sud,libre
+92,Avenue de l'est ,sud,libre
+93,Avenue de Nancy,sud,libre
+94,Rue René char   ,sud,libre
+95,Avenue de Metz ,sud,libre
+96,Rue du midi ,sud,libre
+97,Rue marcel Dassault  ,sud,libre

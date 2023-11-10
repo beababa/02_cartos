@@ -57,15 +57,13 @@ données
 Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
 
 ```{r}
-st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
+st_layers(paste0(chemin, "03_SOCLE/rue.gpkg"))
 # nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
 str(rue)
 #386 rues au 16/06
-# attention suppression
-file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherenc")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
+# 387 au 9/11 impasse benhamou et voie tram train
+
 # maj longueur
 rue$Longueur <- round(st_length(rue$geom),0)
 sum(rue$Longueur)
@@ -128,10 +126,13 @@ rue$NOM2 <- gsub(motif, "", rue$NOM)
 rue$NOM2 <- gsub("^ ", "", rue$NOM2)
 ```
 
-enregistrement
+enregistrement rue2023
 
 ```{r}
-st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
+# attention suppression
+file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherence")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
 ```
 
 
