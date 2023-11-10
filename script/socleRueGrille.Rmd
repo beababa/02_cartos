@@ -178,7 +178,7 @@ rue [, c("NOM2")]
 enregistrement
 
 ```{r}
-st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
+st_write(rue, paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023", delete_layer = T)
 ```
 
 

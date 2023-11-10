@@ -48,7 +48,9 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 
 
 
-# données
+# Comptabiliser les arbres 
+
+## données
 
 
 
@@ -66,4 +68,22 @@ write.csv(agg,"../data/nbArbres.csv")
 ```
 
 
+
+# recup alignements d'arbres
+
+```{r}
+
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023")
+alignement <- read.csv("../data/alignement.csv", fileEncoding = "UTF-8")
+chercher <- function (i, col) {
+  res <- rue$NOM [grep(alignement$CODE [i], rue [, col])]
+  nb <- sapply(res, length)
+  ind <- which(nb >1)
+  res2 <- lapply(ind, chercher)
+  }
+res <- chercher(1, "NOM")
+res <- lapply(c(1:22), chercher)
+
+# tout ceux qui ont 1 ceux qui ont pl de 1 on distigue avec le type
+```
 
