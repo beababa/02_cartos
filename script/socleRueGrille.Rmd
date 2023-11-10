@@ -54,13 +54,16 @@ données
 
 Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
 
+
+il existe rue2023 et rue 
+
 ```{r}
 # pour le fond le cadastre
 cadastre <- st_read("../data/cadastre.gpkg", "proprio")
 # les rues
-st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
+st_layers(paste0(chemin, "03_SOCLE/rue.gpkg"))
 # nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rueCadastre")
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre3")
 # verif NOM
 rue$NOM_1_G
 #386 rues au 16/06 - 385 au 30/10/2023
@@ -168,6 +171,7 @@ str(rue)
 suppression des articles dans le nom des rues pour l'index
 
 ```{r}
+rue
 rue$NOM
 motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE |^D\'")
 rue$NOM2 <- gsub(motif, "", rue$NOM)
@@ -179,6 +183,8 @@ enregistrement
 
 ```{r}
 st_write(rue, paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023", delete_layer = T)
+write.csv(rue [, c("NATURE", "NOM_1_G", "NOM2"), drop=T],"../data/rue.csv", fileEncoding = "UTF-8")
+st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
 ```
 
 

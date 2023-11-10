@@ -1,0 +1,447 @@
+id,num_route,nom_rue,commune,essence,stade_dvlp,hauteur,circonfere,type_taill,etat_phyto,prop_fonc,gestion,date_diag,date_maj,etat,photo,date_plant,effectif,dvpt,genre
+"50",RD78,R ANDREI SAKHAROV,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"226",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"367",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"438",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"474",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"500",RD10,R JULES GUESDE,BONDY,Sophora japonica,J,<10m,<50cm,Port libre,"1",,,"0","2018","1",,,"1",G,Sophora
+"603",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"734",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"738",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"819",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"831",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"893",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"1120",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"1227",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"1260",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"1297",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"1323",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"1360",RD10,R JULES GUESDE,BONDY,Capirnus betulus,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Capirnus
+"1713",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"1987",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"2230",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"2330",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"2636",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"2645",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,"2011","2018","1",,,"1",G,Platanus
+"2650",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"2732",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"2813",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"2881",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"3018",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"3026",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"3028",RD41,R AUGUSTE POLISSARD,BONDY,Prunus avium,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Prunus
+"3440",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"3536",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"3658",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"3748",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"3749",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"3820",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"3823",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"3827",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"4067",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"4145",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"4182",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"4260",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"4321",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"4379",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"4904",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"4994",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"5036",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"5041",RD41,AV HENRI VARAGNAT,BONDY,Picea abies,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Picea
+"5150",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"5214",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"5312",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"5326",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"5328",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"5363",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"5417",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"5607",RD41,AV HENRI VARAGNAT,BONDY,Fraxinus excelsior,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Fraxinus
+"5618",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"5630",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"5814",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"5822",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"5842",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"5889",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"5971",RD10,R JULES GUESDE,BONDY,Sophora japonica,J,<10m,<50cm,Port libre,"1",,,"0","2018","1",,,"1",G,Sophora
+"5983",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,50-100cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"6012",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"6087",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6153",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"6197",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6207",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"6286",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6324",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6328",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,<50cm,Port libre,"1",,,"0","2019","1",,,"1",G,Ginkgo
+"6423",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6468",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"6482",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"6525",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"6533",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6534",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"6609",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"6660",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6722",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"6758",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6773",RD10,R JULES GUESDE,BONDY,Sophora japonica,J,<10m,<50cm,Port libre,"1",,,"0","2018","1",,,"1",G,Sophora
+"6812",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"6836",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,<50cm,Rideau,"1",,,"0","2018","1",,,"1",G,Platanus
+"6865",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"6895",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"6943",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"7020",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,"0","2018","1",,,"1",G,Platanus
+"7074",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,"0","2018","1",,,"1",G,Platanus
+"7080",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"7144",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"7203",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"7224",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"7522",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"7640",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"7727",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"7756",RD41,AV HENRI VARAGNAT,BONDY,Populus nigra,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"7814",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"7852",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"8296",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,,"2018","1",,,"1",G,Platanus
+"8370",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"8591",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"8720",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"8734",RD10,R JULES GUESDE,BONDY,Capirnus betulus,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Capirnus
+"8746",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"8983",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"9028",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,"0","2018","1",,,"1",G,Platanus
+"9416",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"9471",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"9510",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"9610",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"9807",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"9850",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"9884",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"10063",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"10131",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"10214",RD10,R JULES GUESDE,BONDY,Capirnus betulus,J,<10m,<50cm,Port libre,"1",,,"0","2018","1",,,"1",G,Capirnus
+"10392",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"10567",RD41,AV HENRI VARAGNAT,BONDY,Fraxinus excelsior,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Fraxinus
+"10709",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"10871",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"11150",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"11406",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"11415",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"11446",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"11474",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"11497",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"11644",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"11717",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"11739",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"11765",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"11776",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"11793",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,<50cm,Rideau,"1",,,"0","2018","1",,,"1",G,Platanus
+"11794",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,,"2018","1",,,"1",G,Populus
+"11915",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"12004",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"12027",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"12080",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"12138",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"12201",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"12338",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"12388",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"12390",RD10,R JULES GUESDE,BONDY,Prunus avium,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",G,Prunus
+"12491",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"12664",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"12679",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"12721",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"12871",RD41,R AUGUSTE POLISSARD,BONDY,Tilia cordata,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"13039",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"13056",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"13075",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"13078",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"13088",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,50-100cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"13267",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"13300",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"13323",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"13358",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"13536",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"13684",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"13690",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"13784",RD10,R JULES GUESDE,BONDY,Capirnus betulus,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Capirnus
+"13846",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,,"2018","1",,,"1",G,Platanus
+"13859",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"13890",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"13968",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"14090",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"14094",RD10,R JULES GUESDE,BONDY,Capirnus betulus,J,<10m,<50cm,Port libre,"1",,,"0","2018","1",,,"1",G,Capirnus
+"14201",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"14326",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,"2011","2018","1",,,"1",G,Platanus
+"14377",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"14386",RD10,R JULES GUESDE,BONDY,Prunus avium,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",G,Prunus
+"14669",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"14695",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,,"2018","1",,,"1",G,Platanus
+"14703",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"14707",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"14749",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"14862",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"15037",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"15148",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,J,<10m,50-100cm,Rideau,"1",,,,"2018","1",,,"1",G,Platanus
+"15425",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"15492",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"15513",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,50-100cm,Port libre,"1",,,,"2018","1",,,"1",M,Prunus
+"15533",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"15609",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"15747",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"15980",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"16075",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Rideau,"1",,,,"2018","1",,,"1",G,Platanus
+"16177",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"16230",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"16248",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"16493",RD10,AV HENRI BARBUSSE,BONDY,Quercus petraea,A,10-20m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Quercus
+"16522",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"16540",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"16647",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"16764",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"16767",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"16890",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"16900",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"16909",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"17003",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"17097",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"17322",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"17413",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"17415",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"17581",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,,"2018","1",,,"1",,
+"17769",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"17945",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"18488",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"18704",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"18770",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"18842",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"18912",RD986,AV DE ROSNY,BONDY,non définie,A,<10m,<50cm,Port libre,"2",,,"2016","2018","1",,,"1",,
+"18918",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,50-100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"19042",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,50-100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"19049",RD41,R AUGUSTE POLISSARD,BONDY,Celtis australis,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"19066",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",G,Ginkgo
+"19106",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"19111",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"19287",RD986,AV DE ROSNY,BONDY,non définie,J,<10m,<50cm,Port libre,"1",,,"2016","2018","1",,,"1",,
+"19434",RD41,R AUGUSTE POLISSARD,BONDY,Populus nigra,A,<10m,50-100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Populus
+"19507",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,J,<10m,50-100cm,Port libre,"1",,,"0","2018","1",,,"1",M,Prunus
+"19632",RD10,AV HENRI BARBUSSE,BONDY,Picea abies,A,10-20m,>100cm,Port libre,"2",,,,"2018","1",,,"1",G,Picea
+"21987",RD10E,AV ANATOLE FRANCE,BONDY,Tilia cordata,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"22014",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"22029",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"22031",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"22034",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22047",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"22048",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22083",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"22183",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22220",RD933,AV GALLIENI,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2012","2018","1",,,"1",G,Platanus
+"22236",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"22245",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"22279",RD10E,AV ANATOLE FRANCE,BONDY,Populus nigra 'Italica',M,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"22312",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22371",RD10,AV HENRI BARBUSSE,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"22394",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22399",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22428",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"22482",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"22502",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"22529",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"22589",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22618",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"22651",RD41,AV HENRI VARAGNAT,BONDY,Acer platanoides 'Crimson king',M,<10m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",M,Acer
+"22713",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"22726",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"22728",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"22735",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"22763",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"22768",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"22772",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"22773",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"22776",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22787",RD10,AV HENRI BARBUSSE,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"22870",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"22901",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"22921",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"22958",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"22977",RD10,AV HENRI BARBUSSE,BONDY,Betula pendula,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Betula
+"23000",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"23026",RD10,AV HENRI BARBUSSE,BONDY,Acer negundo,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Acer
+"23084",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"23089",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"23218",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"23233",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,M,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"23238",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"23263",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"23302",RD10,AV HENRI BARBUSSE,BONDY,Acer negundo 'Variegatum',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Acer
+"23309",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"23335",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"23385",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"23433",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"23520",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"23552",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"23555",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"23647",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"23648",RD986,AV DE ROSNY,BONDY,,,,,,,,,"2016","2018","0",,,"1",,
+"23773",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,M,10-20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Platanus
+"23783",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"23813",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"23826",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"23837",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"23879",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"23885",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"23916",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"23920",RD10E,AV ANATOLE FRANCE,BONDY,Populus nigra 'Italica',M,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"23941",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"23964",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24005",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"24009",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24025",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"24027",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24062",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24078",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24080",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24105",RD10E,AV ANATOLE FRANCE,BONDY,Tilia cordata,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"24131",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24167",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"24261",RD986,AV DE ROSNY,BONDY,,,,,,,,,"2016","2018","0",,,"1",,
+"24265",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24354",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"24360",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24424",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24430",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"24449",RD933,AV GALLIENI,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2012","2018","1",,,"1",G,Platanus
+"24458",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"24465",RD10,AV HENRI BARBUSSE,BONDY,Betula pendula,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Betula
+"24518",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"24586",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24641",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24655",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"24678",RD10E,AV ANATOLE FRANCE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24701",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,M,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"24771",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"24803",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"24830",RD78,R ANDREI SAKHAROV,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"24841",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"24891",RD10,AV HENRI BARBUSSE,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"24894",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24899",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"24908",RD10E,AV ANATOLE FRANCE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24966",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"24968",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"24978",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"24982",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25058",RD10,AV HENRI BARBUSSE,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"25066",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"25083",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"25097",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"25147",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"25162",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"25163",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"25174",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25191",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"25245",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25248",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"25313",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"25340",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"25350",RD10E,AV ANATOLE FRANCE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"25368",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"25421",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25458",RD986,AV DE ROSNY,BONDY,,,,,,,,,"2016","2018","0",,,"1",,
+"25482",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25501",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25585",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"25619",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"25623",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"25637",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"25661",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"25718",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25750",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"25775",RD78,R ANDREI SAKHAROV,BONDY,Ginkgo biloba,J,<10m,<50cm,Port libre,"1",,,"0","2019","1",,,"1",G,Ginkgo
+"25793",RD933,AV GALLIENI,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2012","2018","1",,,"1",G,Platanus
+"25794",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"25906",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"25909",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,M,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"25930",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"25990",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"26052",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"26058",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"26105",RD10E,AV ANATOLE FRANCE,BONDY,Tilia cordata,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"26154",RD933,AV GALLIENI,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2012","2018","1",,,"1",G,Platanus
+"26214",RD78,R ANDREI SAKHAROV,BONDY,Catalpa bignionoides,M,<10m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",M,Catalpa
+"26216",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"26229",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"26267",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"26272",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"26285",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"26316",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"26394",RD41,R AUGUSTE POLISSARD,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"26404",RD986,AV DE ROSNY,BONDY,,,,,,,,,"2016","2018","0",,,"1",,
+"26417",RD933,AV GALLIENI,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2012","2018","1",,,"1",G,Platanus
+"26523",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"26668",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"26686",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"26696",RD933,AV GALLIENI,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2012","2018","1",,,"1",G,Platanus
+"26698",RD10,AV HENRI BARBUSSE,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"26711",RD10E,AV ANATOLE FRANCE,BONDY,Populus nigra 'Italica',M,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"26754",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"26759",RD41,RTE D'AULNAY,BONDY,Sophora japonica,S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Sophora
+"26782",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"26883",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"26956",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"26966",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"26975",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"26980",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"27024",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"27058",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"27099",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"27131",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"27156",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27157",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27160",RD986,AV DE ROSNY,BONDY,,,,,,,,,"2016","2018","0",,,"1",,
+"27204",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27234",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"27248",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"27280",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27313",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"27333",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27358",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27361",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"27374",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27394",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"27401",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"27444",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27463",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"27473",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"27549",RD78,R ANDREI SAKHAROV,BONDY,Pinus nigra,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Pinus
+"27553",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"3",,,"2009","2018","1",,,"1",G,Platanus
+"27627",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27638",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27659",RD10,AV HENRI BARBUSSE,BONDY,Prunus cerasifera 'Pissardii',A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",P,Prunus
+"27743",RD41,R AUGUSTE POLISSARD,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"27757",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"27782",RD78,R ANDREI SAKHAROV,BONDY,,,,,,,,,"0","2018","0",,,"1",,
+"27795",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"27818",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,M,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27820",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"27840",RD10,AV HENRI BARBUSSE,BONDY,Celtis australis,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Celtis
+"27846",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"27852",RD10E,AV ANATOLE FRANCE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"27861",RD986,AV DE ROSNY,BONDY,,,,,,,,,"2016","2018","0",,,"1",,
+"27944",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27976",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"27981",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"27994",RD10E,AV ANATOLE FRANCE,BONDY,Tilia cordata,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Tilia
+"28040",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"28082",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,M,10-20m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"28107",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"1",,,"2009","2018","1",,,"1",G,Platanus
+"28259",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"28287",RD10,AV HENRI BARBUSSE,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",G,Platanus
+"28307",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"28336",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"28365",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"28409",RD78,R ANDREI SAKHAROV,BONDY,Prunus serotina,A,<10m,>100cm,Port libre,"2",,,"0","2018","1",,,"1",M,Prunus
+"28437",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"1",,,"2011","2018","1",,,"1",G,Platanus
+"28484",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"28528",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
+"28535",RD41,RTE D'AULNAY,BONDY,Populus nigra 'Italica',S,>20m,>100cm,Port libre,"3",,,"0","2018","1",,,"1",G,Populus
+"28541",RD41,RTE D'AULNAY,BONDY,Platanus x acerifolia,A,10-20m,>100cm,Rideau,"2",,,"2009","2018","1",,,"1",G,Platanus
+"28616",RD41,AV HENRI VARAGNAT,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"2011","2018","1",,,"1",G,Platanus
+"28617",RD78,AV DU 14 JUILLET,BONDY,Platanus x acerifolia,A,<10m,>100cm,Rideau,"2",,,"0","2018","1",,,"1",G,Platanus
