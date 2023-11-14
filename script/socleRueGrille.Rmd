@@ -182,6 +182,7 @@ rue [, c("NOM2")]
 enregistrement
 
 ```{r}
+st_write(rue, paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023", delete_layer = T)
 write.csv(rue [, c("NATURE", "NOM_1_G", "NOM2"), drop=T],"../data/rue.csv", fileEncoding = "UTF-8")
 st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
 ```

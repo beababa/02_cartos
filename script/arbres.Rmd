@@ -49,7 +49,9 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 
 
 
-# données
+# Comptabiliser les arbres 
+
+## données
 
 
 
@@ -78,6 +80,10 @@ write.csv(rue [, c("NATURE", "NOM_1_G", "NOM"), drop=T],"../data/rue.csv", fileE
 
 liste alignement de novembre 2023
 
+La liste comporte de nb erreurs de saisie.
+
+Après avoir tenté de faire un dictionnaire de données, je suis finalement partie sur une jointure classique.
+
 ```{r}
 arbres <- read.csv("../data/arbres.csv", fileEncoding = "UTF-8")
 head(rue)
@@ -94,6 +100,7 @@ arbres$NOM <- gsub ("IMPASSE", "IMP", arbres$NOM)
 arbres$NOM <- gsub ("CHEMIN", "CH", arbres$NOM)
 arbres$NOM <- gsub ("VILLA", "VLA", arbres$NOM)
 arbres$NOM <- gsub ("PLACE", "PL", arbres$NOM)
+# suppression des espaces en fin de caractères
 arbres$NOM <- gsub ("\\s+$", "", arbres$NOM)
 arbres$NOM
 ```
@@ -101,7 +108,25 @@ arbres$NOM
 jointure
 
 
+
+# recup alignements d'arbres
+
 ```{r}
+
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023")
+alignement <- read.csv("../data/alignement.csv", fileEncoding = "UTF-8")
+chercher <- function (i, col) {
+  res <- rue$NOM [grep(alignement$CODE [i], rue [, col])]
+  nb <- sapply(res, length)
+  ind <- which(nb >1)
+  res2 <- lapply(ind, chercher)
+  }
+res <- chercher(1, "NOM")
+res <- lapply(c(1:22), chercher)
+
+# tout ceux qui ont 1 ceux qui ont pl de 1 on distigue avec le type
+
+
 joint <- merge(rue, arbres, by.x = "NOM_1_G", by.y = "NOM")
 setdiff(arbres$NOM, joint$NOM_1_G)
 ```
@@ -112,5 +137,6 @@ Pour l'école JF Primaire, poser la question
 
 ```{r}
 st_write(joint, paste0(chemin, "campagneArbre.gpkg"), "alignement", fileEncoding = "UTF-8", delete_layer = T)
+
 ```
 
