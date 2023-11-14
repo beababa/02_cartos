@@ -46,7 +46,7 @@ Ne pas jouer
 ## Lecture de tous les fichiers .pdf et  conversion en image
 
 ```{r, eval = FALSE}
-path <- dir (path = "C:/ARRETES", pattern = "*.PDF", full.names = TRUE)
+path <- dir (path = "C:/ARRETES", pattern = "*.pdf", full.names = TRUE)
 for (i in 1:length(path)){
   pngfile <- pdftools::pdf_convert(path[i], dpi = 100)
 }
@@ -55,7 +55,7 @@ for (i in 1:length(path)){
 
 ## Reconnaissance de l'écriture (ocr) et mise en liste
 
-tic toc sontlà pour mesurer le temps
+tic toc sont là pour mesurer le temps
 
 ```{r, eval = FALSE}
 #  Uniquement les premières pages
