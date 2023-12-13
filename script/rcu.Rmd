@@ -36,6 +36,66 @@ library(mapsf)
 ```
 
 
+
+
+# Récupération donnée itherm
+
+
+
+
+
+```{r}
+ch <- Sys.getenv("HOME")
+chemin <- paste0(ch, "/03_SIG/03_03_Data/08_VOIRIE/RCU/")
+chemin2 <- paste0(ch, "/03_SIG/03_03_Data/03_SOCLE/")
+# on dézippe le .kmz
+rcuComplement <- st_read(paste0(chemin, "doc.kml"))
+fic <- paste0(chemin, "doc.kml")
+concatenerCouchesGeom <- function (fic){
+  couches <- st_layers(fic)
+  couches
+  fin <- length(couches$name)
+tmp <- NULL
+data <- NULL
+i <- 1
+for (i in 1:fin){
+  tmp <- st_read(fic, couches$name [i])
+  tmp <- st_transform(tmp, 2154)
+  # ajout champs
+  tmp$Description <- couches$name [i]
+  data <- rbind(data, tmp)
+} 
+
+# un seul gpkg et les géométries se trient toutes seules
+
+}
+
+st_write(data,"../data/rcu.gpkg", "itherm", delete_layer = T)
+
+
+```
+
+
+
+# Création de la zone tampon
+
+
+```{r}
+tampon <- st_buffer(data,10)
+
+st_layers(paste0(chemin2, "batiment.gpkg"))
+bat <- st_read(paste0(chemin2, "batiment.gpkg"), "BDTOPO")
+mf_map(bat)
+mf_map(tampon, add = T, col = "red")
+poi <- st_read(paste0(chemin2, "batiment.gpkg"), "poi3")
+batPoi <- st_intersection(bat, poi)
+st_write(batPoi, "../data/bat.gpkg", "batpoi", delete_layer = T)
+st_write(bat, "../data/bat.gpkg", "BDTOPO", delete_layer = T)
+```
+
+
+
+
 Tuiles OSM
 
 ```{r}

@@ -1,0 +1,161 @@
+---
+title: "Accidentologie"
+author: "B. Maranget"
+date: "01/12/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Superposer carte accidentologie, 2019 - 2022
+
+distinguer vélo / EDPm, piéton / EDPsm / 2 RM / autre
+
+faire une table accident et une autre véhicules de l'accident
+
+
+clé : Num_Acc / id_vehicule 
+
+dans caractéristique : num_acc / an / com / long/lat
+
+vehicules : num_acc / id_vehicule / num_vehicule / catv (categ du véhicule) 
+
+01 bicyclette / 02 cyclo < 50 cm3 / 07 : 21 VL PL tracteur
+30 : 36 scooter
+37 : 40 transports
+50 : EDP à moteur
+60 : EDP sans moteur
+99 : autre véhicule
+
+
+
+
+
+# Données
+
+```{r}
+library(sf)
+library(mapsf)
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/08_VOIRIE/acccidentologie")
+```
+
+
+```{r}
+fic <- list.files("../data/accidentologie", "vehic")
+fic
+fin <- NULL
+for (f in fic) {
+  tmp <- read.csv2(paste0("../data/accidentologie/", f))
+  fin <- rbind(fin, tmp)
+}
+table(vehicule$catv)
+
+vehicule <- fin
+```
+
+spatialisation et concaténation
+
+```{r}
+fic.sf <- list.files("../data/accidentologie", "ristique")
+fic.sf
+fin <- NULL
+f <- fic.sf [1]
+for (f in fic.sf){
+  print(f)
+  tmp <- read.csv2(paste0("../data/accidentologie/", f))
+  tmp <- st_as_sf(tmp, coords = c("long", "lat"), crs=4326 )
+  names(tmp) [1] <- "Num_Acc"
+  fin <- rbind(fin, tmp)
+}
+
+table(fin$an)
+
+```
+
+filtre
+
+```{r}
+fin <- fin [fin$com == '93010',]
+table(fin$an)
+mf_map(fin, "typo", var = "an")
+```
+
+jointure
+
+```{r}
+joint <- merge(fin, vehicule, by = "Num_Acc")
+```
+
+517 / 947
+
+```{r}
+head(joint)
+base <- joint [, c("Num_Acc", "num_veh", "catv", "adr", "an")]
+st_write(base,"../data/accidentologie/accidentologie.gpkg", "base", delete_layer = T)
+table(base$an)
+```
+
+table ref
+
+
+```{r}
+tab <- table(base$catv)
+write.csv(tab,"../data/accidentologie/catv.csv", fileEncoding = "UTF-8", row.names = F)
+ref <- read.csv("../data/accidentologie/refVehicule.csv", fileEncoding = "UTF-8")
+```
+
+
+```{r}
+base <- merge(base, ref,by = "catv")
+```
+
+Elimination autoroute
+
+
+```{r}
+base2 <- base [-grep("AUTOROUTE", base$adr),]
+st_write(base2, "../data/accidentologie/accidentologie.gpkg", "base2", delete_layer = T)
+mf_init(base)
+fond()
+mf_map(base2, "typo", var = "an", add = T, border = NA)
+mf_map(base2, "typo", var = "categorie", pch = 20)
+mf_layout("Accidents par type de véhicule de 2019 à 2022", "base accidentologie opendata")
+```
+
+
+table accident
+
+
+```{r}
+accident <- st_read("../data/accidentologie/accidentologie.gpkg", "base2")
+str(accident)
+table(accident$an)
+accident <- accident[!duplicated (accident$Num_Acc),]
+agg <- aggregate(accident [, c("Num_Acc")], by = list(accident$adr ,accident$an)   , join = st_intersects, length)
+names (agg)[1:3] <- c("adr", "an", "nb")
+st_write(agg, "../data/accidentologie/accidentologie.gpkg", "accident", delete_layer = T)
+```
+
+Vérification 4 ans
+
+```{r}
+table(agg$an)
+hist(agg$nb)
+agg [order(agg$nb, decreasing = T),]
+```
+
