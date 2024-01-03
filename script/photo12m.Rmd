@@ -1,0 +1,205 @@
+---
+title: "lien GPS Photo bus"
+author: "B. Maranget"
+date: "28/12/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Joindre les points GPS et les photos d'arrêt de bus (21 abris de bus)
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/08_VOIRIE/mobilierUrbain/bus/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+```
+
+
+
+# Données
+
+## Tableau d'équivalence plan - gps - adresse
+
+
+On part du fichier d'équivalence pour trouver les identifiants des waypoints
+
+```{r}
+equiv <- read.csv2(paste0(chemin,"bus.csv"), fileEncoding = "UTF-8")
+sort(equiv$plan)
+sort(equiv$gps)
+# 50 - 71
+```
+
+
+## Photos
+
+
+```{r}
+photo <- list.files(path.expand(chemin), pattern = "*.jpg")
+photo
+```
+
+
+On vérifie que les noms de photos correspondent bien au fichier equiv
+
+
+```{r}
+num <- gsub(".jpg", "",photo)
+num <- as.integer(num)
+equiv$plan
+# penser à faire la diff dans les deux sens !
+setdiff(equiv$plan,num)
+setdiff(num, equiv$plan)
+```
+
+Il manque la photo 31
+
+
+## Concaténation des .gpx
+
+On récupère les waypoints (la 1e couche par défaut) 
+
+Il s'agit de tous les .gpx stockés dans le répertoire bus (on a un peu oublié de quelles sorties terrains il s'agissait)
+
+```{r}
+fic <- list.files(chemin, ".gpx")
+trace <- NULL
+for (f in fic){
+  print (f)
+  tmp <- st_read(paste0(chemin, f))
+  print(st_layers(paste0(chemin, f)))
+  print(tmp$name)
+  trace <- rbind(tmp, trace)
+}
+sort(trace$name)
+st_crs(trace) <- 4326
+head(trace)
+trace <- st_transform(trace, crs = 2154)
+# J'ai une correspondance point gps / point photo dans un fichier
+# mais j'ai aussi la date et l'heure
+st_write(trace,"../data/mobPublicitaire.gpkg", "001_164", delete_layer = T )
+```
+
+On stocke tous les points sous 001_164 pour mémoire, mais il y a des points
+
+
+# Extraction des points GPS nécessaires
+
+pb sur projection : on convertit ds Qgis
+
+```{r}
+trace <- st_read("../data/mobPublicitaire.gpkg", "001_164_2154")
+trace$name <- as.integer(trace$name)
+trace <- trace [50:71,]
+```
+
+
+
+Première carto
+
+```{r}
+png("../img/mobUrbainBUSAvt.png")
+mf_init(trace)
+fond()
+mf_map(trace, add = T)
+mf_label(trace, var ="name", overlap = F , halo = T, cex = 1)
+mf_layout("Points GPS mobilier publicitaire", "recup 26 déc. 2023")
+dev.off()
+```
+
+
+![](../img/mobUrbainBUSAvt.png)
+
+Il ne s'agit pas du tout des points...
+
+En fait, il existe une couche 50-72 qui convient (ouf)
+pb conversion, on le fait sous QGIS
+
+```{r}
+st_layers("../data/mobPublicitaire.gpkg")
+data <- st_read("../data/mobPublicitaire.gpkg", "50_72_2154")
+# enlever l'altitude
+data <- st_zm (data, drop = T)
+data$name <- as.integer(data$name)
+```
+
+
+# Jointure equiv et data
+
+
+Jointure equiv et trace
+
+
+```{r}
+joint <- merge(data, equiv, by.x = "name", by.y="gps")
+# 2 pts perdus 67 et 72
+setdiff(data$name, joint$name)
+equiv$gps
+# pas de doublons
+table(data$name)
+png("../img/mobUrbainBUS.png")
+mf_init(joint)
+fond()
+mf_map(joint, add =T)
+mf_map(data [data$name %in% c(67,72),], col = "red", add = T)
+mf_label(data [data$name %in% c(67,72),], var ="name", col = "red", cex = 1, overlap = F)
+mf_label(joint, var="terrain", halo = T, overlap= F, cex = 1)
+mf_layout("Mobilier urbain 2m²", "trace GPS\nDéc 2023")
+dev.off()
+```
+
+![](../img/mobUrbainBUSAvt.png)![](../img/mobUrbainBUS.png)
+
+
+
+Enregistrement
+
+```{r}
+names(joint)
+st_write(joint [, c("name", "plan", "Adresse", "terrain")],"../data/mobPublicitaire.gpkg", "terrain bus", append = F)
+```
+
+
+# Chemin photo identifiant
+
+
+```{r}
+joint$chemin <- paste0("/images/", joint$name, ".jpg")
+st_write(joint,"../data/mobPublicitaire.gpkg", "terrain bus", append = F)
+```
+
+
+
+
+

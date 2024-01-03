@@ -1,0 +1,49 @@
+﻿dispositif;Adresse;PLAN;GPS;TERRAIN
+2 INFO;Rond Point du Verger / bretelle accès A3 face gauche;2;74;40
+3 PLAN;Rond Point Léon Jouhaux  sortie A3 Bondy nord face droite;3;75;0
+4 INFO;Av Henri Varagnat face droite ;4;76;42
+5 INFO;Av Henri Varagnat / Av Marx Dormoy face droite;5;77;43
+41 PLAN;Chemin de Groslay / chemin latéral face gauche;41;78;78
+6 INFO;Av du 14 Juillet / Voie Promenade face droite;6;79;44
+48 INFO;Chemin du Pont face droite;48;80;96
+50 PLAN;Av Carnot / Rue Auguste Blanqui face gauche;50;206;98
+26 INFO;Av Henri Barbusse / Rue Carnot face droite;26;166;63
+45 INFO;Av Henri Barbusse / Place Nicole Neuburger face droite;45;167;82
+25 INFO;Av Henri Barbusse / allée des primevères face droite;25;168;0
+11 INFO;Place du 11/11/1918 face Place Carnot;11;169;49
+27 INFO;Av Henri barbusse / Place Carnot face gauche;27;170;64
+42 INFO;Rue Roger Salengro / Place de la Division Leclerc face gauche;42;171;79
+12 INFO;Rue Pollissard / vois hlm face gauche;12;172;50
+38 INFO;RN 3 - Av Gallieni / rue Pollissard face droite Paris;38;173;0
+37 INFO;RN 3 - 90 Av Gallieni face droite Paris près hotel Saxo;37;174;74
+13 INFO;Rue Pollissard / Villa Thorel;13;175;0
+15 INFO;Rue Jules Guesde près lycée Marcel Pagnol;15;176;53
+16 INFO;Rue Jules Guesde / Rue Fremin;16;177;54
+17 PLAN;RN 3 - Av Gallieni / Rue Jules Guesde face droite paris;17;178;55
+36 INFO;RN 3 - 52 Av Gallieni face droite Paris près Buffalo grill;36;179;73
+40 INFO;RN 3 - Av Gallieni près Av Mal de Lattre de Tassigny face droite Paris;40;180;77
+39 INFO;RN 3 - Av Gallieni - parking sous autopont face gauche Paris;39;181;76
+10 INFO;RN 3 - 182 Av Gallieni face droite Paris;10;182;0
+19 PLAN ;Rue Roger Salengro / Rue Paul Vaillant Couturier face droite;19;183;56
+20 INFO;106 Rue Roger Salengro école face droite;20;184;57
+43 INFO;Rampe du pont num 10;43;185;0
+22 INFO;Route de Villemomble  près pont sncf face droite;22;186;59
+24 INFO;Av Anatole France / Rue St Louis prolongée face droite;24;187;61
+44 PLAN;Rue Edouard Vaillant / Rue F. Collet face droite;44;188;81
+23 PLAN;Av Anatole France / Rue St Louis face droite;23;189;60
+8 INFO;RN 3 - Av Gallieni / Av de Verdun face droite Paris;8;190;114
+7 INFO;RN 3 - Av Gallieni près Mac Donald's face droite province;7;191;45
+28 INFO;AV Pasteur / Av de Verdun;28;192;0
+9 INFO;RN 3 - Av Gallieni près magasin Fly face droite province;9;194;47
+29 INFO;RN 3 - Av Gallieni / Rue Marguerite face droite province;29;193;116
+30 INFO;Route d'Aulnay / Av Gallieni;30;195;67
+31 PLAN;RN 3 - Av Gallieni - parking sous autopont face gauche province;31;196;68
+49 INFO;RN 3 - Av Gallieni face droite province station ESSO;49;197;0
+32 INFO;RN 3 - 53 Av Gallieni / entrée parking conforama face droite province;32;198;69
+33 INFO;RN 3 -Av Gallieni / passerelle piéton face droite province;33;199;70
+34 INFO;RN 3 - Av Gallieni face droite province sortie parking conforama;34;200;71
+35 INFO;RN 3 - Av Gallieni face droite province après bretelle A3;35;201;72
+46 INFO;Av de Rosny / Rue Philéas Collardeau face droite;46;202;83
+14 PLAN;Rue Jules Guesde / Rue Pollissard;14;203;52
+21 INFO;Place de la république / rue de la Liberté face gauche;21;204;0
+47 PLAN;Place de la Gare / Rue de la Liberté face droite;47;205;84

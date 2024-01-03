@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "eauEE",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::2154" } },
+"features": [
+{ "type": "Feature", "properties": { "fid": 2, "nom": "Mare à la veuve 2", "etat": "ne fonctionne pas" }, "geometry": { "type": "Point", "coordinates": [ 661944.863599490141496, 6865687.102256946265697, 61.27314 ] } },
+{ "type": "Feature", "properties": { "fid": 4, "nom": "Place de la gare", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 661744.409280434134416, 6866234.642856994643807, 58.562653 ] } },
+{ "type": "Feature", "properties": { "fid": 5, "nom": "1", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 662122.131637562997639, 6866891.362104997970164, 57.447674 ] } },
+{ "type": "Feature", "properties": { "fid": 6, "nom": "2", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 662240.625783138908446, 6866860.785871721804142, 54.802261 ] } },
+{ "type": "Feature", "properties": { "fid": 7, "nom": "3", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 662291.343801816459745, 6866881.027603968046606, 55.657776 ] } },
+{ "type": "Feature", "properties": { "fid": 8, "nom": "4", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 662269.871733188279904, 6866983.584453030489385, 56.774265 ] } },
+{ "type": "Feature", "properties": { "fid": 9, "nom": "Cimetière 5", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 662187.728011464118026, 6866910.949589951895177, 54.543415 ] } },
+{ "type": "Feature", "properties": { "fid": 10, "nom": "6", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 662138.79144198843278, 6866972.541707115247846, 52.483673 ] } },
+{ "type": "Feature", "properties": { "fid": 11, "nom": "7", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 662211.219050688203424, 6866994.308827714063227, 50.291321 ] } },
+{ "type": "Feature", "properties": { "fid": 12, "nom": "Théatre de verdure", "etat": "évacuation" }, "geometry": { "type": "Point", "coordinates": [ 661187.387436769087799, 6867350.035696011036634, 51.188618 ] } },
+{ "type": "Feature", "properties": { "fid": 13, "nom": "Parc François Mitterand", "etat": "en service" }, "geometry": { "type": "Point", "coordinates": [ 661852.349388645263389, 6866937.280845208093524, 52.992477 ] } },
+{ "type": "Feature", "properties": { "fid": 15, "nom": "Place 11 novembre", "etat": "ne fonctionne pas" }, "geometry": { "type": "Point", "coordinates": [ 662023.743134584277868, 6867103.290488578379154, 52.701992 ] } },
+{ "type": "Feature", "properties": { "fid": 17, "nom": "Esplanade Mairie", "etat": "arrivée d'eau" }, "geometry": { "type": "Point", "coordinates": [ 661994.615885345963761, 6867080.224812748841941, 54.468834 ] } },
+{ "type": "Feature", "properties": { "fid": 20, "nom": "Mare à la veuve 1", "etat": "évacuation" }, "geometry": { "type": "Point", "coordinates": [ 661932.909961758181453, 6865668.706074202433228, 0.0 ] } }
+]
+}

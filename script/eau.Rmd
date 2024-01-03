@@ -1,0 +1,46 @@
+---
+title: "eau"
+author: "B. Maranget"
+date: "29/03/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Transformation fichier pour transmission ee
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+```{r}
+data <- st_read("../data/eau.geojson")
+head(data)
+names(data)[c(4:5)] <- c("nom", "etat")
+st_write(data [c(1,4:5)], "../data/eauEE.geojson")
+```
+
+

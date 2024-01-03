@@ -200,12 +200,13 @@ st_write(bat, paste0(chemin, "fond.gpkg"), "bat", delete_layer = T)
 #### Chargement des couches
 
 ```{r, eval = TRUE}
+ch <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 #readOGR(paste0(chemin, "logement.gpkg"))
 #st_read(paste0(chemin, "fond.gpkg"))
-couche <- st_layers(paste0(chemin, "03_SOCLE/fond.gpkg"))
+couche <- st_layers(paste0(ch, "fond.gpkg"))
 tmp <- couche$name
 for (i in 1:length(tmp)){
-    objet <- st_read(paste0(chemin, "03_SOCLE/fond.gpkg"), tmp [i])
+    objet <- st_read(paste0(ch, "fond.gpkg"), tmp [i])
     assign(tmp [i], objet)
 }
 length(couche$name)
@@ -225,7 +226,7 @@ fond <- function(){
   mf_label(noms, var = "name")
   mf_shadow(bondy, col = "antiquewhite1", add = TRUE)
   mf_map(ept, col = NA, border = "red", lwd = 2, add = T)
-  mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "burlywood", "burlywood", "burlywood", "burlywood", "bisque4"), lwd = 1.5, leg_pos = "n")
+  mf_typo(rue, var = "highway", border = NA,add = T, pal = c("red", "burlywood", "burlywood", "burlywood", "burlywood", "bisque4"), lwd = 1.5, leg_pos = NA)
 mf_map(jardin, col = "#B0F2B6", border = NA,add = T)
 
 mf_map(bat, col = "antiquewhite1", border = NA,add = T)

@@ -1,0 +1,286 @@
+---
+title: "affichage photo dans QGIS"
+author: "B. Maranget"
+date: "27/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Au moment de la campagne de saisie des mobiliers publicitaires, la demande porte sur comment afficher dans QGIS les photos.
+
+
+Un article : https://marionlouveaux.fr/fr/blog/gpx-tracks-and-leaflet-interactive-map/#go-to-folding-div permet de faire avec R et Leaflet...
+
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(dplyr)
+library(ggplot2)
+library(leaflet)
+library(leafpop)
+library(lubridate)
+library(purrr)
+library(readr)
+library(sf)
+library(mapsf)
+library(tibble)
+library(tidyr)
+library(exiftoolr) # metadonnées photo
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/08_VOIRIE/mobilierUrbain/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+```
+
+
+
+# Données
+
+
+## Concaténation des .gpx
+
+On récupère les waypoints (la 1e couche par défaut) uniquement
+
+```{r}
+fic <- list.files(chemin, ".gpx")
+trace <- NULL
+for (f in fic){
+  print (f)
+  tmp <- st_read(paste0(chemin, f))
+  print(st_layers(paste0(chemin, f)))
+  trace <- rbind(tmp, trace)
+}
+sort(trace$name)
+trace <- st_transform(trace, crs = 2154)
+# J'ai une correspondance point gps / point photo dans un fichier
+# mais j'ai aussi la date et l'heure
+st_write(trace,"../data/mobPublicitaire.gpkg", "165_206", delete_layer = T )
+```
+
+
+Première carto
+
+```{r}
+png("../img/mobUrbain2mAvt.png")
+mf_init(trace)
+fond()
+mf_map(trace, add = T)
+mf_label(trace, var ="name", overlap = F , halo = T, cex = 1)
+mf_layout("Points GPS mobilier publicitaire", "recup 26 déc. 2023")
+dev.off()
+```
+
+
+concaténation de tous les waypoints dans le mobPub.gpkg       
+
+```{r}
+st_layers("../data/mobPublicitaire.gpkg")
+data <- st_read("../data/mobPublicitaire.gpkg")
+```
+
+
+
+## Waypoints complémentaires
+
+Il existe des waypoints déjà enregistrés
+
+On part du fichier d'équivalence pour trouver les identifiants des waypoints
+
+```{r}
+equiv <- read.csv2(paste0(chemin,"2m/2m.csv"), fileEncoding = "UTF-8")
+sort(equiv$GPS)
+# 73-81 / 98 / 166-205
+num <- c(74:80,166:206)
+```
+
+
+
+on récupère les couches du .gpkg correspondant
+
+```{r}
+couche <- st_layers("../data/mobPublicitaire.gpkg")
+couche
+numCouche <- c(2,7)
+couche <- couche$name [numCouche]
+data <- NULL
+for (c in couche){
+  d <- st_read("../data/mobPublicitaire.gpkg", c)
+  d <- st_transform(d, crs = 2154)
+  data <- rbind(d, data)
+}
+sort(data$name)
+data$name <- as.integer(data$name)
+data <- data [data$name %in% num, c("name")]
+# enlever l'altitude
+data <- st_zm (data, drop = T)
+```
+
+## Photos
+
+
+```{r}
+cheminPhoto <- paste0(chemin, "2m/")
+cheminPhoto
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg")
+photo
+```
+
+
+
+
+
+### Verif données
+
+On vérifie que les noms de photos correspondent bien au fichier equiv
+
+
+```{r}
+num <- gsub(".jpg", "",photo)
+equiv$PLAN
+setdiff(num, equiv$PLAN)
+```
+Pas de différence entre les noms de photo et le num plan
+
+
+## Récup métadonnées photo
+
+```{r}
+lireMeta <- function(fic){
+  exif_read(path.expand(paste0(cheminPhoto, fic)))
+} 
+test <- lireMeta(photo)
+test$FileCreateDate
+test$FileModifyDate
+test$FileAccessDate
+test$SourceFile
+#install_exiftool()
+```
+
+Malheureusement la date création photo n'est pas valable
+
+Autre essai : appareil photo
+
+
+```{r}
+chemin <- "C:/Users/bmaranget/Pictures/photo/"
+file_names <- list.files(path.expand(chemin), pattern = "*.JPG")
+test <- lireMeta(file_names)
+test$FileModifyDate
+grep("ude", names(test))
+grep("GPS", names(test))
+```
+
+pas de long lat, ni de GPS grrrr
+
+mais date sur le modify date.
+
+
+# Jointure equiv et data
+
+
+Jointure equiv et trace
+
+
+```{r}
+joint <- merge(data, equiv, by.x = "name", by.y="GPS")
+# 2 pts perdus
+setdiff(data$name, joint$name)
+equiv$GPS
+# pas de doublons
+table(data$name)
+png("../img/mobUrbain2m.png")
+mf_init(joint)
+fond()
+mf_map(joint, add =T)
+
+mf_label(joint, var="TERRAIN", halo = T, overlap= F, cex = 1)
+mf_layout("Mobilier urbain 2m²", "trace GPS\nDéc 2023")
+dev.off()
+```
+
+![](../img/mobUrbain2mAvt.png)![](../img/mobUrbain2m.png)
+
+Vérif
+
+2 points 193
+
+```{r, eval=FALSE}
+pt <- data [data$name %in% c(193,194,195),]
+png("../img/pointGPS.png")
+mf_init(st_buffer(pt,500))
+fond()
+mf_map(pt, add =T)
+mf_label(pt, var = "name", halo = T)
+mf_layout ("pb PTS Av Galliéni", "pts GPS\ndéc 2023")
+dev.off()
+```
+
+![](../img/pointGPS.png)
+
+Enregistrement
+
+```{r}
+names(joint)
+st_write(joint,"../data/mobPublicitaire.gpkg", "2m", append = F)
+```
+
+
+# Leaflet
+
+
+Il s'agit maintenant de récupérer les photos et de projeter en leaflet
+
+
+pour mémoire, les photos sont dans file_names
+
+```{r}
+joint$chemin <- paste0(cheminPhoto, joint$PLAN, ".jpg")
+joint$chemin
+st_write(joint,"../data/mobPublicitaire.gpkg", "2m", append=F)
+```
+
+Icone appareil photo
+
+```{r}
+curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_and_leaflet_map/240px-Icone_appareil_photo.png",
+                    destfile = "../img/240px-Icone_appareil_photo.png")
+```
+
+```{r, eval=TRUE}
+cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
+data <- st_read("../data/mobPublicitaire.gpkg", "2m")
+data <- st_transform(data, crs = 4326)
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
+  addPopupImages(data$chemin, group = "photos", width = 500) 
+```
+
