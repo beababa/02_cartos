@@ -43,6 +43,12 @@ library(tictoc)
 Ne pas jouer
 
 
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
 ## Lecture de tous les fichiers .pdf et  conversion en image
 
 ```{r, eval = FALSE}
@@ -132,14 +138,111 @@ write.csv2(loc, "lieux.csv")
 
 
 ```{r}
-loc <- read.csv2("../data/lieux.csv")
+loc <- read.csv2("../data/lieux.csv", fileEncoding = "CP1252")
 str(loc)
 grep("Villa", loc [1], value = TRUE)
 ```
 
 
+
+
+
 # Géocodage
 
+Nettoyage
+
+
 ```{r}
-require(devtools)  
-devtools::install_github(repo = 'rCarto/photon') 
+head(loc)
+categ <- c("Interdiction", "momentanée", "momentanée","circulation", "Modification","Réglementation", "Autorisation","stationnement")
+categ2 <-paste(categ, collapse =  " | ")
+codeCateg <- c("STAT", "CIRC")
+loc2 <-gsub (categ2," ", loc$x, ignore.case = TRUE)
+loc2
+loc3 <- gsub(categ2, " ", loc2)
+loc3
+res <- NULL
+nettoyage <- function(fin){
+  data <- gsub (categ[fin]," ", loc$x, ignore.case = TRUE)
+  print(fin)
+  if (fin!=0){
+     data2 <- nettoyage(mot [fin-1], data)
+     return(data2)
+  }
+  else {
+     return(data2)
+  }
+  
+ 
+}
+res <- nettoyage 
+nettoyage(nettoyage(nettoyage(loc$x)))
+```
+
+les rues
+
+```{r}
+momentanée 
+rue <- read.csv("../data/indexRues.csv")
+rue
+chemin <- "D:/03_SIG/03_03_Data/"
+rue <- st_read(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
+rue <- paste(rue$NOM, collapse = "|")
+loc3_df <- as.data.frame(loc3)
+ind <- grep(rue [1], loc3_df$loc3)
+```
+
+On recherche le nom de la rue 
+
+
+https://ichi.pro/fr/guide-rapide-de-la-reconnaissance-d-entites-et-du-geocodage-avec-r-211832443971733
+
+
+
+
+```{r}
+library(tidygeocoder)
+result_tidygeocoder=tidygeocoder::geocode(adresse_df,
+                                          adresse,
+                                          method="osm")
+result_tidygeocoder
+```
+
+```{r}
+adresse <- paste0(loc3, ", 93140, Bondy")
+adresse_df <- as.data.frame(adresse)
+adresse_df
+locgeo <- geocode(adresse, limit = 1)
+```
+
+
+Les résultats ne sont pas bons.7/ 194...
+
+Or, j'ai quand même une table d'équivalence.
+
+Il s'agit de repérer les motifs RUE et d'afficher dans le tableau de départ (loc3)
+une colonne equiv qui va permettre de faire le lien
+
+```{r}
+i <- 375
+rue$NOM [i]
+rue$NOM
+loc <- loc3
+loc3$correspondance <- NA
+trouverCorrespondance <- function(i){
+  res <- grep(rue$NOM [i], loc3, ignore.case = T)
+  }
+res <- sapply(1:387, trouverCorrespondance)
+res
+loc3$correspondance
+for (i in c(1:387)){
+  tmp <- res [[i]]
+  loc3$correspondance
+}
+ind <- which(sapply(res, length)!=0)
+ind
+loc3 [ind]
+
+```
+
+

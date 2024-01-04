@@ -72,8 +72,45 @@ for (i in 1:fin){
 
 st_write(data,"../data/rcu.gpkg", "itherm", delete_layer = T)
 
-
+table(data$Description)
+table(data$Name)
 ```
+
+
+Structure du fichier
+
+```{r}
+str(data)
+mf_map(data, type =  "typo", "Description", lwd = 3)
+#mf_label(data, "Name", cex = 0.5)
+mf_layout("RCU", "Itherm Conseil")
+```
+
+
+On zoome pour voir les étiquettes
+
+```{r}
+data [data$Name == "00-01",]
+mf_init(st_buffer(data$geom [data$Name =="101"],300))
+mf_map(data, type =  "typo", "Description", lwd = 3, add =T)
+mf_label(data, "Name", cex = 0.7)
+mf_layout("Taxinomie RCU", "Itherm Conseil")
+```
+
+
+
+longueur du réseau
+
+```{r}
+sum(st_length(data$geom))
+ind <- grep("existants", names(tab))
+ancien <- data [data$Description %in% names(tab)[ind],]
+nouveau <- data [!(data$Description %in% names(tab)[ind]),]
+tab <- table(data$Description)
+sum(st_length(ancien))
+sum(st_length(nouveau))
+```
+
 
 
 
@@ -81,6 +118,7 @@ st_write(data,"../data/rcu.gpkg", "itherm", delete_layer = T)
 
 
 ```{r}
+data <- st_read("../data/rcu.gpkg", "itherm")
 tampon <- st_buffer(data,10)
 
 st_layers(paste0(chemin2, "batiment.gpkg"))
