@@ -145,7 +145,15 @@ str(rue)
 write.csv(rue [ , c("NATURE", "NOM","Longueur", "NOMnumero", "cadastre", "usage", "incoherence"), drop = TRUE], "../data/ruePriveNonCadastre.csv",  fileEncoding = "UTF-8")
 ```
 
+export num rues
 
+```{r}
+petiteRue <- rue [!is.na(rue$NOMnumero), c("NOMnumero", "NOM"), drop = T]
+names(petiteRue) <- c("Nom", "numéro")
+petiteRue$numéro <- as.integer(petiteRue$numéro)
+petiteRue <- petiteRue [order(petiteRue$numéro),]
+write.csv(petiteRue, "../data/petiteRue.csv", fileEncoding = "UTF-8", row.names = F)
+```
 
 
 

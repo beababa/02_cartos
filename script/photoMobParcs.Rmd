@@ -188,13 +188,17 @@ photoMeta <- lireMeta(photo)
 names(photoMeta)
 photoMeta$FileModifyDate # c'est le modify date
 photoMeta$FileAccessDate
+photoMeta$FileCreateDate
 photoMeta <- photoMeta [, c("FileModifyDate", "SourceFile")]
+photoMeta
 #install_exiftool()
 write.csv(photoMeta,"../data/photoMeta.csv", fileEncoding = "UTF-8")
 ```
 
 remarque : correspondance rownum et nom photo dans source photo
 
+
+attention les métadonnées ont changé il faut reprendre celle du .csv
 
 # Correspondance photo waypoints
 
@@ -224,7 +228,7 @@ class(WPpotFleur)
 photoMeta$FileModifyDateCET  <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d %H:%M:%S", tz = "CET")
 class(photoMeta$FileModifyDateCET)
 # on cherche la différence minimum avec la photo
-ind <- (which.min(abs(difftime(WPpotfleur, photoMeta$FileModifyDateCET))))
+ind <- (which.min(abs(difftime(WPpotFleur, photoMeta$FileModifyDateCET))))
 ind
 photoMeta [ind,]
 # Il s'agit bien de la photo 8
@@ -243,23 +247,25 @@ wp
 
 
 ```{r}
-t <- wp$time2 [1]
+p <- photoMeta$FileModifyDateCET [1]
+photoMeta <- read.csv("../data/photoMeta.csv")
+photoMeta
 # pour éviter d'utiliser deux fois la même photo, on va supprimer les
 # photos au fur et à mesure
 photoMetaBoucle <- photoMeta
 wp$timePhoto <- NA
 matrice <-  NA
-for (t in wp$time2){
-  class(t)
+for (p in photoMeta$FileModifyDate){
+  class(p)
   # c'est une heure
   # indice de ligne du vecteur de difference de tmps entre les deux prise
-  print(abs(difftime(photoMetaBoucle$FileModifyDateCET,t)))
-  tmp <- which.min(abs(difftime(photoMetaBoucle$FileModifyDateCET,t)))
+  print(abs(difftime(p,wp$time2)))
+  tmp <- which.min(abs(difftime(p,wp$time2)))
   #matrice <- rbind(matrice, as.vector(tmp))
   print(tmp)
     # c'est à dire lg photo
   # on récupère l'heure de la photo
-  wp$timePhoto [wp$time2 == t] <- photoMetaBoucle$FileModifyDateCET [tmp]
+  wp$timePhoto [tmp] <- tmp
   # pour éviter que la photo soit reprise, on supprime la phot
   print(wp)
   print(photoMetaBoucle [tmp,])

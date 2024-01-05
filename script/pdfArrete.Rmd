@@ -155,7 +155,7 @@ Nettoyage
 ```{r}
 head(loc)
 categ <- c("Interdiction", "momentanée", "momentanée","circulation", "Modification","Réglementation", "Autorisation","stationnement")
-categ2 <-paste(categ, collapse =  " | ")
+categ2 <-paste(categ, collapse =  "|")
 codeCateg <- c("STAT", "CIRC")
 loc2 <-gsub (categ2," ", loc$x, ignore.case = TRUE)
 loc2
