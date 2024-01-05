@@ -190,6 +190,7 @@ photoMeta$FileModifyDate # c'est le modify date
 photoMeta$FileAccessDate
 photoMeta <- photoMeta [, c("FileModifyDate", "SourceFile")]
 #install_exiftool()
+write.csv(photoMeta,"../data/photoMeta.csv", fileEncoding = "UTF-8")
 ```
 
 remarque : correspondance rownum et nom photo dans source photo
