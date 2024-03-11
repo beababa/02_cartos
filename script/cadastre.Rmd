@@ -131,7 +131,7 @@ tmp <- strsplit(proprio, split= "\\-")
 proprio <- sapply(tmp, "[",2)
 proprio <- gsub("^ | $",x =  proprio, "")
 cadastre$proprio <- proprio
-st_write(cadastre, "../data/cadastre.gpkg", "proprio", delete_layer = T)
+st_write(cadastre, "../data/cadastre.gpkg", "proprio2023b", delete_layer = T)
 ```
 
 

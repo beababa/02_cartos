@@ -1,7 +1,7 @@
 ---
-title: "photos et gpx pour parcs et jardins"
+title: "fond des parcs pour parcs et jardins"
 author: "B. Maranget"
-date: "02/01/2024"
+date: "11/01/2024"
 output: 
   html_document: 
     number_sections: yes
@@ -24,13 +24,10 @@ knitr::opts_chunk$set(warning = FALSE)
 
 saisie mobilier parcs et jardins (bancs et poubelles), faire correspondre aux photos.
 
-
-Un article : https://marionlouveaux.fr/fr/blog/gpx-tracks-and-leaflet-interactive-map/#go-to-folding-div permet de lier date photo et date gpx
-
-A retenir, les wp sont différents des photos. 
-J'ai fait plusieurs photos d'ensemble et des wp sans photo.
-
 81 wp et 43 photos
+
+
+
 
 # Environnement
 
@@ -94,16 +91,15 @@ PROJSearchPaths()
 On récupère les waypoints (la 1e couche par défaut) uniquement
 
 ```{r}
-# choix de la wp. wp2 16/2.
 st_layers("../data/mobParc.gpkg")
 # la couche a été retravaillé sous QGIS
-wp <- st_read("../data/mobParc.gpkg", "wp2")
+wp <- st_read("../data/mobParc.gpkg", "wp")
 # suppression altitude
 wp <- st_zm(wp,drop = T)
-st_write(wp, "../data/mobParc.gpkg", "wp2", append = F)
+st_write(wp, "../data/mobParc.gpkg", "wp", append = F)
 ```
 
-20 wp pour le 16/02
+
 
 ### Carto
 
@@ -111,7 +107,7 @@ st_write(wp, "../data/mobParc.gpkg", "wp2", append = F)
 mf_init(wp)
 mf_map(wp, add = T)
 mf_label(wp, var ="cmt", overlap = F , halo = T, cex = 1)
-mf_layout("Points GPS mobilier parcs", "recup 16 février 2024")
+mf_layout("Points GPS mobilier parcs", "recup 26 déc. 2023")
 ```
 
 
@@ -185,9 +181,6 @@ photo <- list.files(path.expand(chPH), pattern = "*.JPG")
 
 
 
-
-
-
 ## Récup métadonnées photo
 
 ```{r}
@@ -210,19 +203,6 @@ remarque : correspondance rownum et nom photo dans source photo
 
 attention les métadonnées ont changé il faut reprendre celle du .csv
 
-
-### Filtre sur les photos
-
-
-2 sorties 26/12 et 16/02
-
-```{r}
-photoMeta$jour <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d" )
-unique(photoMeta$jour)
-photoMeta <- photoMeta [photoMeta$jour == "2024-02-16 CET" ,]
-```
-
-
 # Correspondance photo waypoints
 
 Time zone pour les deux appareils automatique donc CET
@@ -231,26 +211,20 @@ Comme il s'agit d'heure/mn/s, il faut utiliser les formats POSIXct (calendar tim
 
 L'appareil photo non réglé : différence de 1 h 03 mn
 
-## Test sur une photo précise
+## Test sur une photo précise prise à 10 h 51 
 
 Il pourrait ensuite suffire d'aligner les photos mais c'est plus sûr mais comme le nombre est différent.
 
-
-la troisième
-
 ```{r}
-wp$time [20]
+wp
 # le joli pot de fleur
 WPpotFleur <- wp$time [wp$name == "092"]
 WPpotFleur
-# le bambou : 
-wpBambou <- wp$time [20]
-# 9 h 49 / 10 h 45
-(photoMeta$FileModifyDate) [19]
+# 9 h 49
+str(photoMeta$FileModifyDate)
 # c'est du chr
 WPpotFleur <-  WPpotFleur + 3720
 class(WPpotFleur)
-wpBambou <- wpBambou + 120
 # c'est du posix en natif 
 # rajout d'une heure (3600 secondes) + 2 mn
 # l'appareil photo est en CET également (automatique)
@@ -258,10 +232,10 @@ wpBambou <- wpBambou + 120
 photoMeta$FileModifyDateCET  <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d %H:%M:%S", tz = "CET")
 class(photoMeta$FileModifyDateCET)
 # on cherche la différence minimum avec la photo
-ind <- (which.min(abs(difftime(wpBambou, photoMeta$FileModifyDateCET))))
+ind <- (which.min(abs(difftime(WPpotFleur, photoMeta$FileModifyDateCET))))
 ind
 photoMeta [ind,]
-# Il s'agit bien de la photo 8 / 19
+# Il s'agit bien de la photo 8
 ```
 
 Cela fonctionne pour une photo, on le fait pour toutes les photos
@@ -270,7 +244,7 @@ Cela fonctionne pour une photo, on le fait pour toutes les photos
 modif tps pour tous les points wp
 
 ```{r}
-wp$time2 <- wp$time + 120
+wp$time2 <- wp$time + 3720
 # verif format
 class(wp$time2)
 ```
@@ -338,19 +312,8 @@ Enregistrement
 
 ```{r}
 names(joint)
-st_write(joint [, c("time2", "SourceFile", "name", "cmt")],"../data/mobParc.gpkg", "photoFEV2024", append = F)
-# enregistrement ds la base de saisie
-st_write(joint [, c("time2", "SourceFile", "name", "cmt")],"../data/mobParc.gpkg", "photo", append = T)
+st_write(joint [, c("time2", "SourceFile", "name", "cmt")],"../data/mobParc.gpkg", "photo", append = F)
 ```
-
-
-Recup ancienne copie
-
-```{r}
-tmp <- st_read("../data/tmp.gpkg", "pt_gps")
-st_write(tmp, "../data/mobParc.gpkg", "photo", append = F)
-```
-
 
 
 # Leaflet

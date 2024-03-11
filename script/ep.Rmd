@@ -24,6 +24,7 @@ knitr::opts_chunk$set(warning = FALSE)
 
 exploitation du fichier des candelabres du prestataire EQUANS (Frederic Drochon)
 
+comparatif sources SIG et fichier voirie (Sylvie) pour identifier les armoires électriques.
 
 
 
@@ -39,7 +40,7 @@ library(mapsf)
 ```{r, eval = T}
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
-rep3 <-  "E:/03_SIG/03_03_Data/08_VOIRIE/"
+rep3 <-  paste0(rep,"/03_SIG/03_03_Data/08_VOIRIE/eclairage/")
 ```
 
 
@@ -79,6 +80,34 @@ mf_map(rue, add = T)
 mf_map(candelabre, type = "symb", var = "equiv", pch = c(16:18), pal = c("antiquewhite", "red", "blue"), cex =c(0.5, 0.8, 0.5), leg_pos = "topright", leg_title = "Type lampe", add=T)
 mf_layout("Candelabre LED", "Mairie de Bondy / DGST\nOctobre 2023\nEquans")
 dev.off()
+```
+
+
+# Comparatif armoires électriques
+
+
+```{r}
+st_layers("../data/ep.gpkg")
+armoire2023 <- st_read("../data/ep.gpkg", "armoire2023")
+str(armoire2023)
+```
+
+les pts d'interrogations soulignent l'absence de correspondance
+
+```{r}
+ficVoirie <- read.csv(paste0(rep3, "comparatifPDL_ArmoireElectrique_pourJOINTURE.csv"), fileEncoding = "UTF-8")
+```
+
+les fic voirie a 3 inexistants.
+
+
+## Jointure
+
+```{r}
+str(ficVoirie)
+str(armoire2023)
+jointure <- merge(armoire2023, ficVoirie, by.x = "NOM", by.y= "Nom.source.SIG", all.x=T)
+st_write(jointure, "../data/ep.gpkg", "jointureArmoireElec", delete_layer = T)
 ```
 
 

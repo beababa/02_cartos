@@ -1,0 +1,139 @@
+---
+title: "RLPi export fichiers finaux"
+author: "B. Maranget"
+date: "27/02/2024"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Concaténation fichiers finaux
+
+Diminution taille des images
+
+
+# Librairies et répertoire
+
+```{r}
+library(sf)
+library(mapsf)
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+```
+
+
+# Concaténation fichier données
+
+
+
+```{r}
+st_layers("../data/mobPublicitaire.gpkg")
+couches <- c("2m", "terrain 8m", "terrain bus")
+for (c in couches){
+  tmp <- st_read("../data/mobPublicitaire.gpkg", c)
+  assign(c, tmp)
+}
+
+str(`terrain 8m`)
+str(`terrain bus`)
+str(`2m`)
+names (`terrain bus`)[1] <- "gps"
+`2m` <- `2m` [, c("gps" , "PLAN", "Adresse", "TERRAIN", "chemin")]
+names(`2m`)[c(2,4)] <- c("plan", "terrain")
+
+`terrain 8m`$type <- "8m"
+`terrain bus`$type <- "bus"
+`2m`$type <- "2m"
+
+
+data <- rbind(`terrain 8m`, `terrain bus`, `2m` )
+
+st_write(data, "../data/mobPublicitaire.gpkg", "data", fileEncoding = "UTF-8", delete_layer = T)
+```
+
+
+
+Diminution taille image
+
+```{r}
+library(magick)
+rep1 <- paste0(chemin, "05_PHOTOS/mobUrbain/2m/" )
+rep <- list.files (paste0(chemin, "05_PHOTOS/mobUrbain/"))
+r <- NULL
+for (r in rep){
+  r
+  r <- paste0(chemin, "05_PHOTOS/mobUrbain/", r)
+  
+  fic <- list.files(r, pattern = ".jpg")
+  for (f in fic ){
+    img <- image_read(paste0(r,"/",f))
+    img <- image_scale(img, "500x200")
+    image_write(img, paste0(r,"/",f))
+  }
+}
+
+```
+
+
+zonage
+
+```{r}
+zone <- st_read("../data/pluiM2.gpkg", "zone")
+st_layers("../data/mobPublicitaire.gpkg")
+data <- st_read("../data/mobPublicitaire.gpkg", "data")
+inter <- st_intersection(data, zone)
+st_crs(data)
+st_crs(zone)
+library(raster)
+compareCRS(data, zone)
+```
+
+
+
+
+Affichage Leaflet
+
+
+```{r , eval=TRUE}
+#(dplyr)
+#library(ggplot2)
+library(leaflet)
+library(leafpop)
+#library(lubridate)
+#library(purrr)
+#library(readr)
+library(sf)
+library(mapsf)
+#library(tibble)
+#library(tidyr)
+library(exiftoolr) # metadonnées photo
+```
+
+
+
+```{r}
+cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
+data <- st_read("../data/mobPublicitaire.gpkg", "2m")
+data
+st_crs(data) <- "EPSG:2154"
+crs_longlat <- "EPSG:4326"
+data <- st_transform(data, crs = crs_longlat)
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
+  addPopupImages(data$chemin, group = "photos", width = 500) 
+```
