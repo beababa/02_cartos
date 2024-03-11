@@ -1,0 +1,125 @@
+---
+title: "Stationnement"
+author: "B. Maranget"
+date: "06/03/2024"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Concaténation fichiers rue
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <- "G:/Mon Drive/05_DATA/"
+```
+
+
+# Données
+
+Tracés dans QGIS, extraction pour .csv via R
+
+```{r}
+st_layers(paste0(chemin,"08_VOIRIE/stationnement.gpkg")) 
+rueVert <- st_read(paste0(chemin,"08_VOIRIE/stationnement.gpkg"), "rueZoneVerte")
+rueOrange <- st_read(paste0(chemin,"08_VOIRIE/rueOrange.gpkg"), "intersection")
+zoneVert <- st_read(paste0(chemin,"08_VOIRIE/stationnement.gpkg"), "ZoneVerte2")
+zoneOrange <- st_read(paste0(chemin,"08_VOIRIE/stationnement.gpkg"), "zoneorange")
+st_layers(paste0(chemin,"03_SOCLE/rue2023.gpkg")) 
+```
+
+
+# Pb fid du gpkg
+
+```{r}
+gpkg <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
+shp <- st_read(paste0(chemin,"03_SOCLE/rue2023.shp"))
+setdiff(gpkg$NOM_1_G, shp$NOM_1_G)
+shp [which(!shp$NOM_1_G  %in% gpkg$NOM_1_G),]
+```
+
+
+
+
+# Concaténation
+
+```{r}
+str(zoneOrange)
+str(zoneVert)
+zoneOrange <- zoneOrange [, c("nom", "couleur")]
+zoneOrange <- st_union(zoneOrange)
+zoneOrange <- st_as_sf(zoneOrange)
+names(zoneOrange) <- "geom"
+st_geometry(zoneOrange) <-  "geom"
+mf_map(zoneOrange)
+zoneOrange$nom <-  "zone orange"
+zoneOrange$couleur <-  "orange"
+zoneOrange <- zoneOrange [, c("nom", "couleur")]
+zoneVert <-  zoneVert [, c("nom",  "couleur")]
+zone <- rbind (zoneOrange, zoneVert)
+mf_map(zone)
+str(rueVert)
+str(rueOrange)
+rueVert <- rueVert [, c("NOM_1_G", "usage", "IMPORTANCE")]
+rueOrange <- rueOrange [, c("NOM_1_G", "usage", "IMPORTANCE")]
+rueOrange$couleur <- "orange"
+rueVert$couleur <- "vert"
+rue <- rbind (rueVert, rueOrange)
+mf_map(rue, add = T)
+```
+
+```{r}
+st_write(zone, "../data/stationnement.gpkg", "zone2024", delete_layer = T)
+```
+
+
+
+# Intersection
+
+```{r}
+inter <- st_intersection(rue, zone)
+# suppression des incohérences
+inter <- inter [inter$couleur == inter$couleur.1,]
+st_write(inter, "../data/stationnement.gpkg", "rueStationnement2024", delete_layer = T)
+data <- st_drop_geometry(inter)
+write.csv(data, "../data/rueStationnement2024.csv", fileEncoding = "UTF-8")
+```
+
+
+
+# Carto
+
+
+```{r}
+png("../img/stationnement 2024.png", width = 1000, height = 1200, res = 120)
+mf_init(zone)
+mf_map(zone, type = "typo",var = "couleur", pal = c("darkorange1", "darkolivegreen2"), leg_pos = NA, add = T, border = NA)
+mf_map(inter , type = "typo" , var = "couleur", pal = c("antiquewhite2", "black"), leg_pos = NA, add = T)
+mf_layout("Zones stationnement", "sources internes")
+dev.off()
+```
+
