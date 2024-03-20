@@ -104,6 +104,29 @@ compareCRS(data, zone)
 
 
 
+état des panneaux
+
+l'état des panneaux est rajouté à la main, ainsi que l'ajout de la photo du 2e.
+Du coup, jointure pour couche et remplacement
+
+```{r}
+data <- st_read("../data/mobPublicitaire.gpkg", "data")
+fin <- read.csv(paste0(chemin, "08_VOIRIE/mobilierUrbain/exports finaux/data.csv"))
+#aie différence de 1
+fin
+setdiff(data$)
+```
+
+
+ajout des panneaux administratifs
+
+
+
+
+```{r}
+panneauAdm <- st_read("../data/mobPanneauxAdm.gpkg")
+```
+
 
 Affichage Leaflet
 

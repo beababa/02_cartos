@@ -41,7 +41,9 @@ chemin <- "G:/Mon Drive/05_DATA/"
 
 # Données
 
-Tracés dans QGIS, extraction pour .csv via R
+Tracés dans QGIS, concaténation, intersection et extraction pour .csv via R
+distinguer les routes à tracer des routes dans zone mais non à tracer
+
 
 ```{r}
 st_layers(paste0(chemin,"08_VOIRIE/stationnement.gpkg")) 
@@ -53,19 +55,10 @@ st_layers(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
 ```
 
 
-# Pb fid du gpkg
-
-```{r}
-gpkg <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
-shp <- st_read(paste0(chemin,"03_SOCLE/rue2023.shp"))
-setdiff(gpkg$NOM_1_G, shp$NOM_1_G)
-shp [which(!shp$NOM_1_G  %in% gpkg$NOM_1_G),]
-```
-
-
-
 
 # Concaténation
+
+## zones
 
 ```{r}
 str(zoneOrange)
@@ -90,6 +83,7 @@ rueOrange$couleur <- "orange"
 rueVert$couleur <- "vert"
 rue <- rbind (rueVert, rueOrange)
 mf_map(rue, add = T)
+mf_map(rueVert, col = "green", add = T)
 ```
 
 ```{r}
@@ -105,10 +99,55 @@ inter <- st_intersection(rue, zone)
 # suppression des incohérences
 inter <- inter [inter$couleur == inter$couleur.1,]
 st_write(inter, "../data/stationnement.gpkg", "rueStationnement2024", delete_layer = T)
+test <- inter [inter$NOM_1_G == "VLA CARNOT",]
+mf_map(inter)
+mf_map(test, col ="red",add = T)
 data <- st_drop_geometry(inter)
 write.csv(data, "../data/rueStationnement2024.csv", fileEncoding = "UTF-8")
 ```
 
+
+intersection rue privée, rue dans zone mais non dans stationnement
+
+```{r}
+inter2 <-  st_intersection (gpkg, zone)
+gpkg
+str(inter2)
+str(gpkg)
+joint <- merge(inter2, data, by = "NOM_1_G", all.x = T)
+joint
+# rues 
+filtre <- joint [is.na(joint$nom.y ),drop=T]
+filtre$NOM_1_G
+filtre$NOM_1_G [!is.na(filtre$NOMnumero)] <- filtre$NOMnumero [!is.na(filtre$NOMnumero)]
+write.csv(filtre,"../data/stationnementSANS.csv", fileEncoding = "UTF-8")
+head(joint)
+```
+
+concaténation des 2 fichiers de rue
+
+```{r}
+str(filtre)
+str(data)
+```
+
+```{r}
+filtre$type <- "zone ayant droit"
+data$type <- "rues à marquer"
+names(filtre) [6] <- "usage"
+names(filtre) [7] <- "nom"
+titre <- c("NOM_1_G", "usage", "nom", "type")
+```
+
+```{r}
+fin <- rbind(filtre [,titre], data [,titre])
+fin$usage [is.na(fin$usage)] <-  "public"
+names(fin) <-  c("rue", "usage", "zone", "type")
+fin <- fin [fin$rue != 'Sans nom',]
+# 5 rues supprimées
+fin <- fin [order(fin$type, fin$zone, fin$rue),]
+write.csv(fin,"../data/rueStationnement.csv", row.names = F)
+```
 
 
 # Carto
