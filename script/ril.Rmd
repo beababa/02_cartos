@@ -53,41 +53,87 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 
 # données
 
+```{r}
+str(ril)
+```
+
+
 
 
 ```{r}
-ril <- read.csv2("../data/rilFevrier2023.csv", fileEncoding = "UTF-8", dec =".", skip = 1)
+ril <- read.csv("../data/mars2024.csv", header = T, fileEncoding = "UTF-8", na.strings = "")
+ril <- ril [,c(1:15)]
+ril$cle <- rownames(ril)
 str(ril)
-# spatialisation
-ril <- st_as_sf(ril, coords = c("x", "y"), crs = 2154 )
-st_layers("../data/ril.gpkg")
-st_write(ril, "../data/ril.gpkg", "rilFev2023", delete_layer = T)
+```
 
+Gros pb mars 2024, le fichier a trop de commentaire. on ne prend que les 15 colonne
+
+On peut repérer le termes 2154 et extraire les 40 caractères avant
+
+
+```{r}
+coords <- read.csv2("../data/mars2024.csv", header = T)
+
+extractionCoord <- function(ch){
+  ind <- unlist(gregexpr('2154', ch))
+  substr(ch, ind-27,ind-2)
+}
+names(coords) <- ""
+coords <- sapply(coords,extractionCoord)
+coords
+X <- substring(coords,1,12)
+Y <- substring(coords, 14)
+df <- data.frame("X"=X, "Y"=Y)
+names(df) <- c("X", "Y")
+```
+
+
+
+
+
+```{r}
+# spatialisation
+ril_sf <- st_as_sf(df, coords = c("X", "Y"), crs = 2154 )
+mf_map(ril_sf)
+# jointure
+ril_sf$cle <- rownames(ril_sf)
+str(ril_sf)
+ril <- merge(ril_sf, ril, by="cle")
+str(ril)
+st_write(ril,"../data/ril2024.gpkg", "mars2024b", delete_layer = T)
+ril <- st_drop_geometry(ril)
+write.csv(ril, "../data/rilMars2024.csv")
 ```
 
 les zones de sortie
+
+```{r}
+zone <- st_read("../data/ril2024.gpkg", "zone")
+```
 
 elles sont dessinées sous qgis, puis l'intersection est faite sous R
 
 
 ```{r}
-zone <- st_read("../data/ril.gpkg", "zonesDeSortie")
+st_crs(ril) <- 2154
+st_crs(zone) <- 2154
 ril <- st_intersection(ril, zone)
-ril <- ril [, c("numero", "repetition", "complement", "type_voie", "libelle", "nombre_logements", "numero_permis", "commentaire", "zone")]
-st_write(ril, "../data/ril.gpkg", "rilFev2023", delete_layer = T)
 str(ril)
-
+ril <- ril [, c("numero", "repetition", "complement", "type_voie", "libelle", "nombre_logements", "numero_permis", "commentaire", "nom")]
+st_write(ril, "../data/ril2024.gpkg", "rilMars2024", delete_layer = T)
+str(ril)
 write.csv(st_drop_geometry(ril),"../data/ril.csv", fileEncoding = "UTF-8")
 ```
 
 nb de points pour chaque sortie
 
 ```{r}
-agg <- aggregate(ril [, "zone"], by = list(ril$zone), length)
+agg <- aggregate(ril [, "nom"], by = list(ril$nom), length)
 # verif
-sum(agg$zone)
-zone <- merge (st_drop_geometry(agg), zone, by.x = "Group.1", by.y = "zone")
-st_write(zone, "../data/ril.gpkg", "zonesDeSortie", delete_layer = T)
+sum(agg$nom)
+zone <- merge (st_drop_geometry(agg), zone, by.x = "Group.1", by.y = "nom")
+st_write(zone, "../data/ril2024.gpkg", "zonesDeSortie", delete_layer = T)
 ```
 
 
