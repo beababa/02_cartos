@@ -1,7 +1,7 @@
 ---
-title: "fichiers bd topo"
+title: "carroyage 200 m intersection et traitement"
 author: "B. Maranget"
-date: "10/09/2021"
+date: "12/04/2024"
 output: 
   html_document: 
     number_sections: yes
@@ -22,7 +22,23 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-couper bd topo via R plutôt que Qgis
+traitement du carroyage 200 : extraction et dénombrement pour quartier demandé pour
+physionmie quartier
+
+base données 2019 Filosofi (Dispositif Fichier localisé social et fiscal) 
+https://www.insee.fr/fr/statistiques/7655475?sommaire=7655515#consulter
+
+variable : men_pauv et ind_snv : Somme des niveaux de vie winsorisés des individus (niveau de vie moyen)
+
+dernier milesime disponible 2021 non trouvé
+
+traitement : après fait les 3 intersections (bondy, périmètre, reste Bondy), on calcule le prorata et on l'applique au périmètre et reste Bondy
+
+On somme ensuite les données puis leur ratio par rapport à la surface totale de chaque zone pour
+pouvoir comparer le périmètre et le reste de Bondy
+
+Les variables utilisées sont les tranches d'age et pour les revenus le nombre de ménage pauvre et le revenu windsorisé (on supprime les extrêmes)
+
 
 
 # Import
@@ -34,14 +50,177 @@ library(units)
 ```
 
 
-```{r}
-data <- st_read("../../03_Data/03_SOCLE/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D093_2021-06-15/BDTOPO/1_DONNEES_LIVRAISON_2021-06-00164/BDT_3-0_SHP_LAMB93_D093-ED2021-06-15/TRANSPORT/TRONCON_DE_ROUTE.shp", quiet = T)
-limite <- st_read("../../03_Data/limites.gpkg","bondy", quiet = T)
-inter <- st_intersection(data, limite)
-st_write(inter,"../../03_Data/03_SOCLE/bondy.gpkg", "routeBDTOPO", quiet = T)
-adresse <- st_read("../../03_Data/03_SOCLE/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D093_2021-06-15/BDTOPO/1_DONNEES_LIVRAISON_2021-06-00164/BDT_3-0_SHP_LAMB93_D093-ED2021-06-15/ADRESSES/ADRESSE.shp", quiet = T)
-inter <- st_intersection(adresse, limite)
-st_write(inter,"../../03_Data/03_SOCLE/bondy.gpkg", "adresseBDTOPO", quiet = T)
+# données
 
+```{r}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/"
+data <- st_read(paste0(chemin, "03_03_Data/03_SOCLE/carreaux_200m_met.gpkg"))
+limite <- st_read("../data/limitesSocle.gpkg", "Bondy")
+# zone pour demande (déssinée sous)
+zone <- st_read("../data/limitesSocle.gpkg", "limitesSocle")
+st_crs(data) <- 2154
+st_crs(limite) <- 2154
+```
+
+# intersection zone pour physionomie.
+
+
+3 intersections :
+- bondy
+- périmètre
+- resteBondy
+
+
+```{r}
+inter <- st_intersection(data, limite)
+st_write(inter, "../data/carreaux.gpkg", "bondy", delete_layer = T)
+png("../img/carreauxZonePtBondy.png")
+mf_map(inter)
+mf_map(zone [2,], add = T, col = NA, border = "wheat", lwd = 2)
+mf_layout("zone carreaux bondy", "INSEE & Préfecture de police Paris\nAvril, 2024")
+dev.off()
+```
+
+```{r}
+st_crs(zone) <- 2154
+perimetre <- st_intersection(inter, zone [2,])
+st_write(perimetre,"../data/carreaux.gpkg", "perimetre", delete_layer=T)
+png("../img/carreauxZonePtBondyZoom.png")
+mf_init(inter2)
+mf_map(inter, add = T)
+mf_map(inter2, col= NA, border= "red", add=T)
+mf_layout("Carreaux du périmètre", "INSEE & Préfecture de police Paris\nAvril, 2024")
+dev.off()
+```
+
+
+```{r}
+# pour calculer par rapport au reste de la ville.
+invZone <- st_difference(limite, zone)
+mf_map(invZone)
+inter3 <- st_intersection(data,invZone)
+mf_map(inter3, add=T)
+st_write(inter3, "../data/carreaux.gpkg", "resteBondy", delete_Layer=T)
+```
+
+
+# Prorata de la surface
+
+200 m * 200 m = 40 000
+
+On calcule le prorata puis on l'applique aux données qui ont le même nombre de variable
+
+```{r}
+names (inter)
+inter [, c(7:34)]
+```
+
+
+
+```{r}
+prorata <- function(zone){
+  prorata <- st_area(zone) /40000 
+  zoneProrata <-  round(zone [, c(7:34), drop=T]* prorata,2)
+  zoneF <- cbind(zone [,1, drop=F], zoneProrata)
+  return(zoneF)
+}
+# limite
+bondy <- prorata(inter)
+perimetre <- prorata(inter2)
+resteBondy <- prorata(inter3)
+st_write(perimetre,"../data/carreaux.gpkg", "perimetre", append=F)
+st_write(resteBondy, "../data/carreaux.gpkg", "resteBondy", append = F)
+```
+
+
+calculs d'agregation
+
+
+nb d'habitants
+
+```{r}
+hbt <- sum(perimetre$ind)
+hbt + 1500
+# on rajoute 1500 pour la ZAC sur 4800, 1/ 3 habts en plsu
+mf_choro(perimetre, "ind", border = NA , leg_pos = "right")
+mf_layout("Nombre d'habitants par carreaux de 200 m hors ZAC Ourcq", "insee & Préfecture de Police de Paris\navril 2024")
+```
+
+
+age
+
+
+```{r}
+names(perimetre)
+# attention, ne pas oublier de supprimer la géométrieres <- sapply( perimetre [,c(7:34), drop=T], somme)
+revenuPerimetre <- apply(perimetre [,c(4,9), drop=T],2, sum)
+revenuresteBondy <- apply(resteBondy [,c(4,9), drop=T],2, sum)
+revenu <- rbind(revenuPerimetre, revenuresteBondy)
+revenu
+aire <- rbind(sum(st_area(perimetre)),sum(st_area(resteBondy)))
+aire <- cbind(aire, aire)
+ratio <- sum(st_area(perimetre))/sum(st_area(resteBondy))
+densite <- revenu/aire
+densite
+ratio <- densite[1,]/densite [2,]
+```
+
+
+
+```{r}
+par(mar = c(4,10,4,4))
+barplot(revenu, beside = T, las = 2, main = "Population par tranche d'ages" , border = NA, col= c("wheat", "cadetblue2"), legend.text = c("périmètre", "hors périmètre") , horiz = T)
+# mieux en %
+pct <- (revenu / total ) *100
+barplot(pct, beside = T, las = 2, main = "Population par tranche d'ages" , border = NA, col= c("wheat", "cadetblue2"), legend.text = c("périmètre", "hors périmètre") , horiz = T)
+```
+
+
+revenu
+
+menage pauvre et revenu windsorisé
+
+
+
+```{r}
+names(perimetre)
+revenuPerimetre <- apply(perimetre [,c(4,9), drop=T],2, sum)
+revenuPerimetre
+revenuresteBondy <- apply(resteBondy [,c(4,9), drop=T],2, sum)
+revenu <- rbind(revenuPerimetre, revenuresteBondy) 
+
+total <- apply(age, 1, sum)
+```
+
+
+revenu winsorisé
+
+Somme des niveaux de vie winsorisés des individus
+
+
+
+
+enregistrement
+
+
+```{r}
+st_write(prorata,"../data/stat.gpkg", "carreau200_Ptbondy", delete_layer = T)
+```
+
+
+```{r}
+nom <- names(prorata) [1:28]
+nom  <- nom [-16]
+par(mfrow = c(6,5))
+for (n in nom) {
+  mf_choro(prorata, n, leg_pos = NA)
+  mf_layout(paste0(n, " ", ceiling(res [n]))  ,"")
+}
+```
+
+
+
+```{r}
+prorata$log_inc
 ```
 

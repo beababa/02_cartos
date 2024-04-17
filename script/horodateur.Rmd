@@ -27,6 +27,7 @@ reprise de données horodateurs stats mensuelles et carto
 # Conversion XLS CSV (pb sous linux)
 
 ```{r}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 library(xlsx)
 library(readxl)
 # recup identifiant
@@ -73,8 +74,8 @@ st_write(bornes, "../data/stationnement.gpkg", "bornes", delete_layer = TRUE)
 
 ```{r}
 library(mapsf)
-bondy <- st_read("G:/03_SIG/03_data/limites.gpkg", "bondy", quiet=F)
-rue <-  st_read( "G:/03_SIG/03_Data/03_SOCLE/bondy.gpkg", "ruePrincipale", quiet = TRUE)
+bondy <- st_read(paste0(chemin, "03_SOCLE/limites.gpkg"), "bondy", quiet=F)
+rue <-  st_read( paste0(chemin, "03_SOCLE/bondy.gpkg"), "ruePrincipale", quiet = TRUE)
 data <- st_read("../data/stationnement.gpkg", "bornes")
 data$X2018 <- as.numeric(data$X2018)/1000
 data$X2019 <- as.numeric(data$X2019)/1000
