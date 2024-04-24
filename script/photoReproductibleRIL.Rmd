@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
+title: "Lien GPS photo pour le RIL"
+=======
 title: "Lien GPS photo"
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 author: "B. Maranget"
 date: "27/02/2023"
 output: 
@@ -24,6 +28,12 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Mise en place lien pt GPS et photo dans le RIL
 
+<<<<<<< HEAD
+A noter : pb nb photos et nb de points, plusieurs photos pour 1 seul pt. Eliminer 
+toutes les photos de BAL
+
+=======
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 
 Un article : https://marionlouveaux.fr/fr/blog/gpx-tracks-and-leaflet-interactive-map/#go-to-folding-div permet de faire avec R et Leaflet...
 
@@ -41,6 +51,17 @@ les photos dans photos/ril
 
 ```{r , eval=TRUE}
 library(dplyr)
+<<<<<<< HEAD
+#library(ggplot2)
+library(leaflet)
+library(leafpop)
+#library(lubridate)
+#library(purrr)
+#library(readr)
+library(sf)
+library(mapsf)
+#library(tibble)
+=======
 library(ggplot2)
 library(leaflet)
 library(leafpop)
@@ -50,6 +71,7 @@ library(readr)
 library(sf)
 library(mapsf)
 library(tibble)
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 library(tidyr)
 library(exiftoolr) # metadonnées photo
 ```
@@ -62,6 +84,10 @@ library(exiftoolr) # metadonnées photo
 chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/11_RIL/"
 cheminSocle <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/"
+<<<<<<< HEAD
+cheminPhoto <- "D:/TELETRAVAIL/2024_04_18/ril/"
+=======
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
 ```
 
@@ -81,6 +107,12 @@ for (f in fic) {
   tmp <- st_read(paste0(cheminGPX,f), "waypoints")
   trace <- rbind(tmp, trace)
 }
+<<<<<<< HEAD
+# enlever l'altitude
+trace <- st_zm (trace, drop = T)
+st_write("../data/ril2024.gpkg", "rilMars2024Trace")
+=======
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 ```
 
 
@@ -97,15 +129,30 @@ dev.off()
 ```
 
 
+<<<<<<< HEAD
+concaténation de tous les waypoints dans le ril2024.gpkg       
+
+```{r}
+st_layers("../data/ril2024.gpkg")
+trace <- st_read("../data/ril2024.gpkg", "rilMars2024Trace")
+=======
 concaténation de tous les waypoints dans le mobPub.gpkg       
 
 ```{r}
 st_layers("../data/mobPublicitaire.gpkg")
 data <- st_read("../data/mobPublicitaire.gpkg")
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 ```
 
 
 
+<<<<<<< HEAD
+
+Verif date et heure au cas échéant
+
+```{r}
+trace
+=======
 ## Waypoints complémentaires
 
 Il existe des waypoints déjà enregistrés
@@ -117,10 +164,13 @@ equiv <- read.csv2(paste0(chemin,"2m/2m.csv"), fileEncoding = "UTF-8")
 sort(equiv$GPS)
 # 73-81 / 98 / 166-205
 num <- c(74:80,166:206)
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 ```
 
 
 
+<<<<<<< HEAD
+=======
 on récupère les couches du .gpkg correspondant
 
 ```{r}
@@ -140,18 +190,25 @@ data <- data [data$name %in% num, c("name")]
 # enlever l'altitude
 data <- st_zm (data, drop = T)
 ```
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 
 ## Photos
 
 
 ```{r}
+<<<<<<< HEAD
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg|*.JPG")
+=======
 cheminPhoto <- paste0(chemin, "2m/")
 cheminPhoto
 photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg")
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 photo
 ```
 
 
+<<<<<<< HEAD
+=======
 
 
 
@@ -168,6 +225,7 @@ setdiff(num, equiv$PLAN)
 Pas de différence entre les noms de photo et le num plan
 
 
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 ## Récup métadonnées photo
 
 ```{r}
@@ -182,6 +240,35 @@ test$SourceFile
 #install_exiftool()
 ```
 
+<<<<<<< HEAD
+
+mais date sur le modify date. il faut sauvegarder nom photo et modify date
+
+
+```{r}
+photoMeta <- test [, c("FileModifyDate", "SourceFile", "GPSLatitude", "GPSLongitude")]
+table(test$Make)
+# si c'est fait avec le huawei, je récupère les coords GPS...
+# Mais GENERAL IMAGING CO.
+test$GPSLatitude [test$Make != 'HUAWEI']
+# spatialisation
+photoMetasf <- st_as_sf(photoMeta, coords = c("GPSLongitude", "GPSLatitude"), crs=4326)
+photoMetasf <- st_transform(photoMetasf, 2154)
+mf_init(photoMetasf)
+fond()
+mf_map(photoMetasf, add=T)
+# tri si anomalie sur le lieu 
+summary(photoMeta$GPSLongitude)
+photoMeta [min(photoMeta$GPSLongitude),]
+st_write(photoMetasf, "../data/ril2024.gpkg", "photoMetaAvril", append = F)
+```
+
+
+# Jointure trace et photo
+
+
+au cas photo faite avec appareil photo
+=======
 Malheureusement la date création photo n'est pas valable
 
 Autre essai : appareil photo
@@ -205,6 +292,7 @@ mais date sur le modify date.
 
 
 Jointure equiv et trace
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 
 
 ```{r}
@@ -274,11 +362,21 @@ curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_
 
 ```{r, eval=TRUE}
 cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
+<<<<<<< HEAD
+data <- st_read("../data/ril2024.gpkg", "photoMetaAvril")
+data <- st_transform(data, crs = 4326)
+data$name <- rownames(data)
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
+  addPopupImages(data$SourceFile, group = "photos", width = 500) 
+=======
 data <- st_read("../data/mobPublicitaire.gpkg", "2m")
 data <- st_transform(data, crs = 4326)
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
   addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
   addPopupImages(data$chemin, group = "photos", width = 500) 
+>>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 ```
 

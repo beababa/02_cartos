@@ -92,6 +92,3 @@ ville <- st_transform(ville, crs(ortho))
 ortho_cropped <- crop(ortho, ville)
 ortho_masked <- mask(ortho_cropped, ville)
 ```
-
-
-```{r}

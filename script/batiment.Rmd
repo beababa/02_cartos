@@ -53,6 +53,7 @@ chemins
 
 ```{r}
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <- ("D:/03_SIG/03_03_Data/")
 ```
 
 # fichier POI du site web
@@ -84,14 +85,12 @@ On les a rouvert dans Qgis et on rajouté quelques éléments et déplacé des P
 rapport aux batiments...113 !
 
 ```{r}
-poi <- st_read(paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi")
+poi <- st_read(paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi3")
 table(poi$Catégories.de.point.dinterêt)
 poi[grep("alraux", poi$Title),]
 ```
 
-
-
-Catégories
+# Couleur et sous couleur pour catégories
 
 ```{r}
 tab <- table(poi$Catégories.de.point.dinterêt)
@@ -123,7 +122,8 @@ poi
 st_write(poi,paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi", delete_layer = T)
 ```
 
-Couleur et sous couleur pour 
+121 pts
+ 
 
 
 # fichier bat de Karina
@@ -298,7 +298,6 @@ class(jointure)
 ```{r}
 st_layers("../data/cadastre.gpkg")
 cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
-cadastre <- st_transform(cadastre, 4326)
 inter <- st_intersection(cadastre, poi)
 inter <- st_drop_geometry(inter)
 str(inter)
@@ -306,6 +305,53 @@ inter$geo_parcelle
 str(cadastre)
 cadastre$geo_parcelle
 jointure <- merge(cadastre [, c("adresse", "geo_parcelle")], inter, by = "geo_parcelle")
-st_write(jointure, "../data/poi.gpkg", "parcelle")
+st_write(jointure, "../data/poi.gpkg", "parcelle", delete_layer = T)
+```
+
+
+# recherche bâtiments en zone N
+
+Suite à réunion renaturation, point sur les bâtiments en zone N
+
+```{r}
+poi <- st_read(paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi")
+zone <- st_read("../data/pluiM2.gpkg", "zone")
+zoneN <- zone [zone$LIBELLE == 'N',]
+zoneN$num <- rownames(zoneN)
+inter <- st_intersection(poi, zoneN)
+st_layers("../data/cadastre.gpkg")
+bnb <- st_read("../data/bnb.gpkg")
+mf_map(bnb)
+inter <- st_intersection(bnb, zoneN)
+
+mf_map(cadastre, col = "antiquewhite1", border = NA)
+mf_map(inter, add = T)
+st_write(inter,"../data/bnb.gpkg", "zoneN", delete_layer=T)
+```
+
+
+Exclusion des bouts de batiment
+
+```{r}
+inter$aire <- st_area(inter)  
+hist(inter$aire [inter$aire < 200])
+summary(inter$aire)
+library(units)
+inter$aire <- drop_units(inter$aire)
+inter <- inter [inter$aire > 30,] 
+```
+
+Carto zone par zone
+
+```{r}
+zoneN
+zoneNinter <- names(table(inter$num))
+par(mfrow = c(3,2))
+for (z in zoneNinter){
+  z_sf <- zoneN  [zoneN$num == z,]
+  mf_map(z_sf, color="antiquewhite1", border=NA)
+  mf_map (inter, add = T)
+  mf_layout("zones N et batiments bnb", "bnb, avril 2024")
+}
 ```
 

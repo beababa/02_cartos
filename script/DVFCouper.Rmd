@@ -45,6 +45,32 @@ st_write(inter,"../../03_Data/03_SOCLE/bondy.gpkg", "routeBDTOPO", quiet = T)
 adresse <- st_read("../../03_Data/03_SOCLE/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D093_2021-06-15/BDTOPO/1_DONNEES_LIVRAISON_2021-06-00164/BDT_3-0_SHP_LAMB93_D093-ED2021-06-15/ADRESSES/ADRESSE.shp", quiet = T)
 inter <- st_intersection(adresse, limite)
 st_write(inter,"../../03_Data/03_SOCLE/bondy.gpkg", "adresseBDTOPO", quiet = T)
+```
 
+# dvf plus
+
+en avril 2024, exploration des dvf du cerema pour essayer de cerner périmètre ZAC Ourcq
+
+
+```{r}
+bondy <- st_read("../data/limitesSocle.gpkg", "Bondy")
+dvf <- st_read("../data/dvf+Bondy.gpkg")
+st_layers("../data/limitesSocle.gpkg")
+st_layers("../data/pluiM2.gpkg")
+zone <- st_read("../data/pluiM2.gpkg", "zone")
+ZAC <- zone [zone$LIBELLE == 'UP Bd1',]
+mf_map(ZAC)
+mf_map(dvf, add = T)
+mf_layout("ZAC Ourcq et dvf", "Cerema PLUi M2\navril 2024")
+```
+
+Déterminer le prix m2 pour ZAC Ourcq et le reste de Bondy
+
+```{r}
+# la ZAC
+inter <- st_intersection(dvf, ZAC)
+mf_map(inter)
+# le reste
+zoneReste <- st_difference(bondy, ZAC)
 ```
 

@@ -1,0 +1,133 @@
+---
+title: "fichiersdvf"
+author: "B. Maranget"
+date: "10/09/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+couper DVF et jointure avec cadastre
+
+
+# Import
+
+```{r}
+library(sf)
+library(mapsf)
+library(units)
+```
+
+
+```{r}
+dvf <- read.csv("../data/dvf2021s1.txt", sep = "|")
+dvfBondy <- dvf [dvf$Commune == "BONDY",]
+head(dvfBondy)
+cadastre <- st_read("")
+limite <- st_read("../../03_Data/limites.gpkg","bondy", quiet = T)
+inter <- st_intersection(data, limite)
+st_write(inter,"../../03_Data/03_SOCLE/bondy.gpkg", "routeBDTOPO", quiet = T)
+adresse <- st_read("../../03_Data/03_SOCLE/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D093_2021-06-15/BDTOPO/1_DONNEES_LIVRAISON_2021-06-00164/BDT_3-0_SHP_LAMB93_D093-ED2021-06-15/ADRESSES/ADRESSE.shp", quiet = T)
+inter <- st_intersection(adresse, limite)
+st_write(inter,"../../03_Data/03_SOCLE/bondy.gpkg", "adresseBDTOPO", quiet = T)
+```
+
+# dvf plus
+
+en avril 2024, exploration des dvf du cerema pour essayer de cerner périmètre ZAC Ourcq
+
+
+```{r}
+bondy <- st_read("../data/limitesSocle.gpkg", "Bondy")
+dvf <- st_read("../data/dvf+Bondy.gpkg")
+st_layers("../data/limitesSocle.gpkg")
+st_layers("../data/pluiM2.gpkg")
+zone <- st_read("../data/pluiM2.gpkg", "zone")
+ZAC <- zone [zone$LIBELLE == 'UP Bd1',]
+mf_map(ZAC)
+mf_map(dvf, add = T)
+mf_layout("ZAC Ourcq et dvf", "Cerema PLUi M2\navril 2024")
+```
+
+Déterminer le prix m2 pour ZAC Ourcq et le reste de Bondy
+
+intersections
+
+```{r}
+# la ZAC
+inter <- st_intersection(dvf, ZAC)
+mf_map(inter)
+# le reste
+zoneReste <- st_difference(bondy, ZAC)
+mf_map(zoneReste)
+inter2 <- st_intersection(dvf, zoneReste)
+```
+
+calculs moyennes
+
+tout confondu (on supprime juste les sbati à zéro)
+
+```{r}
+names(inter)
+inter <- inter [inter$sbati !=0,]
+moyenneZAC <- mean(inter$valeurfonc/inter$sbati) 
+inter2 <- inter2 [inter2$sbati !=0,]
+moyenneHorsZAC <- mean(inter2$valeurfonc/inter2$sbati, na.rm = T) 
+```
+
+3300 <> 3600 petite différence
+
+en filtrant uniquement sur les appartements
+
+```{r}
+dvfSel <- dvf [dvf$libtypbien %in% c('UN APPARTEMENT', 'BATI MIXTE - LOGEMENTS'),]
+mf_map(ZAC)
+mf_map(dvfSel, add = T)
+```
+
+
+
+```{r}
+dvfSel <- dvf
+# pour refaire les calculs sans récrire le code
+```
+
+même résultat
+
+les variables se croisent
+
+```{r}
+dvf$sbatiBooléen <- ifelse(dvf$sbati >0, "surface", "pas de surface")
+tab <- table(dvf$libtypbien, dvf$sbatiBooléen)
+tab2 <- round(prop.table(tab,2)*100,0)
+par(mar=c(4,15,4,4))
+barplot(tab2, beside = T, col = rainbow(17), names.arg = etik, las = 2, cex.names = 0.6, horiz = T)
+etik <- names(table(dvf$libtypbien))
+etik <- c(etik,etik)
+```
+
+avec quand même, bcp de dépendance sans surface
+
+```{r} 
+tab2
+tab3 <- tab2 [tab2 > 5]
+tab3
+etik <- c("pas de surf - bati indetermine",  "pas de surf - dependance", "surf dep", "surf appart", "surf maison")
+barplot(tab3, beside= T, col = terrain.colors(5), names.arg = etik, horiz = T, las = 1, main = "dvf, nb de transaction par type de bâti et surface (>5)", border=NA)
+```
+
