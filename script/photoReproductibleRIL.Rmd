@@ -1,9 +1,5 @@
 ---
-<<<<<<< HEAD
 title: "Lien GPS photo pour le RIL"
-=======
-title: "Lien GPS photo"
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 author: "B. Maranget"
 date: "27/02/2023"
 output: 
@@ -28,12 +24,10 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Mise en place lien pt GPS et photo dans le RIL
 
-<<<<<<< HEAD
 A noter : pb nb photos et nb de points, plusieurs photos pour 1 seul pt. Eliminer 
 toutes les photos de BAL
 
-=======
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
+
 
 Un article : https://marionlouveaux.fr/fr/blog/gpx-tracks-and-leaflet-interactive-map/#go-to-folding-div permet de faire avec R et Leaflet...
 
@@ -51,7 +45,6 @@ les photos dans photos/ril
 
 ```{r , eval=TRUE}
 library(dplyr)
-<<<<<<< HEAD
 #library(ggplot2)
 library(leaflet)
 library(leafpop)
@@ -61,7 +54,6 @@ library(leafpop)
 library(sf)
 library(mapsf)
 #library(tibble)
-=======
 library(ggplot2)
 library(leaflet)
 library(leafpop)
@@ -71,7 +63,6 @@ library(readr)
 library(sf)
 library(mapsf)
 library(tibble)
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 library(tidyr)
 library(exiftoolr) # metadonnées photo
 ```
@@ -84,10 +75,7 @@ library(exiftoolr) # metadonnées photo
 chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/11_RIL/"
 cheminSocle <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/"
-<<<<<<< HEAD
 cheminPhoto <- "D:/TELETRAVAIL/2024_04_18/ril/"
-=======
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
 ```
 
@@ -107,12 +95,9 @@ for (f in fic) {
   tmp <- st_read(paste0(cheminGPX,f), "waypoints")
   trace <- rbind(tmp, trace)
 }
-<<<<<<< HEAD
 # enlever l'altitude
 trace <- st_zm (trace, drop = T)
-st_write("../data/ril2024.gpkg", "rilMars2024Trace")
-=======
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
+st_write(trace,"../data/ril2024.gpkg", "rilMars2024Trace", delete_layer=T)
 ```
 
 
@@ -129,103 +114,42 @@ dev.off()
 ```
 
 
-<<<<<<< HEAD
+
 concaténation de tous les waypoints dans le ril2024.gpkg       
 
 ```{r}
 st_layers("../data/ril2024.gpkg")
 trace <- st_read("../data/ril2024.gpkg", "rilMars2024Trace")
-=======
-concaténation de tous les waypoints dans le mobPub.gpkg       
-
-```{r}
-st_layers("../data/mobPublicitaire.gpkg")
-data <- st_read("../data/mobPublicitaire.gpkg")
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 ```
 
-
-
-<<<<<<< HEAD
 
 Verif date et heure au cas échéant
 
 ```{r}
-trace
-=======
-## Waypoints complémentaires
-
-Il existe des waypoints déjà enregistrés
-
-On part du fichier d'équivalence pour trouver les identifiants des waypoints
-
-```{r}
-equiv <- read.csv2(paste0(chemin,"2m/2m.csv"), fileEncoding = "UTF-8")
-sort(equiv$GPS)
-# 73-81 / 98 / 166-205
-num <- c(74:80,166:206)
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
+class(trace$time)
 ```
 
+https://demandred.gitbooks.io/introduction-a-r-pour-les-chatons/content/les-structures-de-donnees-avancees/les-dates-en-r.html
 
 
-<<<<<<< HEAD
-=======
-on récupère les couches du .gpkg correspondant
+format POSIXct, données issues du GPS.
 
-```{r}
-couche <- st_layers("../data/mobPublicitaire.gpkg")
-couche
-numCouche <- c(2,7)
-couche <- couche$name [numCouche]
-data <- NULL
-for (c in couche){
-  d <- st_read("../data/mobPublicitaire.gpkg", c)
-  d <- st_transform(d, crs = 2154)
-  data <- rbind(d, data)
-}
-sort(data$name)
-data$name <- as.integer(data$name)
-data <- data [data$name %in% num, c("name")]
-# enlever l'altitude
-data <- st_zm (data, drop = T)
-```
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
+Cette seconde classe permet de représenter les dates également, mais en tennant compte cette fois de l'heure précise (heures et minutes) du jour en question. Pour créer une date ainsi, il faut utiliser la fonction asPOSIXct() . Cette fonction comporte trois arguments principaux :
 
-## Photos
+    Le premier argument qui contient la chaine de la date
+    Un second argument format qui contient le format de cette chaine
+    Un argument tz qui indique le fuseau horraire de la date.
+
+
+# Photos
 
 
 ```{r}
-<<<<<<< HEAD
 photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg|*.JPG")
-=======
-cheminPhoto <- paste0(chemin, "2m/")
-cheminPhoto
-photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg")
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
-photo
 ```
+72 photos
 
 
-<<<<<<< HEAD
-=======
-
-
-
-### Verif données
-
-On vérifie que les noms de photos correspondent bien au fichier equiv
-
-
-```{r}
-num <- gsub(".jpg", "",photo)
-equiv$PLAN
-setdiff(num, equiv$PLAN)
-```
-Pas de différence entre les noms de photo et le num plan
-
-
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
 ## Récup métadonnées photo
 
 ```{r}
@@ -240,7 +164,6 @@ test$SourceFile
 #install_exiftool()
 ```
 
-<<<<<<< HEAD
 
 mais date sur le modify date. il faut sauvegarder nom photo et modify date
 
@@ -268,7 +191,6 @@ st_write(photoMetasf, "../data/ril2024.gpkg", "photoMetaAvril", append = F)
 
 
 au cas photo faite avec appareil photo
-=======
 Malheureusement la date création photo n'est pas valable
 
 Autre essai : appareil photo
@@ -281,6 +203,7 @@ test <- lireMeta(file_names)
 test$FileModifyDate
 grep("ude", names(test))
 grep("GPS", names(test))
+test <- test [test$Make!="HUAWEI",]
 ```
 
 pas de long lat, ni de GPS grrrr
@@ -292,7 +215,7 @@ mais date sur le modify date.
 
 
 Jointure equiv et trace
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
+
 
 
 ```{r}

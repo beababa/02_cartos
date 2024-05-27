@@ -1,5 +1,5 @@
 ---
-title: "affichage photo dans QGIS"
+title: "réduction taille photo dans QGIS"
 author: "B. Maranget"
 date: "27/02/2023"
 output: 
@@ -43,6 +43,7 @@ library(mapsf)
 library(tibble)
 library(tidyr)
 library(exiftoolr) # metadonnées photo
+library(magick)
 ```
 
 
@@ -50,7 +51,7 @@ library(exiftoolr) # metadonnées photo
 
 
 ```{r}
-chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
+gpkg <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/15_PARCS ET JARDINS/campagneArbre.gpkg"
 chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/"
 ```
 
@@ -59,101 +60,26 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/"
 # Données
 
 
-## Concaténation des .gpx
+## tables SIG
 
-On récupère les waypoints (la 1e couche par défaut) uniquement
 
 ```{r}
-fic <- list.files(chemin, ".gpx")
-# on veut une 
-# J'ai une correspondance point gps / point photo dans un fichier
-# mais j'ai aussi la date et l'heure
-st_write(trace,"../data/mobPublicitaire.gpkg", "165_206", delete_layer = T )
+data <- st_read(gpkg, "arbresProteg4326")
+data
 ```
 
-
-Première carto
-
-```{r}
-png("../img/mobUrbain2mAvt.png")
-mf_init(trace)
-fond()
-mf_map(trace, add = T)
-mf_label(trace, var ="name", overlap = F , halo = T, cex = 1)
-mf_layout("Points GPS mobilier publicitaire", "recup 26 déc. 2023")
-dev.off()
-```
-
-
-concaténation de tous les waypoints dans le mobPub.gpkg       
-
-```{r}
-st_layers("../data/mobPublicitaire.gpkg")
-data <- st_read("../data/mobPublicitaire.gpkg")
-```
-
-
-
-## Waypoints complémentaires
-
-Il existe des waypoints déjà enregistrés
-
-On part du fichier d'équivalence pour trouver les identifiants des waypoints
-
-```{r}
-equiv <- read.csv2(paste0(chemin,"2m/2m.csv"), fileEncoding = "UTF-8")
-sort(equiv$GPS)
-# 73-81 / 98 / 166-205
-num <- c(74:80,166:206)
-```
-
-
-
-on récupère les couches du .gpkg correspondant
-
-```{r}
-couche <- st_layers("../data/mobPublicitaire.gpkg")
-couche
-numCouche <- c(2,7)
-couche <- couche$name [numCouche]
-data <- NULL
-for (c in couche){
-  d <- st_read("../data/mobPublicitaire.gpkg", c)
-  d <- st_transform(d, crs = 2154)
-  data <- rbind(d, data)
-}
-sort(data$name)
-data$name <- as.integer(data$name)
-data <- data [data$name %in% num, c("name")]
-# enlever l'altitude
-data <- st_zm (data, drop = T)
-```
 
 ## Photos
 
 
 ```{r}
-cheminPhoto <- paste0(chemin, "2m/")
+cheminPhoto <- paste0(chemin2, "arbresAproteger/")
 cheminPhoto
-photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg")
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG")
 photo
 ```
 
 
-
-
-
-### Verif données
-
-On vérifie que les noms de photos correspondent bien au fichier equiv
-
-
-```{r}
-num <- gsub(".jpg", "",photo)
-equiv$PLAN
-setdiff(num, equiv$PLAN)
-```
-Pas de différence entre les noms de photo et le num plan
 
 
 ## Récup métadonnées photo
@@ -167,106 +93,54 @@ test$FileCreateDate
 test$FileModifyDate
 test$FileAccessDate
 test$SourceFile
+test
 #install_exiftool()
 ```
 
-Malheureusement la date création photo n'est pas valable
-
-Autre essai : appareil photo
-
-
-```{r}
-chemin <- "C:/Users/bmaranget/Pictures/photo/"
-file_names <- list.files(path.expand(chemin), pattern = "*.JPG")
-test <- lireMeta(file_names)
-test$FileModifyDate
-grep("ude", names(test))
-grep("GPS", names(test))
-```
-
-pas de long lat, ni de GPS grrrr
-
 mais date sur le modify date.
 
-
-# Jointure equiv et data
-
-
-Jointure equiv et trace
+## Réduction taille photo
 
 
 ```{r}
-joint <- merge(data, equiv, by.x = "name", by.y="GPS")
-# 2 pts perdus
-setdiff(data$name, joint$name)
-equiv$GPS
-# pas de doublons
-table(data$name)
-png("../img/mobUrbain2m.png")
-mf_init(joint)
-fond()
-mf_map(joint, add =T)
-
-mf_label(joint, var="TERRAIN", halo = T, overlap= F, cex = 1)
-mf_layout("Mobilier urbain 2m²", "trace GPS\nDéc 2023")
-dev.off()
+i <- 1
+for (i in  c(1:21)){
+  nom <- test$FileName [i]
+  img <- image_read(test$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "200")
+  image_write(img2, path = paste0("../img/", nom), format = NULL, quality = NULL,
+              depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
+}
 ```
 
-![](../img/mobUrbain2mAvt.png)![](../img/mobUrbain2m.png)
 
-Vérif
 
-2 points 193
 
-```{r, eval=FALSE}
-pt <- data [data$name %in% c(193,194,195),]
-png("../img/pointGPS.png")
-mf_init(st_buffer(pt,500))
-fond()
-mf_map(pt, add =T)
-mf_label(pt, var = "name", halo = T)
-mf_layout ("pb PTS Av Galliéni", "pts GPS\ndéc 2023")
-dev.off()
-```
 
-![](../img/pointGPS.png)
-
-Enregistrement
-
-```{r}
-names(joint)
-st_write(joint,"../data/mobPublicitaire.gpkg", "2m", append = F)
-```
 
 
 # Leaflet
 
 
-Il s'agit maintenant de récupérer les photos et de projeter en leaflet
 
 
-pour mémoire, les photos sont dans file_names
 
-```{r}
-joint$chemin <- paste0(cheminPhoto, joint$PLAN, ".jpg")
-joint$chemin
-st_write(joint,"../data/mobPublicitaire.gpkg", "2m", append=F)
+
+```{r, eval=F}
+# traitement des NA
+data$photos [is.na(data$photos)] <- "photo.png" 
+data$photoC <- paste0("../img/", data$photos)
+data$photoC
+data$lieuL <- paste0(data$lieu, "<br />")
+st_write(data,"../data/leafletPhoto.gpkg", "data", delete_layer = T)
 ```
 
-Icone appareil photo
-
-```{r}
-curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_and_leaflet_map/240px-Icone_appareil_photo.png",
-                    destfile = "../img/240px-Icone_appareil_photo.png")
-```
 
 ```{r, eval=TRUE}
-cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
-data <- st_read("../data/mobPublicitaire.gpkg", "2m")
-data <- st_transform(data, crs = 4326)
+data <- st_read("../data/leafletPhoto.gpkg","data")
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
-  addPopupImages(data$chemin, group = "photos", width = 500) 
+  addMarkers(data = data, group= "data",label = ~type, popup = ~lieuL) %>%
+  addPopupImages(image = data$photoC, group = "data", width = 200) 
 ```
 

@@ -1,0 +1,386 @@
+---
+title: "Arrêtés dpt récup via internet"
+author: "B. Maranget"
+date: "20/10/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+https://seinesaintdenis.fr/l-essentiel-du-departement/le-conseil-departemental-de-la-seine-saint-denis/les-arretes-reglementaires/
+
+
+```{r}
+library(rvest)
+page  <- read_html("https://seinesaintdenis.fr/l-essentiel-du-departement/le-conseil-departemental-de-la-seine-saint-denis/les-arretes-reglementaires/arretes-du-22-mars-2023")
+get ("https://seinesaintdenis.fr/IMG/pdf/17678-2023_094.pdf")
+```
+
+
+```{r}
+download.file("https://seinesaintdenis.fr/IMG/pdf/17670-2023_094.pdf", "../data/test.pdf")
+https://seinesaintdenis.fr/IMG/pdf/19440-2024-180.pdf
+https://seinesaintdenis.fr/IMG/pdf/19444-2024_179.pdf
+https://seinesaintdenis.fr/IMG/pdf/17740-2023_137.pdf
+https://seinesaintdenis.fr/IMG/pdf/18079-2023_203.pdf
+https://seinesaintdenis.fr/IMG/pdf/17948-2023_201.pdf
+https://seinesaintdenis.fr/IMG/pdf/17958-2023_200.pdf
+https://seinesaintdenis.fr/IMG/pdf/17290-2023_202.pdf
+fic <- paste0("1944", seq(1,12, by=1),"-", "2024_",seq(1,200, by=1))
+for(i in seq_along(urls)){
+    download.file(urls[i], destinations[i], mode="wb")
+}
+https://seinesaintdenis.fr/IMG/pdf/17729-2023_106.pdf
+test <- list.files("https://seinesaintdenis.fr/IMG/pdf/", pattern = ".pdf")
+test <- list.files(".", pattern = ".pdf")
+
+```
+
+
+```{r}
+constitution référentiel batiments à partir 
+
+- export OSM : building = public , leisure = * , amenity = *
+
+- référentiel batiment Karina + ERP
+
+L'objectif est d'obtenir un fichier :
+
+nom / type / tel / adresse / référent structure / codeBat / catWeb
+
+Pas de fichier récupéré au niveau du standard / accueil
+
+Au niveau géographique, on constitue des POI à l'intérieur de bâtiment à l'intérieur d'une emprise (parcelle cadastrale)
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(osmdata)
+library(tidyverse)
+```
+
+
+chemins
+
+```{r}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <- ("D:/03_SIG/03_03_Data/")
+```
+
+# fichier POI du site web
+
+```{r}
+# encodage par défaut
+Sys.getlocale("LC_CTYPE")
+data <- read.csv2("../data/exportPOIsiteVille.csv", dec ="," ,fileEncoding = "latin3")
+table(data$Catégories.de.point.dinterêt,useNA = "always")
+# suppression categ Tx. 406 - 210
+data <- data [data$Catégories.de.point.dinterêt != "Travaux",]
+# ne suffit pas 196 encore 21
+ind <- grep("MOMENTA|RALENTISSEUR|TATION|préfectoral|PREFECTORAL|BUS",data$Title, ignore.case = T)
+data <- data [-ind,]
+# 175 / 68
+head(data)
+data <- data [ !is.na(data$Position_lat),]
+datasf <- st_as_sf(data, coords = c("Position_lng",  "Position_lat"), crs = 4326)
+mf_map(datasf, type = "typo", var = "Catégories.de.point.dinterêt")
+table(datasf$Catégories.de.point.dinterêt)
+mf_label(datasf, var = "Title")
+st_write(datasf, "../data/poi.gpkg", "siteWeb", delete_layer = T)
+```
+
+
+Au final, 64 points
+
+On les a rouvert dans Qgis et on rajouté quelques éléments et déplacé des POI par 
+rapport aux batiments...113 !
+
+```{r}
+poi <- st_read(paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi3")
+table(poi$Catégories.de.point.dinterêt)
+poi[grep("alraux", poi$Title),]
+```
+
+# Couleur et sous couleur pour catégories
+
+```{r}
+tab <- table(poi$Catégories.de.point.dinterêt)
+write.csv(tab, "../data/categPOI.csv", fileEncoding = "UTF-8")
+categ <- read.csv2("../data/categPOIcorrige.csv", fileEncoding = "latin3")
+str(categ)
+str(poi)
+poi <- merge (poi, categ, by.x = "Catégories.de.point.dinterêt", by.y = "Var1")
+# couleurs (bordeaux, vert, bleu, jaune, vert clair, fushia, rose, vert clair.)
+tab <- table(poi$categorie)
+couleurs <- c("#a04c64","#FF7F50", 
+              "#b0c8ed", "#f3dfa3", 
+              "#ecdbdf",  "#f9c6db",
+              "#79D527" , "#8abeb7",
+              "#e6e7e3", "#c3e096" )
+sousCouleurs <- c("#FFE4E1", "#FAEBD7", 
+                  "#F0F8FF", "#F5F5DC", 
+                  "#FFF0F5", "#FFF0F5", 
+                  "#F0FFF0", "#F0F8FF", 
+                   "#F5F5F5", "#F5FFFA")
+df <- data.frame(couleurs, sousCouleurs, names(tab), tab)
+names(tab)
+par(mar = c(8,4,4,4), mfrow = c(2,1))
+barplot(df$Freq, col = couleurs, names.arg = df$names.tab., las =2,  border = NA)
+barplot(df$Freq+1, col = sousCouleurs, names.arg = df$names.tab., las =2,  border = NA)
+poi  <- merge(poi, df, by.x = "categorie", by.y = "Var1")
+poi <- poi [, c("categorie", "Catégories.de.point.dinterêt", "Title", "Position_address", "couleurs.x" , "sousCouleurs")]
+poi
+st_write(poi,paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi", delete_layer = T)
+```
+
+121 pts
+ 
+
+
+# fichier bat de Karina
+
+
+```{r}
+bat <- st_read(paste0(chemin, "08_VOIRIE/batiment.gpkg"), "batkarinageocoded2")
+table(bat$Etablissements  )
+```
+
+
+231 obs
+
+# fichier ERP
+
+Dans Qgis, on a identifié les points non commerciaux ("o" dans colonne sref)
+
+```{r}
+erp <- st_read(paste0(chemin,"18_COMMERCE/erp.gpkg"), "erp", stringsAsFactors = T)
+head(erp)
+erp <- erp [erp$S.Réf. == "o",]
+st_write(erp, paste0(chemin, "03_SOCLE/batiment.gpkg"), "erpNonCommerciaux", fileEncoding = "UTF-8", delete_layer = T)
+```
+
+De  231 à 138 observations
+
+# OSM
+
+## Récupération des données
+
+On récupère les clés, on agrège les points pour sortir une liste.
+Les champs intéressants sont  :
+-
+```{r}
+champs <- c("name", "amenity", "school.FR", "phone", "addr.street", "addr.housenumber")
+```
+
+
+
+pour les crédits : "© OpenStreetMap contributors"
+
+```{r}
+
+town <- 'Bondy' 
+location <- town %>% opq()
+# initialisation variable de fin
+osm <- NULL
+```
+
+
+```{r}
+building <- location %>%
+   add_osm_feature(key = "building", 
+                   value = c("public")) %>%
+   osmdata_sf()
+amenity <- location %>%
+   add_osm_feature(key = "amenity") %>%
+   osmdata_sf()
+
+leisure <- location %>%
+   add_osm_feature(key = "leisure") %>%
+   osmdata_sf()
+```
+
+```{r}
+extraction <- function (cle) {
+    # indice des géométries à extraire
+  nb <- sapply(cle, length)
+  ind <- which(nb != "0")
+  # on élimine tjrs les 3 premiers
+  ind <- ind[-c(1, 2, 3)]
+  # on extrait les centroides de toutes les géométries
+  # on sélectionne les seuls champs intéressants
+  i <- 1
+  for (i in 1:length (ind)) {
+    centroides <- st_centroid(cle [[ind [i]]])
+    # pb des champs
+    champsReels <- names(centroides)
+    champsARajouter <- setdiff(champs, champsReels)
+    centroides [champsARajouter] <- "inexistant"
+    osm <- rbind(osm, centroides [, champs])
+    return(osm)
+  }
+}
+```
+
+```{r}
+osm <- extraction(building)
+osm <- extraction(amenity)
+osm <- extraction(leisure)
+```
+
+
+## Analyse des données récupérées
+
+```{r}
+table(osm$name, useNA = "always")
+```
+
+
+# Grille
+
+## Création
+
+Faire une grille (A:F et 1:4) pour les adressages (carreaux de 500m)
+
+
+```{r}
+poi <- st_read(paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi3")
+str(poi)
+grille <- st_make_grid(st_buffer(poi,500),  n= c(4,6) )
+grille <- st_as_sf(grille)
+mf_map(grille)
+mf_map(poi, add = T)
+chiffres <- rep(1:4, 6)
+lettres <- rep(LETTERS [1:6], each = 4)
+case <- paste0(chiffres, lettres)
+grille <- cbind(grille,case)
+mf_label(grille, var = "case", halo = 1)
+st_write(grille, paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille", delete_layer = T)
+```
+
+
+## Intersection
+
+
+```{r}
+rues <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023c")
+inter <- st_intersection(rues, grille)
+mf_map(grille)
+mf_map(poi, add = T)
+mf_map(rues, add = T)
+```
+
+
+## Liste
+
+```{r}
+index <- inter [, c("NOM_1_G", "case"), drop = T]
+write.csv(index [order (index$"NOM_1_G" ),], "../data/indexRues.csv", fileEncoding = "UTF-8")
+```
+
+
+# Zonage batiments et parcelle
+
+
+On discrétise à l'identique batiment (osm) et (parcelles p morales)
+
+en fait, on sélectionne bat et parcelle par rapport au point
+
+```{r}
+building <- location %>%
+   add_osm_feature(key = "building") %>%
+   osmdata_sf()
+```
+
+
+```{r}
+str(building$osm_polygons)
+inter <- st_intersection( building$osm_polygons [, c("name", "osm_id")], poi)
+# l'intersection renvoie un point et non pas un polygone dont je n'arrive pas à me débarasser...
+noms <- names (inter)
+inter <- st_drop_geometry(inter)
+class(inter)
+jointure <- merge (inter, building$osm_polygons [, "osm_id"] , by = "osm_id")
+jointure <- st_as_sf(jointure)
+st_write(jointure, "../data/poi.gpkg", "building", delete_layer = T)
+class(jointure)
+```
+
+
+```{r}
+st_layers("../data/cadastre.gpkg")
+cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
+inter <- st_intersection(cadastre, poi)
+inter <- st_drop_geometry(inter)
+str(inter)
+inter$geo_parcelle
+str(cadastre)
+cadastre$geo_parcelle
+jointure <- merge(cadastre [, c("adresse", "geo_parcelle")], inter, by = "geo_parcelle")
+st_write(jointure, "../data/poi.gpkg", "parcelle", delete_layer = T)
+```
+
+
+# recherche bâtiments en zone N
+
+Suite à réunion renaturation, point sur les bâtiments en zone N
+
+```{r}
+poi <- st_read(paste0(chemin, "03_SOCLE/batiment.gpkg"), "poi")
+zone <- st_read("../data/pluiM2.gpkg", "zone")
+zoneN <- zone [zone$LIBELLE == 'N',]
+zoneN$num <- rownames(zoneN)
+inter <- st_intersection(poi, zoneN)
+st_layers("../data/cadastre.gpkg")
+bnb <- st_read("../data/bnb.gpkg")
+mf_map(bnb)
+inter <- st_intersection(bnb, zoneN)
+
+mf_map(cadastre, col = "antiquewhite1", border = NA)
+mf_map(inter, add = T)
+st_write(inter,"../data/bnb.gpkg", "zoneN", delete_layer=T)
+```
+
+
+Exclusion des bouts de batiment
+
+```{r}
+inter$aire <- st_area(inter)  
+hist(inter$aire [inter$aire < 200])
+summary(inter$aire)
+library(units)
+inter$aire <- drop_units(inter$aire)
+inter <- inter [inter$aire > 30,] 
+```
+
+Carto zone par zone
+
+```{r}
+zoneN
+zoneNinter <- names(table(inter$num))
+par(mfrow = c(3,2))
+for (z in zoneNinter){
+  z_sf <- zoneN  [zoneN$num == z,]
+  mf_map(z_sf, color="antiquewhite1", border=NA)
+  mf_map (inter, add = T)
+  mf_layout("zones N et batiments bnb", "bnb, avril 2024")
+}
+```
+

@@ -53,7 +53,12 @@ bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
 st_layers("../data/cadastre.gpkg") 
 cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
 pmorale <- st_read("../data/cadastre.gpkg", "pmoraleOpendata")
+rue <- st_read("../data/rue2023.geojson")
+rue <- st_transform(rue, 2154)
+st_crs(rue) <- 2154
+# fichier des ads extraits pour l'occasion du tableau de bord Operis
 ads <- read.csv(paste0(chemin, "15_PARCS ET JARDINS/ads.csv"), fileEncoding = "UTF-8")
+# fichier envoyé par EE
 potentiel <-  read.csv(paste0(chemin, "15_PARCS ET JARDINS/parcellePotentiel.csv"), fileEncoding = "UTF-8")
 ```
 
@@ -62,12 +67,108 @@ cadastre : pas de zéro avt la section cadastrale
 
 
 ```{r}
-table(sapply(cadastre$code, nchar))
-substr(cadastre$code,1,3)
-cadastre [268,]
+# supprimer les espaces dans le fichier ads
+ads$Parcelles <- gsub(" ","", ads$Parcelles)
 # Eclatemetn de la chaine et extraction 1er terme
-eclate <- strsplit(ads$Parcelles, ",")
-ads$Parcelles2 <- sapply(eclate, "[",1)
+eclateADS <- strsplit(ads$Parcelles, ",")
+```
+
+Sélection des projets concernant au moins 2 parcelles
+
+```{r}
+# repérage des plus gros projets (concernant le plus gros nb de parcelle)
+table(sapply(eclateADS,length))
+ind <- which(sapply(eclateADS,length)> 1,)
+# 96 projets
+# parcelle - dossier : on fait une table d'équivalence
+dossier <- NA
+parcelle <- NA
+equiv <- data.frame(dossier, parcelle)
+for (i in ind){
+  parcelle <-  ads$Parcelles [i]
+  eclate <- unlist(strsplit(parcelle,","))
+    for (e in eclate){
+      tmp <- c(ads$Dossier [i],e)
+      equiv <- rbind(tmp, equiv)
+}
+}
+# uniquement 2023 24
+equiv$annee <- substr(equiv$dossier,9,11)
+table(equiv$annee)
+equiv <-  equiv [equiv$annee %in% c(" 23"," 24"),]
+```
+
+
+Préparation cadastre avec un code sans zéro comme dans le fichier ads
+
+Suppression de tous les espaces vides
+sélection de dossier dont la sélection commence par zéro
+
+
+```{r}
+cadastre$code <- gsub(" ", "", cadastre$code)
+table(substring(cadastre$geo_section,10,12))
+ind <- grep("^0", substring(cadastre$geo_section,10,12))
+# 2826
+cadastre$section <- substring(cadastre$geo_section,10,12)
+cadastre$section [ind] <- gsub("^0", "",cadastre$section [ind] )
+table(cadastre$section)
+cadastre$codeSansZero  <-  paste0(cadastre$section, cadastre$tex)
+```
+
+Jointure cadastre - ads
+
+```{r}
+equiv$parcelle
+ads_sf <- merge(cadastre [, "codeSansZero", drop= F], equiv, by.x="codeSansZero", by.y= "parcelle")
+ads_sf <- aggregate(ads_sf [, c("dossier")], by = list(ads_sf$dossier), length) 
+names(ads_sf) [1:2] <- c("Dossier","nbParcelles")
+mf_map(ads_sf)
+mf_layout("Autorisations d'urbanisme 2023-24 - Dossiers > 1 parcelle", "sources internes")
+# jointure avec les numéros de dossiers
+ads_sf <- merge(ads_sf, ads, by = "Dossier" )
+ads_sf
+st_write(ads_sf,"../data/ads1.gpkg", "grosDossiers", delete_layer = T)
+```
+
+pb enregistrement des fichiers
+
+carto pour les plus gros dossiers
+
+```{r}
+table(ads_sf$nbParcelles)
+# 10 cas
+nbdossier <- names(table(ads_sf$nbParcelles))
+nbdossier <- nbdossier [5:8]
+
+png("../img/grosDemandeur.png", res=1000, width = 6000, height = 6000)
+par (mfrow = c(4,3))
+for (nb in nbdossier){
+  adsGros  <- ads_sf [ads_sf$nbParcelles == nb,]
+  demandeur <- unique(adsGros$Demandeur...Identité)
+  for (d in demandeur){
+    print (d)
+    adsGrosDemandeur <- adsGros [adsGros$Demandeur...Identité == d,]
+    adsGros$Demandeur...Identité
+    mf_init(adsGrosDemandeur)
+    mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
+    #mf_label(rue, var = "name")
+    mf_map(adsGrosDemandeur, add = T)
+    mf_layout(paste0(adsGrosDemandeur$Demandeur...Identité, " - ", adsGrosDemandeur$nbParcelles) , "logiciel ADS")
+  }
+  
+}
+dev.off()
+```
+
+
+
+Sur les parcelles uniques
+
+
+```{r}
+eclateADS
+ads$Parcelles2 <- sapply(eclateADS, "[",1)
 # 3 % du total
 tab <- addmargins(table(is.na(ads$Parcelles2)))
 prop.table(table(is.na(ads$Parcelles2)))*100
@@ -76,168 +177,37 @@ ads$num <- gsub("[A-Z]", "", ads$Parcelles2)
 ads$section <- gsub("[0-9]","", ads$Parcelles2)
 # rajout des zéros
 potentiel$code <- substr(potentiel$N.PARCELLE,10,19)
-potentiel$code
-ads$numNB <- nchar(ads$num)
-ads$sectionNB <- nchar(ads$section)
-#ads$section <- ifelse(ads$sectionNB == 1 , paste0("0",ads$section), ads$section)
-ads$num2 <- ifelse(ads$numNB == 1, paste0("000", ads$num),
-               ifelse(ads$numNB == 2,paste0("00", ads$num),
-                 ifelse(ads$numNB == 3, paste0("0", ads$num), ads$num)))
-ads$num2
-ads$code <- paste0(ads$section, ads$num2)
-cadastre$code
-res <- merge(cadastre, ads, by = "code")
-# 282 sur 
 potentiel$code <- gsub("^0", "", potentiel$code)
-res <- merge(res, potentiel, by = "code")
-mf_map(bondy)
+potentiel$code
+cadastre$code
+table(cadastre$section)
+table(ads$section)
+ads$num
+ads$code <- paste0(ads$section, ads$num)
+cadastre$codeSansZero
+ads <- merge(cadastre, ads, by.x = "codeSansZero", by.y= "code")
+mf_map(res)
+mf_layout("ADS 1 parcelle 2023-24", "logiciel ADS")
+st_write(res, "../data/renaturation1.gpkg", "ads", delete_layer = T)
+res
+names(res)
+# 461 sur 500 
+potentiel$code
+potentiel$code <- gsub("^0", "", potentiel$code)
+res$code
+res <- merge(ads, potentiel, by = "code")
+#15 cadastre - ads - potentiel
+mf_map(ads)
 st_layers("../data/cadastre.gpkg")
 section <- st_read("../data/cadastre.gpkg", "section")
+mf_init(res)
 mf_map(section, add = T)
 mf_label(section, var = "tex")
-mf_map(res, add = T)
+mf_map(res, col ="red", border = NA, add = T)
+names(res)
+resSel <- res [, c("code", "TYPE", "TYPE.PROP", "Dossier", "ADRESSE", "proprietaire")]
+resSel
+st_write(resSel,"../data/renaturation4.gpkg", "potentiel", delete_layer = T)
 ```
 
-
-# Traitement
-
-Intersection rue et cadastre pour récupérer les rues non cadastrées
-On récupère en fait le nb d'intersection que l'on rend booléen
-
-```{r}
-inter <- st_intersection(rue, cadastre)
-interMat <- st_intersects (rue, cadastre)
-length(interMat [[6]])
-# les lignes vides marquent les rues non cadastrées.
-rue$inter <- sapply(interMat, length)
-table(rue$inter)
-# longueur rue non cadastré
-rueNonCadastre <- rue [rue$inter == 0,]
-sum(st_length(rueNonCadastre))
-# on met à jour le champs longueur également
-rue$Longueur <- st_length(rue)
-```
-
-57 km de voirie non cadastrée.
-
-```{r}
-rueCadastre <- rue [rue$inter != 0,]
-sum(st_length(rueCadastre))
-```
-
-36 km de voirie cadastrée
-
-
-```{r}
-table(rue$inter)
-rue$cadastre <- ifelse(rue$inter == 0, "non", "oui") 
-tab  <- aggregate(st_length(rue), by = list(rue$cadastre), sum)
-st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
-```
-
-
-Reprise de l'attribut
-
-```{r}
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
-str(rue)
-# éclatement terme et nom rue
-
-```
-
-
-Rectification à la main pour les rues cadastrées ou non
-
-```{r}
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
-# Ecrasement du fichier d'origine
-st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
-```
-
-Diff usage et logique (cadastré ou non)
-
-
-Récup de l'usage à partir de la delib de 2019 (sous Qgis)
-On essaie ensuite de trouver les incohérences : rues d'usage privées non cadastrées
-
-```{r}
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
-rue$incoherence [rue$cadastre == "non"& rue$usage == "privé"] <- "incohérence"
-table(rue$incoherence)
-sort(rue$NOM_1_G [rue$incoherence == "incohérence"])
-st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
-```
-
-export liste
-
-
-```{r}
-str(rue)
-write.csv(rue [ , c("NATURE", "NOM","Longueur", "NOMnumero", "cadastre", "usage", "incoherence"), drop = TRUE], "../data/ruePriveNonCadastre.csv",  fileEncoding = "UTF-8")
-```
-
-export num rues
-
-```{r}
-petiteRue <- rue [!is.na(rue$NOMnumero), c("NOMnumero", "NOM"), drop = T]
-names(petiteRue) <- c("Nom", "numéro")
-petiteRue$numéro <- as.integer(petiteRue$numéro)
-petiteRue <- petiteRue [order(petiteRue$numéro),]
-write.csv(petiteRue, "../data/petiteRue.csv", fileEncoding = "UTF-8", row.names = F)
-```
-
-
-
-# Cartographie
-
-
-rue cadastrée / non cadastrée
-
-```{r}
-png("../img/inter.png", width = 1000, height = 1200, res = 120)
-mf_init(rue)
-mf_map(cadastre, col = "antiquewhite2", border = "antiquewhite1", add = T)
-mf_map(rue, type = "typo" , var = "cadastre", pal = c("darkorange1", "darkolivegreen2"), leg_pos = NA, add = T)
-mf_inset_on(fig = c(0.75, 0.95, 0.84, .99))
-# draw the histogram
-par(mar = c(0, 0, 1.7, 0))
-barplot(table(rue$cadastre), col = c("darkorange1", "darkolivegreen2"), border = NA,
-  axes = F, names.arg = "",
-  xlab = "", ylab = "", main = "", space=0, width = 0.1, xlim = c(0,1)
-)
-axis(
-  side = 1, las = 2, tick = FALSE, line = -.9,
-  cex.axis = .5, labels = c("non", "oui"), at = c(0.03,0.14)
-)
-axis(
-  side = 2, las = 2, tick = T, 
-  cex.axis = .5
-)
-
-title("nb rues",
-  cex.main = .8,
-  font.main = 1, adj = 0
-)
-# close the inset
-mf_inset_off()
-# Add map layout
-mf_layout("Distinction voirie cadastrée / non cadastrée", "sources : cadastre 2022 & rues")
-dev.off()
-```
-
-![](../img/inter.png)
-
-rue incohérente
-
-
-```{r}
-png("../img/incoherence.png", width = 1000, height = 1200, res = 120)
-mf_init(rue [rue$incoherence == "incohérence",])
-mf_map(cadastre, col = "antiquewhite2", border = "antiquewhite1", add = T)
-mf_map(rue , type = "typo" , var = "incoherence", pal = c("darkorange1", "darkolivegreen2"), leg_pos = NA, add = T)
-mf_label(rue [rue$incoherence == "incohérence",], var = "NOM")
-# Add map layout
-mf_layout("Voirie non cadastrée et pourtant privée", "sources : cadastre 2022 & rues")
-dev.off()
-```
 
