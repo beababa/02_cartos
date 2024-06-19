@@ -1,5 +1,5 @@
 ---
-title: "arbres"
+title: "stats sur renaturation"
 author: "B. Maranget"
 date: "11/04/2023"
 output: 
@@ -72,6 +72,7 @@ renaturation$nom
 sum(renaturation$st_area_sh [renaturation$nom!="n.c."])
 # pour mémoire le MOS est à 573 M pour les espaces verts artificialisés
 sum(renaturation$st_area_sh [renaturation$nom!="n.c."])/55000
+# suppression units pour faire le barplot
 library(units)
 renaturation$st_area_sh <- drop_units(renaturation$st_area_sh)
 hist(renaturation$st_area_sh)
@@ -84,6 +85,17 @@ barplot(sort(renaturation$st_area_sh),
         main = "Renaturation - liste des espaces par aire")
 dev.off()
 ```
+
+# Extraction sur liste officielle parcs et jardins
+
+En juin 2024, maj des mesures
+
+clé de jointure par rapport à un code
+
+```{r}
+write.csv(renaturation [,c("nom","st_area_sh"), drop = T], "../data/rapideParcJardin.csv")
+```
+
 
 
 ```{r}

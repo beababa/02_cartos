@@ -1,0 +1,182 @@
+---
+title: "stats sur renaturation"
+author: "B. Maranget"
+date: "11/04/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+statistiques sur les potentiels de renaturation.
+
+81 ha de surface au total
+
+identifier les éléments et vérifier
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/15_PARCS ET JARDINS/"
+chemin <- "D:/03_SIG/03_03_Data/15_PARCS ET JARDINS/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+```
+
+
+
+# La couche renaturation
+
+
+Cette couche proposée par l'IPR permet de voir tous les espaces verts potentiels, notamment
+les espaces verts des résidences sociales.
+
+## données
+
+
+
+```{r}
+st_layers(paste0(chemin, "renaturation.gpkg"))
+renaturation <- st_read(paste0(chemin, "renaturation.gpkg"), "bondymodifOCT")
+str(renaturation)
+renaturation$st_area_sh <- st_area(renaturation)
+sum(renaturation$st_area_sh)/55000
+renaturation$nom
+sum(renaturation$st_area_sh [renaturation$nom!="n.c."])
+# pour mémoire le MOS est à 573 M pour les espaces verts artificialisés
+sum(renaturation$st_area_sh [renaturation$nom!="n.c."])/55000
+# suppression units pour faire le barplot
+library(units)
+renaturation$st_area_sh <- drop_units(renaturation$st_area_sh)
+hist(renaturation$st_area_sh)
+renaturation <- renaturation [order(renaturation$st_area_sh),]
+png("../img/renaturation.png", width = 4400, height = 4000, res = 600)
+par(mar = c(4,14,2,2))
+barplot(sort(renaturation$st_area_sh), 
+        names.arg = renaturation$nom, 
+        las=2, cex.names = 0.4, horiz = T,
+        main = "Renaturation - liste des espaces par aire")
+dev.off()
+```
+
+# Extraction sur liste officielle parcs et jardins
+
+En juin 2024, maj des mesures
+
+clé de jointure par rapport à un code
+
+```{r}
+write.csv(renaturation [,c("nom","st_area_sh"), drop = T], "../data/rapideParcJardin.csv")
+```
+
+
+
+```{r}
+table(as.integer(arbres$nbArbres), arbres$statut)
+
+agg <- aggregate(as.integer(arbres$nbArbres), by = list(statut=arbres$statut), sum)
+names(agg)[2] <- "nb"
+knitr::kable(agg)
+
+write.csv(agg,"../data/nbArbres.csv")
+```
+
+rues
+
+```{r}
+rue <- st_read(paste0(chemin2,"rue.gpkg"), "rueCadastre")
+head(rue)
+grep ("BENHA", rue$NOM_1_G)
+write.csv(rue [, c("NATURE", "NOM_1_G", "NOM"), drop=T],"../data/rue.csv", fileEncoding = "UTF-8")
+```
+
+
+liste alignement de novembre 2023
+
+La liste comporte de nb erreurs de saisie.
+
+Après avoir tenté de faire un dictionnaire de données, je suis finalement partie sur une jointure classique.
+
+```{r}
+arbres <- read.csv("../data/arbres.csv", fileEncoding = "UTF-8")
+head(rue)
+# ratpatrier les noms de rue à la place des num
+rue$NOM_1_G [  grep("^[0-9]",rue$NOM_1_G )] <- rue$NOMnumero [  grep("^[0-9]",rue$NOM_1_G )]
+arbres$NOM <- toupper(arbres$rue)
+arbres$NOM <- gsub ("É|È", "E", arbres$NOM)
+arbres$NOM <- gsub ("ALLEE", "ALL", arbres$NOM)
+arbres$NOM <- gsub ("ALLEE|ALLE", "ALL", arbres$NOM)
+arbres$NOM <- gsub ("AVENUE", "AV", arbres$NOM)
+arbres$NOM <- gsub ("RUE", "R", arbres$NOM)
+arbres$NOM <- gsub ("RAMPE", "RPE", arbres$NOM)
+arbres$NOM <- gsub ("IMPASSE", "IMP", arbres$NOM)
+arbres$NOM <- gsub ("CHEMIN", "CH", arbres$NOM)
+arbres$NOM <- gsub ("VILLA", "VLA", arbres$NOM)
+arbres$NOM <- gsub ("PLACE", "PL", arbres$NOM)
+# suppression des espaces en fin de caractères
+arbres$NOM <- gsub ("\\s+$", "", arbres$NOM)
+arbres$NOM
+```
+
+jointure
+
+
+
+# recup alignements d'arbres
+
+```{r}
+
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023")
+alignement <- read.csv("../data/alignement.csv", fileEncoding = "UTF-8")
+chercher <- function (i, col) {
+  res <- rue$NOM [grep(alignement$CODE [i], rue [, col])]
+  nb <- sapply(res, length)
+  ind <- which(nb >1)
+  res2 <- lapply(ind, chercher)
+  }
+res <- chercher(1, "NOM")
+res <- lapply(c(1:22), chercher)
+
+# tout ceux qui ont 1 ceux qui ont pl de 1 on distigue avec le type
+
+
+joint <- merge(rue, arbres, by.x = "NOM_1_G", by.y = "NOM")
+setdiff(arbres$NOM, joint$NOM_1_G)
+```
+
+
+Pour l'école JF Primaire, poser la question
+
+
+```{r}
+st_write(joint, paste0(chemin, "campagneArbre.gpkg"), "alignement", fileEncoding = "UTF-8", delete_layer = T)
+
+```
+

@@ -58,8 +58,8 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/"
 
 
 ```{r}
-data <- st_read(gpkg, "arbresProteg4326")
-data
+data <- st_read(gpkg, "arbre_protg4326")
+# verif proj
 ```
 
 
@@ -69,7 +69,7 @@ data
 ```{r}
 cheminPhoto <- paste0(chemin2, "arbresAproteger/")
 cheminPhoto
-photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG")
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG|.jpg")
 photo
 ```
 
@@ -89,6 +89,7 @@ test$FileAccessDate
 test$SourceFile
 test
 #install_exiftool()
+names(test)
 ```
 
 mais date sur le modify date.
@@ -98,7 +99,7 @@ mais date sur le modify date.
 
 ```{r}
 i <- 1
-for (i in  c(1:21)){
+for (i in  c(1:length(test$FileModifyDate))){
   nom <- test$FileName [i]
   img <- image_read(test$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
   img2 <- image_scale(img, geometry = "200")
@@ -132,6 +133,7 @@ st_write(data,"../data/leafletPhoto.gpkg", "data", delete_layer = T)
 
 ```{r, eval=TRUE}
 data <- st_read("../data/leafletPhoto.gpkg","data")
+#µ attention proj 4326
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
   addMarkers(data = data, group= "data",label = ~type, popup = ~lieuL) %>%
