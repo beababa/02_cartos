@@ -1,0 +1,191 @@
+---
+title: "réduction taille photo dans QGIS"
+author: "B. Maranget"
+date: "27/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Réduction de la taille des photos pour les insérer dans leaflet
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(dplyr)
+library(leaflet)
+library(leafpop)
+library(sf)
+library(mapsf)
+library(exiftoolr) # metadonnées photo
+library(magick)
+```
+
+
+## Chemins
+
+
+```{r}
+gpkg <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/15_PARCS ET JARDINS/campagneArbre.gpkg"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/"
+```
+
+
+
+# Données
+
+
+## coordonnées GPS recupérées
+
+
+```{r}
+ptPhoto <- test [, c("GPSLongitude", "GPSLatitude", "GPSPosition", "FileModifyDate", "FileName")]
+ptPhoto <- ptPhoto [!is.na(ptPhoto$GPSLatitude),]
+ptPhoto <- st_as_sf(ptPhoto, coords = c("GPSLongitude","GPSLatitude"), crs = 4326)
+st_transform(ptPhoto, 2154)
+ptPhoto
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+#mf_map(bondy)
+mf_map(ptPhoto, add = T)
+
+ptPhoto$nom <- substr(ptPhoto$FileName,14,17)
+mf_label(ptPhoto, var = "nom", overlap = F, pos= 1)
+```
+
+
+
+Pb projection
+
+
+
+
+```{r}
+terra::st_crs(ptPhoto) <- 4326
+Sys.getenv("PROJ_LIB")
+plib <- Sys.getenv("PROJ_LIB")
+prj <- system.file("proj", package = "terra")[1]
+Sys.setenv("PROJ_LIB" = prj)
+st_crs(ptPhoto)
+st_set_crs(ptPhoto, 4326)
+```
+
+
+```{r}
+st_write(ptPhoto, "../data/stationnement.gpkg", "PMR", delete_layer = T)
+# on met la projection avec qgis
+ptPhoto <- st_read("../data/stationnement.gpkg", "pmr4326")
+st_layers("../data/stationnement.gpkg")
+```
+
+
+
+## Photos
+
+
+```{r}
+cheminPhoto <- paste0(chemin2, "stationnement/")
+cheminPhoto
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG|.jpg")
+photo
+```
+
+
+
+
+## Récup métadonnées photo
+
+```{r}
+lireMeta <- function(fic){
+  exif_read(path.expand(paste0(cheminPhoto, fic)))
+} 
+test <- lireMeta(photo)
+test$FileCreateDate
+test$FileModifyDate
+test$FileAccessDate
+test$SourceFile
+test
+#install_exiftool()
+names(test)
+```
+
+mais date sur le modify date.
+
+## Réduction taille photo
+
+
+```{r}
+i <- 1
+for (i in  c(1:length(test$FileModifyDate))){
+  nom <- test$FileName [i]
+  img <- image_read(test$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "400")
+  image_write(img2, path = paste0("../img/", nom), format = NULL, quality = NULL,
+              depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
+}
+```
+
+
+
+
+# géocodage inversé
+
+```{r}
+ptPhoto$X <-as.double(substr(ptPhoto$GPSPosition, 1,16))
+ptPhoto$Y <-as.double(substr(ptPhoto$GPSPosition, 17,99))
+ptPhoto
+library(tidygeocoder)
+library(tmaptools)
+tidygeocoder::reverse_geo(long = ptPhoto["X"], lat = ptPhoto["Y"], method = "osm")
+tmaptools::rev_geocode_OSM(ptPhoto)
+
+terra::crs(ptPhoto) <- "+proj=longlat +datum=WGS84"
+
+st_crs(ptPhoto) <- "+proj=longlat +datum=WGS84"
+ptPhoto <- st_transform(ptPhoto,"+proj=longlat +datum=WGS84")  
+```
+
+
+
+
+# Leaflet
+
+
+
+
+
+
+```{r, eval=F}
+ptPhoto
+ptPhoto$photoC <- paste0("../img/", ptPhoto$FileName)
+ptPhoto$lieuL <- paste0("Num Photo",data$lieu, "<br />")
+st_write(data,"../data/leafletPhoto.gpkg", "data", delete_layer = T)
+```
+
+
+```{r, eval=TRUE}
+ptPhoto$nomN <- paste0("<b>Num Photo :</b> ",ptPhoto$nom, "<br />")
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = ptPhoto, group= "ptPhoto", popup = ~nomN, label = ptPhoto$nom) %>%
+addPopupImages(image = ptPhoto$photoC, group = "ptPhoto", width = 400) 
+```
+

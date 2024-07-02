@@ -1,0 +1,84 @@
+---
+title: "Camera fichier TdB"
+author: "B. Maranget"
+date: "21/06/2024"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+fichier TdB en .xls, enregistrement en .csv puis jointure avec le bon fichier
+
+
+# Librairies et répertoire
+
+```{r}
+library(sf)
+library(mapsf)
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/22_VIDEOPROTECTION/")
+```
+
+
+# Données
+
+enregistrement oo en UTF-8 et sep ,
+
+```{r}
+priorisation <- read.csv2(paste0(chemin, "cameraPriorisation.csv"))
+priorisation <- priorisation [1:128,]
+names(priorisation)[1] <- "id"
+camera <- st_read(paste0 (chemin, "camera.gpkg"), "cameraV2")
+str(camera)
+camera$id <- rownames(camera)
+jointure <- merge(camera, priorisation, by = "id")
+st_write(jointure, paste0 (chemin, "camera2.gpkg"), "cameraV3", delete_layer = T)
+str(jointure)
+```
+
+
+
+# Cartographie
+
+
+On fait une carte typologique par catégorie d'enseigne.
+
+```{r}
+commerceSel <- commerce [commerce$DEPCOM == '93010',]
+commercesf <- st_as_sf(commerceSel, coords = c("LAMBERT_X", "LAMBERT_Y"), crs = 2154)
+mf_map(commercesf)
+st_write(commercesf,"../data/commerces.gpkg","BPE2021")
+```
+
+table d'équivalences
+
+```{r}
+equiv <- read.csv2("../data/BPE21_table_passage.csv")
+tail (equiv)
+# jointure
+data <- merge(commercesf, equiv, by.x = "TYPEQU", by.y="TYPEQU")
+st_write(data,"../data/commerces.gpkg","BPE2021", delete_layer = T)
+table(data$LIB_SDOM)
+```
+
+```{r}
+commerce <- data [data$LIB_SDOM %in% c("COMMERCES ALIMENTAIRES","GRANDES SURFACES"),]
+mf_map(commerce, type = "typo", var = "LIB_TYPEQU")
+str(commerce)
+```
+
+

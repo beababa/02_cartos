@@ -1,0 +1,145 @@
+---
+title: "réduction taille photo dans QGIS"
+author: "B. Maranget"
+date: "27/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Réduction de la taille des photos pour les insérer dans leaflet
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(dplyr)
+library(leaflet)
+library(leafpop)
+library(sf)
+library(mapsf)
+library(exiftoolr) # metadonnées photo
+library(magick)
+```
+
+
+## Chemins
+
+
+```{r}
+gpkg <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/15_PARCS ET JARDINS/campagneArbre.gpkg"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/"
+chemin2 <- "C:/Users/bmaranget/Documents/Mes images/"
+```
+
+
+
+# Données
+
+
+## tables SIG
+
+
+```{r}
+data <- st_read(gpkg, "arbre_protg4326")
+# verif proj
+```
+
+
+## Photos
+
+
+```{r}
+cheminPhoto <- paste0(chemin2, "captures/")
+cheminPhoto <- chemin2
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG|.jpg")
+photo
+```
+
+
+
+
+## Récup métadonnées photo
+
+```{r}
+lireMeta <- function(fic){
+  exif_read(path.expand(paste0(cheminPhoto, fic)))
+} 
+test <- lireMeta(photo)
+test$FileCreateDate
+test$FileModifyDate
+test$FileAccessDate
+test$SourceFile
+test
+#install_exiftool()
+names(test)
+grep("Long", names(test))
+head(test)
+```
+
+mais date sur le modify date.
+
+## Réduction taille photo
+
+
+```{r}
+i <- 1
+for (i in  c(1:length(test$FileModifyDate))){
+  nom <- test$FileName [i]
+  img <- image_read(test$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "200")
+  image_write(img2, path = paste0("../img/", nom), format = NULL, quality = NULL,
+              depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
+}
+```
+
+
+
+
+
+
+
+# Leaflet
+
+
+
+
+
+
+```{r, eval=F}
+# traitement des NA
+data$photos [is.na(data$photos)] <- "photo.png" 
+data$photoC <- paste0("../img/", data$photos)
+data$photoC
+data$lieuL <- paste0(data$lieu, "<br />")
+st_write(data,"../data/leafletPhoto.gpkg", "data", delete_layer = T)
+```
+
+
+```{r, eval=TRUE}
+data <- st_read("../data/leafletPhoto.gpkg","data")
+#µ attention proj 4326
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = data, group= "data",label = ~type, popup = ~lieuL) %>%
+  addPopupImages(image = data$photoC, group = "data", width = 200) 
+```
+

@@ -67,7 +67,7 @@ data <- st_read(gpkg, "arbre_protg4326")
 
 
 ```{r}
-cheminPhoto <- paste0(chemin2, "arbresAproteger/")
+cheminPhoto <- paste0(chemin2, "stationnement/")
 cheminPhoto
 photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG|.jpg")
 photo
