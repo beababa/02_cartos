@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<gpx version="1.1" creator="GDAL 3.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><bounds minlat="48.938519999999997" minlon="2.554450000000000" maxlat="48.981138999999999" maxlon="2.586303000000000"/></metadata>                    
+<wpt lat="48.951693" lon="2.570835">
+  <name>hotel de ville</name>
+</wpt>
+<wpt lat="48.950659" lon="2.570322">
+  <name>hotel de ville</name>
+</wpt>
+<wpt lat="48.960625" lon="2.567707">
+  <name>espace henri barbusse</name>
+</wpt>
+<wpt lat="48.940869" lon="2.57866">
+  <name>espace ambroise croizat</name>
+</wpt>
+<wpt lat="48.958258" lon="2.57573">
+  <name>ecole victor hugo</name>
+</wpt>
+<wpt lat="48.950283" lon="2.586303">
+  <name>ecole victor hugo</name>
+</wpt>
+<wpt lat="48.954736" lon="2.584922">
+  <name>ecole suzanne buisson</name>
+</wpt>
+<wpt lat="48.951532" lon="2.565524">
+  <name>ecole rosenberg</name>
+</wpt>
+<wpt lat="48.94956" lon="2.573241">
+  <name>ecole primaire pierre brossolette</name>
+</wpt>
+<wpt lat="48.954736" lon="2.584922">
+  <name>ecole maternelle suzanne buisson</name>
+</wpt>
+<wpt lat="48.942008" lon="2.579808">
+  <name>ecole maternelle marie curie</name>
+</wpt>
+<wpt lat="48.955912" lon="2.56749">
+  <name>ecole maternelle jacques prevert</name>
+</wpt>
+<wpt lat="48.960318" lon="2.566738">
+  <name>ecole maternelle d casanova</name>
+</wpt>
+<wpt lat="48.93852" lon="2.581725">
+  <name>ecole jean jaures</name>
+</wpt>
+<wpt lat="48.938754" lon="2.582631">
+  <name>ecole jean jaures</name>
+</wpt>
+<wpt lat="48.955912" lon="2.56749">
+  <name>ecole jacques prevert</name>
+</wpt>
+<wpt lat="48.960519" lon="2.575546">
+  <name>ecole honore de balzac</name>
+</wpt>
+<wpt lat="48.948141" lon="2.567652">
+  <name>ecole eugenie cotton</name>
+</wpt>
+<wpt lat="48.957585" lon="2.572913">
+  <name>ecole eugene varlin</name>
+</wpt>
+<wpt lat="48.981139" lon="2.55445">
+  <name>ecole andre malraux</name>
+</wpt>
+<wpt lat="48.981139" lon="2.55445">
+  <name>ecole andre malraux</name>
+</wpt>
+<wpt lat="48.946001" lon="2.585702">
+  <name>ecole anatole france</name>
+</wpt>
+<wpt lat="48.946001" lon="2.585702">
+  <name>ecole anatole france</name>
+</wpt>
+</gpx>

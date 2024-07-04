@@ -1,0 +1,171 @@
+---
+title: "Numéro de rues - Un sur trois"
+author: "B. Maranget"
+date: "4/07/2024"
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Affichage des numéros peut poser pb sur les cartes, essai d'afficher 1/3 1/4
+
+extraire les 1er et derniers numéros pour chaque rue et intercaler le coeff désiré
+
+On remarque du coup des doublons chiffres mais pas point. TODO on supprime les doublons dés le téléchargement de départ.
+
+Essai de géocodage inversé pour projet stationnement génant à partir de banR
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Mise à jour à partir internet
+
+et également suppression de doublons
+
+
+```{r}
+chemin <- "G:/"
+download.file("https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-93.csv.gz", "../data/ban.csv.gz")
+library(R.utils)
+gunzip("../data/ban.csv.gz", overwrite=T)
+ban <- read.csv2("../data/ban.csv")
+ban <- ban  [ban$code_insee == '93010',]
+# suppression doublons numeros
+ban <- ban [!duplicated(paste0(ban$numero, ban$nom_voie)),]
+# TODO explorer les doublons
+# spatialisation
+ban <- st_as_sf(ban, coords = c("lon", "lat"), crs=4326)
+st_write(ban, "../data/adresse.gpkg", "ban", delete_layer = T)
+```
+
+
+## Sources
+
+```{r}
+st_layers("../data/adresse.gpkg", "ban")
+ban <- st_read("../data/adresse.gpkg", "ban")
+plot (ban$geom)
+```
+
+7669
+
+# sélectionner les numéros par 3
+
+
+
+
+```{r}
+ban <- ban [, c("nom_voie", "numero"), drop = F]
+# on éclate la ban en liste pour pouvoir gérer les numéros comme des séquences
+lban <- split(ban, ban$nom_voie)
+ban$numero
+# paramètre le tableau car data$numero permet de renvoyer le tableau
+choix <- function(data) {
+  mini <- min(data$numero)
+  # cela fonctionne pour le mini, mais pour le max... nécessité du test
+  maxi <- max(data$numero)
+  # construction de la série avec seq
+  sequence <- seq(mini, maxi, by = 3)
+  # filtre sur sequence
+  data <- data [data$numero %in% sequence,]
+  return(data)
+}
+liste <- lapply(lban, choix)
+# on déroule la liste
+nom <- names(sapply(liste, "[[",1))
+df <- NULL
+for (n in nom){
+  l <- liste [n]
+  nomRue <- sapply(l, "[[",1)
+  num <- sapply(l , "[[",2)
+  pt <- sapply(l, "[", 3)
+  tmp <- data.frame(nomRue,num, pt)
+  names(tmp)[1:2] <- c("nom", "num")
+  df <- rbind(df,tmp)
+}
+df <- st_as_sf(df)
+df$nom
+pt <- df [df$nom == "Avenue Galliéni",]
+mf_init(pt)
+mf_map(ban, add = T)
+mf_map(df, col="red", add = T)
+mf_layout("ban / 3 : une utilité ? av Galliéni", "ban")
+st_write(df, "../data/adresse.gpkg", layer = "numerosPar3", delete_layer = T)
+```
+
+test de verif pour 3
+
+```{r}
+length(ban$nom_voie)/length(df$nom)
+```
+
+
+# Géocodage avec banR
+
+on fait un test en reprenant les coordonnées avec 6 décimales...5 solutions !
+
+```{r}
+cadastre <- st_read("../data/cadastre.gpkg")
+library(banR)
+ban [1]
+data <- reverse_geocode(long = 2.488881, lat = 48.89349)
+sf <- st_as_sf(data, coords = c("x", "y"), crs= 2154)
+mf_init(sf)
+mf_map(cadastre, col = "antiquewhite1", border = "wheat", add = T)
+mf_map(sf, add = T)
+mf_label(sf, var="name", pos=2)
+```
+
+en reprenant les coordonnées complètes
+
+...et variable distance
+
+```{r}
+ptBan <- ban [1,1]
+ptBan <- st_transform(ptBan, 4326)
+pt <-st_coordinates(ptBan)
+pt [1,1]
+pt[1,2]
+data <- reverse_geocode(pt[1,1], pt [1,2])
+data$distance
+sf <- st_as_sf(data, coords = c("x", "y"), crs= 2154)
+mf_init(sf)
+mf_map(cadastre, col = "antiquewhite1", border = "wheat", add = T)
+mf_map(sf, add = T)
+mf_map(ptBan, col = "red", add = T)
+mf_label(sf, var="distance", pos=2)
+mf_layout("Distance géocodage (m)", "BAN et api")
+library(mapview)
+mapview(sf)
+```
+
+Variables distance
+
+```{r}
+data <- reverse_geocode(pt[1,1], pt [1,2])
+```
+
+

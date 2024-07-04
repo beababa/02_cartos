@@ -51,6 +51,7 @@ chemin <- "G:/"
 
 ```{r}
 index <- read.csv("../data/indexFinalRueSecteurPetiteEnfance.csv")
+index
 ```
 
 

@@ -26,7 +26,7 @@ Dans le cadre de la mise en place de la Ban, travail sur les numéros de rue
 - extraire les 1er et derniers numéros pour chaque rue afin de tracer des flèches
 indiquant le sens par rapport au canal de l'Ourcq.
 
-
+Voir aussi banGeocodage pour acquisition ban et géocodage inversé
 
 # Environnement
 

@@ -104,6 +104,7 @@ st_write(trace,"../data/ril2024.gpkg", "rilMars2024Trace", delete_layer=T)
 Première carto
 
 ```{r}
+trace 
 png("../img/ptRIL2024.png")
 mf_init(trace)
 fond()
@@ -285,7 +286,7 @@ curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_
 
 ```{r, eval=TRUE}
 cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
-<<<<<<< HEAD
+
 data <- st_read("../data/ril2024.gpkg", "photoMetaAvril")
 data <- st_transform(data, crs = 4326)
 data$name <- rownames(data)
@@ -293,13 +294,13 @@ leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
   addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
   addPopupImages(data$SourceFile, group = "photos", width = 500) 
-=======
+
 data <- st_read("../data/mobPublicitaire.gpkg", "2m")
 data <- st_transform(data, crs = 4326)
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
   addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
   addPopupImages(data$chemin, group = "photos", width = 500) 
->>>>>>> a10a52034ff468be1a4c1537d3db5e99a31cf3bf
+
 ```
 

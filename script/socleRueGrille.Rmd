@@ -46,6 +46,7 @@ chemins
 ```{r}
 Sys.getenv()
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+# si dd externe
 chemin <- "D:/03_SIG/03_03_Data/"
 ```
 
@@ -78,6 +79,14 @@ sum(rue$Longueur)
 # 
 ```
 
+
+```{r}
+st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
+rue <- st_read(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
+```
+
+
+
 verif doublon
 
 ```{r}
@@ -88,11 +97,19 @@ select <- rue [rue$NOM_1_G %in% names (tab [tab > 1]), ]
 mf_init(st_buffer(select [1,], 100))
 fond()
 mf_map(select [c(1:2),], lwd= 2, col = "red",add = T)
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
 mf_label(rue, "NOM" , overlap = F, lines = T)
 mf_layout("Pb dessin rues", credits = "")
 # Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
 ```
+
+Avec mapvieuw, solution plus simple
+
+```{r}
+select4326 <- st_transform(select, 4326)
+mapviewOptions(fgb=FALSE)
+mapview(select)
+```
+
 
 
 correction en repérant le fid si nécessaire
@@ -147,9 +164,18 @@ table(rue$NATURE)
 rue$Longueur <- length(rue)
 agg <- aggregate(rue$Longueur, by = list(rue$NATURE), sum )
 knitr::kable(agg)
+```
+
+
+# constitution index
+
+## extraction type rue
+
+```{r}
 # extraction type rue / isolement
 motif <- agg$Group.1
 motif
+nb <- length(motif)
 #ch <- as.character(seq(1,17))
 #motif <- motif [!(motif %in% ch)]
 # Suppression sans nom et D78
@@ -158,11 +184,13 @@ motif
 # construction de la chaine
 motif <- paste0("^",motif, " |")
 # dernier élément
-motif [motif == "^VLA |"] <- "^VLA "
+nb<-length(motif)
+motif [nb]
 # union de tous les termes
 motif <- paste(motif, collapse = "")
 nchar(motif)
-motif
+# on enlève le dernier caractère
+motif <- substring(motif,1,nchar(motif)-1)
 rue$NOM <- gsub(motif, "", rue$NOM_1_G)
 str(rue)
 ```
@@ -176,15 +204,48 @@ rue$NOM
 motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE |^D\'")
 rue$NOM2 <- gsub(motif, "", rue$NOM)
 rue$NOM2 <- gsub("^ ", "", rue$NOM2)
-rue [, c("NOM2")]
+rue [, c("NOM2"), drop=T]
 ```
+
+on remet les num rues pour les petites rues
+
+
+```{r}
+rue$Longueur <- st_length(rue)
+# discretisation
+plot(rue$Longueur)
+summary(rue$Longueur)
+# 20 m
+library(units)
+min <- set_units(50,m)
+petitesRues <-  rue [rue$Longueur < min,]
+```
+
+24 rues de moins de 50 m
+
+```{r}
+mf_map(petitesRues)
+```
+
+
+On les numérote par ordre alphabétique
+
+```{r}
+# sauvegarde du nom complet
+petitesRues$NOMnumero [order(petitesRues$NOM2)] <- petitesRues$NOM_1_G [order(petitesRues$NOM2)]
+petitesRues$NOM_1_G [order(petitesRues$NOM2)] <- seq(1,24)
+```
+
+
+
+
 
 enregistrement
 
 ```{r}
 st_write(rue, paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023", delete_layer = T)
+# sauvegarde pour index
 write.csv(rue [, c("NATURE", "NOM_1_G", "NOM2"), drop=T],"../data/rue.csv", fileEncoding = "UTF-8")
-st_write(rue, paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
 ```
 
 
@@ -321,9 +382,12 @@ tot <- merge(partie1 [, c("NOM", "NATURE", "NOM2", "case")], fin, by = "NOM", al
 names(tot)
 head(tot)
 # 385
-tot <- tot [ , c("NOM2.x", "NATURE.x", "case.x", "NOM")]
-names(tot) <- c("NOM2","NATURE", "case", "NOM")
-write.csv(tot, "../data/interRueGrille.csv", fileEncoding = "UTF-8")
+tot <- tot [ , c("NOM2.x", "NATURE.x", "case.x")]
+names(tot) <- c("Nom court","NATURE", "case")
+# suppression des sans noms
+tot <- tot [tot$NATURE != "Sans",]
+tot <- tot [order (tot$`Nom court`),]
+write.csv(tot, "../data/interRueGrille.csv", fileEncoding = "UTF-8", row.names = F)
 ```
 
 jointure carreau quartier
