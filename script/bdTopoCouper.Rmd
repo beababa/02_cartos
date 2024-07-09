@@ -35,7 +35,7 @@ library(units)
 
 
 ```{r}
-data <- st_read("../../03_Data/03_SOCLE/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_D093_2021-06-15/BDTOPO/1_DONNEES_LIVRAISON_2021-06-00164/BDT_3-0_SHP_LAMB93_D093-ED2021-06-15/TRANSPORT/TRONCON_DE_ROUTE.shp", quiet = T)
+data <- st_read("../../03_Data/03_SOCLE/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D093_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042\BDT_3-3_SHP_LAMB93_D093-ED2024-03-15/BDT_3-0_SHP_LAMB93_D093-ED2021-06-15/TRANSPORT/TRONCON_DE_ROUTE.shp", quiet = T)
 limite <- st_read("../../03_Data/limites.gpkg","bondy", quiet = T)
 inter <- st_intersection(data, limite)
 st_write(inter,"../../03_Data/03_SOCLE/bondy.gpkg", "routeBDTOPO", quiet = T)

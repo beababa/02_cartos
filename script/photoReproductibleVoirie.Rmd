@@ -1,7 +1,7 @@
 ---
-title: "réduction taille photo dans QGIS"
+title: "Projet photo points chaud stationnement"
 author: "B. Maranget"
-date: "27/02/2023"
+date: "5/07/2024"
 output: 
   html_document: 
     number_sections: yes
@@ -22,7 +22,9 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Réduction de la taille des photos pour les insérer dans leaflet
+Récupération photo, retailler, créer la clé, spatialiser et projeter leaflet.
+
+egalement utilisé pour photo pmr / place livraison (campagne juin-juillet 2024)
 
 # Environnement
 
@@ -38,6 +40,7 @@ library(sf)
 library(mapsf)
 library(exiftoolr) # metadonnées photo
 library(magick)
+library(filesstrings)
 ```
 
 
@@ -45,9 +48,10 @@ library(magick)
 
 
 ```{r}
-gpkg <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/15_PARCS ET JARDINS/campagneArbre.gpkg"
-chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/"
-chemin2 <- "C:/Users/bmaranget/Documents/Mes images/"
+Sys.getenv("HOME")
+cheminPhoto <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/05_PHOTOS/stationnement/")
+cheminPhoto <- "S:/VOIRIE PHOTO STATIONNEMENT/"
+cheminPhoto
 ```
 
 
@@ -55,21 +59,10 @@ chemin2 <- "C:/Users/bmaranget/Documents/Mes images/"
 # Données
 
 
-## tables SIG
+## photos
 
 
 ```{r}
-data <- st_read(gpkg, "arbre_protg4326")
-# verif proj
-```
-
-
-## Photos
-
-
-```{r}
-cheminPhoto <- paste0(chemin2, "captures/")
-cheminPhoto <- chemin2
 photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG|.jpg")
 photo
 ```
@@ -81,37 +74,72 @@ photo
 
 ```{r}
 lireMeta <- function(fic){
-  exif_read(path.expand(paste0(cheminPhoto, fic)))
+  exif_read(path.expand(paste0(cheminPhoto,  fic)))
 } 
-test <- lireMeta(photo)
-test$FileCreateDate
-test$FileModifyDate
-test$FileAccessDate
-test$SourceFile
-test
-#install_exiftool()
-names(test)
-grep("Long", names(test))
-head(test)
+meta <- lireMeta(photo)
 ```
 
-mais date sur le modify date.
+tri éventuel sur la date et déplacement
+
+
+```{r}
+str(meta$FileModifyDate)
+meta$jour <- substring(meta$FileModifyDate,1,10)
+table(meta$jour)
+file.move(meta$SourceFile [meta$jour == "2024:07:08"], paste0(cheminPhoto,"/traités") )
+```
+
+
 
 ## Réduction taille photo
 
 
+Les photos sont dans ../img et on archive les photos dans traités
+
 ```{r}
 i <- 1
-for (i in  c(1:length(test$FileModifyDate))){
-  nom <- test$FileName [i]
-  img <- image_read(test$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
-  img2 <- image_scale(img, geometry = "200")
+for (i in  c(1:length(meta$FileModifyDate))){
+  nom <- meta$FileName [i]
+  img <- image_read(meta$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "400")
   image_write(img2, path = paste0("../img/", nom), format = NULL, quality = NULL,
               depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
 }
+# archivage photos originales
+file.move(meta$SourceFile, paste0(cheminPhoto, "/traités"))
+```
+
+# identifiants et paramètres
+
+```{r}
+meta$FileName
+# on extrait les 3 derniers caractères avant l'extension
+nb <- nchar(meta$FileName)
+meta$nom <- substr(meta$FileName,nb-6,nb-4)
+meta$nomN <- paste0("<b>Num Photo :</b> ",meta$nom, "<br />")
+```
+
+```{r, eval=F}
+# traitement des NA
+meta$photoC <- paste0("../img/", meta$FileName)
+metasf$photoC
 ```
 
 
+# spatialisation
+
+```{r}
+metasf <- st_as_sf(meta, coords = c("GPSLongitude", "GPSLatitude"), crs = 4326)
+```
+
+# enregistrement
+
+il faut concaténer avec les données déjà acquises
+
+```{r}
+st_write(metasf, "../data/stationnement.gpkg", "genant",append = T )
+st_write(metasf, "../data/stationnement1.gpkg", "pmr", delete_layer = T )
+```
 
 
 
@@ -120,26 +148,48 @@ for (i in  c(1:length(test$FileModifyDate))){
 # Leaflet
 
 
+## rouverture du fichier
 
 
 
-
-```{r, eval=F}
-# traitement des NA
-data$photos [is.na(data$photos)] <- "photo.png" 
-data$photoC <- paste0("../img/", data$photos)
-data$photoC
-data$lieuL <- paste0(data$lieu, "<br />")
-st_write(data,"../data/leafletPhoto.gpkg", "data", delete_layer = T)
+```{r}
+metasf <- st_read("../data/stationnement.gpkg", "genant")
 ```
+
+# vérification doublons
+
+```{r}
+metasf <- metasf [!duplicated(metasf)]
+```
+
+
+
+
 
 
 ```{r, eval=TRUE}
-data <- st_read("../data/leafletPhoto.gpkg","data")
-#µ attention proj 4326
+m =leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = metasf, group= "metasf", popup = ~nomN, label = metasf$nom) %>%
+addPopupImages(image = metasf$photoC, group = "metasf", height = 300, width = 300) 
+```
+
+```{r, eval=TRUE}
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = data, group= "data",label = ~type, popup = ~lieuL) %>%
-  addPopupImages(image = data$photoC, group = "data", width = 200) 
+  addMarkers(data = metasf, group= "metasf", popup = ~nomN, label = metasf$nom) %>%
+addPopupImages(image = metasf$photoC, group = "metasf", height = 300, width = 300) 
 ```
+
+
+
+export du leaflet
+
+```{r}
+library(mapview)
+dateJour <- Sys.Date()
+mapshot(m, url =paste0(cheminPhoto,"03_carte/genant_",dateJour,".html"))
+mapshot(m, url =paste0("../img/pmr",dateJour,".html"))
+```
+
 
