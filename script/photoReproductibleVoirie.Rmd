@@ -68,6 +68,7 @@ photo
 ```
 
 
+nb de photos : 5 (pour contrôle)
 
 
 ## Récup métadonnées photo
@@ -77,17 +78,19 @@ lireMeta <- function(fic){
   exif_read(path.expand(paste0(cheminPhoto,  fic)))
 } 
 meta <- lireMeta(photo)
-```
 
-tri éventuel sur la date et déplacement
-
-
-```{r}
+# recup du jour
 str(meta$FileModifyDate)
 meta$jour <- substring(meta$FileModifyDate,1,10)
 table(meta$jour)
-file.move(meta$SourceFile [meta$jour == "2024:07:08"], paste0(cheminPhoto,"/traités") )
+
+# filtre et  1er enregistrement
+meta <- meta [,c("FileName","FileModifyDate", "GPSLatitude", "GPSLongitude", "jour", "SourceFile")]
+write.csv(meta , "../data/meta.csv", fileEncoding = "UTF-8")
 ```
+
+
+
 
 
 
@@ -97,6 +100,7 @@ file.move(meta$SourceFile [meta$jour == "2024:07:08"], paste0(cheminPhoto,"/trai
 Les photos sont dans ../img et on archive les photos dans traités
 
 ```{r}
+meta <- read.csv("../data/meta.csv", fileEncoding = "UTF-8")
 i <- 1
 for (i in  c(1:length(meta$FileModifyDate))){
   nom <- meta$FileName [i]
@@ -106,7 +110,8 @@ for (i in  c(1:length(meta$FileModifyDate))){
               depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
 }
 # archivage photos originales
-file.move(meta$SourceFile, paste0(cheminPhoto, "/traités"))
+file.move(meta$SourceFile, paste0(cheminPhoto, "/01_fait"))
+file.move(meta$SourceFile [meta$jour == "2024:07:11"], paste0(cheminPhoto,"/traités") )
 ```
 
 # identifiants et paramètres
@@ -122,7 +127,7 @@ meta$nomN <- paste0("<b>Num Photo :</b> ",meta$nom, "<br />")
 ```{r, eval=F}
 # traitement des NA
 meta$photoC <- paste0("../img/", meta$FileName)
-metasf$photoC
+meta
 ```
 
 
@@ -132,15 +137,81 @@ metasf$photoC
 metasf <- st_as_sf(meta, coords = c("GPSLongitude", "GPSLatitude"), crs = 4326)
 ```
 
+## pb éventuel NA, on récupère le x y de la photo suivante -5
+
+solution simple : suppression
+
+```{r}
+meta <- meta [!is.na(meta$GPSLatitude),]
+```
+
+solution complexe 1
+
+```{r}
+pb <- which( is.na(meta$GPSLongitude))
+sol <- pb + 1
+meta [pb, c("GPSLatitude", "GPSLongitude")] <- meta [sol, c("GPSLatitude", "GPSLongitude")]+0.01
+meta$GPSLatitude
+```
+
+
+
+solution complexe 2 : photo + proche
+
+```{r}
+# conversion
+pb$DateTimeOriginal <- as.POSIXct(pb$DateTimeOriginal, format = "%Y:%m:%d %H:%M:%S")
+meta$DateTimeOriginal <- as.POSIXct(meta$DateTimeOriginal, format = "%Y:%m:%d %H:%M:%S")
+difftime(pb$DateTimeOriginal[1],meta$DateTimeOriginal, units = "secs")
+str(pb$DateTimeOriginal)
+str(meta$DateTimeOriginal)
+anomalie <- pb$DateTimeOriginal [1]
+str(anomalie)
+plusProche <- function(anomalie){
+  # on élimine anomalie de la 
+  suite <- meta [meta$DateTimeOriginal != anomalie]
+suite$DateTimeOriginal
+  meta$diff <- difftime(anomalie, meta$DateTimeOriginal, units = "secs")
+  
+  # on prend l'indice du minimum
+  ind <- which.min(abs(difftime(anomalie, suite$DateTimeOriginal, units = "secs")))
+  # le meta de départ reçoit le x y du minimum avec ieger décalage
+  meta$GPSLatitude [meta$DateTimeOriginal == anomalie] <- suite$GPSLatitude  [ind] + 0.001
+  meta$GPSLongitude [meta$DateTimeOriginal == anomalie] <- suite$GPSLongitude  [ind] + 0.001
+  return(meta)
+}
+res <- plusProche(pb$DateTimeOriginal [1])
+res
+```
+
+solution complexe 2 : récupération wp
+
+
+```{r}
+
+```
+
+
 # enregistrement
 
 il faut concaténer avec les données déjà acquises
 
 ```{r}
 st_write(metasf, "../data/stationnement.gpkg", "genant",append = T )
-st_write(metasf, "../data/stationnement1.gpkg", "pmr", delete_layer = T )
+st_write(metasf, "../data/stationnement1.gpkg", "PhotoPmr2", append = T )
 ```
 
+pb harmonisation colonnes
+
+```{r}
+test <- st_read("../data/stationnement.gpkg", "PhotoPmr") 
+test
+test <- test [,c("jour", "nom", "nomN", "photoC")]
+metasf <- metasf [,c("jour", "nom", "nomN", "photoC")]
+metasf <- rbind(test, metasf)
+st_write(metasf, "../data/stationnement1.gpkg", "PhotoPmr", delete_layer = T)
+metasf <- metasf [,c("jour", "nom", "nomN", "photoC")]
+```
 
 
 
@@ -153,19 +224,36 @@ st_write(metasf, "../data/stationnement1.gpkg", "pmr", delete_layer = T )
 
 
 ```{r}
-metasf <- st_read("../data/stationnement.gpkg", "genant")
+metasf <- st_read("../data/stationnement.gpkg", "genant4326b")
+metasf <- st_read("../data/stationnement1.gpkg", "PhotoPmr")
+
+photoGenant <- st_read("../data/stationnement.gpkg", "photo_genant")
 ```
+
+concatenation de 2 fichiers de depart
+
+attention 2 colonnes uniquement Nom, nomN et chemin fichier
+
+```{r}
+entete <- c("nom","nomN", "photoC")
+metasf <- metasf [, entete]
+photoGenant <- photoGenant [, entete]
+metasf <- rbind(photoGenant, metasf)
+st_write(metasf, "../data/stationnement.gpkg", "genant", delete_layer = T)
+```
+
+
 
 # vérification doublons
 
 ```{r}
-metasf <- metasf [!duplicated(metasf)]
+metasf <- metasf [!duplicated(metasf),]
 ```
 
 
 
 
-
+avec export
 
 ```{r, eval=TRUE}
 m =leaflet() %>%
@@ -173,6 +261,8 @@ m =leaflet() %>%
   addMarkers(data = metasf, group= "metasf", popup = ~nomN, label = metasf$nom) %>%
 addPopupImages(image = metasf$photoC, group = "metasf", height = 300, width = 300) 
 ```
+
+sans export
 
 ```{r, eval=TRUE}
 leaflet() %>%
@@ -182,8 +272,80 @@ addPopupImages(image = metasf$photoC, group = "metasf", height = 300, width = 30
 ```
 
 
+## leaflet avec cluster et différents groupes
 
-export du leaflet
+
+En attendant les catégories / par jour
+
+### solution 1 : on éclate les couches
+
+```{r}
+metasf$DateTimeOriginal <- as.POSIXct(metasf$DateTimeOriginal, format = "%Y:%m:%d %H:%M:%S")
+metasf$jour <- as.Date (metasf$DateTimeOriginal, format = "%m %d")
+l_eclat <- split(metasf, f=metasf$jour)
+l_eclat [[1]]
+eclat <- names(table(metasf$jour))
+```
+
+
+```{r}
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = l_eclat [[1]], 
+             group= eclat [1], popup = ~as.character(jour),
+             label = ~nom,
+             clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = FALSE),
+             labelOptions = labelOptions(noHide = FALSE, direction = 'auto'))  %>%
+ 
+  addMarkers(data = l_eclat [[2]], 
+             group= eclat[2], popup = ~as.character(jour),
+             label = ~nom,
+             clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = FALSE),
+             labelOptions = labelOptions(noHide = FALSE, direction = 'auto'))  %>%
+  
+    addMarkers(data = l_eclat [[3]], 
+             group= eclat[3], popup = ~as.character(jour),
+             label = ~nom,
+             clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = FALSE),
+             labelOptions = labelOptions(noHide = FALSE, direction = 'auto'))  %>%
+  
+    addLayersControl(
+    overlayGroups = eclat,
+    options = layersControlOptions(collapsed = FALSE))
+```
+
+
+### solution 2 : discrétisation
+
+ou avec une  ms pas d'affichage car les données appartiennent à la même table
+
+
+```{r}
+# Create a palette that maps factor levels to colors
+pal <- colorFactor(c("navy", "red"), domain = c(eclat [1], eclat [2]))
+pal
+```
+
+
+```{r}
+leaflet(metasf) %>% addTiles() %>%
+  addCircleMarkers(
+    radius = ~ifelse(jour == eclat [1], 8, 10),
+    color = ~pal(jour),
+    stroke = FALSE, fillOpacity = 0.5,
+    label = metasf$nom) %>%
+  addPopupImages(image = metasf$photoC, 
+                 group = "metasf", height = 300, width = 300)
+```
+
+
+
+
+# Export du leaflet
+
+Génère un 2e fichier
+
+rajouter m<- dvt le leaflet concerné
 
 ```{r}
 library(mapview)
@@ -191,5 +353,36 @@ dateJour <- Sys.Date()
 mapshot(m, url =paste0(cheminPhoto,"03_carte/genant_",dateJour,".html"))
 mapshot(m, url =paste0("../img/pmr",dateJour,".html"))
 ```
+
+
+# Jointure avec le tableau final
+
+## test de contrôle le nb d'éléments
+
+
+```{r}
+tableau <- read.csv2("S:/VOIRIE PHOTO STATIONNEMENT/02_tableau/premiers tableaux/tableauCommun.csv", fileEncoding = "UTF-8")
+pt <- st_read("../data/stationnement.gpkg", "genant")
+length(pt$nom)==length(tableau$num.photo)
+# différence (il est logique que les 0 en début soient consignés)
+pt$nom <- as.integer(pt$nom)
+setdiff(pt$nom, tableau$num.photo)
+setdiff(tableau$num.photo, pt$nom)
+```
+
+
+## Jointure
+
+
+```{r}
+joint <- merge (pt, tableau, by.x = "nom", by.y="num.photo")
+st_write(joint, "../data/stationnement.gpkg", "genantFIN", delete_layer = T)
+```
+
+
+
+
+
+
 
 

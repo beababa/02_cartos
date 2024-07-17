@@ -32,16 +32,19 @@ Egalement liste des rues dans delib
 
 on coupe avec les quartiers et différentes autres géométries
 
+recodage de la liste des rues stationnements (11/07/2024)
+
 ## Librairies
 
 
 ```{r}
 library(sf)
 library(mapsf)
+library(mapview)
 ```
 
 
-chemins
+## Chemins
 
 ```{r}
 Sys.getenv()
@@ -51,7 +54,7 @@ chemin <- "D:/03_SIG/03_03_Data/"
 ```
 
 
-données
+## Données
 
 Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
 
@@ -80,20 +83,29 @@ sum(rue$Longueur)
 ```
 
 
+le fichier final est dans socle et s'intitule rue2023.gpkg
+
 ```{r}
 st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
 rue <- st_read(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
 ```
 
+387 au 12/07/2023
 
 
-verif doublon
+# Verif doublon
+
+
 
 ```{r}
 tab <- table(rue$NOM_1_G)
 tab [tab >1]
+# on extrait les sans noms
+select <- rue [!(rue$NATURE %in% c("Sans","SANS")),]
+table(select$NATURE)
 # carto pour voir pb
-select <- rue [rue$NOM_1_G %in% names (tab [tab > 1]), ]
+select <- select [select$NOM_1_G %in% names (tab [tab > 1]), ]
+select
 mf_init(st_buffer(select [1,], 100))
 fond()
 mf_map(select [c(1:2),], lwd= 2, col = "red",add = T)
@@ -102,7 +114,7 @@ mf_layout("Pb dessin rues", credits = "")
 # Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
 ```
 
-Avec mapvieuw, solution plus simple
+Avec mapvieuw, solution plus simple que l'utilisation du fond
 
 ```{r}
 select4326 <- st_transform(select, 4326)
@@ -131,9 +143,12 @@ st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage",
 
 
 
-Rue très petites numérotées
+# Rue très petites numérotées (version 1)
 
-en principe 16
+en principe 15
+ALL MARIE-JOSE CHOMBART DE LAUWE la 16e
+
+essai plus bas pour numérotation / longueur rue ?
 
 ```{r}
 rue$NOMnumero [!is.na(rue$NOMnumero)]
@@ -153,7 +168,16 @@ rue$NOM_1_G [rue$NOM %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
 knitr::kable(rue[!is.na(rue$NOMnumero), c("NOM_1_G", "NOM")])
 ```
 
-aggrégation par type de rue
+
+
+
+
+
+# constitution index
+
+## extraction type rue
+
+### Aggrégation par type de rue
 
 
 ```{r}
@@ -164,12 +188,10 @@ table(rue$NATURE)
 rue$Longueur <- length(rue)
 agg <- aggregate(rue$Longueur, by = list(rue$NATURE), sum )
 knitr::kable(agg)
+write.csv(agg , "../data/typeRue.csv", fileEncoding = "UTF-8")
 ```
 
-
-# constitution index
-
-## extraction type rue
+### Recherche motif
 
 ```{r}
 # extraction type rue / isolement
@@ -196,7 +218,7 @@ str(rue)
 ```
 
 
-suppression des articles dans le nom des rues pour l'index
+## Suppression des articles dans le nom des rues pour l'index
 
 ```{r}
 rue
@@ -206,6 +228,9 @@ rue$NOM2 <- gsub(motif, "", rue$NOM)
 rue$NOM2 <- gsub("^ ", "", rue$NOM2)
 rue [, c("NOM2"), drop=T]
 ```
+
+## Nouvelle numérotation en fonction longueur rues
+
 
 on remet les num rues pour les petites rues
 
@@ -240,23 +265,100 @@ petitesRues$NOM_1_G [order(petitesRues$NOM2)] <- seq(1,24)
 
 
 
-enregistrement
+## Enregistrement
 
 ```{r}
 st_write(rue, paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023", delete_layer = T)
+
 # sauvegarde pour index
 write.csv(rue [, c("NATURE", "NOM_1_G", "NOM2"), drop=T],"../data/rue.csv", fileEncoding = "UTF-8")
 ```
 
+# Recodage rue stationnement
 
-
-# Liste
+le fichier utilisé est celui liste des rues stationnement payant.csv qui est une copie du fichier excel / format ; UTF-8
 
 
 ```{r}
-liste <- rue [, c("NOM",  "Longueur", "NATURE"), drop = T]
-write.csv(liste [order (liste$"NOM" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+chemin
+fic <- paste0(chemin, "08_VOIRIE/Liste des rues stationnement payant.csv")
+fic
+rue <- read.csv2(fic, fileEncoding = "UTF-8", na.strings = "En cours")
 ```
+
+On applique les mêmes traitements.
+
+- aggregation par type de rue
+- suppression nature (rue) et articles (de la)
+
+
+## aggrégation par type de rue
+
+
+```{r}
+# extraction type rue
+explode <- strsplit(rue$Nom.du.site, " ")
+rue$NATURE <- sapply(explode, "[",1)
+table(rue$NATURE)
+agg <- aggregate(rue$Nombre.de.places, by = list(rue$NATURE),sum)
+knitr::kable(agg)
+write.csv(agg , "../data/typeRueStationnement.csv", fileEncoding = "UTF-8")
+```
+
+
+## Motifs
+
+```{r}
+#recup fichier type rue
+agg <- read.csv("../data/typeRueStationnement.csv", fileEncoding = "UTF-8")
+# extraction type rue / isolement
+motif <- agg$Group.1
+motif
+nb <- length(motif)
+#ch <- as.character(seq(1,17))
+#motif <- motif [!(motif %in% ch)]
+# Suppression sans nom et D78
+motif <- motif [!motif%in% c("Autopont")]
+motif
+# construction de la chaine
+motif <- paste0("^",motif, " |")
+# dernier élément
+nb<-length(motif)
+motif [nb]
+# union de tous les termes
+motif <- paste(motif, collapse = "")
+nchar(motif)
+# on enlève le dernier caractère
+motif <- substring(motif,1,nchar(motif)-1)
+rue$NOM <- gsub(motif, "", rue$Nom.du.site)
+str(rue)
+```
+
+
+suppression des articles dans le nom des rues pour l'index
+
+```{r}
+rue$NOM <- toupper(rue$NOM)
+motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE |^D\'")
+rue$NOM2 <- gsub(motif, "", rue$NOM)
+rue$NOM2 <- gsub("^ ", "", rue$NOM2)
+rue$NOM2
+```
+
+
+
+## Export
+
+
+```{r}
+write.csv(rue [order (rue$"NOM2" ),], "../data/listeRuesStationnement.csv", fileEncoding = "UTF-8", row.names = F)
+```
+
+
+
+Ce fichier peut être utilisé en jointure.
+Voir script stationnement.
+
 
 
 # Intersections diverses
