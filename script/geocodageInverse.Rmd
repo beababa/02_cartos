@@ -1,0 +1,111 @@
+---
+title: "Geocodage inversé"
+author: "B. Maranget"
+date: "18/07/2024"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Récupération de photo, on rajoute les adresses pour vérifier avec les fichiers
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(dplyr)
+library("tibble") # df amélioré
+library(leaflet)
+library(leafpop)
+library(sf)
+library(mapsf)
+library(exiftoolr) # metadonnées photo
+library(magick)
+library(filesstrings)
+library("banR")
+
+```
+
+
+http://joelgombin.github.io/banR/articles/geocode.html
+
+
+## Chemins
+
+
+```{r}
+Sys.getenv("HOME")
+cheminPhoto <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/05_PHOTOS/stationnement/")
+cheminPhoto <- "S:/VOIRIE PHOTO STATIONNEMENT/"
+cheminPhoto <- ""
+cheminPhoto
+```
+
+
+
+# Données
+
+
+## Fichier test
+
+Des photos remises places côté av Rosny (PMR ou livraison)
+
+```{r}
+data <- st_read("../data/stationnement1.gpkg", "PhotoPmr2")
+```
+
+
+# Traitement
+
+```{r}
+reverse_geocode(long = 2.37, lat = 48.357)
+```
+
+
+```{r}
+mat <- st_coordinates(data)
+nom <- data$nom
+photo <- data$photoC
+X <- mat [,1]
+Y <- mat [,2]
+df <- data.frame(nom, X, Y)
+tb <- tibble(df)
+tb
+loc <-reverse_geocode_tbl(tbl = tb, longitude = X, latitude = Y)
+loc <- loc [, c("nom", "result_label")]
+df <-merge(data,loc, by = "nom")
+st_write(df,"../data/stationnement.gpkg", "complementPMR", delete_layer = T)
+```
+
+affichage avec leaflet
+
+```{r}
+df$locL <- paste0("<b>adresse : </b>",df$result_label)
+df$texte <- paste0(df$locL,"<br />", df$nomN)
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = df, group= "df", popup = ~texte) %>%
+addPopupImages(image = df$photoC, group = "df", height = 300, width = 300) 
+```
+```
+
+
+```{r}

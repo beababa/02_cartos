@@ -59,6 +59,45 @@ cheminPhoto
 # Données
 
 
+## Données acquises
+
+le .gpkg stationnement à épurer
+
+```{r}
+couches <- st_layers("../data/stationnement.gpkg")
+couches$name
+couches <- st_layers("../data/stationnement1.gpkg")
+```
+
+lecture de toutes les couches
+
+```{r}
+nom <- couches$name
+i <- 1
+for (c in couches){
+  tmp <- NULL
+  tmp <- st_read("../data/stationnement1.gpkg", nom [i])
+  assign(nom [i], tmp)
+  i <- i+1
+}
+```
+
+
+```{r}
+PhotoPmr2
+```
+
+
+
+autre gpkg dans voirie
+
+```{r}
+st_layers("D:/08_VOIRIE/stationnement.gpkg")
+```
+
+
+
+
 ## photos
 
 
@@ -225,10 +264,16 @@ metasf <- metasf [,c("jour", "nom", "nomN", "photoC")]
 
 ```{r}
 metasf <- st_read("../data/stationnement.gpkg", "genant4326b")
-metasf <- st_read("../data/stationnement1.gpkg", "PhotoPmr")
+metasf <- st_read("../data/stationnement1.gpkg", "PhotoPmr2")
 
 photoGenant <- st_read("../data/stationnement.gpkg", "photo_genant")
 ```
+
+
+```{r}
+photoGenant
+```
+
 
 concatenation de 2 fichiers de depart
 
@@ -239,6 +284,9 @@ entete <- c("nom","nomN", "photoC")
 metasf <- metasf [, entete]
 photoGenant <- photoGenant [, entete]
 metasf <- rbind(photoGenant, metasf)
+st_crs(photoGenant) <- 4326
+st_crs(metasf) <- 4326
+
 st_write(metasf, "../data/stationnement.gpkg", "genant", delete_layer = T)
 ```
 
