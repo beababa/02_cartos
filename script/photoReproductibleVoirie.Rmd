@@ -50,6 +50,7 @@ library(filesstrings)
 ```{r}
 Sys.getenv("HOME")
 cheminPhoto <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/05_PHOTOS/stationnement/")
+cheminPhoto <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/05_PHOTOS/fibre/")
 cheminPhoto <- "S:/VOIRIE PHOTO STATIONNEMENT/"
 cheminPhoto
 ```
@@ -107,7 +108,7 @@ photo
 ```
 
 
-nb de photos : 5 (pour contrôle)
+nb de photos : 34 (pour contrôle)
 
 
 ## Récup métadonnées photo
@@ -150,6 +151,7 @@ for (i in  c(1:length(meta$FileModifyDate))){
 }
 # archivage photos originales
 file.move(meta$SourceFile, paste0(cheminPhoto, "/01_fait"))
+# archivage avec filtre
 file.move(meta$SourceFile [meta$jour == "2024:07:11"], paste0(cheminPhoto,"/traités") )
 ```
 
@@ -243,16 +245,27 @@ st_write(metasf, "../data/stationnement1.gpkg", "PhotoPmr2", append = T )
 pb harmonisation colonnes
 
 ```{r}
-test <- st_read("../data/stationnement.gpkg", "PhotoPmr") 
-test
+test <- st_read("../data/stationnement.gpkg", "PhotoPmr")
+test <- st_read("../data/stationnement.gpkg", "genant") 
+names(test)
+test$jour <- "2024:07:01"
+names(metasf)
 test <- test [,c("jour", "nom", "nomN", "photoC")]
 metasf <- metasf [,c("jour", "nom", "nomN", "photoC")]
-metasf <- rbind(test, metasf)
+metasf2 <- rbind(test, metasf)
 st_write(metasf, "../data/stationnement1.gpkg", "PhotoPmr", delete_layer = T)
+st_write(metasf2, "../data/stationnement.gpkg", "genant", delete_layer = T)
 metasf <- metasf [,c("jour", "nom", "nomN", "photoC")]
 ```
 
 
+pb geom et geometry
+
+
+```{r}
+names(metasf) [5] <- "geom"
+st_geometry(metasf) <- "geom"
+```
 
 
 # Leaflet
@@ -296,6 +309,7 @@ st_write(metasf, "../data/stationnement.gpkg", "genant", delete_layer = T)
 
 ```{r}
 metasf <- metasf [!duplicated(metasf),]
+metasf <- st_read("../data/stationnement.gpkg", "genant")
 ```
 
 
@@ -312,10 +326,12 @@ addPopupImages(image = metasf$photoC, group = "metasf", height = 300, width = 30
 
 sans export
 
+
+
 ```{r, eval=TRUE}
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = metasf, group= "metasf", popup = ~nomN, label = metasf$nom) %>%
+  addMarkers(data = metasf, group= "metasf", popup = ~nomN2, label = metasf$nom) %>%
 addPopupImages(image = metasf$photoC, group = "metasf", height = 300, width = 300) 
 ```
 
@@ -329,8 +345,9 @@ En attendant les catégories / par jour
 
 ```{r}
 metasf$DateTimeOriginal <- as.POSIXct(metasf$DateTimeOriginal, format = "%Y:%m:%d %H:%M:%S")
-metasf$jour <- as.Date (metasf$DateTimeOriginal, format = "%m %d")
-l_eclat <- split(metasf, f=metasf$jour)
+metasf$jour <- as.Date (metasf$jour, format = "%Y:%m:%d")
+metasf$jour
+l_eclat <- split(metasf, f=metasf$jour2)
 l_eclat [[1]]
 eclat <- names(table(metasf$jour))
 ```
@@ -340,26 +357,61 @@ eclat <- names(table(metasf$jour))
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
   addMarkers(data = l_eclat [[1]], 
-             group= eclat [1], popup = ~as.character(jour),
+             group= eclat [1], popup = ~nomN2,
              label = ~nom,
              clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = FALSE),
              labelOptions = labelOptions(noHide = FALSE, direction = 'auto'))  %>%
+  
+  addPopupImages (image = l_eclat[[1]]$photoC, 
+                  group = eclat [1],
+                        height = 300, width = 300)  %>%
+
+  
+
+ 
  
   addMarkers(data = l_eclat [[2]], 
-             group= eclat[2], popup = ~as.character(jour),
+             group= eclat[2], popup = ~nomN2,
              label = ~nom,
              clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = FALSE),
              labelOptions = labelOptions(noHide = FALSE, direction = 'auto'))  %>%
+  
+  addPopupImages (image = l_eclat[[2]]$photoC, 
+                  group = eclat [2],
+                        height = 300, width = 300)  %>%
   
     addMarkers(data = l_eclat [[3]], 
-             group= eclat[3], popup = ~as.character(jour),
+             group= eclat[3], popup = ~nomN2,
              label = ~nom,
              clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = FALSE),
              labelOptions = labelOptions(noHide = FALSE, direction = 'auto'))  %>%
   
+  addPopupImages (image = l_eclat[[3]]$photoC, 
+                  group = eclat [3],
+                        height = 300, width = 300)  %>%
+  
+
+ 
+
     addLayersControl(
     overlayGroups = eclat,
     options = layersControlOptions(collapsed = FALSE))
+```
+
+
+Affichage num photo et date
+
+```{r}
+metasf$nomN
+metasf$nomN2 <- paste0(metasf$nomN,"<b>Date : </b>", metasf$jour, "<br />")  
+```
+
+
+Affichage image dans le leaflet catégorisé
+
+
+```{r}
+l_eclat [[1]]$photoC
 ```
 
 
@@ -370,7 +422,8 @@ ou avec une  ms pas d'affichage car les données appartiennent à la même table
 
 ```{r}
 # Create a palette that maps factor levels to colors
-pal <- colorFactor(c("navy", "red"), domain = c(eclat [1], eclat [2]))
+eclat
+pal <- colorFactor(rainbow(5), domain = c(eclat [1], eclat [2], eclat [3], eclat [4], eclat [5]))
 pal
 ```
 
@@ -378,10 +431,10 @@ pal
 ```{r}
 leaflet(metasf) %>% addTiles() %>%
   addCircleMarkers(
-    radius = ~ifelse(jour == eclat [1], 8, 10),
     color = ~pal(jour),
     stroke = FALSE, fillOpacity = 0.5,
-    label = metasf$nom) %>%
+    label = metasf$nom,
+    popup = metasf$nomN2) %>%
   addPopupImages(image = metasf$photoC, 
                  group = "metasf", height = 300, width = 300)
 ```

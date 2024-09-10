@@ -1,0 +1,360 @@
+---
+title: "Lien GPS et photo reproductible"
+author: "B. Maranget"
+date: "27/02/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Mise en place lien pt GPS et photo
+
+A noter : pb nb photos et nb de points, plusieurs photos pour 1 seul pt. Eliminer 
+toutes les photos de BAL
+
+
+
+Un article : https://marionlouveaux.fr/fr/blog/gpx-tracks-and-leaflet-interactive-map/#go-to-folding-div permet de faire avec R et Leaflet...
+
+
+L'objet de ce script est de créer un outil reproductible quelque soit l'objet (d'où les nb chemins)
+
+Les points GPS sont enregistrés dans le GPX
+les photos dans photos/ril ou photos/fibre ou etc
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(dplyr)
+#library(ggplot2)
+library(leaflet)
+library(leafpop)
+#library(lubridate)
+#library(purrr)
+#library(readr)
+library(sf)
+library(mapsf)
+#library(tibble)
+library(ggplot2)
+library(leaflet)
+library(leafpop)
+library(lubridate)
+library(purrr)
+library(readr)
+library(sf)
+library(mapsf)
+library(tibble)
+library(tidyr)
+library(exiftoolr) # metadonnées photo
+library(magick) # pour la taille
+```
+
+
+## Chemins
+
+TO DO nombreux voir invite interactive ?
+
+
+```{r}
+chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/11_RIL/"
+cheminSocle <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/"
+cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/fibre/"
+cheminPhoto <- "D:/TELETRAVAIL/2024_04_18/ril/"
+cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
+```
+
+
+
+# Données
+
+
+## Concaténation des .gpx
+
+On récupère les waypoints (la 1e couche par défaut) uniquement
+
+```{r}
+fic <- list.files(cheminGPX, "*19-JUL-24.gpx")
+trace <- NULL
+for (f in fic) {
+  tmp <- st_read(paste0(cheminGPX,f), "waypoints")
+  trace <- rbind(tmp, trace)
+}
+# enlever l'altitude
+trace <- st_zm (trace, drop = T)
+st_write(trace,"../data/ril2024.gpkg", "rilMars2024Trace", delete_layer=T)
+st_write(trace,"../data/fo.gpkg", "wp19_07_2024_Trace", delete_layer=T)
+```
+
+
+Première carto
+
+```{r}
+trace <- st_transform(trace, 2154)
+png("../img/ptFibre2024.png")
+mf_init(trace)
+fond()
+mf_map(trace, add = T)
+mf_label(trace, var ="name", overlap = F , halo = T, cex = 1)
+mf_layout("Points GPS sorties Fibre", "recup 19 juillet 2024")
+dev.off()
+```
+
+
+
+concaténation de tous les waypoints dans le ril2024.gpkg       
+
+```{r}
+st_layers("../data/ril2024.gpkg")
+trace <- st_read("../data/ril2024.gpkg", "rilMars2024Trace")
+```
+
+
+Verif date et heure au cas échéant
+
+```{r}
+class(trace$time)
+```
+
+https://demandred.gitbooks.io/introduction-a-r-pour-les-chatons/content/les-structures-de-donnees-avancees/les-dates-en-r.html
+
+
+format POSIXct, données issues du GPS.
+
+Cette seconde classe permet de représenter les dates également, mais en tenant compte cette fois de l'heure précise (heures et minutes) du jour en question. Pour créer une date ainsi, il faut utiliser la fonction asPOSIXct() . Cette fonction comporte trois arguments principaux :
+
+    Le premier argument qui contient la chaine de la date
+    Un second argument format qui contient le format de cette chaine
+    Un argument tz qui indique le fuseau horraire de la date.
+
+
+# Photos
+
+
+```{r}
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg|*.JPG")
+```
+
+34 photos
+
+
+## Récup métadonnées photo
+
+```{r}
+lireMeta <- function(fic){
+  exif_read(path.expand(paste0(cheminPhoto, fic)))
+} 
+meta <- lireMeta(photo)
+meta$FileCreateDate
+meta$FileModifyDate
+meta$FileAccessDate
+meta$SourceFile
+#install_exiftool()
+```
+
+
+mais date sur le modify date. il faut sauvegarder nom photo et modify date
+
+
+
+```{r}
+photoMeta <- meta [, c("FileName", "SourceFile", "FileModifyDate")]
+table(substring(photoMeta$FileModifyDate,1,10))
+```
+
+
+on réduit la photo
+
+
+## Réduction taille photo
+
+On stocke dans rep photo du projet / on en profite pour renommer selon le thème (ril / fo)
+
+```{r}
+i <- 1
+for (i in  c(1:length(photoMeta$FileModifyDate))){
+  nom <- photoMeta$FileName [i]
+  img <- image_read(photoMeta$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "200")
+  image_write(img2, path = paste0("../photo/fo_", nom), format = NULL, quality = NULL,
+              depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
+  photoMeta$nom [i] <- paste0("../photo/fo_", nom)
+}
+```
+
+
+
+
+
+# Jointure trace et photo
+
+
+mais date sur le modify date.
+
+
+pb format
+
+```{r}
+photoMeta$jour <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d" )
+photoMeta$heure  <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d %H:%M:%S", tz = "CET")
+```
+
+
+
+calcul différence entre les 2 dates
+
+
+A priori 1e photo 1er pt (mais verif à faire)
+
+```{r}
+trace [1, c("name", "time")]
+photoMeta [1,]
+photoMeta$heure - trace$time
+```
+
+27 mn diff entre le gps et l'appareil photo. Attention, 27*60 pourles calculs 
+
+```{r}
+photoMeta$heure - trace$time + 27
+photoMeta$heureAjustee <- photoMeta$heure +( 27 * 60 + 20 )
+class(photoMeta$heureAjustee)
+```
+
+
+```{r}
+ind <- (which.min(abs(difftime(photoMeta$heureAjustee [1], trace$time))))
+```
+
+
+```{r}
+p <- photoMeta$heureAjustee [1]
+# pour éviter d'utiliser deux fois la même photo, on va supprimer les
+# photos au fur et à mesure
+photoMetaBoucle <- photoMeta
+trace$timePhoto <- NA
+for (p in photoMeta$heureAjustee){
+  # c'est une heure
+  # indice de ligne du vecteur de difference de tmps entre les deux prise
+  print(abs(difftime(p,trace$time)))
+  tmp <- which.min(abs(difftime(p,trace$time)))
+  print(tmp)
+  # c'est à dire lg photo
+  # on récupère l'heure de la photo ds la table des wp
+  # cas de pl photos sur un meme pt
+  if (is.na (trace$timePhoto [tmp])){
+    trace$timePhoto [tmp] <- p
+  } else {
+    # on rajoute un pt 
+    tmp2 <- length (trace$timePhoto)+1
+    trace <- rbind(trace , trace[tmp,])
+    trace$timePhoto [tmp2] <- p
+  }
+  # pour éviter que la photo soit reprise, on supprime la photo
+  photoMetaBoucle <- photoMetaBoucle [-tmp,]
+}
+length(trace$timePhoto[!is.na(trace$timePhoto)])
+# il y a bien 34 photos
+
+```
+
+
+Jointure
+
+
+
+```{r}
+joint <- merge(trace, photoMeta, by.x = "timePhoto", by.y="heureAjustee")
+# 2 pts perdus
+setdiff(photoMeta$name, joint$name)
+# pas de doublons
+table(trace$name)
+png("../img/jointurePhotoGPS.png")
+mf_init(joint)
+fond()
+mf_map(joint, add =T)
+joint$TERRAIN <- substring(joint$FileName,4,8)
+mf_label(joint, var="TERRAIN", halo = T, overlap= F, cex = 1)
+mf_layout("Photo et GPS", "trace GPS\nJuillet 2024")
+dev.off()
+```
+
+les 2 cartes
+
+
+![](../img/ptFibre2024.png)![](../img/jointurePhotoGPS.png)
+
+Vérif
+
+2 points 193
+
+```{r, eval=FALSE}
+pt <- data [data$name %in% c(193,194,195),]
+png("../img/pointGPS.png")
+mf_init(st_buffer(pt,500))
+fond()
+mf_map(pt, add =T)
+mf_label(pt, var = "name", halo = T)
+mf_layout ("pb PTS Av Galliéni", "pts GPS\ndéc 2023")
+dev.off()
+```
+
+![](../img/pointGPS.png)
+
+Enregistrement
+
+```{r}
+names(joint)
+st_write(joint [, c("cmt","name", "nom", "TERRAIN", "FileModifyDate", "heure", "timePhoto")],"../data/fo.gpkg", "photo", append = F)
+```
+
+
+# Leaflet
+
+
+Il s'agit maintenant de récupérer les photos et de projeter en leaflet
+
+
+pour mémoire, les photos sont dans file_names
+
+
+Icone appareil photo
+
+```{r}
+curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_and_leaflet_map/240px-Icone_appareil_photo.png",
+                    destfile = "../img/240px-Icone_appareil_photo.png")
+```
+
+```{r, eval=TRUE}
+cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
+
+data <- st_read("../data/ril2024.gpkg", "photoMetaAvril")
+data <- st_transform(joint, crs = 4326)
+data
+data$name <- rownames(data)
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = data, label = ~TERRAIN, group = "photos", icon = ~cameraIcon) %>%
+  addPopupImages(data$chemin, group = "photos", width = 500) 
+
+
+```
+

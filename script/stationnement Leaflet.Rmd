@@ -44,8 +44,8 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 reprise des données finales sur le stationnement
 
 ```{r}
-rue <- st_read("../data/stationnement.gpkg", "rueStationnement4326")
 rue <- st_read("../data/stationnement.gpkg", "rueStationnement2024")
+rue <- st_transform(rue, 4326)
 ```
 
 
@@ -62,7 +62,7 @@ rue$couleur
 
 
 ```{r}
-leaflet() %>% addTiles() %>%
+leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
   addPolylines(data=rue, color = ~factpal(couleur), weight = 8 )
 ```
 

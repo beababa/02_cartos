@@ -24,6 +24,9 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Récupération de photo, on rajoute les adresses pour vérifier avec les fichiers
 
+Egalement, pour fichier point comme livraison, on récupère adresse.
+
+
 # Environnement
 
 
@@ -32,16 +35,11 @@ Récupération de photo, on rajoute les adresses pour vérifier avec les fichier
 
 ```{r , eval=TRUE}
 library(dplyr)
-library("tibble") # df amélioré
-library(leaflet)
-library(leafpop)
+library(tibble) # df amélioré
 library(sf)
 library(mapsf)
-library(exiftoolr) # metadonnées photo
-library(magick)
 library(filesstrings)
-library("banR")
-
+library(banR)
 ```
 
 
@@ -57,6 +55,7 @@ cheminPhoto <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/05_PHOTOS/stationne
 cheminPhoto <- "S:/VOIRIE PHOTO STATIONNEMENT/"
 cheminPhoto <- ""
 cheminPhoto
+chemin <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/")
 ```
 
 
@@ -70,6 +69,10 @@ Des photos remises places côté av Rosny (PMR ou livraison)
 
 ```{r}
 data <- st_read("../data/stationnement1.gpkg", "PhotoPmr2")
+data <- st_read(paste0(chemin, "08_VOIRIE/stationnement.gpkg"), "plLivraison", delete_layer = TRUE)
+data <- st_read("../data/stationnement.gpkg", "photoPMR")
+# attention géométrie, on prend le centroid
+data <- st_centroid(data)
 ```
 
 
@@ -82,17 +85,27 @@ reverse_geocode(long = 2.37, lat = 48.357)
 
 ```{r}
 mat <- st_coordinates(data)
+mat
 nom <- data$nom
 photo <- data$photoC
 X <- mat [,1]
 Y <- mat [,2]
 df <- data.frame(nom, X, Y)
+df <- data.frame(X, Y)
 tb <- tibble(df)
 tb
 loc <-reverse_geocode_tbl(tbl = tb, longitude = X, latitude = Y)
+loc [loc$result_distance == 0,]
 loc <- loc [, c("nom", "result_label")]
+loc <- loc [, c("result_housenumber", "result_street", "longitude", "latitude")]
+class(loc)
+loc <- as.data.frame(loc) 
+df <- cbind(data,loc)
 df <-merge(data,loc, by = "nom")
 st_write(df,"../data/stationnement.gpkg", "complementPMR", delete_layer = T)
+st_write(df,paste0(chemin, "08_VOIRIE/stationnement.gpkg"), "plLivraisonAdresse", delete_layer = T)
+st_write(df, "../data/stationnement.gpkg", "placePMRAdresse", delete_layer = T)
+
 ```
 
 affichage avec leaflet

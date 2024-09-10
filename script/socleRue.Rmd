@@ -78,17 +78,36 @@ fond()
 mf_map(select [c(1:2),], lwd= 2, col = "red",add = T)
 rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
 mf_label(rue, "NOM" , overlap = F, lines = T)
+```
 
 
-# Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
+Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
 
 
+les corrections sont plutôt effectuées sous rue2023
+
+
+le raccourci sans les articles dans rue.csv
+
+à noter également le mot clé utilisé dans la BDTOPO
+
+```{r}
+rue <- read.csv("../data/rue.csv")
+
+rue
+
+```
+
+
+
+```{r}
 # extraction tableau rue numero
 num <- rue[!is.na(rue$NOMnumero),]
 num <- num [order (as.integer(num$NOM)), c("NATURE", "NOMnumero"), drop = T]
+num [16,1] <- 16
 write.csv(num, "../data/numRue.csv", fileEncoding = "UTF-8")
 # remplacementNONNumero
-num <- as.character(seq(1,17))
+num <- as.character(seq(1,16))
 rue$NOM_1_G [rue$NOM %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
 rue[!is.na(rue$NOMnumero),]
 # extraction type rue
@@ -122,8 +141,8 @@ suppression des articles dans le nom des rues pour l'index
 ```{r}
 rue$NOM
 motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE|^D\'")
-rue$NOM2 <- gsub(motif, "", rue$NOM)
-rue$NOM2 <- gsub("^ ", "", rue$NOM2)
+rue$NOM <- gsub(motif, "", rue$NOM)
+rue$NOM <- gsub("^ ", "", rue$NOM)
 ```
 
 enregistrement rue2023
@@ -141,8 +160,10 @@ st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage",
 
 
 ```{r}
-liste <- rue [, c("NOM",  "Longueur", "NATURE"), drop = T]
-write.csv(liste [order (liste$"NOM_1_G" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+rue
+liste <- rue [, c("NOM_1_G",  "NOM2", "NATURE"), drop = T]
+write.csv(liste [order (liste$"NOM2" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
 ```
 
 

@@ -50,8 +50,8 @@ Les fichiers de travail => fichiers finaux dans les script stationnement.
 st_layers("../data/stationnement.gpkg") 
 rueSF <- st_read("../data/stationnement.gpkg", "rueStationnement2024")
 # données rues
-rueDATA <- read.csv("../data/listeRuesStationnement.csv")
 referentiel <- read.csv("../data/rue.csv")
+# fichier corrigé du 3/9/2024
 ```
 
 rmq : 99 et 105 pb pl nums pour LAB et Barbusse
@@ -65,7 +65,7 @@ pour récupérer la clé, il faut faire une 1e jointure avec le référentiel.
 jointure <- merge(rueSF, referentiel, by = "NOM_1_G")
 ```
 
-105 au départ, 103 pour la jointure
+108 au départ, 107 pour la jointure
 
 
 ```{r}
@@ -75,14 +75,33 @@ setdiff(rueSF$NOM_1_G, jointure$NOM_1_G)
 
 autopont n'existent pas dans le référentiel. C'est normal pour l'autopont.
 
+si anomalie...
+
 ```{r}
 # indice
-ind <- grep("POTTIER",referentiel$NOM_1_G)
+ind <- grep("FUZIER",referentiel$NOM_1_G)
+ind <- grep("FUZIER",rueSF$NOM_1_G)
 # expression
+rueSF$NOM_1_G [ind]
 referentiel$NOM_1_G [ind]
+referentiel [ind,]
 ```
 
+pb numéros (verif avt de jouer)
+
+
+```{r}
+jointure$NOM2
+jointure$NOM2 [jointure$NOM2 %in% c(13,14)] <- jointure$NOM_1_G [jointure$NOM2 %in% c(13,14) ]
+```
+
+
 On rectifie rueSF dans Qgis
+
+```{r}
+write.csv(jointure [, c("NATURE", "NOM_1_G", "NOM2", "couleur", "nom"), drop=T], "../data/listeStationnement.csv", fileEncoding = "UTF-8")
+```
+
 
 # Carto
 
