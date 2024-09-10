@@ -346,15 +346,133 @@ curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_
 ```{r, eval=TRUE}
 cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
 
-data <- st_read("../data/ril2024.gpkg", "photoMetaAvril")
-data <- st_transform(joint, crs = 4326)
+data <- st_read("../data/fo.gpkg", "photo")
+data <- st_transform(data, crs = 4326)
 data
 data$name <- rownames(data)
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
   addMarkers(data = data, label = ~TERRAIN, group = "photos", icon = ~cameraIcon) %>%
-  addPopupImages(data$chemin, group = "photos", width = 500) 
+  addPopupImages(data$nom, group = "photos", width = 500) 
+```
 
 
+pb points superposés
+
+
+idée : nb de points détermine le nb de sommets
+
+pour 2 pt lg / 3 triangle...
+
+le centre le point
+
+et +1 - 1
+
+```{r}
+XY <- st_coordinates(data)
+XY <- paste0(XY[,1],XY [,2])
+duplicated(XY)
+tab <- table(XY)
+names(tab)
+# dans ce cas, c'est plus simple d'utiliser le name.
+tab <- table(data$name)
+```
+
+
+```{r}
+mf_init(data)
+mf_map(data, add = T)
+mf_map(st_buffer(data [2,],12), add = T)
+mf_map(pt2_1, col= "red", add = T)
+mf_layout("Tampon de 12", credits = "Test")
+```
+
+
+choix du point / recup nb doublons / calcul coord
+
+```{r}
+data [2,] + 1
+XY [2,]
+XY [2,] + 0.1
+mf_map(st_point(XY [2,] + 8), col = "red", add=T)
+
+mf_map()
+
+```
+
+
+la constante est 8, la variable est de 2 à 4
+
+en résumé...
+
+```{r}
+i <- 2
+const <- 0.08
+XY
+XY [i,1]+8
+XY [i, 2]
+pt2_1 <- st_point(c(XY [i,1],  XY[i,2] +  const))
+pt2_2 <-   st_point(c(XY [i,1] , XY[i,2] - const))
+pt3_1 <- pt2_1
+pt3_2 <- st_point(c(XY [i,1] + const/2, XY [i,2] - const))
+pt3_3 <- st_point(c(XY [i,1] - const/2, XY [i,2] - const))
+pt4_3 <-  st_point(c(XY [i,1] + const,  XY[i,2] ))
+pt4_4 <-  st_point(c(XY [i,1] - const,  XY[i,2] ))
+mf_map(data[2,])
+mf_map(pt2_1, add = T, col = "red")
+mf_map(pt2_2, add = T, col = "red")
+mf_map(pt3_1, add = T, col = "green")
+mf_map(pt3_2, add = T, col = "green")
+mf_map(pt3_3, add = T, col = "green")
+# les 4_1 et 4_2 reprennent 2_1 et 2_2
+mf_map(pt4_3, add = T, col = "blue")
+mf_map(pt4_4, add = T, col = "blue")
+mf_layout("points divers", credits = "calculs jitter")
+```
+
+Comme logique R vectorielle, on cherche à éviter le case
+
+On constitue donc un tableau des points en fonction du type d'occurence
+
+
+```{r}
+occ <- seq(2,4)
+id <- rep(occ, occ)
+occ <- unlist(sapply(occ, seq))
+occ
+pt <- data.frame(id, occ)
+pt
+```
+
+
+
+jointure en fonction nb pt et nb de nb
+
+on constitue la séquence et le nb d'occurences
+
+```{r}
+tab <- as.data.frame(tab)
+tab
+data
+fin <- NULL
+occ <-  NULL
+i <- 1
+for (i in c(1:length(tab$Var1))){
+  tmp <- seq(1, tab [i,2])
+  print(tmp)
+  tmpOcc <- rep(tab [i,2], tab [i,2])
+  fin <- c(fin, tmp)
+  occ  <-  c(occ, tmpOcc)
+}
+data$cmt <- fin
+data$occ <- occ
+```
+
+
+dans data, il y a maintenant tous les points pour que la jointure fonctionne
+
+```{r}
+tab
+data$occ <- 
 ```
 
