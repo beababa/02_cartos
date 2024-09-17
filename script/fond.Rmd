@@ -132,7 +132,7 @@ st_write(batCadastre,paste0(chemin,"fond.gpkg"), "batCadastre", delete_layer = T
 reprise de toutes les rues pour dégager les grands axes autoroute et nationale
 
 ```{r, eval=FALSE}
-rue <- st_read(paste0(chemin, "01_OSM/rues.geojson"))
+rue <- st_read(paste0(chemin, "01_OSM/rue.geojson"))
 sort(table(rue$highway))
 rue <- st_transform(rue, 2154)
 str(rue)
@@ -184,7 +184,7 @@ couches OSM susceptibles d'être complétées :
 
 ```{r, eval=FALSE}
 jardin <- st_read(paste0(chemin,"01_OSM/leisure.geojson"))
-bat <- st_read(paste0(chemin, "01_OSM/buildingPublic.geojson"))
+bat <- st_read(paste0(chemin, "01_OSM/building.geojson"))
 jardin <- st_transform(jardin, 2154)
 # pb jardin multipolkygone, on fusionne
 jardin <- st_union(jardin)

@@ -1,0 +1,114 @@
+---
+title: "Accidentologie 2024"
+author: "B. Maranget"
+date: "16/12/2024"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Superposer carte accidentologie, 2021-22-23, accident corporel (qu'est ce qu'un accident non corporel ?)
+
+Les données sont fournies par le dpt 
+AIT-MOUHOUB Djamal (Chargé d'études territorialisées et de l'expertise routière Plaine Commune) - DRIEAT IF/UD93/SESR/PSR <djamal.ait-mouhoub@developpement-durable.gouv.fr>
+
+Les fichiers fournis distinguent vélo ou EDPm, piéton ou EDPsm / 2 RM / autre
+
+faire une table accident et une autre  type de véhicules de l'accident
+
+clé : Num_Acc 
+
+accident : Id acciden / an
+
+vehicule : type / num_acc
+
+
+
+
+
+# Données
+
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(sp) # pour lire le kml
+library(xml2)
+library(rvest)
+
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/08_VOIRIE/accidentologie/")
+```
+
+
+```{r}
+fic <- list.files(chemin, "_Tous_")
+fic
+fin <- NULL
+f <- fic [1]
+for (f in fic) {
+  tmp <- st_read(paste0(chemin, f))
+  nomShema <- substring(f,1,19)
+  st_read(paste0(chemin, f), nomShema)
+  tmp$an <- substring(f, 16,19)
+  tmp$an
+  fin <- rbind(fin, tmp)
+}
+table(fin$an)
+st_write(fin [, c("an")],"../data/accidentologie.gpkg", "2024")
+```
+
+# Pb données kml
+
+seulement 2 attributs,
+
+```{r}
+fin$Name
+test <- read_xml(paste0(chemin, f))
+html_node(test, "Id acciden")
+html_attr(test, "Id acciden")
+rvest::html_tag(test)
+noeuds <- xml_children(test)
+noeuds [2]
+xml_find_all(test, "Id")
+xml_nodeset(test)
+test <- xml_text(test)
+lister <- as_list(kids, ns = "Id acciden")
+lister$kml ["Id acciden"]
+xml_attr(kids, "SimpleData", ns = character(), default = NA_character_)
+kids <- xml_children(test)
+```
+
+# Affichage doublons
+
+
+
+
+
+```{r}
+data <- st_read("../data/accidentologie.gpkg")
+table(duplicated(data$geom))
+data <- st_transform(data, 2154)
+matDistance <- st_distance(data)
+library(units)
+matDistance <- drop_units(matDistance)
+matDistance [matDistance < 5]
+```
+
+

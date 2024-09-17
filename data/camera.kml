@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="camera" id="camera">
+	<SimpleField name="existant" type="string"></SimpleField>
+	<SimpleField name="extension" type="string"></SimpleField>
+</Schema>
+<Folder><name>camera</name>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">48</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.477284,48.897702</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">49</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.474324,48.898427</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">50</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.474878,48.898114</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">51</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.478366,48.897366</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">52</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.477137,48.896605</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">53</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.473486,48.896183</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">54</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.47423,48.895776</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">71</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.478582,48.894898</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">72</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.477703,48.895283</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">73</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.473746,48.893181</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="extension">74</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.477172,48.893385</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="existant">15'</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.4789744,48.8947935</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="existant">16'</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.4789744,48.8947935</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="existant">17'</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.4778254,48.8949926</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="existant">18'</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.4787198,48.8937506</coordinates></Point>
+  </Placemark>
+  <Placemark>
+	<ExtendedData><SchemaData schemaUrl="#camera">
+		<SimpleData name="existant">19'</SimpleData>
+	</SchemaData></ExtendedData>
+      <Point><coordinates>2.48027,48.8935248</coordinates></Point>
+  </Placemark>
+</Folder>
+</Document></kml>

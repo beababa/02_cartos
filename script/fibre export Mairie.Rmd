@@ -1,0 +1,87 @@
+---
+title: "Fibre mairie export"
+author: "B. Maranget"
+date: "06/06/2024"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Préparation des exports pour Sogetrel
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+# on reprend variable HOME en fonction PC
+rep <- Sys.getenv("HOME")
+rep2 <- "/03_SIG/03_03_Data/22_VIDEOSURVEILLANCE/" 
+rep3 <-  "/03_SIG/03_03_Data/14_CANALISATIONS/ARCEP/"
+zip <-  paste0(rep,"/01_ARCHIVE/02_fibre/03_DSI/01_plans/testV5.kmz")
+outDir <- paste0(rep, "/01_ARCHIVE/02_fibre/03_DSI/01_plans/")
+test <- unzip(outDir, outDir)
+```
+
+
+
+
+# export 1
+
+Juste les données camera autour 17 prime et 18 prime
+
+et la fibre 
+
+
+```{r}
+st_layers("../data/fo.gpkg")
+data <- st_read("../data/fo.gpkg", "etat_donnee_fibre_2154")
+total <- sum
+data$detection [is.na(data$detection)]  <- "non"
+table(data$detection)
+st_write(data, "../data/fo.gpkg", "etat_donnee_fibre_2154", delete_layer = T)
+# 27 km réseau
+agg <- aggregate(data [,"detection", drop = F], by= list(data$detection), length)
+agg
+mf_map(agg)
+agg$longueur <- st_length(agg)
+
+names(agg)[c(1:2)] <- c("detection", "longueur")
+st_write(agg,"../data/detection.kml")
+write.csv(st_drop_geometry(agg), "../data/fibre.csv", fileEncoding = "UTF-8", row.names = F)
+```
+
+
+pour les caméras, on repart de la couche définie dans qgis
+à partir categ etat
+
+```{r}
+camera <- st_read("../data/fo.gpkg", "zoneCameraPrioritaireSogetrel")
+names(camera)
+camera <- camera [,c("existant", "extension")]
+st_write(camera, "../data/camera.kml")
+```
+
+

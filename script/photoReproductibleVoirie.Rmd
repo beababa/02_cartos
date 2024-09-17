@@ -108,7 +108,7 @@ photo
 ```
 
 
-nb de photos : 34 (pour contrôle)
+nb de photos : 43 (pour contrôle)
 
 
 ## Récup métadonnées photo
@@ -267,6 +267,16 @@ names(metasf) [5] <- "geom"
 st_geometry(metasf) <- "geom"
 ```
 
+enregistremetn du fichier final
+
+```{r}
+st_write(metasf, "../data/stationnement2.gpkg", "metasf")
+data <- rbind(metasf, test)
+st_write(data, "../data/stationnement2.gpkg", "genant", delete_layer = T)
+```
+
+
+
 
 # Leaflet
 
@@ -331,8 +341,8 @@ sans export
 ```{r, eval=TRUE}
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = metasf, group= "metasf", popup = ~nomN2, label = metasf$nom) %>%
-addPopupImages(image = metasf$photoC, group = "metasf", height = 300, width = 300) 
+  addMarkers(data = data, group= "metasf", popup = ~nomN2, label = metasf$nom) %>%
+addPopupImages(image = data$photoC, group = "metasf", height = 300, width = 300) 
 ```
 
 
@@ -345,11 +355,11 @@ En attendant les catégories / par jour
 
 ```{r}
 metasf$DateTimeOriginal <- as.POSIXct(metasf$DateTimeOriginal, format = "%Y:%m:%d %H:%M:%S")
-metasf$jour <- as.Date (metasf$jour, format = "%Y:%m:%d")
-metasf$jour
-l_eclat <- split(metasf, f=metasf$jour2)
+data$jour <- as.Date (data$jour, format = "%Y:%m:%d")
+data$jour
+l_eclat <- split(data, f=data$jour)
 l_eclat [[1]]
-eclat <- names(table(metasf$jour))
+eclat <- names(table(data$jour))
 ```
 
 
@@ -404,6 +414,7 @@ Affichage num photo et date
 ```{r}
 metasf$nomN
 metasf$nomN2 <- paste0(metasf$nomN,"<b>Date : </b>", metasf$jour, "<br />")  
+test$nomN2 <- paste0(test$nomN,"<b>Date : </b>", test$jour, "<br />")
 ```
 
 
@@ -423,20 +434,21 @@ ou avec une  ms pas d'affichage car les données appartiennent à la même table
 ```{r}
 # Create a palette that maps factor levels to colors
 eclat
-pal <- colorFactor(rainbow(5), domain = c(eclat [1], eclat [2], eclat [3], eclat [4], eclat [5]))
+pal <- colorFactor(rainbow(6), domain = c(eclat [1], eclat [2], eclat [3], eclat [4], eclat [5], eclat [6]))
 pal
 ```
 
 
 ```{r}
-leaflet(metasf) %>% addTiles() %>%
-  addCircleMarkers(
+leaflet() %>% addTiles() %>%
+  addCircleMarkers(data = data,
     color = ~pal(jour),
     stroke = FALSE, fillOpacity = 0.5,
-    label = metasf$nom,
-    popup = metasf$nomN2) %>%
-  addPopupImages(image = metasf$photoC, 
-                 group = "metasf", height = 300, width = 300)
+    label = data$nom,
+    popup = data$nomN2,
+    group = "data") %>%
+  addPopupImages(image = data$photoC, 
+                 group = "data", height = 300, width = 300)
 ```
 
 
@@ -484,6 +496,14 @@ st_write(joint, "../data/stationnement.gpkg", "genantFIN", delete_layer = T)
 
 
 
+Plutôt que de faire une jointure, on produit un .csv qu'on rajoute en copier - coller
+
+
+
+```{r}
+donneeCSV <- metasf [, c("nom", "jour"), drop=T]
+write.csv(donneeCSV, "../data/complementStationnementCSV.csv", fileEncoding = "UTF-8")
+```
 
 
 

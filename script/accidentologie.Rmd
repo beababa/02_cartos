@@ -48,6 +48,9 @@ vehicules : num_acc / id_vehicule / num_vehicule / catv (categ du véhicule)
 
 # Données
 
+
+https://www.data.gouv.fr/fr/datasets/bases-de-donnees-annuelles-des-accidents-corporels-de-la-circulation-routiere-annees-de-2005-a-2022/
+
 ```{r}
 library(sf)
 library(mapsf)

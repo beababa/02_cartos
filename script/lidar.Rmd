@@ -124,6 +124,7 @@ ggplot(payload(las_tr), aes(X,Z, color = Z)) +
 Sans l'option, 1 G°, avec l'option, 400 M° voire 49,5 M°
 
 
+
 traduction rapide du manuel lidR
 
 https://r-lidar.github.io/lidRbook/io.html
@@ -151,5 +152,19 @@ l'objet est constitué de l'en tête et du nuage de point
 writeLAS(las_tr, "../data/zacLidar.las")
 zac <- readLAS("../data/zacLidar.las")
 plot(zac)
+```
+
+
+
+# présenter
+
+
+```{r}
+las <- readLAS("../data/zacLidar.las")
+plot (las)
+las
+plot(las, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
+df <- payload(las)
+df
 ```
 
