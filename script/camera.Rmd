@@ -36,49 +36,97 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/22_VIDEOPROTECTION/")
 
 # Données
 
+
+## Quel fichier utilisé dans Qgis ?
+
+
+```{r}
+list.files(chemin)
+st_layers(paste0(chemin, "camera.gpkg"))
+st_layers(paste0(chemin, "camera2.gpkg"))
+```
+
+```{r}
+camera <- st_read(paste0(chemin, "camera2.gpkg"), "cameraV3")
+names(camera)
+```
+
+
+## Import
+
+premier import, celui des priorisation
+deuxième import, celui de la feuille de route pour visite site
+
+
 enregistrement oo en UTF-8 et sep ,
+
+Premier import (juillet 2024)
 
 ```{r}
 priorisation <- read.csv2(paste0(chemin, "cameraPriorisation.csv"))
 priorisation <- priorisation [1:128,]
 names(priorisation)[1] <- "id"
-camera <- st_read(paste0 (chemin, "camera.gpkg"), "cameraV2")
+```
+
+
+Deuxième import (sept 2024)
+
+feuille de route, examen des démarches internes / externes
+
+```{r}
+feuilleDeRoute <- read.csv("../data/camera.csv", fileEncoding = "UTF-8")
+```
+
+# Jointure
+
+
+```{r}
+# data <- priorisation
+data <- feuilleDeRoute
+camera <- st_read(paste0 (chemin, "camera2.gpkg"), "cameraV3")
 str(camera)
+# pb de l'id / 2 colonnes existantes
 camera$id <- rownames(camera)
-jointure <- merge(camera, priorisation, by = "id")
-st_write(jointure, paste0 (chemin, "camera2.gpkg"), "cameraV3", delete_layer = T)
+jointure <- merge(camera, data, by = "id")
+# la jointure peut aussi se faire par existant
+str(camera$existant)
+str(data$N..de.caméra.existante)
+jointure <- merge(camera, data, by.y="N..de.caméra.existante", by.x = "existant", all.x=T,all.y=T)
+```
+
+les 3 de George Sand sont nouvelles à situer
+
+```{r}
+setdiff(data$N..de.caméra.existante, camera$existant)
+```
+
+
+Champs à retenir
+
+```{r}
+noms <- names(jointure)
+noms <- c("id", "existant", "extension", "lieu", "matériel", "type",  "ETAT.DE.FONCTIONNEMENT..ACTUEL",       "EXIGENCES.TECHNIQUES.ET.CONDITIONS.D.INSTALLATION.ET.DE.RACCORDEMENT..Analyse.DSI.",
+    "OBSERVATIONS",     "interne"   ,  "sogetrel"  , "PM")
+jointure <- jointure [, noms]
+noms
+names(jointure) [c(7,8)] <- c("Etat", "Dsi")
+```
+
+
+
+le fichier final redevient camera.gpkg
+
+```{r}
+st_write(jointure, paste0 (chemin, "camera.gpkg"), "camera", delete_layer = T)
 str(jointure)
 ```
 
 
-
-# Cartographie
-
-
-On fait une carte typologique par catégorie d'enseigne.
+réouverture pour traitement éventuel
 
 ```{r}
-commerceSel <- commerce [commerce$DEPCOM == '93010',]
-commercesf <- st_as_sf(commerceSel, coords = c("LAMBERT_X", "LAMBERT_Y"), crs = 2154)
-mf_map(commercesf)
-st_write(commercesf,"../data/commerces.gpkg","BPE2021")
+jointure <- st_read(paste0 (chemin, "camera.gpkg"), "camera")
 ```
 
-table d'équivalences
-
-```{r}
-equiv <- read.csv2("../data/BPE21_table_passage.csv")
-tail (equiv)
-# jointure
-data <- merge(commercesf, equiv, by.x = "TYPEQU", by.y="TYPEQU")
-st_write(data,"../data/commerces.gpkg","BPE2021", delete_layer = T)
-table(data$LIB_SDOM)
-```
-
-```{r}
-commerce <- data [data$LIB_SDOM %in% c("COMMERCES ALIMENTAIRES","GRANDES SURFACES"),]
-mf_map(commerce, type = "typo", var = "LIB_TYPEQU")
-str(commerce)
-```
 
 

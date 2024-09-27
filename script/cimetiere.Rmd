@@ -65,6 +65,8 @@ Tout est dans le projet R
 chemin <- st_read("../data/cimetiere.gpkg", "chemin")
 requiem <- st_read("../data/cimetiere.gpkg", "requiem") # le dessin des sépultures
 section <- st_read("../data/cimetiere.gpkg", "section")
+requiem <- st_intersection(requiem, section)
+write.csv2(table(requiem$sections), "../data/dessinSepSection.csv")
 ```
 
 pb doublons
@@ -72,18 +74,14 @@ pb doublons
 
 ```{r, eval = FALSE}
 # on ne cherche que les doublon géométriques
-requiem$doublon <- duplicated(requiem$geom)
 table(duplicated(requiem$geom))
 requiem <- requiem [requiem$doublon == FALSE,]
 st_write (requiem, "../data/cimetiere.gpkg", "requiem", delete_layer = T)
 ```
 
-4666
+5047
 
 # Prétraitement : du chemin au point de départ allée
-
-
-
 
 
 ## Autour du chemin
@@ -110,7 +108,7 @@ Permet de vérfier le nombre de chemins par section, Sans doute va-t-il falloir 
 
 ```{r}
 chemin <- st_intersection(chemin, section)
-chemin
+mf_label(section, var ="sections", col = "red", halo = T)
 ```
 
 
@@ -357,7 +355,7 @@ mf_label(res, var = "num2", cex = 0.5)
 st_write(res, "../data/cimetiere.gpkg", "ptSepultureID", delete_layer = F, append=T)
 ```
 
-# intégration dans le dessin des tombes
+# Intégration dans le dessin des tombes
 
 
 ```{r}
@@ -374,6 +372,198 @@ mf_map(joint, col="green", add = T)
 mf_label(joint, var = "num2")
 ```
 
+
+
+# Correspondance avec les identifiants réels
+
+## Ensemble de la donnée
+
+## Chargement
+
+La liste des identifiants est dans  08/VOIRIE, l'extraction en .csv est dans ../data
+
+Il s'agit de celle de novembre 2023
+
+
+```{r}
+realite <- read.csv2("../data/Extraction REQUIEM - Liste de Terrains le 23-9-2024.csv", na.strings = "", fileEncoding = 'WINDOWS-1252')
+realite$Emplacement
+# On sauvegarde la clé
+realite$cle <- realite$Emplacement
+```
+
+4794
+
+## La section
+
+séparation nécessaire lettre / chiffre pour contrôle nb de tombes / section
+
+```{r}
+# fonction pour permettre de créer col section
+eclater <- function(){
+  div <- strsplit(realite$Emplacement, " ")
+  realite$section <- sapply(div, "[",1)
+  return(realite)
+}
+realite <- eclater()
+tab <- table(realite$section)
+tab
+# une fois
+remplacement1 <- names(tab) [tab == 1]
+remplacement1
+# pour vérifier avec le tableur
+```
+
+Il faudra rectifier à la main dans chaque extraction ?
+
+On exporte et on corrige sous le tableur et on importe à nouveau
+
+
+```{r}
+write.csv(tab,"../data/tabNbSepulture.csv", row.names =  F)
+# lecture du fichier modifié
+modif <- read.csv("../data/tabNbSepultureModifie.csv")
+# differecne avec realite
+setdiff(remplacement1, modif$Var1)
+# cas anormaux
+remplacement2 <-  modif[(modif$remplacement.ID)!="",]
+names(remplacement2) <- c("depart", "Nb", "arrivee")
+# verif : uniqument un remplacement
+table(remplacement2$Nb)
+# controle 36 cas de remplacement
+# on charge le premier realite
+realite <- read.csv2("../data/Extraction REQUIEM - Liste de Terrains le 23-9-2024.csv", na.strings = "", fileEncoding = 'WINDOWS-1252')
+# jointure
+realite <- merge (realite, remplacement2, all.x = T, by.x = "Emplacement", by.y = "depart" )
+# remplacement dans emplacement
+realite$Emplacement [!is.na(realite$arrivee)] <- realite$arrivee [!is.na(realite$arrivee)]
+```
+
+Vérification en refaisant une fréquence
+
+
+```{r}
+# neautest
+realite <- eclater()
+table(realite$section)
+```
+
+On rajoute sur le modifié les anomalies. attention à voir avec Sébastien à bien séparer par un espace la section et le numéro.
+
+correction erreur à la marge : 
+
+pour AI, le l
+
+```{r}
+ind <- which(realite$section == "l")
+realite[ind, c("section", "Emplacement")]
+realite$Emplacement[ind]
+```
+
+En fait, le "l" se mettait en "L" à cause de l'autocorrection...
+
+
+## Le numéro
+
+Problème du numéro, pour pouvoir trier, il faut éclater le numéro et l'indice
+
+Or pb de l'espace
+
+```{r}
+div <- strsplit(realite$Emplacement, " ")
+#realite$section <- sapply(div, "[",1)
+#num sera le numero
+realite$num <- sapply(div, "[",2)
+#num2 sera me complement
+realite$num2 <- sapply(div, "[",3)
+realite$num3 <- sapply(div, "[",4)
+table(realite$num3)
+table(realite$num)
+table(realite$num2)
+```
+
+2 opérations : 
+
+- extraire les 3 dernières lettres de num quand existe complément
+
+- modifier bis / ter en 2/3/4 pour pouvoir incrémenter
+
+
+```{r}
+# repérage des bis et ter (pour permettre le tri numérique du num)
+ind <- grep("bis|BIS|ter|TER", realite$num)
+realite$num [ind]
+# 94 cas
+#extraction dans num2
+realite$num2 [ind] <- substring(realite$num [ind], 3,5)
+realite$num [ind] <- substring(realite$num [ind], 1,2)
+realite$num
+# conversion en entier
+realite$numBon <- as.integer(realite$num)
+realite [is.na(realite$numBon), c("numBon", "num")]
+# on extrait pour en faire table d'équivalence
+write.csv(realite [is.na(realite$numBon), c("numBon", "num")], "../data/mauvaisNum.csv")
+#ind <- which(is.na(realiteAI$numBon ))
+```
+
+On rajoute au grep tous les soucis
+
+
+```{r}
+# correction anomalie par anomalie
+realiteAI$numBon [ind [1]] <- 21
+realiteAI$numBon [ind [2]] <- 24
+realiteAI$num2 [ind [1]] <-  "quarto"
+# il s'agit d'une sépulture 24/25
+realiteAI$num2 [ind  [2]] <- "1"
+#write.csv(realiteAI, "../data/realiteAI.csv")
+table(realiteAI$num2)
+# remplacement bis ter  quarto par 2 3 4 pout tri
+realiteAI$num2 <- gsub("ter" , "3", realiteAI$num2)
+realiteAI$num2 <- gsub("bis|BIS" , "2", realiteAI$num2)
+realiteAI$num2 <- gsub("quarto" , "4", realiteAI$num2)
+# cas des NA
+ind <- which(is.na(realiteAI$num2))
+realiteAI$num2 [ind]   <- "1"
+# tri
+realiteAI <- realiteAI [order(realiteAI$numBon, realiteAI$num2),]
+write.csv(realiteAI, "../data/sectionAI.csv")
+table(realiteAI$num2, useNA ="always")
+```
+
+
+
+## Remplacement par section
+
+
+### Pb incrémentation 
+
+eclater l'emplacement. num puis indice ou autre.
+
+```{r}
+choix <- 'AI'
+# on procède à l'éclatement sur la parcelle
+
+realiteAI <- realite [grep("AI", realite$section ),]
+# premier terme
+realiteAI$num
+
+
+```
+
+
+
+
+# Nb de sépulture par zone
+
+
+```{r}
+occurence <- table(requiem$sections)
+occ <- as.data.frame(occurence)
+names(occ) <- c("sections", "nb")
+section <- merge(section, occ, by = "sections")
+st_write(section,"../data/cimetiere.gpkg", "section", delete_layer =T)
+```
 
 
 # shape final
@@ -394,3 +584,6 @@ st_write(joint [, c("E_ID", "Text", "DIVISION", "SECTION", "ALLEE", "EMPLACEMEN"
 # Simplification
 
 Utilisation d'un graphe ?
+
+
+

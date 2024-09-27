@@ -1,0 +1,98 @@
+"N° de caméra
+existante","Lieu d'implantation","ETAT DE
+FONCTIONNEMENT
+ ACTUEL","EXIGENCES TECHNIQUES ET CONDITIONS D'INSTALLATION ET DE RACCORDEMENT
+(Analyse DSI)","OBSERVATIONS","interne","sogetrel"
+"75'","Route de Villemonble","NON 
+OPERATIONNELLE","- remplacer la caméra sur le mat
+- raccorder la camera par la fibre existante au switch CSU installé à la gare par Bouygues
+- raccorder à la mairie au switch CSU installé par Bouygues
+- configuration dans genetec de la nouvelle caméra"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD",,"verifier fibre camera gare"
+"01'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"02'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"03'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"04'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"05'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"06'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"07'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"08'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"09'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"10'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"11'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"12'","Parking Neuburger","NON 
+OPERATIONNELLE","Verification de l'installation existante et raccordement au CSU. Pont Radio + Switch dans les immeubles",,,
+"13'","Rue Alexandre David Neel","NON 
+OPERATIONNELLE","- remplacer la caméra sur le mat
+- raccorder la camera par la fibre existante au switch CSU installé à la gare par Bouygues
+- raccorder à la mairie au switch CSU installé par Bouygues
+- configuration dans genetec de la nouvelle caméra"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD",,"verifier fibre camera gare"
+"14'","Avenue de Metz","NON 
+OPERATIONNELLE","- projet av Nancy 2025 = 50 % GC
+- en attendant liaison routeur 4G mare à la veuve CSU"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD",,
+"15'","Place de la république","NON 
+OPERATIONNELLE","- GC 10 m avec ou sans traversée
+-  créer BPE dans chambre proche C72 qui desservira 52 / 72 / 15' / 16' / 17' (priorité SOGETREL) 10 brins (prévoir 24 FO) 
+- tirer une fibre gare - BPE (en cas d'insuffisance de fibre, ce qui est quasi sûr)
+- pour estimer quantité de fibre, aller voir synoptique dans baie Salengro (en interne)
+"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD","synoptique Roger Salengro pour vérifier quantité fibre salengro / gare ?","mise en place BPE"
+"16'","Place de la république","NON 
+OPERATIONNELLE","même mat que la 15'"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD",,
+"17'","Rond-point de la république","NON 
+OPERATIONNELLE","- GC 5 m
+- raccordement BPE chambre C72"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD",,
+"18'","Route de Villemonble - rue de Varsovie","NON 
+OPERATIONNELLE","- GC 5 m pour fibre
+- BPE en 18' ou en 19' et 75 (attention déjà existante)
+- tirer fibre entre 18' et  BPE le plus proche"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD",,"mise en place BPE"
+"19'","Route de Villemonble - allée des Hêtres","NON 
+OPERATIONNELLE","- remplacer la caméra sur le mat
+- étiquetage à vérifier en interne à la gare
+- raccorder la camera par la fibre existante au switch CSU installé à la gare par Bouygues
+- raccorder à la mairie au switch CSU installé par Bouygues
+- configuration dans genetec de la nouvelle caméra"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD","étiquetage gare",
+"20'","Avenue de Verdun","NON 
+OPERATIONNELLE","- remplacer la caméra sur le mat
+- étiquetage à vérifier en interne en mairie
+- raccorder la camera par la fibre existante au switch CSU installé à la mairie par Bouygues
+- raccorder à la mairie au switch CSU installé par Bouygues
+- configuration dans genetec de la nouvelle caméra"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD","étiquetage mairie",
+"21'","Avenue de la République","NON 
+OPERATIONNELLE","- remplacer la caméra sur le mat
+- installer un switch CSU au CMS par Bouygues
+- raccordement switch CSU-CMS au switch CSU-mairie
+- configuration genetec"," changement de caméra, remplacer le dôme PTZ par une caméra panoramique 360° + PTZ full HD",,
+"22'","Chemin du pont","NON 
+OPERATIONNELLE","- Vérifier existence de mat en interne",,"existence du mât ?",
+"23'","Rue Lucien Chapelain","NON 
+OPERATIONNELLE","- Verification de l'installation existante en interne
+- détection fibre SOGETREL 
+- installation switch CSU-MJSP et raccordement mairie
+- vérifier à la MJSP / bascule switch DSI 2025",,"existence du mât ?",
+"24'","Rue Andreï Sakharov","NON 
+OPERATIONNELLE","- vérification existence en interne",,"existence du mât ?",
+"25'","Mairie 1","OPERATIONNELLE","- tirer 3 fibres de la baie DSI à chaque caméra (BOUYGUES) ( 120 m max)
+- alimentation électrique",,"baie DSI : étiquetage",
+"26'","Mairie 2","OPERATIONNELLE","- tirer 3 fibres de la baie DSI à chaque caméra (BOUYGUES) ( 120 m max)
+- alimentation électrique",,,
+"27'","Mairie 3","OPERATIONNELLE","- tirer 3 fibres de la baie DSI à chaque caméra (BOUYGUES) ( 120 m max)
+- alimentation électrique",,,
+"39'","G Sand",,"à géolocaliser et à installer dans genetec
+liaison baie informatique DSI et swicth maire-CSU
+- en interne vérifier l'étiquetage baie DSI",,"géolocaliser, étiquetage",
+"40'","G Sand",,"à géolocaliser et à installer dans genetec
+liaison baie informatique DSI et swicth maire-CSU
+- en interne vérifier l'étiquetage baie DSI",,"géolocaliser, étiquetage",
+"41'","G Sand",,"à géolocaliser et à installer dans genetec
+liaison baie informatique DSI et swicth maire-CSU
+- en interne vérifier l'étiquetage baie DSI",,"géolocaliser, étiquetage",
