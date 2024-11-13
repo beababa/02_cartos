@@ -24,7 +24,8 @@ knitr::opts_chunk$set(warning = FALSE)
 
 Récupération photo, retailler, créer la clé, spatialiser et projeter leaflet.
 
-egalement utilisé pour photo pmr / place livraison (campagne juin-juillet 2024)
+egalement utilisé pour photo pmr / place livraison (campagne juin-juillet 2024) 
+et pb voiture ventouse
 
 # Environnement
 
@@ -233,6 +234,44 @@ solution complexe 2 : récupération wp
 ```
 
 
+# Géocodage
+
+Si les coordonnées GPS n'existent pas, on peut récupèrer les adresses et on géocode le fichier
+
+```{r}
+data <- read.csv2("../data/tableauCommun.geocoded.csv", fileEncoding = "WINDOWS-1252")
+data_sf <- st_as_sf(data, coords = c("longitude", "latitude"), crs = 4326)
+mapview(data_sf)
+# permet de contrôler et de faire bouger les pt dans qgis
+st_write(data_sf, "../data/stationnement.gpkg", "tmp")
+```
+
+
+concaténation avec le fichier existant
+
+attention contrôle de la date et du nb avant
+
+```{r}
+tmp <- st_read("../data/stationnement.gpkg", "tmp")
+stationnement <- st_read("../data/stationnement2.gpkg", "genant")
+```
+
+66 au 18/10/2024
+
+```{r}
+str(stationnement)
+tmp$jour <- "2024:10:14"
+tmp$nom
+tmp$nomN <- paste0("<b>Num Photo :</b>",tmp$nom)  
+tmp$nomN2 <- paste0("<b>Num Photo : </b>",tmp$nom,"<br/ ><b>Date : </b>", tmp$jour, "<br />")  
+tmp$photoC <- paste0("../img/", tmp$nom, ".jpg")
+tmp <- tmp [,c("jour", "nom", "nomN",  "photoC", "nomN2")]
+concat <- rbind(stationnement, tmp)
+st_write(concat, "../data/stationnment.gpkg", "genant", delete_layer = T)
+```
+
+
+
 # enregistrement
 
 il faut concaténer avec les données déjà acquises
@@ -339,10 +378,11 @@ sans export
 
 
 ```{r, eval=TRUE}
+data <- recherche
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = data, group= "metasf", popup = ~nomN2, label = metasf$nom) %>%
-addPopupImages(image = data$photoC, group = "metasf", height = 300, width = 300) 
+  addMarkers(data = data, group= "data", popup = ~nomN2, label = data$nom) %>%
+addPopupImages(image = data$photoC, group = "data", height = 300, width = 300) 
 ```
 
 
@@ -354,6 +394,7 @@ En attendant les catégories / par jour
 ### solution 1 : on éclate les couches
 
 ```{r}
+data <- concat
 metasf$DateTimeOriginal <- as.POSIXct(metasf$DateTimeOriginal, format = "%Y:%m:%d %H:%M:%S")
 data$jour <- as.Date (data$jour, format = "%Y:%m:%d")
 data$jour
@@ -434,8 +475,9 @@ ou avec une  ms pas d'affichage car les données appartiennent à la même table
 ```{r}
 # Create a palette that maps factor levels to colors
 eclat
-pal <- colorFactor(rainbow(6), domain = c(eclat [1], eclat [2], eclat [3], eclat [4], eclat [5], eclat [6]))
+pal <- colorFactor(rainbow(7), domain = c(eclat [1], eclat [2], eclat [3], eclat [4], eclat [5], eclat [6], eclat[7]))
 pal
+rainbow(7)
 ```
 
 
@@ -506,4 +548,31 @@ write.csv(donneeCSV, "../data/complementStationnementCSV.csv", fileEncoding = "U
 ```
 
 
+# Recherche
+
+
+Ajout d'un champs recherche
+
+909
+956
+017
+224
+242
+258
+909
+631
+515
+527
+015
+021
+242
+842
+928
+ 
+
+```{r}
+recherche <- read.csv2("../data/recherche.csv")
+recherche <- stationnement[stationnement$nom %in% c(recherche$num),]
+
+```
 

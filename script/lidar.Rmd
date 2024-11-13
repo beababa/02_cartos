@@ -75,7 +75,7 @@ las_tr <- clip_transect(las, p1, p2, width = 50, xz = TRUE)
 
 
 ```{r}
-LASfile <- "C:/Users/tachasa/Downloads/LHD_FXX_0661_6868_PTS_O_LAMB93_IGN69.copc.laz"
+LASfile <- "C:/Users/bmaranget/Downloads/LHD_FXX_0661_6868_PTS_O_LAMB93_IGN69.copc.laz"
 las <- readLAS(LASfile, select = "xyz")
 print (las)
 las_check(las)
@@ -85,8 +85,17 @@ las <-  readLAS(LASfile, filter = "-keep_first")
 
 
 ```{r}
+ground <- filter_poi(las, "Classification" == 2L, "ReturnNumber"== 1L)
+
+```
+
+
+
+
+```{r}
 plot(las)
-plot(las_tr, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
+plot(ground)
+plot(las, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
 ```
 
 couper le las

@@ -573,17 +573,6 @@ AG0162 <- cadastre [3303,]
 ```
 
 
-Voisinage de bureau
-
-
-```{r}
-bureau <- pres_surf [substring(pres_surf$LIBELLE, 1,3) == "Per", ]
-mff_init(bureau)
-  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
-  mf_map(bureau, border = "green",  col = NA, lwd = 3,add = T)
-```
-
-
 # ICPE BASIAS BAZOL
 
 On a plusieurs sources operis, georisque/infoterre et le géoportail93
@@ -669,7 +658,7 @@ sort(icpeOperis$clé)
 setdiff(op,geo)
 ```
 
-Donc BIONAZ CEMEXBETON et EQUIIOM BETON sont en plus.
+Donc BIONAZ CEMEX BETON et EQUIOM BETON sont en plus.
 
 On repart du fichier géocodé de géorisque, auquel on rajoute ces 3 éléments.
 

@@ -77,7 +77,7 @@ TO DO nombreux voir invite interactive ?
 ```{r}
 chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/11_RIL/"
 cheminSocle <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
-cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/"
+cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/rilNov2024/"
 cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/fibre/"
 cheminPhoto <- "D:/TELETRAVAIL/2024_04_18/ril/"
 cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
@@ -93,7 +93,7 @@ cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
 On récupère les waypoints (la 1e couche par défaut) uniquement
 
 ```{r}
-fic <- list.files(cheminGPX, "*19-JUL-24.gpx")
+fic <- list.files(cheminGPX, "08-NOV-24")
 trace <- NULL
 for (f in fic) {
   tmp <- st_read(paste0(cheminGPX,f), "waypoints")
@@ -101,7 +101,9 @@ for (f in fic) {
 }
 # enlever l'altitude
 trace <- st_zm (trace, drop = T)
-st_write(trace,"../data/ril2024.gpkg", "rilMars2024Trace", delete_layer=T)
+mf_map(trace)
+mf_label(trace, var="name")
+st_write(trace,"../data/ril2024.gpkg", "rilNOv2024Trace_2", delete_layer=T)
 st_write(trace,"../data/fo.gpkg", "wp19_07_2024_Trace", delete_layer=T)
 ```
 
@@ -125,7 +127,7 @@ concaténation de tous les waypoints dans le ril2024.gpkg
 
 ```{r}
 st_layers("../data/ril2024.gpkg")
-trace <- st_read("../data/ril2024.gpkg", "rilMars2024Trace")
+trace <- st_read("../data/ril2024.gpkg", "rilNOv2024Trace_2")
 ```
 
 
@@ -182,6 +184,14 @@ table(substring(photoMeta$FileModifyDate,1,10))
 ```
 
 
+filtre éventuelle sur la date
+
+```{r}
+photoMetaSel <- photoMeta [substring(photoMeta$FileModifyDate,1,10) == "2024:11:08", ]
+photoMeta <-  photoMetaSel
+```
+
+
 on réduit la photo
 
 
@@ -195,9 +205,9 @@ for (i in  c(1:length(photoMeta$FileModifyDate))){
   nom <- photoMeta$FileName [i]
   img <- image_read(photoMeta$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
   img2 <- image_scale(img, geometry = "200")
-  image_write(img2, path = paste0("../photo/fo_", nom), format = NULL, quality = NULL,
+  image_write(img2, path = paste0("../photo/ril_", nom), format = NULL, quality = NULL,
               depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
-  photoMeta$nom [i] <- paste0("../photo/fo_", nom)
+  photoMeta$nom [i] <- paste0("../photo/ril_", nom)
 }
 ```
 
@@ -226,27 +236,36 @@ calcul différence entre les 2 dates
 A priori 1e photo 1er pt (mais verif à faire)
 
 ```{r}
+trace <- trace [-1,]
 trace [1, c("name", "time")]
+trace$time
 photoMeta [1,]
-photoMeta$heure - trace$time
+photoMeta$heure [1] - trace$time [1]
 ```
 
-27 mn diff entre le gps et l'appareil photo. Attention, 27*60 pourles calculs 
+30 mn diff entre le gps et l'appareil photo. Attention, 27*60 pourles calculs 
 
 ```{r}
-photoMeta$heure - trace$time + 27
-photoMeta$heureAjustee <- photoMeta$heure +( 27 * 60 + 20 )
+dif <- 30
+photoMeta$heure [1] - trace$time [1] + dif
+photoMeta$heureAjustee <- photoMeta$heure -( dif * 60)
 class(photoMeta$heureAjustee)
+photoMeta [, c("heure", "heureAjustee")]
 ```
 
+On cherche la différence minimum entre l'heure ajustée et l'heure du wp
+
+test sur la photo 1
 
 ```{r}
 ind <- (which.min(abs(difftime(photoMeta$heureAjustee [1], trace$time))))
+trace [ind,]
+photoMeta$heureAjustee [1]
 ```
 
 
 ```{r}
-p <- photoMeta$heureAjustee [1]
+p <- photoMeta$heureAjustee
 # pour éviter d'utiliser deux fois la même photo, on va supprimer les
 # photos au fur et à mesure
 photoMetaBoucle <- photoMeta
@@ -282,18 +301,31 @@ Jointure
 
 
 ```{r}
-joint <- merge(trace, photoMeta, by.x = "timePhoto", by.y="heureAjustee")
+joint <- merge(trace [, c("time", "name", "timePhoto")], photoMeta, by.x = "timePhoto", by.y="heureAjustee")
+names(trace)
+names(photoMeta)
 # 2 pts perdus
 setdiff(photoMeta$name, joint$name)
 # pas de doublons
 table(trace$name)
+```
+
+pourquoi 23 photos au pt 148 ?
+
+```{r}
+trace [trace$name == '148',]
+```
+
+
+
+```{r}
 png("../img/jointurePhotoGPS.png")
 mf_init(joint)
 fond()
 mf_map(joint, add =T)
 joint$TERRAIN <- substring(joint$FileName,4,8)
 mf_label(joint, var="TERRAIN", halo = T, overlap= F, cex = 1)
-mf_layout("Photo et GPS", "trace GPS\nJuillet 2024")
+mf_layout("Photo et GPS", "trace GPS\nNov 2024")
 dev.off()
 ```
 
@@ -323,7 +355,7 @@ Enregistrement
 
 ```{r}
 names(joint)
-st_write(joint [, c("cmt","name", "nom", "TERRAIN", "FileModifyDate", "heure", "timePhoto")],"../data/fo.gpkg", "photo", append = F)
+st_write(joint [, c("name", "nom", "TERRAIN", "FileModifyDate", "heure")],"../data/ril2024.gpkg", "photoNov2024_2", delete_layer = T)
 ```
 
 
@@ -346,19 +378,25 @@ curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_
 ```{r, eval=TRUE}
 cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
 
-data <- st_read("../data/fo.gpkg", "photo")
+data <- st_read("../data/ril2024.gpkg", "photoNov2024_2")
 data <- st_transform(data, crs = 4326)
 data
 data$name <- rownames(data)
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = data, label = ~TERRAIN, group = "photos", icon = ~cameraIcon) %>%
+  addMarkers(data = data, label = ~nom, group = "photos", icon = ~cameraIcon) %>%
   addPopupImages(data$nom, group = "photos", width = 500) 
 ```
 
 
-pb points superposés
+# pb points superposés
 
+```{r}
+table(duplicated(data$geom))
+```
+
+
+## Solution manuelle
 
 idée : nb de points détermine le nb de sommets
 
@@ -476,3 +514,15 @@ tab
 data$occ <- 
 ```
 
+
+
+## Automatique
+
+
+```{r}
+data <- st_jitter(data)
+mf_map(data)
+st_write(data,"../data/ril2024.gpkg", "photoNov2024_2", delete_layer = T)
+```
+
+C'est quand même beaucoup plus simple ...

@@ -1,0 +1,28 @@
+{
+"type": "FeatureCollection",
+"name": "exportICPE2024",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::2154" } },
+"features": [
+{ "type": "Feature", "properties": { "fid": 1, "nom_ets": "BONDY HABITAT (OPHLM)", "adresse": "RUE JEAN MOULIN - (30 RUE SUZANNE BUISSON - ex face au 47" }, "geometry": { "type": "Point", "coordinates": [ 661942.643867798964493, 6868281.300544466823339 ] } },
+{ "type": "Feature", "properties": { "fid": 2, "nom_ets": "FRANCE EMBALLAGE INTERNATIONAL", "adresse": "33 avenue Galliéni" }, "geometry": { "type": "Point", "coordinates": [ 661448.417058303253725, 6867402.446838335134089 ] } },
+{ "type": "Feature", "properties": { "fid": 3, "nom_ets": "MASQUES DE FRANCE", "adresse": "63-65 rue Marcel Dassault" }, "geometry": { "type": "Point", "coordinates": [ 662343.458104853401892, 6865390.612248942255974 ] } },
+{ "type": "Feature", "properties": { "fid": 4, "nom_ets": "SOCIETE ALLIAGE", "adresse": "11 RUE MARCEL DASSAULT" }, "geometry": { "type": "Point", "coordinates": [ 661877.068711749860086, 6865505.092671228572726 ] } },
+{ "type": "Feature", "properties": { "fid": 5, "nom_ets": "LORA GAZ   SARL", "adresse": "5 RUE DE TREMEUGE" }, "geometry": { "type": "Point", "coordinates": [ 663019.538562311441638, 6866709.29099808447063 ] } },
+{ "type": "Feature", "properties": { "fid": 6, "nom_ets": "ETS DARTY ET FILS", "adresse": "129-155 AV GAL GALLIENI" }, "geometry": { "type": "Point", "coordinates": [ 662134.959973671007901, 6867525.684066007845104 ] } },
+{ "type": "Feature", "properties": { "fid": 7, "nom_ets": "ICF LA SABLIERE", "adresse": "132-168 Route DE VILLEMOMBLE" }, "geometry": { "type": "Point", "coordinates": [ 662617.164908117498271, 6865805.154526673257351 ] } },
+{ "type": "Feature", "properties": { "fid": 8, "nom_ets": "M. DIDI Maurice", "adresse": "37 RUE DE VARSOVIE" }, "geometry": { "type": "Point", "coordinates": [ 661526.813843011506833, 6865839.767509208060801 ] } },
+{ "type": "Feature", "properties": { "fid": 9, "nom_ets": "EFR FRANCE", "adresse": "165 avenue du Général Galliéni" }, "geometry": { "type": "Point", "coordinates": [ 662263.575929381186143, 6867547.198200619779527 ] } },
+{ "type": "Feature", "properties": { "fid": 11, "nom_ets": "CHF (SARL)", "adresse": "5, chemin latéral" }, "geometry": { "type": "Point", "coordinates": [ 661780.209279634291306, 6867702.812612765468657 ] } },
+{ "type": "Feature", "properties": { "fid": 12, "nom_ets": "CORIANCE", "adresse": "SOCIETE THERMIQUE DE BONDY - 31 avenue Andreï Sakharov ZAC Bondy Nord" }, "geometry": { "type": "Point", "coordinates": [ 662535.072555503691547, 6868614.912334408611059 ] } },
+{ "type": "Feature", "properties": { "fid": 13, "nom_ets": "S.N.B.  (URL)", "adresse": "36 RUE RAOUL" }, "geometry": { "type": "Point", "coordinates": [ 662729.335837453487329, 6866575.973266513086855 ] } },
+{ "type": "Feature", "properties": { "fid": 14, "nom_ets": "BUZDUGANARIU Minodora", "adresse": "35 RUE DE VARSOVIE" }, "geometry": { "type": "Point", "coordinates": [ 661551.801174259861, 6865893.419163596816361 ] } },
+{ "type": "Feature", "properties": { "fid": 15, "nom_ets": "CERTAS ENERGY FRANCE 1", "adresse": "205 AV GALLIENI" }, "geometry": { "type": "Point", "coordinates": [ 662668.690216380404308, 6867631.882217979058623 ] } },
+{ "type": "Feature", "properties": { "fid": 16, "nom_ets": "CERTAS ENERGY FRANCE 2", "adresse": "106 AV GALLIENI" }, "geometry": { "type": "Point", "coordinates": [ 661987.208953977678902, 6867417.079337299801409 ] } },
+{ "type": "Feature", "properties": { "fid": 17, "nom_ets": "SAS PROTEC  DECOR", "adresse": "45 ROUTE DE VILLEMOMBLE" }, "geometry": { "type": "Point", "coordinates": [ 662762.867277695098892, 6865710.790434810332954 ] } },
+{ "type": "Feature", "properties": { "fid": 18, "nom_ets": "GDR CHERPIN SARL", "adresse": "34, RUE  ETIENNE DOLET" }, "geometry": { "type": "Point", "coordinates": [ 661683.304405141854659, 6865829.512299086898565 ] } },
+{ "type": "Feature", "properties": { "fid": 19, "nom_ets": "PRESSING DE LA GARE", "adresse": "114 AV DE LA REPUBLIQUE" }, "geometry": { "type": "Point", "coordinates": [ 661711.309017394785769, 6866339.807610384188592 ] } },
+{ "type": "Feature", "properties": { "fid": 20, "nom_ets": " BIONAZ ", "adresse": "28 RUE MARCEL DASSAULT" }, "geometry": { "type": "Point", "coordinates": [ 662189.649202019325458, 6865445.836544068530202 ] } },
+{ "type": "Feature", "properties": { "fid": 21, "nom_ets": " CEMEX BETON ", "adresse": "1 QUAI HUBERTINE AUCLERT" }, "geometry": { "type": "Point", "coordinates": [ 661440.488157904823311, 6867489.956111267209053 ] } },
+{ "type": "Feature", "properties": { "fid": 22, "nom_ets": " EQIOM BETONS IDF ", "adresse": "CHEMIN DE HALAGE" }, "geometry": { "type": "Point", "coordinates": [ 661469.355484335916117, 6867546.659788186661899 ] } }
+]
+}

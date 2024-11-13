@@ -161,10 +161,41 @@ st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage",
 
 ```{r}
 rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
-rue
-liste <- rue [, c("NOM_1_G",  "NOM2", "NATURE"), drop = T]
-write.csv(liste [order (liste$"NOM2" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+liste <- rue [, c("NOM_1_G",  "NOM", "NATURE", "usage"), drop = T]
+write.csv(liste [order (liste$"NOM" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+write.csv(rue [!is.na(rue$NOMnumero),c("NOM", "NOMnumero"), drop=T] , "../data/listePetiteRue.csv")
 ```
+
+
+
+# Longueur
+
+
+```{r}
+# verif doublons
+table( !duplicated(rue$geom), useNA = "always")
+rue$longueur <- st_length(rue)
+```
+
+voie Public / Privé
+
+```{r}
+table(rue$usage)
+aggregate(rue [, "longueur", drop = T], by =list(rue$usage), sum)
+```
+
+
+
+On extrait les rues publiques uniquement
+
+```{r}
+ruePub <- rue [rue$usage != 'privé',]
+# 292 verif pour les sans nom (on a nommé, palais des sports)
+ruePub [ruePub$NATURE == 'Sans',]
+agg <- aggregate(ruePub [, c("longueur"), drop=T], by = list(ruePub$NATURE, ruePub$IMPORTANCE), sum)
+write.csv2(agg, "../data/aggRue.csv", row.names = FALSE)
+```
+
 
 
 # Intersections diverses
