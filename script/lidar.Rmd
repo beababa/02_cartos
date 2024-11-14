@@ -54,13 +54,15 @@ chemin1 <- "C:/Users/tachasa/Downloads/"
 chemin2 <- "D:/03_SIG/03_03_Data/03_SOCLE/"
 zone <- paste0(chemin2, "zones.gpkg")
 zone <- st_read(zone, "zonesNouvellesRue")
-zac <- st_transform(zone [2,],4326)
+zone <- st_read(zone, "zones")
+ind <- 4
+zac <- st_transform(zone [ind,],2154)
 mapview(zac)
-c <- st_coordinates(zone [2,])
+c <- st_coordinates(zone [4,])
 summary(c [,1])
 summary(c [,2])
-b <- st_bbox(zone [2,])
-e <- st_convex_hull(zone [2,])
+b <- st_bbox(zone [ind,])
+e <- st_convex_hull(zone [ind,])
 p <- (st_cast(e, "POINT"))
 mapview(p)
 test <- st_centroid(p [2,], p [5,])
@@ -75,18 +77,28 @@ las_tr <- clip_transect(las, p1, p2, width = 50, xz = TRUE)
 
 
 ```{r}
+# pour la ZAC
 LASfile <- "C:/Users/bmaranget/Downloads/LHD_FXX_0661_6868_PTS_O_LAMB93_IGN69.copc.laz"
+# pour le cimetière
+LASfile <- "C:/Users/tachasa/Downloads/LHD_FXX_0662_6867_PTS_O_LAMB93_IGN69.copc.laz"
 las <- readLAS(LASfile, select = "xyz")
 print (las)
 las_check(las)
-las <-  readLAS(LASfile, filter = "-keep_first -drop_z_below 5 -drop_z_above 50")
+sep <-  readLAS(sel, filter = "-keep_first -drop_z_below 50 -drop_z_above 53")
 las <-  readLAS(LASfile, filter = "-keep_first")
 ```
 
 
 ```{r}
 ground <- filter_poi(las, "Classification" == 2L, "ReturnNumber"== 1L)
-
+ground <- filter_poi(sel, Z>52, Z<54)
+plot(ground)
+ground_sf <- st_as_sf(ground)
+selC <- classify_ground(sel, algorithm = pmf(ws = 5, th = 3))
+selC <- classify_ground(sel, algorithm = csf())
+plot(selC)
+hist(selC$Z)
+plot(selC, color = "Classification", size = 3, bg = "white") 
 ```
 
 
@@ -94,8 +106,10 @@ ground <- filter_poi(las, "Classification" == 2L, "ReturnNumber"== 1L)
 
 ```{r}
 plot(las)
+plot(sel)
 plot(ground)
-plot(las, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
+plot(ground, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
+
 ```
 
 couper le las
@@ -114,6 +128,12 @@ df <- payload(las_tr)
 class(df)
 sfc <- st_sfc(st_point(c(df$X, df$Y)))
 st_as_sf(df, coords = c("X", "Y", "Z"), epsg = 2154)
+```
+
+
+
+```{r}
+sel <- clip_roi(las, zac)
 ```
 
 
@@ -158,9 +178,9 @@ l'objet est constitué de l'en tête et du nuage de point
 # enregistrer
 
 ```{r}
-writeLAS(las_tr, "../data/zacLidar.las")
-zac <- readLAS("../data/zacLidar.las")
-plot(zac)
+writeLAS(sel, "../data/cimetiereLidar.las")
+sel <- readLAS("../data/cimetiereLidar.las")
+plot(sel)
 ```
 
 
@@ -172,8 +192,20 @@ plot(zac)
 las <- readLAS("../data/zacLidar.las")
 plot (las)
 las
-plot(las, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
+plot(sel, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
 df <- payload(las)
 df
+```
+
+
+
+
+
+# batiment
+
+tester l'orga planaire des points
+
+```{r}
+
 ```
 
