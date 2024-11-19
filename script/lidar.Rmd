@@ -49,15 +49,27 @@ library(mapview)
 
 Les fichiers de téléchargement sont lourds. donc restent dans téléchargements.
 
+Récupération des formes pour couper
+
+ZAC et cimetière
+
 ```{r}
 chemin1 <- "C:/Users/tachasa/Downloads/"
 chemin2 <- "D:/03_SIG/03_03_Data/03_SOCLE/"
 zone <- paste0(chemin2, "zones.gpkg")
 zone <- st_read(zone, "zonesNouvellesRue")
 zone <- st_read(zone, "zones")
-ind <- 4
+st_layers("../data/test.gpkg")
+zone <- st_read("../data/test.gpkg", "test")
+ind <- 2
 zac <- st_transform(zone [ind,],2154)
+zac <- st_transform(zone,2154)
 mapview(zac)
+```
+
+Bidouillage : récupération des points
+
+```{r}
 c <- st_coordinates(zone [4,])
 summary(c [,1])
 summary(c [,2])
@@ -74,11 +86,11 @@ las_tr <- clip_transect(las, p1, p2, width = 50, xz = TRUE)
 ```
 
 
-
+Les fichiers laz
 
 ```{r}
 # pour la ZAC
-LASfile <- "C:/Users/bmaranget/Downloads/LHD_FXX_0661_6868_PTS_O_LAMB93_IGN69.copc.laz"
+LASfile <- "C:/Users/tachasa/Downloads/LHD_FXX_0661_6868_PTS_O_LAMB93_IGN69.copc.laz"
 # pour le cimetière
 LASfile <- "C:/Users/tachasa/Downloads/LHD_FXX_0662_6867_PTS_O_LAMB93_IGN69.copc.laz"
 las <- readLAS(LASfile, select = "xyz")
@@ -88,6 +100,8 @@ sep <-  readLAS(sel, filter = "-keep_first -drop_z_below 50 -drop_z_above 53")
 las <-  readLAS(LASfile, filter = "-keep_first")
 ```
 
+
+Filtre hauteur
 
 ```{r}
 ground <- filter_poi(las, "Classification" == 2L, "ReturnNumber"== 1L)
@@ -130,10 +144,12 @@ sfc <- st_sfc(st_point(c(df$X, df$Y)))
 st_as_sf(df, coords = c("X", "Y", "Z"), epsg = 2154)
 ```
 
-
+Extraction
 
 ```{r}
-sel <- clip_roi(las, zac)
+sel <- clip_roi(las, zone [1,])
+sel <- clip_roi(las, zone [2,])
+plot(sel)
 ```
 
 
@@ -142,7 +158,7 @@ vue 2d
 ```{r}
 library(ggplot2)
 
-ggplot(payload(las_tr), aes(X,Z, color = Z)) + 
+ggplot(payload(sel), aes(X,Z, color = Z)) + 
   geom_point(size = 0.5) + 
   coord_equal() + 
   theme_minimal() +
@@ -178,9 +194,12 @@ l'objet est constitué de l'en tête et du nuage de point
 # enregistrer
 
 ```{r}
-writeLAS(sel, "../data/cimetiereLidar.las")
-sel <- readLAS("../data/cimetiereLidar.las")
-plot(sel)
+writeLAS(sel, "../data/ArbreCimetiereLidar.las")
+sel <- readLAS("../data/ArbreCimetiereLidar.las")
+plot(sel, bg="white")
+open3d()# Open a new RGL device
+bg3d(color = "white")
+points3d(sel)
 ```
 
 
@@ -189,9 +208,10 @@ plot(sel)
 
 
 ```{r}
-las <- readLAS("../data/zacLidar.las")
+sel <- readLAS("../data/zacLidar.las")
 plot (las)
 las
+sel$Classification
 plot(sel, color = "Classification", bg = "white", axis = TRUE, legend = TRUE)
 df <- payload(las)
 df
@@ -199,13 +219,197 @@ df
 
 
 
+## les toits
 
 
-# batiment
+```{r}
+sel2 <- segment_shapes(sel, shp_plane(k=300), attribute = "Coplanar")
+table(sel2$Coplanar)
+export <-st_as_sf(as.spatial(sel2))
+st_write(export, "../data/lidar.gpkg", "batiment", delete_layer = T)
+```
+
+
+```{r}
+copla <- filter_poi(sel2, Coplanar=TRUE)
+bati <- rasterize_density(copla, res=1)
+plot(bati)
+bati_sf <- st_as_sf(bati, coords = c("x","y"), crs = 2154, agr ="constant")
+```
+
+# cimetière : pb végétation
+
+
+
+source : https://whitschroder.github.io/remote-sensing/lidr.html#cloth-simulation-function-csf
+
+https://r-lidar.github.io/lidRbook/dtm.html
+
+```{r}
+sel <- readLAS("../data/extrCimetiereLidar.las")
+plot(sel, size= 3, bg="white")
+hist(sel$Z)
+```
+
+On filtre sur 52 53.2 par rapport à la forme du plot et à l'histo
+
+```{r}
+ground <- filter_poi(sel, Z>52, Z<53.2)
+ground <- filter_poi(sel, Z>52, Z<53.5)
+plot(ground)
+hist(ground$Z)
+# remarque tout est à zéro
+table(ground$Classification)
+ground$Classification
+```
+
+
+Si on voulait filtrer sur le ground
+
+```{r}
+ground <- filter_ground(sel)
+plot(sel)
+table(sel$Classification)
+plot(ground, size=3)
+```
+
+
+## Classification
+
+On essaie de densifier les points (algorythmes d'interpolation)
+
+Mais il faut rendre la classif à 2
+
+
+```{r}
+table(ground$Classification)
+ground$Classification <- 2L 
+```
+
+Cela serait trop simple.. mais cela n'est pas bcp plus compliqué.
+
+Mais le 2L est radical !
+
+
+Plusieurs méthodes PMF CSF MCC
+
+### CSF
+
+```{r}
+library(RCSF)
+mycsf <- csf(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1, iterations = 500L, time_step = .65)
+lascsf <- classify_ground(ground, mycsf)
+mycsf <- csf(sloop_smooth = TRUE, class_threshold = 0.3, cloth_resolution = 0.5, rigidness = 1, iterations = 1000L, time_step = .75)
+lascsf <- classify_ground(ground, mycsf)
+hist(lascsf$Z)
+plot(lascsf)
+table(lascsf$Classification)
+```
+
+
+Quelques points de différence...
+
+### PMF
+
+PMF progressive morphological filter
+windows size : taille échantillon
+th : hauteur échantillon
+
+```{r}
+class <- classify_ground(ground, algorithm = pmf(ws = 2, th = 10))
+plot(class, color = "Classification", size = 1, bg = "white") 
+table(class$Classification)
+```
+
+
+Voit-on vraiment des différences ?
+
+On fait varier les paramètres
+
+```{r}
+for (ind in 1:9){
+  tmp <- classify_ground(ground, algorithm = pmf(ws = ind, th = ind))
+  print(table(tmp$Classification))
+}
+
+plot(class2, color = "Classification", size = 3, bg = "white") 
+table(class2$Classification)
+```
+
+
+CSF Cloth Simulation Fonction
+
+simuler un drap
+
+
+
+```{r}
+class <- classify_ground(sel, algorithm = csf())
+table(class$Classification)
+```
+
+
+
+## DTM
+
+Une fois classifié, on peut faire le DTM
+
+
+
+```{r}
+dtm_tin <- rasterize_terrain(class, res = 1, algorithm = tin())
+plot_dtm3d(dtm_tin, bg = "white") 
+dtm_idw <- rasterize_terrain(class, res =1, algorithm = knnidw(k = 10L, p=2))
+plot_dtm3d(dtm_idw, bg = "white") 
+library(gstat)
+dtm_kriging <- rasterize_terrain(class, res = 0.050, algorithm = kriging(k = 100))
+# on augment le paramètre car sortie floue
+plot_dtm3d(dtm_kriging, bg = "white") 
+```
+
+Rendu
+
+```{r}
+library(terra)
+dtm_prod <- terrain(dtm_tin, v = c("slope", "aspect"), unit = "radians")
+dtm_prod <- terrain(dtm_idw, v = c("slope", "aspect"), unit = "radians")
+dtm_prod <- terrain(dtm_kriging, v = c("slope", "aspect"), unit = "radians")
+dtm_hillshade <- shade(slope = dtm_prod$slope, aspect = dtm_prod$aspect)
+plot(dtm_hillshade, col =gray(0:30/30), legend = FALSE)
+```
+
+
+```{r}
+library(rayshader)
+dtm <- raster::raster(dtm_kriging)
+elmat <- raster_to_matrix(dtm)
+map <- elmat %>%
+  sphere_shade(texture = "imhof1", progbar = FALSE) %>%
+  add_water(detect_water(elmat), color = "imhof1") %>%
+  add_shadow(ray_shade(elmat, progbar = FALSE), 0.5) %>%
+  add_shadow(ambient_shade(elmat, progbar = FALSE), 0)
+plot_map(map)
+plot_3d(map, elmat, zscale = 1, windowsize = c(800, 800))
+```
+
+
+# Surfaces planaires
+
+Ce qui est vrai pour les batiments, l'est pour les tombes
 
 tester l'orga planaire des points
 
 ```{r}
+sel2 <- segment_shapes(class, shp_plane(k=300), attribute = "Coplanar")
+table(sel2$Coplanar)
+export <-st_as_sf(as.spatial(sel2))
+st_write(export, "../data/lidar.gpkg", "arbre", delete_layer = T)
+```
 
+
+```{r}
+copla <- filter_poi(sel2, Coplanar=TRUE)
+bati <- rasterize_density(copla, res=1)
+plot(bati)
 ```
 
