@@ -58,12 +58,13 @@ Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
 
 ```{r}
 st_layers(paste0(chemin, "03_SOCLE/rue.gpkg"))
+st_layers(paste0(chemin, "03_SOCLE/socle2024.gpkg"))
 # nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
+rue <- st_read(paste0(chemin,"03_SOCLE/socle2024.gpkg"), "rues")
 str(rue)
 #386 rues au 16/06
 # 387 au 9/11 impasse benhamou et voie tram train
-
+# 373 au 10/12/2024
 # maj longueur
 rue$Longueur <- round(st_length(rue$geom),0)
 sum(rue$Longueur)
@@ -84,7 +85,7 @@ mf_label(rue, "NOM" , overlap = F, lines = T)
 Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
 
 
-les corrections sont plutôt effectuées sous rue2023
+les corrections sont effectuées sous socle2024.gpkg / rues
 
 
 le raccourci sans les articles dans rue.csv
@@ -124,8 +125,8 @@ ch <- as.character(seq(1,17))
 motif <- motif [!(motif %in% ch)]
 motif <- motif [!motif%in% c("Sans", "D78")]
 motif
-motif <- paste0(motif, " |")
-motif [motif == "VLA |"] <- "VLA "
+motif <- paste0("^",motif, " |")
+motif [motif == "^VOIE |"] <- "VOIE "
 motif <- paste(motif, collapse = "")
 
 nchar(motif)
@@ -143,6 +144,7 @@ rue$NOM
 motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE|^D\'")
 rue$NOM <- gsub(motif, "", rue$NOM)
 rue$NOM <- gsub("^ ", "", rue$NOM)
+str(rue)
 ```
 
 enregistrement rue2023
@@ -150,8 +152,8 @@ enregistrement rue2023
 ```{r}
 # attention suppression
 file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherence")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/socle2024.gpkg"), "rues", delete_layer = T)
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherence")], paste0(chemin, "03_SOCLE/socle2024.gpkg"), "rues", delete_layer = T)
 ```
 
 
@@ -229,7 +231,55 @@ mf_map(grille)
 mf_map(rue, add = T)
 ```
 
-```{r}
 
+Pb nom numéros
+
+
+```{r}
+rue$NOM_1_G[!is.na(rue$NOMnumero)] <- rue$NOMnumero [!is.na(rue$NOMnumero)] 
+rue$NOM_1_G[!is.na(rue$NOMnumero)] 
+motif <- c("ALL |^R |SEN |IMP ")
+rue$NOM [!is.na(rue$NOMnumero)] <- gsub(motif, "", rue$NOM [!is.na(rue$NOMnumero)])
+```
+
+
+
+
+Les secteurs voirie
+
+```{r}
+voirie <- st_read(paste0(chemin, "03_SOCLE/limites.gpkg"), "bondy")
+inter <- st_intersection(rue, voirie)
+st_crs(voirie)
+st_crs(rue)
+rue <- st_transform(rue, 2154)
+```
+
+
+
+
+
+
+
+
+
+Enregistrement
+
+```{r}
+secteurVoirie <- write.csv(inter [, c("NATURE", "NOM", "NOM_1_G", "usage", "nom"), drop = T], "../data/rueSecteurVoirie.csv")
+#filtre
+inter <- inter [, c("NATURE", "NOM", "NOM_1_G", "usage", "nom"), drop = T]
+```
+
+
+Eclatement du fichier
+
+```{r}
+liste <- split(inter, inter$nom)
+sapply(liste, nrow)
+lengths(liste)
+write.csv(liste$Habib, "../data/habib.csv", na ="public")
+write.csv(liste$Murat, "../data/murat.csv", na ="public")
+write.csv(liste$Rachid, "../data/rachid.csv", na ="public")
 ```
 

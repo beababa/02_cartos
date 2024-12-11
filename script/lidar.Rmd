@@ -247,7 +247,7 @@ https://r-lidar.github.io/lidRbook/dtm.html
 
 ```{r}
 sel <- readLAS("../data/extrCimetiereLidar.las")
-plot(sel, size= 3, bg="white")
+plot(ground, size= 3, bg="white")
 hist(sel$Z)
 ```
 
@@ -268,7 +268,7 @@ Si on voulait filtrer sur le ground
 
 ```{r}
 ground <- filter_ground(sel)
-plot(sel)
+plot(sel) 
 table(sel$Classification)
 plot(ground, size=3)
 ```
