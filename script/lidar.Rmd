@@ -54,14 +54,14 @@ Récupération des formes pour couper
 ZAC et cimetière
 
 ```{r}
+Sys.getenv("HOME")
 chemin1 <- "C:/Users/tachasa/Downloads/"
 chemin2 <- "D:/03_SIG/03_03_Data/03_SOCLE/"
+chemin2 <- paste0(Sys.getenv("HOME"), "/03_SIG/03_03_Data/03_SOCLE/")
 zone <- paste0(chemin2, "zones.gpkg")
 zone <- st_read(zone, "zonesNouvellesRue")
 zone <- st_read(zone, "zones")
-st_layers("../data/test.gpkg")
-zone <- st_read("../data/test.gpkg", "test")
-ind <- 2
+ind <- 4
 zac <- st_transform(zone [ind,],2154)
 zac <- st_transform(zone,2154)
 mapview(zac)
@@ -93,7 +93,10 @@ Les fichiers laz
 LASfile <- "C:/Users/tachasa/Downloads/LHD_FXX_0661_6868_PTS_O_LAMB93_IGN69.copc.laz"
 # pour le cimetière
 LASfile <- "C:/Users/tachasa/Downloads/LHD_FXX_0662_6867_PTS_O_LAMB93_IGN69.copc.laz"
+# pour Pasteur
+LASfile <- "C:/Users/bmaranget/Downloads/LHD_FXX_0662_6868_PTS_O_LAMB93_IGN69.copc.laz"
 las <- readLAS(LASfile, select = "xyz")
+las <- readLAS(LASfile)
 print (las)
 las_check(las)
 sep <-  readLAS(sel, filter = "-keep_first -drop_z_below 50 -drop_z_above 53")
@@ -147,7 +150,7 @@ st_as_sf(df, coords = c("X", "Y", "Z"), epsg = 2154)
 Extraction
 
 ```{r}
-sel <- clip_roi(las, zone [1,])
+sel <- clip_roi(las, zac)
 sel <- clip_roi(las, zone [2,])
 plot(sel)
 ```
@@ -195,6 +198,7 @@ l'objet est constitué de l'en tête et du nuage de point
 
 ```{r}
 writeLAS(sel, "../data/ArbreCimetiereLidar.las")
+writeLAS(sel, "../data/pasteur.las")
 sel <- readLAS("../data/ArbreCimetiereLidar.las")
 plot(sel, bg="white")
 open3d()# Open a new RGL device

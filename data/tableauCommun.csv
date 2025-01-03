@@ -1,28 +1,144 @@
-﻿nom;date;adresse;ville;cp
-Ventouse 1;14/10/2024;193 rue Auguste Blanqui;Bondy;93140
-Ventouse 2;14/10/2024;Place Edith Piaf;Bondy;93140
-Ventouse 3;14/10/2024;30 allée de l'orme;Bondy;93140
-Ventouse 4;14/10/2024;06 avenue de Metz;Bondy;93140
-Ventouse 5;14/10/2024;09 rue Marcel Dassault;Bondy;93140
-Ventouse 6;14/10/2024;07 rue Jules Ferry;Bondy;93140
-Ventouse 7;14/10/2024;03 villa Madeleine;Bondy;93140
-Ventouse 8;14/10/2024;76 rue Edouard Vaillant;Bondy;93140
-Ventouse 9;14/10/2024;13 rue de l'union;Bondy;93140
-Ventouse 10;14/10/2024;07 bis allée Corneille;Bondy;93140
-Ventouse 11;14/10/2024;189-193- rue Auguste Blanqui;Bondy;93140
-Ventouse 12;14/10/2024;35 allée de la paix;Bondy;93140
-Ventouse 13;14/10/2024;16 rue Raoul;Bondy;93140
-Ventouse 14;14/10/2024;33 rue du professeur Vaillant;Bondy;93140
-Ventouse 15;14/10/2024;17 rue des droits de l'homme;Bondy;93140
-Ventouse 16;14/10/2024;26 rue Michelet;Bondy;93140
-Ventouse 17;14/10/2024;30 rue Michelet;Bondy;93140
-Ventouse 18;14/10/2024;145 rue Baudin;Bondy;93140
-Ventouse 19;14/10/2024;66 rue du vieux moulin;Bondy;93140
-Ventouse 20;14/10/2024;11 avenue de Verdun;Bondy;93140
-Ventouse 21;14/10/2024;43 rue des 5 ormes;Bondy;93140
-Ventouse 22;14/10/2024;39 avenue de Verdun;Bondy;93140
-Ventouse 23;14/10/2024;4 rue Béranger;Bondy;93140
-Ventouse 24;14/10/2024;2 rue de préssensé;Bondy;93140
-Ventouse 25;14/10/2024;52 rue Louis Auguste Blanqui;Bondy;93140
-Ventouse 26;14/10/2024;52 rue Louis Auguste Blanqui;Bondy;93140
-Ventouse 27;14/10/2024;17 rue César Delaine;Bondy;93140
+﻿num photo;jour;adresse;type d'infraction;type de place;observation;enlevé (oui/non)
+325;03/07/2024;49 bis rue du vieux moulin;gênant;- - - autre;ventouse;non
+427;03/07/2024;50 rue Michelet;gênant;- - - autre;ventouse;non
+436;03/07/2024;edouard vaillant;gênant;- - - autre;ventouse;non
+438;03/07/2024;50 rue Michelet;gênant;- - - autre;ventouse;non
+758;03/07/2024;59 bis rue de la liberté;gênant;- - - autre;ventouse;non
+37;04/07/2024;alexandra david neel;gênant;- - - autre;ventouse;non
+447;04/07/2024;19 av jouhaux;gênant;- - - autre;ventouse;non
+518;04/07/2024;21 av jouhaux;gênant;- - - autre;ventouse;non
+654;04/07/2024;2 rue picrochole;gênant;- - - autre;ventouse;non
+45;10/07/2024;rue du professeur vaillant;gênant;PMR;chevauchement;
+230;10/07/2024;avenue Varagnat;gênant;Livraison;stationnement;
+410;10/07/2024;IRD;gênant;PMR;stationnement travers;
+454;10/07/2024;leon blum;gênant;PMR;stationnement travers;
+628;10/07/2024;Moulin / Blum;gênant;PMR;stationnement travers;
+908;10/07/2024;peupliers;gênant;Livraison;chevauchement;
+816;02/08/2024;3 Rue Gatine;gênant;- - - autre;ventouse;non
+143;07/08/2024;Rue des 5 Ormes;gênant;- - - autre;ventouse;non
+224;07/08/2024;Rue Bérangère;gênant;- - - autre;ventouse;non
+45;09/08/2024;Rue Etienne Dolet;gênant;- - - autre;ventouse;non
+229;09/08/2024;Avenue Léon Blum;gênant;- - - autre;ventouse;non
+256;09/08/2024;Avenue Léon Blum;gênant;- - - autre;ventouse;non
+434;13/08/2024;Avenue des Plateaux;gênant;- - - autre;ventouse;non
+611;13/08/2024;Avenue des Plateaux;gênant;- - - autre;ventouse;non
+537;06/09/2024;Rue du Lion;gênant;- - - autre;ventouse;non
+015;16/09/2024;44 rue Lucien Chapelain;gênant;- - - autre;ventouse;non
+016;16/09/2024;25 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+017;16/09/2024;13 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+021;16/09/2024;44 rue Lucien Chapelain;gênant;- - - autre;ventouse;non
+041;16/09/2024;25 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+046;16/09/2024;40 rue promenade;gênant;- - - autre;ventouse;non
+053;16/09/2024;25 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+106;16/09/2024;17 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+121;16/09/2024;17 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+127;16/09/2024;46 rue Lucien Chapelain;gênant;- - - autre;ventouse;non
+135;16/09/2024;06 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+224;16/09/2024;12 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+242;16/09/2024;46 rue fontaine;gênant;- - - autre;ventouse;non
+242;16/09/2024;13 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+245;16/09/2024;46 rue Fontaine;gênant;- - - autre;ventouse;non
+258;16/09/2024;12 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+305;16/09/2024;12 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+309;16/09/2024;39 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+312;16/09/2024;12 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+322;16/09/2024;39 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+411;16/09/2024;20 avenue Marx Dormoy;gênant;- - - autre;ventouse;non
+447;16/09/2024;39 rue de Meaux;gênant;- - - autre;ventouse;non
+451;16/09/2024;6 rue Francois Villon;gênant;- - - autre;ventouse;non
+508;16/09/2024;12 rue Lucien Chapelain;gênant;- - - autre;ventouse;non
+515;16/09/2024;6 rue Francois Villon;gênant;- - - autre;ventouse;non
+527;16/09/2024;6 rue Francois Villon;gênant;- - - autre;ventouse;non
+534;16/09/2024;6 rue Francois Villon;gênant;- - - autre;ventouse;non
+544;16/09/2024;8 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+547;16/09/2024;6 rue Francois Villon;gênant;- - - autre;ventouse;non
+610;16/09/2024;6 rue Francois Villon;gênant;- - - autre;ventouse;non
+618;16/09/2024;8 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+631;16/09/2024;60 rue de Meaux;gênant;- - - autre;ventouse;non
+638;16/09/2024;40 rue promenade;gênant;- - - autre;ventouse;non
+645;16/09/2024;60 rue de Meaux;gênant;- - - autre;ventouse;non
+828;16/09/2024;6 avenue de la parisienne;gênant;- - - autre;ventouse;non
+842;16/09/2024;6 avenue de la parisienne;gênant;- - - autre;ventouse;non
+909;16/09/2024;11 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+919;16/09/2024;04 avenue Varagnat;gênant;- - - autre;ventouse;non
+920;16/09/2024;40 rue promenade;gênant;- - - autre;ventouse;non
+928;16/09/2024;6 avenue de la parisienne;gênant;- - - autre;ventouse;non
+956;16/09/2024;13 avenue Maurice Benhamou;gênant;- - - autre;ventouse;non
+Ventouse 1;14/10/2024;193 rue Auguste Blanqui;gênant;- - - autre;ventouse;non
+Ventouse 10;14/10/2024;07 bis allée Corneille;gênant;- - - autre;ventouse;oui
+Ventouse 11;14/10/2024;189-193- rue Auguste Blanqui;gênant;- - - autre;ventouse;non
+Ventouse 12;14/10/2024;35 allée de la paix;gênant;- - - autre;ventouse;oui
+Ventouse 13;14/10/2024;16 rue Raoul;gênant;- - - autre;ventouse;non
+Ventouse 14;14/10/2024;33 rue du professeur Vaillant;gênant;- - - autre;ventouse;non
+Ventouse 15;14/10/2024;17 rue des droits de l'homme;gênant;- - - autre;ventouse;non
+Ventouse 16;14/10/2024;26 rue Michelet;gênant;- - - autre;ventouse;non
+Ventouse 17;14/10/2024;30 rue Michelet;gênant;- - - autre;ventouse;non
+Ventouse 18;14/10/2024;145 rue Baudin;gênant;- - - autre;ventouse;non
+Ventouse 19;14/10/2024;66 rue du vieux moulin;gênant;- - - autre;ventouse;non
+Ventouse 2;14/10/2024;Place Edith Piaf;gênant;- - - autre;ventouse;non
+Ventouse 20;14/10/2024;11 avenue de Verdun;gênant;- - - autre;ventouse;oui
+Ventouse 21;14/10/2024;43 rue des 5 ormes;gênant;- - - autre;ventouse;non
+Ventouse 22;14/10/2024;39 avenue de Verdun;gênant;- - - autre;ventouse;oui
+Ventouse 23;14/10/2024;4 rue Béranger;gênant;- - - autre;ventouse;oui
+Ventouse 24;14/10/2024;2 rue de préssensé;gênant;- - - autre;ventouse;oui
+Ventouse 25;14/10/2024;52 rue Louis Auguste Blanqui;gênant;- - - autre;ventouse;non
+Ventouse 26;14/10/2024;52 rue Louis Auguste Blanqui;gênant;- - - autre;ventouse;non
+Ventouse 27;14/10/2024;17 rue César Delaine;gênant;- - - autre;ventouse;oui
+Ventouse 3;14/10/2024;30 allée de l'orme;gênant;- - - autre;ventouse;non
+Ventouse 4;14/10/2024;06 avenue de Metz;gênant;- - - autre;ventouse;non
+Ventouse 5;14/10/2024;09 rue Marcel Dassault;gênant;- - - autre;ventouse;non
+Ventouse 6;14/10/2024;07 rue Jules Ferry;gênant;- - - autre;ventouse;oui
+Ventouse 7;14/10/2024;03 villa Madeleine;gênant;- - - autre;ventouse;oui
+Ventouse 8;14/10/2024;76 rue Edouard Vaillant;gênant;- - - autre;ventouse;oui
+Ventouse 9;14/10/2024;13 rue de l'union;gênant;- - - autre;ventouse;oui
+Ventouse 28;12/12/2024;Rue René Char;gênant;- - - autre;ventouse;non
+Ventouse 29;12/12/2024;Rue René Char;gênant;- - - autre;ventouse;non
+27;18/12/2024;;;;;
+117;18/12/2024;;;;;
+123;18/12/2024;;;;;
+254;18/12/2024;;;;;
+318;18/12/2024;;;;;
+334;18/12/2024;;;;;
+422;18/12/2024;;;;;
+429;18/12/2024;;;;;
+505;18/12/2024;;;;;
+533;18/12/2024;;;;;
+836;18/12/2024;;;;;
+856;18/12/2024;;;;;
+104;19/12/2024;;;;;
+112;19/12/2024;;;;;
+121;19/12/2024;;;;;
+131;19/12/2024;;;;;
+141;19/12/2024;;;;;
+244;19/12/2024;;;;;
+246;19/12/2024;;;;;
+247;19/12/2024;;;;;
+250;19/12/2024;;;;;
+256;19/12/2024;;;;;
+342;19/12/2024;;;;;
+442;19/12/2024;;;;;
+454;19/12/2024;;;;;
+502;19/12/2024;;;;;
+545;19/12/2024;;;;;
+837;19/12/2024;;;;;
+15;30/12/2024;;;;;
+29;30/12/2024;;;;;
+108;30/12/2024;;;;;
+139;30/12/2024;;;;;
+301;30/12/2024;;;;;
+400;30/12/2024;;;;;
+402;30/12/2024;;;;;
+416;30/12/2024;;;;;
+419;30/12/2024;;;;;
+421;30/12/2024;;;;;
+427;30/12/2024;;;;;
+505;30/12/2024;;;;;
+655;30/12/2024;;;;;
+714;30/12/2024;;;;;
+745;30/12/2024;;;;;
+802;30/12/2024;;;;;
+817;30/12/2024;;;;;
+847;30/12/2024;;;;;
+903;30/12/2024;;;;;
+905;30/12/2024;;;;;
+913;30/12/2024;;;;;

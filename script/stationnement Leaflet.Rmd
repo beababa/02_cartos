@@ -56,7 +56,7 @@ rue <- st_transform(rue, 4326)
 
 ```{r}
 factpal <- colorFactor(c("orange", "green"), rue$couleur)
-rue$couleur
+table(rue$couleur)
 ```
 
 
