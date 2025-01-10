@@ -22,7 +22,7 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Ouverture fichier pdf arrêté lecture numéro d'arrêté
+Ouverture fichier pdf arrêté lecture lieu et date de l'arrêté
 
 # Sources
 
@@ -40,13 +40,24 @@ library(tesseract)
 library(magick)
 library(tictoc)
 ```
-Ne pas jouer
+
 
 
 ```{r}
 library(sf)
 library(mapsf)
 ```
+
+
+
+
+# Chemins
+
+```{r}
+Sys.getenv("HOME")
+chemin <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/03_SOCLE/")
+```
+
 
 
 ## Lecture de tous les fichiers .pdf et  conversion en image
@@ -72,26 +83,38 @@ tic()
 text_list <- map(images, ocr)
 toc()
 stext <- str_split(text_list, "\n")
+stext [[1]] [1:18]
+stext [[2]][1:25]
+stext [[3]][1:18]
 ```
 
 
-## Extraction des titres des arrêtés
+## Extraction des lieux et dates des arrêtés
 
+### Extraction des chaînes
 
-après A2021
+après A2022 titre de l'arrêté
+on extrait les termes avec les rues etc... (1er filtre)
+puis on prend la 1e occurence
+
 
 
 ```{r}
 # 232 textes 2 exemples
-images[91]
-(extr <- stext [[91]])
+images[1]
+(extr <- stext [[1]])
 # fonctions pour chercher chaine
-chercherType <- function (chaine) {
-  lg_type <- grep("A2021",chaine, ignore.case = TRUE,value = FALSE)
+chaine <- stext [[1]]
+chercherDate <- function (chaine) {
+  ind <- grep("2022",chaine, ignore.case = TRUE,value = FALSE)
+  # on supprime la 1e occurence, car c'est forcemment le titre
+  ind <- ind [-1]
+  res <- chaine[ind] 
 }
 vLoc <- c("rue","allée","villa","chemin","avenue","place","voies","Esplanade")
 chercherLoc <- function (chaine) {
   lg_loc <- grep("rue|allée|villa|chemin|avenue|place|voies|Esplanade",chaine, ignore.case = TRUE,value = FALSE)
+  res <- chaine[lg_loc]
 }
 premiereOccurence <- function(liste) {
   vecteur <-  NULL
@@ -102,10 +125,102 @@ premiereOccurence <- function(liste) {
   }
   return(vecteur)
 }
-liste <- lapply(stext, chercherType)
-liste
-# plusieurs occurences car réf VU
-lgType <- premiereOccurence(liste)
+liste <- lapply(stext, chercherLoc)
+lieu <- premiereOccurence(liste)
+liste <- lapply(stext, chercherDate)
+date <- premiereOccurence(liste)
+# plusieurs occurences car liste = # plusieurs occurences car réf VU
+lieu
+date
+```
+
+
+
+### Extraction des termes
+
+
+```{r}
+lieu <- as.data.frame(lieu)
+# pour le nom
+lieu$NOM <- NA
+# pour la nature
+lieu$EXTR <-  NA
+```
+
+
+
+
+
+#### Ñom rues
+
+On récupère la liste des rues et on cherche toutes les rues correspondantes.
+
+
+
+```{r}
+rues <- st_read(paste0(chemin, "socle2024.gpkg"),"rues")
+nb <- length(rues$NOM)
+# Utilisation d'une fonction plutôt qu'une boucle
+# le mot clé est dans la table des rues, pas dans l'extraction de l'arrêté
+trouverCorrespondance <- function(i){
+  res <- grep(rues$NOM [i], lieu, ignore.case = T)
+  }
+res <- sapply(c(1:nb), trouverCorrespondance)
+# filtre sur les item de la liste ayant une correspondance (différent de zéro)
+ind <- which(sapply(res, length)!=0)
+ref <- rues [ind,]
+ref
+```
+
+
+#### Jointure
+
+Récupération des clés
+
+```{r}
+
+for (r in ref$NOM){
+  print(r)
+  ind <- grep(r, lieu$lieu, ignore.case = T )
+  print(ind)
+  lieu$NOM [ind] <- r
+}
+jointure <- merge(ref, lieu, by = "NOM")
+table(jointure$NOM)
+```
+
+Noms à préciser
+
+
+### Nature
+
+on repère le motif correspondant à une clé, et on joint pour récupérer le motif de reférence
+
+```{r}
+# table d'équivalence constituée peu à peu à partir de jointure
+NATURE <- c("AV", "R","CH")
+EXTR <- c("Avenue","rue", "Chemin")
+equiv <- data.frame(NATURE,EXTR)
+for (e in equiv$EXTR){
+  print(e)
+  ind <- grep(e, jointure$lieu, ignore.case = T )
+  print(ind)
+  jointure$EXTR [ind] <- e
+}
+lieu
+equiv
+jointure <- merge(lieu,equiv, by=c("EXTR"))
+jointure
+```
+
+
+
+
+
+
+Cas particuliers hors corpus d'exemple
+
+```{r}
 # filtrage uniquement sur les vrais arrêtés
 ok <- which(!is.na(lgType))
 stextSel <- stext [c(ok)]
@@ -123,126 +238,18 @@ lgLoc <- premiereOccurence(liste)
 pb <- which(is.na(lgLoc))
 # pb empty c'est pas de pb
 stextSel[c(pb)]
+```
+
+
+```{r}
 loc <- NULL
 i <- 1
 for (i in 1:length(stextSel)){
-  tmp <- stextSel [[i]][lgLoc[i]]
+  tmp <- stextSel [[i]][ind[i]]
   loc <- c(loc, tmp)
 }
 head(loc)
 # sauvegarde du résulat
 write.csv2(loc, "lieux.csv")
 ```
-
-## Extraction de la localisation
-
-
-```{r}
-loc <- read.csv2("../data/lieux.csv", fileEncoding = "CP1252")
-str(loc)
-grep("Villa", loc [1], value = TRUE)
-```
-
-
-
-
-
-# Géocodage
-
-Nettoyage
-
-
-```{r}
-head(loc)
-categ <- c("Interdiction", "momentanée", "momentanée","circulation", "Modification","Réglementation", "Autorisation","stationnement")
-categ2 <-paste(categ, collapse =  "|")
-codeCateg <- c("STAT", "CIRC")
-loc2 <-gsub (categ2," ", loc$x, ignore.case = TRUE)
-loc2
-loc3 <- gsub(categ2, " ", loc2)
-loc3
-res <- NULL
-nettoyage <- function(fin){
-  data <- gsub (categ[fin]," ", loc$x, ignore.case = TRUE)
-  print(fin)
-  if (fin!=0){
-     data2 <- nettoyage(mot [fin-1], data)
-     return(data2)
-  }
-  else {
-     return(data2)
-  }
-  
- 
-}
-res <- nettoyage 
-nettoyage(nettoyage(nettoyage(loc$x)))
-```
-
-les rues
-
-```{r}
-momentanée 
-rue <- read.csv("../data/indexRues.csv")
-rue
-chemin <- "D:/03_SIG/03_03_Data/"
-rue <- st_read(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
-rue <- paste(rue$NOM, collapse = "|")
-loc3_df <- as.data.frame(loc3)
-ind <- grep(rue [1], loc3_df$loc3)
-```
-
-On recherche le nom de la rue 
-
-
-https://ichi.pro/fr/guide-rapide-de-la-reconnaissance-d-entites-et-du-geocodage-avec-r-211832443971733
-
-
-
-
-```{r}
-library(tidygeocoder)
-result_tidygeocoder=tidygeocoder::geocode(adresse_df,
-                                          adresse,
-                                          method="osm")
-result_tidygeocoder
-```
-
-```{r}
-adresse <- paste0(loc3, ", 93140, Bondy")
-adresse_df <- as.data.frame(adresse)
-adresse_df
-locgeo <- geocode(adresse, limit = 1)
-```
-
-
-Les résultats ne sont pas bons.7/ 194...
-
-Or, j'ai quand même une table d'équivalence.
-
-Il s'agit de repérer les motifs RUE et d'afficher dans le tableau de départ (loc3)
-une colonne equiv qui va permettre de faire le lien
-
-```{r}
-i <- 375
-rue$NOM [i]
-rue$NOM
-loc <- loc3
-loc3$correspondance <- NA
-trouverCorrespondance <- function(i){
-  res <- grep(rue$NOM [i], loc3, ignore.case = T)
-  }
-res <- sapply(1:387, trouverCorrespondance)
-res
-loc3$correspondance
-for (i in c(1:387)){
-  tmp <- res [[i]]
-  loc3$correspondance
-}
-ind <- which(sapply(res, length)!=0)
-ind
-loc3 [ind]
-
-```
-
 

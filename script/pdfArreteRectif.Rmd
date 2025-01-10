@@ -1,5 +1,5 @@
 ---
-title: "commerces Enseigne"
+title: "Pdf arrete enseignes"
 author: "B. Maranget"
 date: "09/05/2022"
 output: 
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Ouverture fichier pdf enseigne pour avoir une base pour les enseignes.
+Ouverture fichier pdf enseigne pour avoir une base pour les enseignes
 
 
 # Import
