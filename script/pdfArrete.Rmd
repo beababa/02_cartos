@@ -46,75 +46,29 @@ library(tictoc)
 ```{r}
 library(sf)
 library(mapsf)
+library(filesstrings)# pour le move
 ```
 
 
-
-
-# Chemins
-
-```{r}
-Sys.getenv("HOME")
-chemin <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/03_SOCLE/")
-```
-
-
-
-## Lecture de tous les fichiers .pdf et  conversion en image
-
-```{r, eval = FALSE}
-path <- dir (path = "C:/ARRETES", pattern = "*.pdf", full.names = TRUE)
-for (i in 1:length(path)){
-  pngfile <- pdftools::pdf_convert(path[i], dpi = 100)
-}
-```
-
-
-## Reconnaissance de l'écriture (ocr) et mise en liste
-
-tic toc sont là pour mesurer le temps
-
-```{r, eval = FALSE}
-#  Uniquement les premières pages
-path <- dir ( pattern = "*_1.png",full.names = TRUE)
-equiv <- substr(path, 12,25)
-images <- map(path, magick::image_read)
-tic()
-text_list <- map(images, ocr)
-toc()
-stext <- str_split(text_list, "\n")
-stext [[1]] [1:18]
-stext [[2]][1:25]
-stext [[3]][1:18]
-```
-
-
-## Extraction des lieux et dates des arrêtés
-
-### Extraction des chaînes
-
-après A2022 titre de l'arrêté
-on extrait les termes avec les rues etc... (1er filtre)
-puis on prend la 1e occurence
+# Fonctions diverses 
 
 
 
 ```{r}
-# 232 textes 2 exemples
-images[1]
-(extr <- stext [[1]])
-# fonctions pour chercher chaine
-chaine <- stext [[1]]
-chercherDate <- function (chaine) {
-  ind <- grep("2022",chaine, ignore.case = TRUE,value = FALSE)
-  # on supprime la 1e occurence, car c'est forcemment le titre
-  ind <- ind [-1]
-  res <- chaine[ind] 
+# OCR
+ocrEssai <- function() {
+  text_list <- map(images, ocr)
+# 40 secondes / 81 pages (correspond au nb de fichier)
+# 18 s / si on filtre sur les premières pages
+  stext <- str_split(text_list, "\n")
 }
-vLoc <- c("rue","allée","villa","chemin","avenue","place","voies","Esplanade")
-chercherLoc <- function (chaine) {
-  lg_loc <- grep("rue|allée|villa|chemin|avenue|place|voies|Esplanade",chaine, ignore.case = TRUE,value = FALSE)
-  res <- chaine[lg_loc]
+
+# Recherches de chaîne
+
+
+chercherNum <- function (chaine) {
+   ind <- grep("^ARRETE",chaine, ignore.case = FALSE,value = FALSE)
+   res <-  chaine[ind] 
 }
 premiereOccurence <- function(liste) {
   vecteur <-  NULL
@@ -125,26 +79,214 @@ premiereOccurence <- function(liste) {
   }
   return(vecteur)
 }
-liste <- lapply(stext, chercherLoc)
-lieu <- premiereOccurence(liste)
-liste <- lapply(stext, chercherDate)
-date <- premiereOccurence(liste)
-# plusieurs occurences car liste = # plusieurs occurences car réf VU
-lieu
-date
+chercherArticle <- function(chaine){
+  ind <- grep("^ARTICLE",chaine, ignore.case = FALSE,value = FALSE)
+  # on supprime la 1e occurence, car c'est forcemment le titre
+  res <- chaine[ind] 
+}
+chercherDate <- function (chaine) {
+  ind <- grep("^ARTICLE 1",chaine, ignore.case = FALSE,value = FALSE)
+  # on supprime la 1e occurence, car c'est forcemment le titre
+  res <- chaine[ind] 
+}
+vLoc <- c("rue","allée","villa","chemin","avenue","place","voies","Esplanade")
+chercherLoc <- function (chaine) {
+  lg_loc <- grep("rue|allée|villa|chemin|avenue|place|voies|Esplanade",chaine, ignore.case = TRUE,value = FALSE)
+  res <- chaine[lg_loc]
+}
+```
+
+
+Pour le lieu, fonction alternative, les 2 lg après le num arrêté
+
+```{r}
+chaine <- stext [[1]]
+chaine
+chercherLoc <- function (chaine) {
+   ind <- grep("^ARRETE",chaine, ignore.case = FALSE,value = FALSE)
+   res <-  chaine[ind+1]
+   res <- paste0 (res, chaine [ind+2])
+   res <- gsub("LE MAIRE DE BONDY,", "", res)
+}
+res
 ```
 
 
 
-### Extraction des termes
+# Chemins
+
+```{r}
+Sys.getenv("HOME")
+cheminGen <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/03_SOCLE/")
+chemin <- "S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/"
+```
+
+# Les images
+
+A priori, on ne le fait qu'une fois
+
+## Lecture de tous les fichiers .pdf et  conversion en image
+
+```{r, eval = FALSE}
+fic <- dir (path = chemin, pattern = "*.pdf", full.names = TRUE)
+for (f in fic){
+  pngfile <- pdftools::pdf_convert(f, dpi = 100)
+}
+# déplacements de fichiers
+file.move(fic,  paste0(chemin,"/01_fait"))
+file.move(pngfile, "../data/pdf/")
+```
+
+```{r, eval = FALSE}
+fic <- dir (path = "../data/pdf/" ,pattern = "*.png",full.names = TRUE)
+images <- map(fic, magick::image_read)
+```
+
+
+
+## Reconnaissance de l'écriture (ocr) et mise en liste
+
+tic toc sont là pour mesurer le temps
+```{r}
+tic()
+stext <- ocrEssai()
+toc()
+```
+
+
+
+## Premier filtre sur les images
+
+Uniquement 1e page de tous les arrêtés
+
+```{r}
+liste <- lapply(stext, chercherNum)
+num <- premiereOccurence(liste)
+```
+
+On extrait à la fois le numéro et la page du numéro.
+
+
+```{r}
+# les lg où NA et ARRETE tout seul
+ind <- which (is.na(num))
+ind <- c(ind,which(num=="ARRETE"))
+nb <- length(images)
+serie <- seq(1,nb)
+ind <- serie [-ind]
+```
+
+vérifier 29 arrêtés à traiter
+
+```{r}
+images <- images[ind]
+```
+
+La base images est stable, on refait un OCR
+
+
+```{r, eval = FALSE}
+tic()
+stext <- ocrEssai()
+toc()
+```
+
+
+Tentative d'utiliser c séparateur ARTICLE non poursuivie
+
+## Extraction d'éléments
+
+### Articles
+
+```{r}
+article1 <- premiereOccurence(  lapply(stext, chercherArticle))
+article1
+```
+
+
+Rmq : suppression arrêté stationnement (pas d'article en page 1 et pas utile à cartographier)
+
+
+## Extraction des lieux et  dates et numéros des arrêtés
+
+### Origine
+
+après A2024 titre de l'arrêté
+on extrait les termes avec les rues etc... (1er filtre)
+puis on prend la 1e occurence
+
+
+
+```{r}
+liste <- lapply(stext, chercherLoc)
+lieu <- premiereOccurence(liste)
+liste <- lapply(stext, chercherDate)
+date <- premiereOccurence(liste)
+liste <- lapply(stext, chercherNum)
+num <- premiereOccurence(liste)
+# plusieurs occurences car liste = # plusieurs occurences car réf VU
+lieu
+date
+num
+```
+
+
+
+### Filtrage des origines
+
+
+#### Num arrêté
+
+
+Suppression de tous les caractères sauf les chiffres
+
+```{r}
+numModif <- gsub("[^0-9]","", num)
+numModif <- gsub("2024", "", num)
+numModif 
+```
+
+
+normalement les arrêtés sont sur 3 chifres
+
+```{r}
+lg <- sapply(numModif, nchar)
+ind <-which(lg!=3)
+anomalie <- lg[ind]
+stext [[ind [1]]]
+images [ind[2]]
+# on regarde les images pour récupérer la donnée
+# on pourrait également repartir de la numérisation
+numComplement <- c(429,428 ,406)
+numModif [ind] <- numComplement
+```
+
+tests
+
+```{r}
+i <- 15
+images[i]
+numModif [i]
+```
+
+15
+
+```{r}
+numModif [i] <- 412
+```
+
+
+
+
+#### Lieu
 
 
 ```{r}
 lieu <- as.data.frame(lieu)
 # pour le nom
-lieu$NOM <- NA
+lieu$NOM <-NA
 # pour la nature
-lieu$EXTR <-  NA
+lieu$NATURE <-  NA
 ```
 
 
@@ -158,11 +300,13 @@ On récupère la liste des rues et on cherche toutes les rues correspondantes.
 
 
 ```{r}
-rues <- st_read(paste0(chemin, "socle2024.gpkg"),"rues")
+rues <- st_read(paste0(cheminGen, "socle2024.gpkg"),"rues")
 nb <- length(rues$NOM)
 # Utilisation d'une fonction plutôt qu'une boucle
 # le mot clé est dans la table des rues, pas dans l'extraction de l'arrêté
 trouverCorrespondance <- function(i){
+  # enlever les accents
+  lieu <- iconv(lieu, to="ASCII//TRANSLIT")
   res <- grep(rues$NOM [i], lieu, ignore.case = T)
   }
 res <- sapply(c(1:nb), trouverCorrespondance)
@@ -178,7 +322,6 @@ ref
 Récupération des clés
 
 ```{r}
-
 for (r in ref$NOM){
   print(r)
   ind <- grep(r, lieu$lieu, ignore.case = T )
@@ -216,9 +359,7 @@ jointure
 
 
 
-
-
-Cas particuliers hors corpus d'exemple
+cas particuliers hors corpus d'exemple
 
 ```{r}
 # filtrage uniquement sur les vrais arrêtés

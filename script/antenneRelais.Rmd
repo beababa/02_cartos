@@ -48,6 +48,7 @@ library(mapsf)
 
 ```{r}
 chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/25_DEV_DURABLE/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 ```
 
 
@@ -55,35 +56,107 @@ chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/25_DEV_DURABLE/"
 # Données
 
 
+```{r}
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+tampon <- st_buffer(bondy, 700)
+mf_map(tampon)
+mf_map(bondy, add = T)
+```
+
+
 
 ```{r}
+# Toute la France
+antenne <- st_read(paste0(chemin,"sourceANFR_France.geojson"))
+antenne <- st_transform(antenne, 2154)
+# Uniquement Bondy
 antenne <- st_read(paste0(chemin,"antenneRelais.gpkg"))
-
 ```
+
+
+```{r}
+bat <- st_read(paste0(chemin2, "BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D093_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D093-ED2024-03-15/BATI/BATIMENT.shp"))
+```
+
+
+Intersections
+
+```{r}
+batSel <- st_intersection(bat  [bat$HAUTEUR > 15,], tampon)
+mf_map(batSel)
+batSel <- batSel [,c("HAUTEUR")]
+# si pb gééométrie
+batSel <- st_cast(bat, "MULTIPOLYGON")
+# par défaut les immeubles sans hauteur ne sont pas importants
+sansHauteur <- batSel [is.na(batSel$HAUTEUR),]
+batSel <- batSel [!is.na(batSel$HAUTEUR)]
+# par curiosité
+batSel$aire <- st_area(batSel$geometry)
+summary(batSel$aire)
+hist(batSel$aire)
+library(units)
+batSel$aire <- drop_units(batSel$aire)
+mf_map(batSel [batSel$aire > 600,])
+mf_layout("gros batiment (aire)", "BDTOPO")
+# recodage
+batSel$taille [batSel$HAUTEUR  >= 15 & batSel$HAUTEUR < 20] <- "petit"
+batSel$taille [batSel$HAUTEUR  >= 20 & batSel$HAUTEUR < 40] <- "moyen"
+batSel$taille [batSel$HAUTEUR  >= 40 & batSel$HAUTEUR < 60] <- "grand"
+# fusion avec critère
+aggBat <- aggregate(batSel [,c("taille")], by= list(batSel$taille), length )
+names (aggBat) [1:2] <- c("taille","nb")
+st_write("../data/antenneRelais.gpkg", "bat_tampon")
+antenneSel <- st_intersection(antenne, tampon)
+```
+
+
+```{r}
+mf_init(tampon)
+mf_map(bondy, col="wheat", border = NA, add = T)
+mf_map(antenneSel, add = T)
+mf_typo(aggBat, var = "taille", border = NA, add = T)
+mf_layout("Antennes relais et batiments > 15 m", "IGN, ANFR")
+```
+
+```{r}
+st_write(aggBat, "../data/antenneRelais.gpkg", "bat_tampon_700m", delete_layer = T)
+```
+
 
 # Agregation
 
 ## Par type de fréquence
 
 ```{r}
+# intersection tampon antenne
+antenne <- antenneSel
 # filtre sur le 5 G
 prop.table(table(antenne$generation))*100
-
+table(antenne$generation)
 antenne5G <- antenne [antenne$generation == '5G',]
 antenne4G <- antenne [antenne$generation == '4G',]
 ```
 
+Agrégation par adresse et fournisseur
 
 ```{r}
+# filtre sur les 4 G
 data <- antenne4G
-agg <- aggregate(data [, c("adr_lb_add1","geom")], by=list(data$adr_lb_add1,  data$adm_lb_nom), length)
+# détermination du nb de points d'implantation quelque soit le fournisseur et la fréquence
+agg <- aggregate(data [, c("adr_lb_add1","geometry")], by=list(data$adr_lb_add1), length)
+# 77 pour le tampon
+# founisseur
+agg <- aggregate(data [, c("adr_lb_add1","geometry")], by=list(data$adr_lb_add1,  data$adm_lb_nom), length)
+# 107
 agg <- st_jitter(agg)
 names(agg)[1:3]  <- c("Adresse", "Fournisseur", "nb")
 hist(agg$nb)
-st_write(agg, "../data/antenneRelais.gpkg", "agg4G", delete_layer = T)
+# le nb varie de 5 à 10 avec les fréquences
+st_write(agg, "../data/antenneRelais.gpkg", "aggFournisseur_tampon_4G", delete_layer = T)
 summary(agg$nb)
 length(agg$nb)
 sum(agg$nb)
+# 439 antennes 4 G
 ```
 
 
@@ -92,11 +165,10 @@ sum(agg$nb)
 En vue de créer une carte de densité pondérée par le nb d'antennes sur chaque point.
 
 ```{r}
-data <- antenne
-agg <- aggregate(data [, c("adr_lb_add1","geom")], by=list(data$adr_lb_add1), length)
+data <- antenneSel
+agg <- aggregate(data [, c("adr_lb_add1","geometry")], by=list(data$adr_lb_add1), length)
 names(agg)[1:2]  <- c("Adresse",  "nb")
 hist(agg$nb)
-
 ```
 
 
@@ -112,7 +184,8 @@ agg <- st_transform(agg, 2154)
 enveloppe <- st_convex_hull(st_union(agg))
 mf_map(enveloppe)
 aire <- st_area(enveloppe)
-aire
+aire/ 10000
+# ha 1250 / 500 ha Bondy
 ```
 
 
@@ -140,6 +213,16 @@ agg <- aggregate(inter [ ,c("nb"), drop = T], by = list(inter$ID), sum)
 names(agg) <- c("ID", "nb")
 jointure <- merge(grid, agg, by= "ID")
 mf_choro(jointure, var = "nb")
-st_write(jointure, "../data/antenneRelais.gpkg", "densite")
+st_write(jointure, "../data/antenneRelais.gpkg", "densite_tampon", delete_layer = T)
 ```
+
+
+```{r}
+mf_init(tampon)
+mf_map(bondy, col = "wheat", border = NA)
+mf_choro(jointure, var = "nb", border= NA, add = T)
+mf_layout("densité antennes relais","ANFR, IGN")
+summary(jointure$nb)
+```
+
 
