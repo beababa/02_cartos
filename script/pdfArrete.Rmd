@@ -81,14 +81,22 @@ premiereOccurence <- function(liste) {
 }
 chercherArticle <- function(chaine){
   ind <- grep("^ARTICLE",chaine, ignore.case = FALSE,value = FALSE)
-  # on supprime la 1e occurence, car c'est forcemment le titre
+  # on supprime la 1e occurrence, car c'est forcement le titre
   res <- chaine[ind] 
 }
+jour <- c("lundi|mardi|mercredi|vendredi|samedi|dimanche")
 chercherDate <- function (chaine) {
-  ind <- grep("^ARTICLE 1",chaine, ignore.case = FALSE,value = FALSE)
-  # on supprime la 1e occurence, car c'est forcemment le titre
+  # 1e recherche sur l'article
+  ind <- grep("^ARTICLE",chaine, ignore.case = FALSE,value = FALSE)
+  # recherche sur le jour
+  res <- chaine[ind] 
+  ind <- grep(jour, res, ignore.case = FALSE, value = FALSE )
   res <- chaine[ind] 
 }
+```
+
+
+```
 vLoc <- c("rue","allée","villa","chemin","avenue","place","voies","Esplanade")
 chercherLoc <- function (chaine) {
   lg_loc <- grep("rue|allée|villa|chemin|avenue|place|voies|Esplanade",chaine, ignore.case = TRUE,value = FALSE)
@@ -98,17 +106,18 @@ chercherLoc <- function (chaine) {
 
 
 Pour le lieu, fonction alternative, les 2 lg après le num arrêté
+plus efficace qu'avec un motif
+
+Le terme d'arrêté en majuscule n'apparaît qu'une fois sur la 1e page
 
 ```{r}
-chaine <- stext [[1]]
-chaine
 chercherLoc <- function (chaine) {
-   ind <- grep("^ARRETE",chaine, ignore.case = FALSE,value = FALSE)
+   ind <- grep("^ARRETE",chaine, ignore.case = TRUE,value = FALSE)
    res <-  chaine[ind+1]
    res <- paste0 (res, chaine [ind+2])
+   # Suppression LE MAIRE DE BONDY qui peut constituer la 3e lg
    res <- gsub("LE MAIRE DE BONDY,", "", res)
 }
-res
 ```
 
 
@@ -118,6 +127,8 @@ res
 ```{r}
 Sys.getenv("HOME")
 cheminGen <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/03_SOCLE/")
+# maison
+cheminGen <- "D:/03_SIG/03_03_Data/03_SOCLE/"
 chemin <- "S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/"
 ```
 
@@ -132,12 +143,18 @@ fic <- dir (path = chemin, pattern = "*.pdf", full.names = TRUE)
 for (f in fic){
   pngfile <- pdftools::pdf_convert(f, dpi = 100)
 }
-# déplacements de fichiers
+# déplacements de fichiers pour archivage
 file.move(fic,  paste0(chemin,"/01_fait"))
 file.move(pngfile, "../data/pdf/")
 ```
 
-```{r, eval = FALSE}
+
+data/pdf est le répertoire temporaire. C'est à partir des images
+que l'on travaille.
+
+pour 27 arrêtés, 8 arrêtés (mais basse définition)
+
+```{r, eval = TRUE}
 fic <- dir (path = "../data/pdf/" ,pattern = "*.png",full.names = TRUE)
 images <- map(fic, magick::image_read)
 ```
@@ -147,13 +164,19 @@ images <- map(fic, magick::image_read)
 ## Reconnaissance de l'écriture (ocr) et mise en liste
 
 tic toc sont là pour mesurer le temps
+la fonction éclate le fichier sur les lignes (/n)
+peut-être envisager sur ARTICLE ?
+
 ```{r}
 tic()
 stext <- ocrEssai()
 toc()
 ```
 
+81 pages, mais seules les premières pages nous intéressent.
+Donc filtre sur les 1ieres pages (celles qui contiennent ARRETE)
 
+Inutile de sauvegarder ce premier scan
 
 ## Premier filtre sur les images
 
@@ -192,19 +215,114 @@ toc()
 ```
 
 
-Tentative d'utiliser c séparateur ARTICLE non poursuivie
+51 s à la maison...
 
-## Extraction d'éléments
+Impossible de sauvegarder une liste (on ne sait pas faire), puis ce n'est pas franchement utile.
+On sauvegardera les extractions
 
-### Articles
+Tentative d'utiliser séparateur ARTICLE non poursuivie
+
+# Extraction d'éléments
+
+
+## Numéros
+
+Attention, il faut rattacher chaque page au bon numéro d'arrêté
+
+
+```{r}
+liste <- lapply(stext, chercherNum)
+num <- premiereOccurence(liste)
+num
+```
+
+
+1ere verif de visu, on a bien tous les arrêtés de stext
+
+Suppression de tous les caractères sauf les chiffres
+en deux étapes :
+- année (pb une année sur 24)
+- puis tout ce qui n'est pas chiffre
+
+
+
+```{r}
+numModif <- gsub("2024|24", "", num)
+numModif <- gsub("[^0-9]","", numModif)
+```
+
+
+normalement les arrêtés sont sur 3 chiffres
+
+```{r}
+# nb ce caractères
+lg <- sapply(numModif, nchar)
+# recherche >3 
+ind <-which(lg!=3)
+anomalie <- numModif[ind]
+# extraction des images concernées
+anomalieImage <- unlist(images [ind])
+# visionner pas uniquement la 1e image ?
+# objet external pointer of class 'magck-image'
+test <- c(anomalieImage [[i]], anomalieImage [[i+1]])
+# on coupe une image de 200 largeur sur 300 hauteur,
+# en commençant à partir de 300 à gauche.
+test2 <- image_crop(test, "200x300+300")
+image_append(test2)
+numComplement <- c(428 ,406)
+numModif [ind] <- numComplement
+numModif
+```
+
+tests
+
+```{r}
+# constitution d'une mosaique d'extrait
+nb <- length(images)
+test <- images [[1]]
+for (i in c(2:nb)){
+  test <- c(test, images [[i]] )
+}
+test2 <- image_crop(test, "200x300+300")
+image_append(test2, stack = T)
+```
+
+
+```{r}
+numModif
+```
+
+
+A la comparaison, pb sur 
+- 438 le 2e (429)
+- 414 (412)
+- 408 premier (409)
+
+Voir si scanner en couleur ne suffirait pas à régler le pb
+également classer les arrêtés papier par numéro.
+
+```{r}
+ind <- which(numModif %in% c(438, 414, 408))
+ind <- ind [-c(1,5)] 
+numModif [ind] <- c(429,412,409)
+write.csv(numModif,"../data/numArrete.csv", fileEncoding = "UTF-8")
+```
+
+On a le numéro d'arrêté en liste fiable. Cela fera ts les rownames.
+
+## Articles
+
+On ne retient que le premier
 
 ```{r}
 article1 <- premiereOccurence(  lapply(stext, chercherArticle))
 article1
+images[[25]]
+write.csv(article1,"../data/article1.csv", fileEncoding = "UTF-8")
 ```
 
 
-Rmq : suppression arrêté stationnement (pas d'article en page 1 et pas utile à cartographier)
+Rmq :  arrêté stationnement le 402 (pas d'article en page 1)
 
 
 ## Extraction des lieux et  dates et numéros des arrêtés
@@ -213,83 +331,27 @@ Rmq : suppression arrêté stationnement (pas d'article en page 1 et pas utile �
 
 après A2024 titre de l'arrêté
 on extrait les termes avec les rues etc... (1er filtre)
-puis on prend la 1e occurence
+puis on prend la 1e occurrence
 
 
 
 ```{r}
 liste <- lapply(stext, chercherLoc)
 lieu <- premiereOccurence(liste)
+# simplification
+lieu <- gsub("Interdiction momentanée du stationnement|nterdiction momentanée de la circulation et du stationnement|circulation|modification|momentanée","", lieu)
+lieu
+
+# vérification du titre du 20e arrêté
+images [[20]]
 liste <- lapply(stext, chercherDate)
 date <- premiereOccurence(liste)
-liste <- lapply(stext, chercherNum)
-num <- premiereOccurence(liste)
-# plusieurs occurences car liste = # plusieurs occurences car réf VU
-lieu
-date
-num
-```
-
-
-
-### Filtrage des origines
-
-
-#### Num arrêté
-
-
-Suppression de tous les caractères sauf les chiffres
-
-```{r}
-numModif <- gsub("[^0-9]","", num)
-numModif <- gsub("2024", "", num)
-numModif 
-```
-
-
-normalement les arrêtés sont sur 3 chifres
-
-```{r}
-lg <- sapply(numModif, nchar)
-ind <-which(lg!=3)
-anomalie <- lg[ind]
-stext [[ind [1]]]
-images [ind[2]]
-# on regarde les images pour récupérer la donnée
-# on pourrait également repartir de la numérisation
-numComplement <- c(429,428 ,406)
-numModif [ind] <- numComplement
-```
-
-tests
-
-```{r}
-i <- 15
-images[i]
-numModif [i]
-```
-
-15
-
-```{r}
-numModif [i] <- 412
 ```
 
 
 
 
-#### Lieu
-
-
-```{r}
-lieu <- as.data.frame(lieu)
-# pour le nom
-lieu$NOM <-NA
-# pour la nature
-lieu$NATURE <-  NA
-```
-
-
+### Filtrage précis
 
 
 
@@ -297,27 +359,55 @@ lieu$NATURE <-  NA
 
 On récupère la liste des rues et on cherche toutes les rues correspondantes.
 
-
+##### Table de référence
 
 ```{r}
+st_layers(paste0(cheminGen, "socle2024.gpkg"))
 rues <- st_read(paste0(cheminGen, "socle2024.gpkg"),"rues")
-nb <- length(rues$NOM)
+rues <- read.csv("../data/rueIndex.csv", fileEncoding = "UTF-8")
+```
+
+le fichier .csv a été fait à partir du socle mais sans les géométries.
+
+On a isolé le mot clé du nom. On modifie le fichier en fonction
+des besoins (ex = est ou l'est ?)
+
+```{r}
+nb <- length(rues)
+# Attention on enlève les mots clés en doublons
+ruesSansDoublon <- rues [!duplicated(rues$NOM),]
+ruesSansDoublon$NOM <- gsub("L'","", ruesSansDoublon$NOM)
+# Liidée est d'identifier toutes les rues et ensuite de faire le tri
+# sur le bloc de ref identifié
 # Utilisation d'une fonction plutôt qu'une boucle
 # le mot clé est dans la table des rues, pas dans l'extraction de l'arrêté
 trouverCorrespondance <- function(i){
   # enlever les accents
   lieu <- iconv(lieu, to="ASCII//TRANSLIT")
+  lieu <- gsub("é","e", lieu)
+  lieu
   res <- grep(rues$NOM [i], lieu, ignore.case = T)
   }
 res <- sapply(c(1:nb), trouverCorrespondance)
 # filtre sur les item de la liste ayant une correspondance (différent de zéro)
 ind <- which(sapply(res, length)!=0)
-ref <- rues [ind,]
-ref
+ref <- ruesSansDoublon [ind,]
+ref <- ref [!is.na(ref$NOM),]
 ```
 
+22 noms de rue repérés sur 370
 
-#### Jointure
+##### Jointure
+
+
+Df pour le vecteur des lieux
+
+```{r}
+lieu <- as.data.frame(lieu)
+# pour le nom
+lieu$NOM <-NA
+```
+
 
 Récupération des clés
 
@@ -328,32 +418,60 @@ for (r in ref$NOM){
   print(ind)
   lieu$NOM [ind] <- r
 }
-jointure <- merge(ref, lieu, by = "NOM")
-table(jointure$NOM)
+# les NA concerne sans doute la commune en entier
+lieu$NOM [is.na(lieu$NOM)] <- "COMMUNE"
 ```
 
-Noms à préciser
+
+```{r}
+write.csv(lieu, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F) 
+lieu <- read.csv("../data/lieuModifie.csv", fileEncoding = "UTF-8")
+lieu$NOM [!is.na(lieu$modif)] <- lieu$modif [!is.na(lieu$modif)]
+```
 
 
-### Nature
+```{r}
+jointure <- merge(ref, lieu, by = "NOM")
+table(jointure$NOM)
+jointure
+```
+
+Vérif dans tableau
+
+
+
+
+
+```{r}
+images [[10]]
+```
+
+
+##### Nature rues
 
 on repère le motif correspondant à une clé, et on joint pour récupérer le motif de reférence
 
 ```{r}
+# pour la nature
+lieu$NATURE <-  NA
+NATURE <- names(table(jointure$NATURE))
 # table d'équivalence constituée peu à peu à partir de jointure
-NATURE <- c("AV", "R","CH")
-EXTR <- c("Avenue","rue", "Chemin")
+EXTR <- c("Avenue", "Chemin", "Impasse", "rue", "Rampe", "Route","Square", "Villa")
 equiv <- data.frame(NATURE,EXTR)
+equiv
 for (e in equiv$EXTR){
   print(e)
   ind <- grep(e, jointure$lieu, ignore.case = T )
   print(ind)
-  jointure$EXTR [ind] <- e
+  jointure$EXTR [ind] <- e 
 }
+jointure
+
 lieu
 equiv
 jointure <- merge(lieu,equiv, by=c("EXTR"))
-jointure
+jointure$lieu
+
 ```
 
 
