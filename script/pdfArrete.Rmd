@@ -84,7 +84,7 @@ chercherArticle <- function(chaine){
   # on supprime la 1e occurrence, car c'est forcement le titre
   res <- chaine[ind] 
 }
-jour <- c("lundi|mardi|mercredi|vendredi|samedi|dimanche")
+
 chercherDate <- function (chaine) {
   # 1e recherche sur l'article
   ind <- grep("^ARTICLE",chaine, ignore.case = FALSE,value = FALSE)
@@ -308,7 +308,8 @@ numModif [ind] <- c(429,412,409)
 write.csv(numModif,"../data/numArrete.csv", fileEncoding = "UTF-8")
 ```
 
-On a le numéro d'arrêté en liste fiable. Cela fera ts les rownames.
+
+
 
 ## Articles
 
@@ -335,13 +336,27 @@ puis on prend la 1e occurrence
 
 
 
+
+
 ```{r}
 liste <- lapply(stext, chercherLoc)
 lieu <- premiereOccurence(liste)
-# simplification
+# simplification après examen de la liste
 lieu <- gsub("Interdiction momentanée du stationnement|nterdiction momentanée de la circulation et du stationnement|circulation|modification|momentanée","", lieu)
 lieu
+  # enlever les accents
+  lieu <- iconv(lieu, to="ASCII//TRANSLIT")
+  # certains accents restent exemple : mésarmes
+  lieu <- gsub("é","e", lieu)
+  # les apostrophes
+  lieu <- gsub("'", " ", lieu)
+  # Sauvegarde du résultat
+write.csv(lieu, "../data/lieuCorrige.csv", fileEncoding = "UTF-8")
+```
 
+
+
+```{r}
 # vérification du titre du 20e arrêté
 images [[20]]
 liste <- lapply(stext, chercherDate)
@@ -372,143 +387,358 @@ le fichier .csv a été fait à partir du socle mais sans les géométries.
 On a isolé le mot clé du nom. On modifie le fichier en fonction
 des besoins (ex = est ou l'est ?)
 
+###### Doublons rues ?
+
 ```{r}
-nb <- length(rues)
+nb <- length(rues$NOM_1_G)
+# 370 rues
 # Attention on enlève les mots clés en doublons
-ruesSansDoublon <- rues [!duplicated(rues$NOM),]
-ruesSansDoublon$NOM <- gsub("L'","", ruesSansDoublon$NOM)
-# Liidée est d'identifier toutes les rues et ensuite de faire le tri
-# sur le bloc de ref identifié
-# Utilisation d'une fonction plutôt qu'une boucle
-# le mot clé est dans la table des rues, pas dans l'extraction de l'arrêté
-trouverCorrespondance <- function(i){
-  # enlever les accents
-  lieu <- iconv(lieu, to="ASCII//TRANSLIT")
-  lieu <- gsub("é","e", lieu)
-  lieu
-  res <- grep(rues$NOM [i], lieu, ignore.case = T)
-  }
-res <- sapply(c(1:nb), trouverCorrespondance)
-# filtre sur les item de la liste ayant une correspondance (différent de zéro)
-ind <- which(sapply(res, length)!=0)
-ref <- ruesSansDoublon [ind,]
-ref <- ref [!is.na(ref$NOM),]
+doublons <- rues$NOM [duplicated(rues$NOM)]
+# 18
+doublons
 ```
 
-22 noms de rue repérés sur 370
+Il y a beaucoup de doublons, cela vaut le coup, de traiter à part en
+fonction du jeu d'arrêté de départ filtré sur les doublons.
 
-##### Jointure
+##### Repérer les noms de rue
 
 
-Df pour le vecteur des lieux
+###### Arretes multi lieux
+
+Du coup, on éclate la liste des lieux
 
 ```{r}
-lieu <- as.data.frame(lieu)
-# pour le nom
-lieu$NOM <-NA
+lieu <- read.csv("../data/lieuCorrige.csv")
+lieu <- lieu$x
+# on éclate chq lieu avec les espaces
+liste_lieu <- strsplit(lieu, " ")
 ```
 
 
-Récupération des clés
+
+
+triple boucle :
+- parcours de la liste des lieux
+- parcours de chaque mot ds la liste des lieux
+- parcours de la liste des rues pour trouver correspondance avec grep
 
 ```{r}
-for (r in ref$NOM){
-  print(r)
-  ind <- grep(r, lieu$lieu, ignore.case = T )
-  print(ind)
-  lieu$NOM [ind] <- r
+nb <- length(liste_lieu)
+nb2 <- length(rues$NOM)
+lg <- 1
+lmot <- NULL
+lmotF <- NULL
+indF <- NULL
+ind <- NULL
+indMot <- NULL
+# parcours de la liste des lieux
+for (lg in (1:nb)){
+    mots <- liste_lieu [[lg]]
+# parcours de la lg de la liste des lieux
+    for (m in mots){
+      # parcours des rues ##############
+        for (i in (1:nb2)) {
+          ind <- grep(rues$NOM [i], m, ignore.case = T)
+          # seuls les indices non nulls nous intéressent
+          if (length(ind)>0){
+            indF <- c(indF, i)}
+        }
+      ###################################
+        # tous les indices du 1er mot de la ligne
+        indMot <- c(indMot,indF)
+        indF <- NULL
+    }
+     # tous les indices de la ligne
+    lmot <- c(lmot,indMot)
+    lmot <- (rues$NOM[lmot])
+    indMot <- NULL
+    # toutes les lignes
+    lmotF <- append(lmotF, list(lmot))
+    lmot <- NULL
 }
-# les NA concerne sans doute la commune en entier
-lieu$NOM [is.na(lieu$NOM)] <- "COMMUNE"
 ```
 
 
+On a le numéro d'arrêté en liste fiable. Cela fera ts les rownames.
+
 ```{r}
-write.csv(lieu, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F) 
-lieu <- read.csv("../data/lieuModifie.csv", fileEncoding = "UTF-8")
-lieu$NOM [!is.na(lieu$modif)] <- lieu$modif [!is.na(lieu$modif)]
+num <- read.csv("../data/numArrete.csv")
+# 29
+num <- as.vector(num$x)
 ```
 
 
+
 ```{r}
-jointure <- merge(ref, lieu, by = "NOM")
-table(jointure$NOM)
+lmotF [[2]]
+liste_motCle <- lmotF
+liste_lieu [[1]]
+num <- paste0("Arr_", num)
+# chaque num arrete en names
+names(liste_motCle) <- num
+```
+
+
+
+###### Détection des arrete sans localisation
+
+correction (cas av de l'est) ou suppression qd sur tte la commune
+
+```{r}
+ind <-  which(sapply(liste_motCle, length)==0)
+# on regarde les lieux et on voit les soucis
+lieu [ind]
+# on repère pb av de l'est sur l'indice 3
+liste_motCle [ind [3]] <- "L'EST"
+# on sort des pb
+ind <- ind [-3]
+# ce sont des arrêtés sur la commune
+liste_motCle [ind] <- "COMMUNE"
+# liste à traiter la 2
+liste_motCle2 <- liste_motCle [-ind]
+lieu2 <- lieu [-ind]
+#  verif de la longueur
+length(liste_motCle2)==length(lieu2)
+# df à garder pour traitement ultérieur
+dfReste <- as.data.frame(do.call(rbind, liste_motCle [ind]))
+names(dfReste) <- "NOM"
+```
+
+Pour meilleure correction
+
+On transforme en csv
+
+
+```{r}
+motCle <- unlist(liste_motCle2) # les mots clé sans COMMUNE
+names(motCle)
+# les num d'arrete
+arr <- substring(names(motCle), 5,7)
+df <- data.frame(motCle, arr)
+lieu2
+arr <- unique(arr)
+df2 <- data.frame(lieu2, arr)
+jointure <- merge(df, df2, by= "arr")
+write.csv(jointure, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F)
+```
+
+On repère trois erreurs MAI et AUTOPONT DAUBIE
+
+correction sur la liste drectement  suite à examen des mots clés (cas autopont)
+
+```{r}
+liste_motCle2$Arr_144 <- "AUTOPONT"
+liste_motCle2$Arr_439 <- "PERMANENT"
+# on retire l'arrete
+dfReste <- rbind(dfReste, liste_motCle2$Arr_439)
+row.names(dfReste)
+row.names(dfReste) [6] <- "Arr_439"
+# et on enlève l'arreté
+liste_motCle2
+element1Liste <- sapply(liste_motCle2, "[",1)
+ind <- which(element1Liste == "PERMANENT")
+liste_motCle3 <- liste_motCle2 [-ind]
+lieu3 <- lieu2 [-ind]
+liste_motCle3
+liste_motCle3$Arr_155[2] <- "DAUBIE"
+liste_motCle3
+```
+
+
+On a une liste bonne qui correspond pour l'indexage à lieu3
+
+
+
+#### Nature des rues
+
+2 cas : avec ou sans doublon
+
+
+##### Avec doublons
+
+On identifie uniquement les doublons dans liste_motCle3
+Recherche du terme dans le txt d'origine
+choix du terme
+
+
+On filtre sur la longueur > 1
+
+```{r}
+longueur <- sapply(liste_motCle3, length)
+ind <- which(longueur > 1 )
+liste_motCle4 <- liste_motCle3 [ind]
+liste_motCle4
+lieu4 <- lieu3 [ind] 
+# la fonction va permettre de repérer les doublons
+doublonListe <- function(item){
+  ind <-  which(duplicated(item))
+} 
+# test sur un arrete
+ind <- doublonListe (liste_motCle4$Arr_407)
+# toute la liste
+listeInd <- sapply(liste_motCle4, doublonListe)
+ind <- which (sapply(listeInd, length) > 0)
+listeInd2 <- listeInd [ind]
+listeInd2
+liste_motCle5$Arr_407 [listeInd2$Arr_407]
+liste_motCle5$Arr_413 [listeInd2$Arr_413]
+# uniquement 2 items en doublons mais avec un sous-item pas en doublon
+lieu5 <- lieu4 [ind]
+lieu5
+```
+
+correction à la main
+
+
+```{r}
+liste_motCle5$Arr_407 <- c("GALLIENI", "STAINS")
+liste_motCle5$Arr_407
+liste_motCle5$Arr_413 <- "CARNOT"
+```
+
+
+A REVOIR
+
+```{r}
+# table d'équivalence constituée peu à peu à partir de jointure
+EXTR <- c("Avenue", "Route")
+NATURE <- c("AV", "RTE")
+equiv <- data.frame(NATURE,EXTR)
+e <- equiv$EXTR[1]
+for (e in equiv$EXTR){
+  print(e)
+  ind <- grep(e, doublons3$lieu, ignore.case = T )
+  print(ind)
+  print(doublons3 [ind,])
+  doublons3$EXTR [ind] <- e 
+}
+doublons3
+doublons3 <- unique(jointureDoublons)
+jointureDoublons$EXTR [2] <- "Route"
+jointureDoublons
+jointure <- merge(jointureDoublons,equiv, by=c("EXTR"))
 jointure
-```
 
-Vérif dans tableau
-
-
-
-
-
-```{r}
-images [[10]]
 ```
 
 
-##### Nature rues
+
+##### Sans doublons
 
 on repère le motif correspondant à une clé, et on joint pour récupérer le motif de reférence
 
+table de référence
+
 ```{r}
-# pour la nature
-lieu$NATURE <-  NA
-NATURE <- names(table(jointure$NATURE))
-# table d'équivalence constituée peu à peu à partir de jointure
-EXTR <- c("Avenue", "Chemin", "Impasse", "rue", "Rampe", "Route","Square", "Villa")
-equiv <- data.frame(NATURE,EXTR)
-equiv
-for (e in equiv$EXTR){
-  print(e)
-  ind <- grep(e, jointure$lieu, ignore.case = T )
-  print(ind)
-  jointure$EXTR [ind] <- e 
-}
-jointure
+df <- data.frame(NOM=unique(unlist(liste_motCle3)))
+df
+rues <- read.csv("../data/rueIndex.csv")
+rues$NOM
+refRue <- merge(rues, df, by="NOM")
+```
 
-lieu
-equiv
-jointure <- merge(lieu,equiv, by=c("EXTR"))
-jointure$lieu
+On garde uniquement les bons doublons
 
+
+```{r}
+refRue <- refRue [-c(5,6),] 
+```
+
+A revoir. qu'arrive t il si on a besoin ailleurs ?
+2 tables de ref, une avec les doublons, une sans on aucun doublon
+
+#### Récupération des géométries rues TODO
+
+```{r}
+ruesGeom <- st_read("../data/cadastre2024.gpkg", "rue")
+```
+
+### Dates
+
+```{r}
+article1 <- read.csv("../data/article1.csv")
+article1$arr <- num
+names(article1) [2] <- "texte"
+# suppression terme article
+# on n'utilise qu'un seul séparateur, le ":"
+article1$texte <- gsub("-|;|—", ":", article1$texte)
+# on éclate avec le :
+list_article1 <- strsplit(article1$texte, ":")
+date <- sapply(list_article1, "[",2)
+# on garde les numéros d'arrete
+names(date) <- num 
+date [2]
+jour <- c("lundi|mardi|mercredi|vendredi|samedi|dimanche")
+```
+
+
+cas des sans dates
+
+```{r}
+article1 [25,]
+lieu [25]
+# On le supprime
+article1 <- article1 [-25,]
+# on cherche l'année
+ind <- grep("2024|2025", date)
+# A revoir
+date [-ind]
+date <- date [ind]
+date
 ```
 
 
 
-
-cas particuliers hors corpus d'exemple
+On repère la place du mot du jour  et on récupère les 2 mots
+d'après
 
 ```{r}
-# filtrage uniquement sur les vrais arrêtés
-ok <- which(!is.na(lgType))
-stextSel <- stext [c(ok)]
-# 194 vrais arrêtés
-# test pour vérifier
-liste <- lapply(stextSel, chercherType)
-liste
-lgType <- premiereOccurence(liste)
-length(which(is.na(lgType)))==0
-# pas de NA dans la liste des arrêtes
-# on cherche les adresses
-liste <- lapply(stextSel, chercherLoc)
-liste
-lgLoc <- premiereOccurence(liste)
-pb <- which(is.na(lgLoc))
-# pb empty c'est pas de pb
-stextSel[c(pb)]
+date2 <- gsub("A compter du ", "", date)
+date2
+date3 <- gsub(" Le | Du ", "", date2)
+date3
+ind <- grep(jour, date3)
+date4 <- date3 [ind]
+date5 <- gsub("et jusqu’au| au ", "STOP", date4)
+date5
+liste_date <- strsplit(date5, "STOP")
+liste_date
+dateDeb <- sapply(liste_date, "[", 1)
+# enlever espaces au début et à la fin
+dateDeb2 <- gsub("^ || $", "", dateDeb)
+dateDeb2
+ind <- which(names(dateDeb2)=="Arr_408")
+dateDeb2 [ind] <- paste(dateDeb2[ind], "2025")
+dateDeb3 <- as.Date(dateDeb2 , format = "%A %d %B %Y")
+dateDeb3
+annee <- format(dateDeb3,  "%Y")
+dateDeb3 [15]
+date4 [15]
+dateFin <- sapply(liste_date, "[",2)
+dateFin <- gsub("yendredi", "vendredi", dateFin)
+dateFin
+dateFin2 <- gsub("^ || $", "", dateFin)
+liste_date  <- strsplit(dateFin2, " ")
+jour <- lapply(liste_date, "[",1:3)
+fusionJour <- function(vecteur){
+  chaine <- paste0(vecteur) 
+ jour <-paste0(chaine, collapse =  " ")
+}
+test <- fusionJour(jour [[1]])
+jour2 <- sapply(jour, fusionJour)
+jour2
+dateFin3 <- paste(jour2, annee, sep=" ")
+dateFin3
+dateFin4 <- as.Date(dateFin3 , format = "%A %d %B %Y")
+dateFin4
 ```
 
+modification manuelle
 
 ```{r}
-loc <- NULL
-i <- 1
-for (i in 1:length(stextSel)){
-  tmp <- stextSel [[i]][ind[i]]
-  loc <- c(loc, tmp)
-}
-head(loc)
-# sauvegarde du résulat
-write.csv2(loc, "lieux.csv")
+dateFin4 [7] <- NA
+dateFin4 [15] <- gsub("NA", "2025", dateFin4 [15])
+dateFin4
 ```
 
