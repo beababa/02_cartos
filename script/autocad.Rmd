@@ -88,7 +88,16 @@ setwd(cheminCAD)
 # Exploration différents formats
 
 
+## DWG direct
 
+
+```{r}
+test <- st_read("../data/Tracés Leon Blum Bondy.dwg")
+```
+
+ACAD1015 pb des formats autocad qui évoluent.
+
+obligation d'avoir le .dxf
 
 ## DXF
 
@@ -408,4 +417,9 @@ st_crs(ptDest) <- 2154
 ptDest
 ```
 
+
+
+```{r}
+
+```
 

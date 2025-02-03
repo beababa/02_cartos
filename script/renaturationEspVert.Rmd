@@ -1,7 +1,7 @@
 ---
-title: "Renaturation - recensement espaces verts"
+title: "Monuments, reprise du fichier des Archives"
 author: "B. Maranget"
-date: "28/04/2022"
+date: "30/01/2024"
 output: 
   html_document: 
     number_sections: yes
@@ -22,9 +22,8 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Début 2025, on repart de la couche renaturation pour faire un nouveau recensement des Esp Verts de la ville
-
-Egalement sources carte espaces verts sur le site avec catégorisation parc, bois / square / espace sportif / coeurs d'ilot / coulée verte
+sous umap, les archives ont saisi une carte des lieux du patrimoine.
+A l'export, le champs 
 
 ```{r}
 library(sf)

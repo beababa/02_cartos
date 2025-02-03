@@ -1,0 +1,107 @@
+---
+title: "Monuments, reprise du fichier des Archives"
+author: "B. Maranget"
+date: "30/01/2024"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+sous umap, les archives ont saisi une carte des lieux du patrimoine.
+A l'export, le champs formaté {} pose problème sous qgis.
+Utilisation de la fonction projectColor() mais le substring ne passe pas sur le champs 
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+```
+
+
+# Données
+
+```{r}
+st_layers(paste0(chemin, "19_CULTURE/monument.gpkg"))
+inventaire <- st_read(paste0(chemin, "19_CULTURE/monument.gpkg"), "inventaire")
+```
+
+# Extraction
+
+```{r}
+inventaire$couleur <- substring(inventaire$X_umap_options,10,20)
+inventaire$couleur <- gsub("\\|}|\"", "", inventaire$couleur)
+inventaire$couleur <- gsub("}", "", inventaire$couleur)
+```
+
+
+```{r}
+st_write(inventaire, paste0(chemin, "19_CULTURE/monument.gpkg"), "inventaire", delete_layer = T)
+```
+
+
+# Carto
+
+```{r}
+mf_map(bondy, col = "wheat", border = NA)
+mf_map(data, add = T, col = "green", border = NA)
+mf_layout("Espaces verts sens large", "janvier 2025")
+```
+
+
+
+# Stats 
+
+Quelques chiffres 
+
+
+```{r}
+#% Esp vert total
+sum(st_area(data)) / sum(st_area(bondy))
+# % Esp vert proprement dit
+table(data$CatGenLib)
+espVert <- data [data$CatGenLib == "Espaces verts",]
+table(espVert$NomProp, useNA = "always")
+sum(st_area(espVert [espVert$NomProp == 'Mairie de Bondy',]))/sum(st_area(bondy))
+```
+
+typo Esp vert
+
+```{r}
+agg <- aggregate(st_area(espVert), by = list(espVert$CategLib), sum)
+aggPCT <- round((agg$x/sum(agg$x)) *100,0)
+names(aggPCT) <- agg$Group.1
+aggPCT
+```
+
+
+
+Squares
+
+
+```{r}
+espVert$aire <- st_area(espVert)
+write.csv(espVert [order(espVert$aire, decreasing = T), c("NOM", "NomProp", "aire"), drop=T], "../data/espVert.csv")
+```
+

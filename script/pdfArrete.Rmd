@@ -140,25 +140,42 @@ A priori, on ne le fait qu'une fois
 
 ```{r, eval = FALSE}
 fic <- dir (path = chemin, pattern = "*.pdf", full.names = TRUE)
+fic
 for (f in fic){
-  pngfile <- pdftools::pdf_convert(f, dpi = 100)
+  pngfile <- pdftools::pdf_convert(f,  dpi = 200)
 }
+pngfile
 # déplacements de fichiers pour archivage
 file.move(fic,  paste0(chemin,"/01_fait"))
-file.move(pngfile, "../data/pdf/")
+# on renomme pour indexation
+file.move(pngfile, "../data/pdf/", overwrite = TRUE)
 ```
+
+
+on renomme l'index des fichiers
+
+```{r}
+fic <- dir(path = "../data/pdf/", pattern = ".png")
+i <- 0
+for (f in fic){
+  i <- i +1 
+  file.rename(paste0("../data/pdf/",f), paste0("../data/pdf/",i, ".png"))
+}
+```
+
+
+TODO pourquoi mes arrêtes disparaissent ?
 
 
 data/pdf est le répertoire temporaire. C'est à partir des images
 que l'on travaille.
 
-pour 27 arrêtés, 8 arrêtés (mais basse définition)
+pour 29 arrêtés, 81 pages arrêtés (mais basse définition)
 
 ```{r, eval = TRUE}
 fic <- dir (path = "../data/pdf/" ,pattern = "*.png",full.names = TRUE)
 images <- map(fic, magick::image_read)
 ```
-
 
 
 ## Reconnaissance de l'écriture (ocr) et mise en liste
@@ -173,10 +190,12 @@ stext <- ocrEssai()
 toc()
 ```
 
-81 pages, mais seules les premières pages nous intéressent.
+60s
+
+71 pages, mais seules les premières pages nous intéressent.
 Donc filtre sur les 1ieres pages (celles qui contiennent ARRETE)
 
-Inutile de sauvegarder ce premier scan
+
 
 ## Premier filtre sur les images
 
@@ -186,6 +205,8 @@ Uniquement 1e page de tous les arrêtés
 liste <- lapply(stext, chercherNum)
 num <- premiereOccurence(liste)
 ```
+
+
 
 On extrait à la fois le numéro et la page du numéro.
 
@@ -221,6 +242,14 @@ Impossible de sauvegarder une liste (on ne sait pas faire), puis ce n'est pas fr
 On sauvegardera les extractions
 
 Tentative d'utiliser séparateur ARTICLE non poursuivie
+
+
+# Sauvegarde des .pdf avec un numéro d'indice
+
+L'opération finale consiste à renommer les fichiers . pdf
+
+
+
 
 # Extraction d'éléments
 
@@ -378,7 +407,7 @@ On récupère la liste des rues et on cherche toutes les rues correspondantes.
 
 ```{r}
 st_layers(paste0(cheminGen, "socle2024.gpkg"))
-rues <- st_read(paste0(cheminGen, "socle2024.gpkg"),"rues")
+ruesGeom <- st_read(paste0(cheminGen, "socle2024.gpkg"),"rues")
 rues <- read.csv("../data/rueIndex.csv", fileEncoding = "UTF-8")
 ```
 
@@ -387,14 +416,18 @@ le fichier .csv a été fait à partir du socle mais sans les géométries.
 On a isolé le mot clé du nom. On modifie le fichier en fonction
 des besoins (ex = est ou l'est ?)
 
+La jointure se fera sur le champs complet (NOM_1_G), on peut modifier le champs (NOM)
+
+Dernier rajout AUTOPONT (29/1/2025)
+
 ###### Doublons rues ?
 
 ```{r}
 nb <- length(rues$NOM_1_G)
-# 370 rues
+# 372 rues
 # Attention on enlève les mots clés en doublons
 doublons <- rues$NOM [duplicated(rues$NOM)]
-# 18
+# 17
 doublons
 ```
 
@@ -410,6 +443,7 @@ Du coup, on éclate la liste des lieux
 
 ```{r}
 lieu <- read.csv("../data/lieuCorrige.csv")
+# vectorisation
 lieu <- lieu$x
 # on éclate chq lieu avec les espaces
 liste_lieu <- strsplit(lieu, " ")
@@ -471,9 +505,7 @@ num <- as.vector(num$x)
 
 
 ```{r}
-lmotF [[2]]
 liste_motCle <- lmotF
-liste_lieu [[1]]
 num <- paste0("Arr_", num)
 # chaque num arrete en names
 names(liste_motCle) <- num
@@ -501,8 +533,10 @@ lieu2 <- lieu [-ind]
 #  verif de la longueur
 length(liste_motCle2)==length(lieu2)
 # df à garder pour traitement ultérieur
+liste_motCle1 <- liste_motCle [ind]
 dfReste <- as.data.frame(do.call(rbind, liste_motCle [ind]))
 names(dfReste) <- "NOM"
+write.csv(dfReste, "../data/arreteSansRue.csv", fileEncoding = "UTF-8")
 ```
 
 Pour meilleure correction
@@ -523,9 +557,9 @@ jointure <- merge(df, df2, by= "arr")
 write.csv(jointure, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F)
 ```
 
-On repère trois erreurs MAI et AUTOPONT DAUBIE
+On repère trois erreurs MAI et AUTOPONT DAUBIE sur le .csv
 
-correction sur la liste drectement  suite à examen des mots clés (cas autopont)
+correction sur la liste directement  suite à examen des mots clés (cas autopont)
 
 ```{r}
 liste_motCle2$Arr_144 <- "AUTOPONT"
@@ -538,15 +572,54 @@ row.names(dfReste) [6] <- "Arr_439"
 liste_motCle2
 element1Liste <- sapply(liste_motCle2, "[",1)
 ind <- which(element1Liste == "PERMANENT")
+liste_motCle1b <- liste_motCle [ind]
 liste_motCle3 <- liste_motCle2 [-ind]
 lieu3 <- lieu2 [-ind]
 liste_motCle3
+# repérage dernière erreur D'Aubier pour DAUBIE
 liste_motCle3$Arr_155[2] <- "DAUBIE"
 liste_motCle3
 ```
 
 
 On a une liste bonne qui correspond pour l'indexage à lieu3
+Reconstituion des listes des 29 arrêtes
+
+```{r}
+liste_motCle4 <- c(liste_motCle1, liste_motCle1b, liste_motCle3 )
+```
+
+
+29 éléments
+
+On écrase pour nommer le fichier
+
+```{r}
+aplatir <- function(vecteur){
+  #rajout du séparateur
+  tmp <- ifelse(length(vecteur) > 1, paste0(vecteur , sep="_", collapse = ""),vecteur)
+  # suppression du dernier séparateur
+  tmp <- gsub("_$", "", tmp)
+}
+res <- sapply(liste_motCle4, aplatir)
+nom <- gsub("Arr", "2024", names(res))
+df <- data.frame(nom,res)
+names(df) <- c("num","lieu")
+write.csv(df,"../data/nomArrete.csv", fileEncoding = "UTF-8" , row.names = F)
+```
+
+Attention l'indice de lieu ne correspond plus. On fait une jointure par le num d'arrêté pour 
+récupérer l'indice du fichier (de l'image.)
+
+```{r}
+num <- read.csv("../data/numArrete.csv")
+lieu <- read.csv("../data/nomArrete.csv")
+lieu$num2 <- substring(lieu$num, 6,8)
+num
+```
+
+
+
 
 
 
@@ -658,7 +731,9 @@ ruesGeom <- st_read("../data/cadastre2024.gpkg", "rue")
 
 ```{r}
 article1 <- read.csv("../data/article1.csv")
-article1$arr <- num
+article1$arr <- num$x
+article1
+# on renomme la colonne
 names(article1) [2] <- "texte"
 # suppression terme article
 # on n'utilise qu'un seul séparateur, le ":"
@@ -666,9 +741,13 @@ article1$texte <- gsub("-|;|—", ":", article1$texte)
 # on éclate avec le :
 list_article1 <- strsplit(article1$texte, ":")
 date <- sapply(list_article1, "[",2)
-# on garde les numéros d'arrete
-names(date) <- num 
-date [2]
+# on garde les numéros d'arrete en titre de colonne
+names(date) <- num
+```
+
+
+
+```{r}
 jour <- c("lundi|mardi|mercredi|vendredi|samedi|dimanche")
 ```
 
