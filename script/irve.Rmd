@@ -1,0 +1,102 @@
+---
+title: "IRVE"
+author: "B. Maranget"
+date: "11/02/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Les statistiques sur le fichier opendata des IRVE rendent des résultats étranges dans Qgis.
+(compter les pts dans les polygones)
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/08_VOIRIE/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+```
+
+
+
+# données
+
+```{r}
+st_layers(paste0(chemin, "bornesElectriques.gpkg"))
+data <- st_read(paste0(chemin, "bornesElectriques.gpkg"), "bornesOpenDataTampon5km")
+fond <- st_read(paste0(chemin2, "limites.gpkg"), "autourbondy4326")
+```
+
+Sous Qgis, on a regroupé les bornes (doublons géo), fait un tampon 5 km
+
+Du coup, il faut éclater les géométries
+
+```{r}
+data <- st_cast(data, "POINT")
+data <- data [, c("nom_amenageur")]
+```
+
+
+# Traitement
+
+
+```{r}
+inter <- st_intersection(data, fond)
+tab <- table(inter$nom_amenageur, useNA = "always")
+# recodage 
+petits <-  names(tab)[tab<6]
+inter$recodage [inter$nom_amenageur %in% petits] <- "Divers"
+table(inter$recodage, useNA = "always")
+inter$recodage [is.na(inter$recodage)] <- inter$nom_amenageur [is.na(inter$recodage)]
+ind <- grep("POLIS", inter$nom_amenageur, ignore.case = T )
+inter$recodage [ind] <-  "METROPOLIS"
+table(inter$recodage)
+# export
+st_write(inter, "../data/bornesElectriques.gpkg", "irveVille", delete_layer = T)
+agg <- aggregate(inter [, c ("nom")], by = list(inter$nom), length)
+agg <- aggregate(inter [, c("recodage", "nom")], by = list(inter$nom, inter$recodage), length)
+names(agg) [1:3]  <- c("Commune", "Nom", "nb")
+agg
+write.csv(agg [, c(1:2), drop = T], "../data/irveStat.csv")
+```
+
+
+
+```{r}
+png("../img/irve.png", width = 800, height = 800, res = 100)
+mf_init(data)
+mf_map(fond, add = T, col = "wheat", border = "white", pch =  1)
+mf_typo(inter, var="recodage", add = T, leg_pos = "right",   border = NA , leg_title = NA ,  leg_frame = TRUE)
+mf_layout("Bornes IRVE tampon 5 km autour Bondy", "Mairie de Bondy \ DGST\nJanvier 2025\nOSM, data.gouv")
+dev.off()
+```
+
+
