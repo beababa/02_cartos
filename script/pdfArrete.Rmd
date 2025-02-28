@@ -22,7 +22,9 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Ouverture fichier pdf arrêté lecture lieu et date de l'arrêté
+Projet voirie = lecture de l'arrêté et extraction dates / nom / rues
+
+Les arrêtés sont traités mois par mois. (Nécessité de vérif manuelle)
 
 # Sources
 
@@ -131,21 +133,33 @@ le tampon qui ne seront traitées qu'une fois.
 ## Lecture de tous les fichiers .pdf et conversion en image
 
 ```{r, eval = FALSE}
+# au cas où second passage pour verif
+chemin <- paste0(chemin,"01_fait")
+# si 1er passage ne pas jouer
 fic <- dir (path = chemin, pattern = "*.pdf", full.names = TRUE)
-
-# On conserve fic
+# ordre
+fic
+# On conserve fic / nb (nb pages par fichier)
+info <- NULL
+nb <- NULL
 for (f in fic){
+  info <- pdf_info(f)
+  nb <- c(nb,info$pages)
   pngfile <- pdftools::pdf_convert(f,  dpi = 200)
 }
+write.csv(cbind(fic, nb),"../data/paginationFic.csv", fileEncoding = "UTF-8")
+# attention fichier temporaire, il sera écrasé à chq nel import
 # liste de tous les png
 pngfile <- dir(path =".", pattern = "*.png", full.names = T)
+pngfile
+# L'ordre change !
 # déplacements de fichiers pour archivage
 file.move(fic,  paste0(chemin,"/01_fait"))
 # on renomme pour indexation
 file.move(pngfile, "../data/pdf/", overwrite = TRUE)
 ```
 
-141 images
+81 images pour décembre
 
 Comment garder la correspondance avec les fichiers de départ ?
 
@@ -156,17 +170,40 @@ ficPDF <- fic
 ficPNG <- pngfile
 ```
 
+
+
+ attention, la production des pdf a respecté un ordre numérique
+il est nécessaire que la lecture des .png respecte ce même ordre
+sinon coupure impossible en fin de parcours !
+
+
+(cela me prend plusieurs jours poru arriver à une solution...)
+
+Solution on éclate le nom du fichier pour trier sur le nom, puis l'indice
+
+```{r}
+nbCar <- nchar(ficPNG)
+nom <- substring(ficPNG,1,12)
+fin <- substring(ficPNG,nbCar-5,nbCar-4 )
+num <- as.numeric(gsub("_", "", fin))
+nomFicPNG <- data.frame(ficPNG, nom, num)
+```
+
 data/pdf est le répertoire temporaire. C'est à partir des images que
 l'on travaille.
 
-pour 10 fichiers, 141 pages arrêtés (mais basse définition)
+pour 7 fichiers, 81 pages arrêtés (mais basse définition)
 
 ```{r, eval = TRUE}
 ficPNG <- dir (path = "../data/pdf/" ,pattern = "*.png",full.names = TRUE)
-images <- map(ficPNG, magick::image_read)
+ficPNG_ordre <- nomFicPNG$ficPNG [order(nomFicPNG$nom, nomFicPNG$num)]
+images <- map(ficPNG_ordre, magick::image_read)
 ```
 
-140 images... il y a des pertes à chaque fois.
+81 ... pas de pertes
+
+
+il y a des pertes à chaque fois.
 
 
 
@@ -179,85 +216,198 @@ les lignes (/n) peut-être envisager sur ARTICLE ?
 tic()
 stext <- ocrEssai()
 toc()
+
 ```
 
-60s
+159 s
 
-71 pages, mais seules les premières pages nous intéressent. Donc filtre
+81 pages, mais seules les premières pages nous intéressent. Donc filtre
 sur les 1ieres pages (celles qui contiennent ARRETE)
 
-304 s pour 140, on ne les traitera pas à nouveau !
 
-Mais il faut sauvegarder l'index
-
+1 page n'est pas ocr-isée TO DO si pb
 
 
-## Premier filtre sur les images
+## Extraction numéro et nettoyage
 
-Uniquement 1e page de tous les arrêtés
+### Uniquement 1e page de tous les arrêtés
 
 ```{r}
 liste <- lapply(stext, chercherNum)
 num <- premiereOccurence(liste)
-num
-write.csv(num, "../data/extractionTotaleNumArrete.csv")
 ```
 
-
-## Pagination
-
-### Extraction numéro
-
-On extrait à la fois le numéro et la page du numéro.
+### Extraction ARRETE qlq chose
 
 ```{r}
-num <- read.csv("../data/extractionTotaleNumArrete.csv")
-num <- num$x
 # les lg où NA et ARRETE tout seul
 ind <- which (is.na(num))
-ind <- c(ind,which(num=="ARRETE$"))
+ind <- c(ind,grep("^ARRETE$", num))
+# combien d'images (automatisation du traitement)
 nb <- length(images)
 serie <- seq(1,nb)
 ind <- serie [-ind]
 # Numeros des pages num arrêté
 ind
+# verif
+(num <- num [ind])
 ```
-
-
-### Pagination
-
-```{r}
-deb <- ind
-fin <- c(ind-1, length(liste))
-fin <- fin [-1]
-pagination <- data.frame(deb=deb,fin=fin)
-pagination$nbPages <- pagination$fin-pagination$deb
-pagination$nbPages
-write.csv(pagination,"../data/paginationPDF.csv")
-```
-
 
 ### Nettoyage du numéro d'arrêté
-
 
 ```{r}
 numModif <- gsub("2024|24", "", num)
 numModif <- gsub("[^0-9]","", numModif)
 numModif <- gsub("2025", "2025_", numModif)
 numModif <-numModif [!is.na(numModif)]
-pagination$numArrete <- numModif
-write.csv(pagination,"../data/pagination.csv")
 ```
 
 
-Ainsi pagination contient deb fin nbPages et num arrêté
 
 
-# Sauvegarde des .pdf avec un numéro d'indice
+## Pagination
 
-L'opération finale consiste à renommer les fichiers . pdf
+### Nb pages pour chq arrete
 
-Il faut donc sauvegarder un df / nom fic / page
+Pour chq arrêté, on détermine le nb de pages
+
+ind est l'indice de la lg d'extraction d'arrêté
+
+```{r}
+deb <- ind
+fin <- c(ind-1, length(liste))
+fin <- fin [-1]
+pagination <- data.frame(deb=deb,fin=fin)
+# rajout de 1 pour compter la pg de garde
+pagination$nbPages <- pagination$fin-pagination$deb + 1
+pagination$nbPages
+```
+
+### Cumul sur tous les fichiers
+
+Pour chq fichier, on a déterminé le nb de pages au moment de
+la transformation pdf - png
+
+```{r}
+paginationFic <- read.csv("../data/paginationFic.csv", fileEncoding = "UTF-8") 
+```
+
+cumul du nb de pages
+
+```{r}
+paginationFic
+paginationFic$fic <- gsub(chemin, "", paginationFic$fic)
+fin <- length(paginationFic$nb)
+paginationFic$cumul <- NULL
+paginationFic$cumul [1] <- paginationFic$nb [1]
+for (i in (2:fin)){
+  paginationFic$cumul [i] <- paginationFic$cumul [i-1]+ paginationFic$nb [i]
+}
+paginationFic$cumul
+```
+
+jointure via le cumul
+
+```{r}
+pagination <- merge(pagination, paginationFic, by.x = "fin", by.y = "cumul", all.x = T)
+```
+
+La jointure ne suffit pas, il faut remplir les lg NA
+
+
+
+
+
+
+### Les numéros d'arrêté
+
+
+Ainsi pagination contient deb fin nbPages, num arrêté, nom fichier
+On peut voir les absences de num d'arrêté
+
+```{r}
+pagination <- cbind(pagination,numModif)
+pb <- which((pagination$numModif)=="") 
+pagination
+```
+
+
+### Rectification manuelle de pagination
+
+Il n'y a pas 30 arrêtés mais 29
+
+TODO pourquoi erreur ? il y a une feuille qui n'a pas
+été ocr-isée (blanche)
+
+En attendant on rectifie manuellement le fichier
+
+```{r}
+paginationFin <- pagination [pagination$num !="",]
+paginationFin$fin [13] <- 35
+paginationFin$nbPages [13] <- paginationFin$fin [13] - paginationFin$deb [13] 
+
+write.csv(paginationFin ,"../data/pagination.csv", row.names = F)
+ficPNG_ordre
+```
+
+### Pagination par fichier
+
+
+Plutôt que de faire des boucles, on construit une suite
+en fonction de l'indexation
+
+```{r}
+serie <- seq(1,29)
+absent <- which(is.na(pagination$fic))
+present <- serie [-absent]
+
+pagination$fic [present]
+fin <- NULL
+rep(present, fin)
+a <- seq(1,5)
+b <- rep(16, 17-6)
+c <- rep(29, 30-17)
+fin <- c(a,b,c)
+pagination$X <- fin
+
+pagination$fic [pagination$X == 16] <- paginationFic$fic [6]
+pagination$fic [pagination$X == 29] <- paginationFic$fic [7]
+pagination <- pagination [,-1]
+# la page finale sera la première page de l'arrete
+pagination$fin2 <- pagination$nb 
+pagination$deb2 <- pagination$nb - pagination$nbPages + 1
+pagination$fin2
+pagination$deb2
+```
+
+Puis on ajoute le cumul par fichier
+
+
+```{r}
+f <- fic [6] 
+fin <- NULL
+fic <- unique(fic)
+for (f in fic) {
+    tmp <- pagination [pagination$fic == f,]
+    nb <- length(tmp$numModif)-1
+    for (i in nb:1){
+      print(i)
+      tmp$fin2 [i] <- tmp$fin2 [i+1] - tmp$nbPages [i+1] 
+      tmp$deb2 [i] <- tmp$deb2 [i+1] - tmp$nbPages [i]
+    }
+  fin <- rbind(tmp, fin)
+  }
+fin$fid <- as.numeric(rownames(fin))
+fin <- fin [order(fin$fid),]
+fin$fin2 [is.na(fin$fin2)] <- 2
+fin$deb2 [is.na(fin$deb2)] <- 1
+write.csv(fin, "../data/paginationFinale.csv")
+```
+
+
+# Sauvegarde des .pdf avec un numéro d'arrete
+
+L'opération finale consiste à renommer les fichiers . pdf avec le num d'arrêté
 
 
 Parcours des fichiers pdf pour les éclater et les renommer arrêté par arrêté.
@@ -265,54 +415,62 @@ Parcours des fichiers pdf pour les éclater et les renommer arrêté par arrêt�
 Variables et initialisation
 
 ```{r}
-pagination <- read.csv("../data/pagination.csv")
-pagination$nbPages <- pagination$nbPages + 1
-# liste des 10 fichiers avec nb pages différentes
+pagination <- read.csv("../data/paginationFinale.csv")
+# liste des 7 fichiers avec nb pages différentes
 ficPDF
-# pagination des 61 arretes
+# pagination des 29 arretes
 pagination
-# initialisation compteur
-f <- ficPDF [1]
+# initialisation compteurs
+# le fichier
+f <- ficPDF [2]
+```
+
+
+```{r}
 # nb pages par pdf
 nbPages <- sapply(ficPDF, pdf_length)
+nbPages
 # i index lg fic pagination
-i <- 1
+lg <- 1
 # cumul
 cumulPageArrete <- 1
 ```
 
 
+
+
 Boucle
 
 ```{r}
+ficPDF
+f <- ficPDF [1]
+chemin
+pagination$fic
+pagination$fic2 <- paste0(chemin,pagination$fic)
 for (f in ficPDF){
-  nbP <- nbPages [f]
-  print(nbP)
-  while (cumulPageArrete < nbP){
-    deb <- pagination$deb [i]
-    fin <- pagination$fin [i]
-    numArr <- pagination$numArrete [i]
-    nbPagesArrete <- pagination$nbPages [i]
-    pdf_subset(f, pages = deb:fin, output =  paste0(numArr,".pdf"))
-    cumulPageArrete <- cumulPageArrete + nbPagesArrete -1 
-    i <- i + 1
+  print(f)
+  
+  tmp <- pagination [pagination$fic2 == f,]
+  for (i in 1: length(tmp$deb2)){
+      deb <- tmp$deb2 [i]
+      fin <- tmp$fin2 [i]
+      numArr <- tmp$numModif [i]
+      pdf_subset(f, pages = deb:fin, 
+               output =  paste0("../data/pdf/",numArr,".pdf"))
   }
+
 }
 ```
 
-
-
-```{r}
-pdf_subset(ficPDF [1], pages = 1:3, output =  "test.pdf")
-pdf_subset(ficPDF [6], pages = deb [1]:fin[1], output =  "test.pdf")
-```
+TODO c'est presque bon ! (28 février 2025)
 
 # Base image définitive
 
 vérifier 61 arrêtés à traiter
 
 ```{r}
-images <- images[ind]
+images <- images[pb]
+images
 ```
 
 La base images est stable, on refait un OCR car seule la 1e page nous
