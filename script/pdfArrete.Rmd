@@ -162,8 +162,8 @@ l'on travaille.
 pour 10 fichiers, 141 pages arrêtés (mais basse définition)
 
 ```{r, eval = TRUE}
-fic <- dir (path = "../data/pdf/" ,pattern = "*.png",full.names = TRUE)
-images <- map(fic, magick::image_read)
+ficPNG <- dir (path = "../data/pdf/" ,pattern = "*.png",full.names = TRUE)
+images <- map(ficPNG, magick::image_read)
 ```
 
 140 images... il y a des pertes à chaque fois.
@@ -188,7 +188,7 @@ sur les 1ieres pages (celles qui contiennent ARRETE)
 
 304 s pour 140, on ne les traitera pas à nouveau !
 
-Mais il faut sauvegarder l'indiex
+Mais il faut sauvegarder l'index
 
 
 
@@ -200,11 +200,19 @@ Uniquement 1e page de tous les arrêtés
 liste <- lapply(stext, chercherNum)
 num <- premiereOccurence(liste)
 num
+write.csv(num, "../data/extractionTotaleNumArrete.csv")
 ```
+
+
+## Pagination
+
+### Extraction numéro
 
 On extrait à la fois le numéro et la page du numéro.
 
 ```{r}
+num <- read.csv("../data/extractionTotaleNumArrete.csv")
+num <- num$x
 # les lg où NA et ARRETE tout seul
 ind <- which (is.na(num))
 ind <- c(ind,which(num=="ARRETE$"))
@@ -215,13 +223,8 @@ ind <- serie [-ind]
 ind
 ```
 
-# Sauvegarde des .pdf avec un numéro d'indice
 
-L'opération finale consiste à renommer les fichiers . pdf
-
-Il faut donc sauvegarder un df / nom fic / page
-
-## Pagination
+### Pagination
 
 ```{r}
 deb <- ind
@@ -234,38 +237,67 @@ write.csv(pagination,"../data/paginationPDF.csv")
 ```
 
 
-## Combien de pages par .pdf ?
-
+### Nettoyage du numéro d'arrêté
 
 
 ```{r}
-#### présentation des élémnents####
-# liste des noms d'arrete indexe 1 à 140
-numModif
-# DONC CPTEUR iOLD 1 140
+numModif <- gsub("2024|24", "", num)
+numModif <- gsub("[^0-9]","", numModif)
+numModif <- gsub("2025", "2025_", numModif)
+numModif <-numModif [!is.na(numModif)]
+pagination$numArrete <- numModif
+write.csv(pagination,"../data/pagination.csv")
+```
+
+
+Ainsi pagination contient deb fin nbPages et num arrêté
+
+
+# Sauvegarde des .pdf avec un numéro d'indice
+
+L'opération finale consiste à renommer les fichiers . pdf
+
+Il faut donc sauvegarder un df / nom fic / page
+
+
+Parcours des fichiers pdf pour les éclater et les renommer arrêté par arrêté.
+
+Variables et initialisation
+
+```{r}
+pagination <- read.csv("../data/pagination.csv")
+pagination$nbPages <- pagination$nbPages + 1
 # liste des 10 fichiers avec nb pages différentes
 ficPDF
 # pagination des 61 arretes
 pagination
-# donc CPT num 1 61 ms inutile car f
 # initialisation compteur
 f <- ficPDF [1]
 # nb pages par pdf
 nbPages <- sapply(ficPDF, pdf_length)
-# i nb pg par arrete
+# i index lg fic pagination
 i <- 1
-iOLD <- 1
-# iNum index du nom de l'arrete,  
-iArr <- 1
+# cumul
+cumulPageArrete <- 1
+```
+
+
+Boucle
+
+```{r}
 for (f in ficPDF){
   nbP <- nbPages [f]
   print(nbP)
-  iArr <- 1 
-  deb <- pagination$deb [iArr]
-  fin <- pagination$fin [iArr]
-  numArr <- numModif [deb]
-  pdf_subset(f, pages = deb:fin, output =  paste0(numArr,".pdf"))
+  while (cumulPageArrete < nbP){
+    deb <- pagination$deb [i]
+    fin <- pagination$fin [i]
+    numArr <- pagination$numArrete [i]
+    nbPagesArrete <- pagination$nbPages [i]
+    pdf_subset(f, pages = deb:fin, output =  paste0(numArr,".pdf"))
+    cumulPageArrete <- cumulPageArrete + nbPagesArrete -1 
+    i <- i + 1
   }
+}
 ```
 
 
