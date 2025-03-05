@@ -32,7 +32,7 @@ Les arrêtés sont traités mois par mois. (Nécessité de vérif manuelle)
 
 <https://pyimagesearch.com/2020/08/03/tesseract-ocr-for-non-english-languages/>
 
-# Import
+# Librairies
 
 ```{r}
 library(pdftools)# pdf_subset
@@ -149,7 +149,7 @@ for (f in fic){
 }
 write.csv(cbind(fic, nb),"../data/paginationFic.csv", fileEncoding = "UTF-8")
 # attention fichier temporaire, il sera écrasé à chq nel import
-# liste de tous les png
+# liste de tous les png 81
 pngfile <- dir(path =".", pattern = "*.png", full.names = T)
 pngfile
 # L'ordre change !
@@ -160,30 +160,32 @@ file.move(pngfile, "../data/pdf/", overwrite = TRUE)
 ```
 
 81 images pour décembre
-
+()
 Comment garder la correspondance avec les fichiers de départ ?
 
 Eclater les fichiers par arrêté
 
+initialisation des .pdf et .png
+
 ```{r}
-ficPDF <- fic
-ficPNG <- pngfile
+ficPDF <- dir (path = chemin, pattern = "*.pdf", full.names = TRUE)
+ficPNG <- dir(path = "../data/pdf/", pattern = ".png")
 ```
 
 
 
- attention, la production des pdf a respecté un ordre numérique
+Attention, la production des pdf a respecté un ordre numérique
 il est nécessaire que la lecture des .png respecte ce même ordre
 sinon coupure impossible en fin de parcours !
 
 
-(cela me prend plusieurs jours poru arriver à une solution...)
+(cela me prend plusieurs jours pour arriver à une solution...)
 
-Solution on éclate le nom du fichier pour trier sur le nom, puis l'indice
+Solution : on éclate le nom du fichier pour trier sur le nom, puis l'indice
 
 ```{r}
 nbCar <- nchar(ficPNG)
-nom <- substring(ficPNG,1,12)
+nom <- substring(ficPNG,1,9)
 fin <- substring(ficPNG,nbCar-5,nbCar-4 )
 num <- as.numeric(gsub("_", "", fin))
 nomFicPNG <- data.frame(ficPNG, nom, num)
@@ -195,12 +197,11 @@ l'on travaille.
 pour 7 fichiers, 81 pages arrêtés (mais basse définition)
 
 ```{r, eval = TRUE}
-ficPNG <- dir (path = "../data/pdf/" ,pattern = "*.png",full.names = TRUE)
 ficPNG_ordre <- nomFicPNG$ficPNG [order(nomFicPNG$nom, nomFicPNG$num)]
-images <- map(ficPNG_ordre, magick::image_read)
+images <- map(paste0("../data/pdf/",ficPNG_ordre), magick::image_read)
 ```
 
-81 ... pas de pertes
+pour dec, 81 ... pas de pertes et dans le bon ordre !
 
 
 il y a des pertes à chaque fois.
@@ -216,7 +217,6 @@ les lignes (/n) peut-être envisager sur ARTICLE ?
 tic()
 stext <- ocrEssai()
 toc()
-
 ```
 
 159 s
@@ -225,7 +225,7 @@ toc()
 sur les 1ieres pages (celles qui contiennent ARRETE)
 
 
-1 page n'est pas ocr-isée TO DO si pb
+1 page n'est pas ocr-isée TO DO si pb ?
 
 
 ## Extraction numéro et nettoyage
@@ -234,24 +234,59 @@ sur les 1ieres pages (celles qui contiennent ARRETE)
 
 ```{r}
 liste <- lapply(stext, chercherNum)
-num <- premiereOccurence(liste)
+numArrete <- premiereOccurence(liste)
+numArrete
 ```
 
 ### Extraction ARRETE qlq chose
 
 ```{r}
-# les lg où NA et ARRETE tout seul
+# les lg où NA et ARRETE tout seul, cas ARRETE E
 ind <- which (is.na(num))
 ind <- c(ind,grep("^ARRETE$", num))
+ind <- c(ind, grep("ARRETE E",num))
 # combien d'images (automatisation du traitement)
 nb <- length(images)
 serie <- seq(1,nb)
-ind <- serie [-ind]
+# on exclue les pages avec ARRETE tout seul et NA
+indOK <- serie [-ind]
 # Numeros des pages num arrêté
-ind
-# verif
-(num <- num [ind])
+indOK
+# veri
+(num <- num [indOK])
 ```
+
+On a donc 29 arrêtés
+Dés cette étape on vérifie et on rectifie en regardant le .pdf
+
+Pour décembre 2 :
+- 419 pour 412
+- indice 73 : 414 
+- indice 65 : 431
+- indice 63 : 434
+
+Trop d'erreur sur ce paquet decembre 2 
+
+### Détection article 1 pour verif
+
+
+```{r}
+article1 <- premiereOccurence(  lapply(stext, chercherArticle))
+article1
+# on a besoin des num d'indice pour les images
+# mais le rownames conserve ce num
+indImage <- seq(1,81)
+df <- data.frame(indImage, article1)
+ind <- grep("ARTICLE 10|ARTICLE 11", df$article1)
+df <- df [-ind,]
+ind <- grep("ARTICLE 1|ARTICLE l", df$article1)
+df <- df [ind,]
+numImage <- df$indImage
+```
+
+
+
+
 
 ### Nettoyage du numéro d'arrêté
 
@@ -262,6 +297,69 @@ numModif <- gsub("2025", "2025_", numModif)
 numModif <-numModif [!is.na(numModif)]
 ```
 
+```{r}
+numModif
+```
+
+Les arrêtes sont bien sur 3 chiffes
+
+```{r}
+# nb ce caractères
+lg <- sapply(numModif, nchar)
+# recherche >3 
+ind <-which(lg!=3)
+```
+
+
+###  Vérification : affichage des scans en mosaïque
+
+
+
+1ere verif de visu, on a bien tous les arrêtés de stext
+
+calage de la fenêtre crop sur les 2 premières images
+
+
+```{r}
+# extraction des images concernées
+verifImage <- unlist(images [indOK])
+# visionner pas uniquement la 1e image ?
+# objet external pointer of class 'magck-image'
+i <-1
+test <- c(verifImage [[i]], verifImage [[i+1]])
+# on coupe une image de 300 largeur sur 300 hauteur,
+# en commençant à partir de 800 à droite.
+test2 <- image_crop(test, "300x200+800+300")
+image_append(test2)
+```
+
+
+On visualise tous les arrêtés
+
+```{r}
+# constitution d'une mosaique d'extrait
+nb <- length(verifImage)
+test <- NULL
+test <- verifImage [[1]]
+for (i in 2:nb){
+  test <- c(test, verifImage [[i]] )
+}
+test
+test2 <- image_crop(test, "300x300+800+300")
+image_append(test2, stack = F)
+numModif
+```
+
+Erreur sur le 419 qui est 412
+
+```{r}
+numModif [28] <- 412
+```
+
+
+TODO pourquoi erreur ? il y a une feuille qui n'a pas
+été ocr-isée (blanche)
+
 
 
 
@@ -269,19 +367,49 @@ numModif <-numModif [!is.na(numModif)]
 
 ### Nb pages pour chq arrete
 
-Pour chq arrêté, on détermine le nb de pages
+Pour chq arrêté, on détermine le nb de pages 
 
-ind est l'indice de la lg d'extraction d'arrêté
+indOK est l'indice de la lg d'extraction d'arrêté
+
+la fin est le indOK suivant - 1 (vectorisation !)
+
 
 ```{r}
-deb <- ind
-fin <- c(ind-1, length(liste))
+deb <- indOK
+indOK - 1
+fin <- c(indOK-1, length(liste))
+# suppression du 1er element
 fin <- fin [-1]
 pagination <- data.frame(deb=deb,fin=fin)
-# rajout de 1 pour compter la pg de garde
+# pour le nb de pages, rajout de 1 pour compter la pg de garde
 pagination$nbPages <- pagination$fin-pagination$deb + 1
 pagination$nbPages
+pagination$num <- numModif
+pagination
 ```
+
+#### Vérification sur les images
+
+En regardant le pdf on voit page blanche pdf mais pages
+scanné 
+
+```{r}
+ind <- which(pagination$nbPages == 7)
+pagination [ind,]
+images [[pagination$deb [ind]]]
+# 7 pages
+nb <- seq(ind+1,ind+7)
+tot <- images[[pagination$deb [ind]]]
+nb
+for (n in nb ) {
+  print(n)
+  tot <- c(tot,images[[pagination$deb [n]]])
+}
+tot
+
+```
+
+
 
 ### Cumul sur tous les fichiers
 
@@ -317,11 +445,6 @@ La jointure ne suffit pas, il faut remplir les lg NA
 
 
 
-
-
-### Les numéros d'arrêté
-
-
 Ainsi pagination contient deb fin nbPages, num arrêté, nom fichier
 On peut voir les absences de num d'arrêté
 
@@ -336,25 +459,12 @@ pagination
 
 Il n'y a pas 30 arrêtés mais 29
 
-TODO pourquoi erreur ? il y a une feuille qui n'a pas
-été ocr-isée (blanche)
-
-En attendant on rectifie manuellement le fichier
-
-```{r}
-paginationFin <- pagination [pagination$num !="",]
-paginationFin$fin [13] <- 35
-paginationFin$nbPages [13] <- paginationFin$fin [13] - paginationFin$deb [13] 
-
-write.csv(paginationFin ,"../data/pagination.csv", row.names = F)
-ficPNG_ordre
-```
 
 ### Pagination par fichier
 
 
 Plutôt que de faire des boucles, on construit une suite
-en fonction de l'indexation
+en fonction de l'indexation (bidouillage non reproductible)
 
 ```{r}
 serie <- seq(1,29)
@@ -449,12 +559,12 @@ pagination$fic
 pagination$fic2 <- paste0(chemin,pagination$fic)
 for (f in ficPDF){
   print(f)
-  
+  # selection du fic
   tmp <- pagination [pagination$fic2 == f,]
   for (i in 1: length(tmp$deb2)){
       deb <- tmp$deb2 [i]
       fin <- tmp$fin2 [i]
-      numArr <- tmp$numModif [i]
+      numArr <- tmp$numModif [i]#
       pdf_subset(f, pages = deb:fin, 
                output =  paste0("../data/pdf/",numArr,".pdf"))
   }
@@ -463,6 +573,7 @@ for (f in ficPDF){
 ```
 
 TODO c'est presque bon ! (28 février 2025)
+
 
 # Base image définitive
 
@@ -493,77 +604,6 @@ Tentative d'utiliser séparateur ARTICLE non poursuivie
 
 # Extraction d'éléments
 
-## Numéros
-
-Attention, il faut rattacher chaque page au bon numéro d'arrêté
-
-```{r}
-liste <- lapply(stext, chercherNum)
-num <- premiereOccurence(liste)
-num
-```
-
-1ere verif de visu, on a bien tous les arrêtés de stext
-
-Suppression de tous les caractères sauf les chiffres en deux étapes : -
-année (pb une année sur 24) - puis tout ce qui n'est pas chiffre
-
-```{r}
-numModif <- gsub("2024|24", "", num)
-numModif <- gsub("[^0-9]","", numModif)
-```
-
-normalement les arrêtés sont sur 3 chiffres
-
-```{r}
-# nb ce caractères
-lg <- sapply(numModif, nchar)
-# recherche >3 
-ind <-which(lg!=3)
-anomalie <- numModif[ind]
-# extraction des images concernées
-anomalieImage <- unlist(images [ind])
-# visionner pas uniquement la 1e image ?
-# objet external pointer of class 'magck-image'
-test <- c(anomalieImage [[i]], anomalieImage [[i+1]])
-# on coupe une image de 200 largeur sur 300 hauteur,
-# en commençant à partir de 300 à gauche.
-test2 <- image_crop(test, "200x300+300")
-image_append(test2)
-numComplement <- c(428 ,406)
-numModif [ind] <- numComplement
-numModif
-```
-
-tests
-
-```{r}
-# constitution d'une mosaique d'extrait
-nb <- length(images)
-test <- images [[1]]
-for (i in c(2:nb)){
-  test <- c(test, images [[i]] )
-}
-test2 <- image_crop(test, "200x300+300")
-image_append(test2, stack = T)
-```
-
-```{r}
-numModif
-```
-
-A la comparaison, pb sur - 438 le 2e (429) - 414 (412) - 408 premier
-(409)
-
-Voir si scanner en couleur ne suffirait pas à régler le pb également
-classer les arrêtés papier par numéro.
-
-```{r}
-ind <- which(numModif %in% c(438, 414, 408))
-ind <- ind [-c(1,5)] 
-numModif [ind] <- c(429,412,409)
-write.csv(numModif,"../data/numArrete.csv", fileEncoding = "UTF-8")
-```
 
 ## Articles
 
