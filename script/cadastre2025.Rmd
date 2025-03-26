@@ -1,0 +1,60 @@
+---
+title: "Cadastre thématique"
+author: "B. Maranget"
+date: "12/03/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Le fichier cadastre est devenu très gros.
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+#chemin <- "G:/Mon Drive/05_DATA"
+# changer le chemin chaque année
+cadastre <- "03_SOCLE/cadastre2023/cadastre2023.sqlite"
+```
+
+
+```{r}
+st_layers("../data/cadastre.gpkg")
+couches <- unlist(st_layers("../data/cadastre.gpkg"))
+
+#couches importantes : 1, 9,14
+for (i in c(1,5,11,13)){
+  tmp <- st_read("../data/cadastre.gpkg", couches [i])
+  st_write(tmp, "../data/cadastreBase.gpkg", couches [i], delete_layer = T)
+}
+```
+
+
+```{r}
+st_layers("../data/cadastreBase.gpkg")
+```
+
+

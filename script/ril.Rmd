@@ -61,8 +61,9 @@ str(ril)
 
 
 ```{r}
-ril <- read.csv("../data/mars2024.csv", header = T, fileEncoding = "UTF-8", na.strings = "")
-ril <- ril [,c(1:15)]
+ril <- read.csv2("../data/RIL-2025-03-24-15-17-43.csv", header = T, fileEncoding = "UTF-8", na.strings = "", skip = 1)
+names(ril)
+ril <- ril [,c(1:15, 22,23)]
 ril$cle <- rownames(ril)
 str(ril)
 ```
@@ -94,25 +95,36 @@ names(df) <- c("X", "Y")
 
 ```{r}
 # spatialisation
-ril_sf <- st_as_sf(df, coords = c("X", "Y"), crs = 2154 )
+ril_sf <- st_as_sf(ril, coords = c("x", "y"), crs = 2154 )
 mf_map(ril_sf)
 # jointure
 ril_sf$cle <- rownames(ril_sf)
 str(ril_sf)
 ril <- merge(ril_sf, ril, by="cle")
 str(ril)
-st_write(ril,"../data/ril2024.gpkg", "mars2024b", delete_layer = T)
+st_write(ril_sf,"../data/ril2025.gpkg", "mars2025", delete_layer = T)
 ril <- st_drop_geometry(ril)
-write.csv(ril, "../data/rilMars2024.csv")
+write.csv(ril, "../data/rilMars2025.csv")
 ```
 
 les zones de sortie
 
 ```{r}
-zone <- st_read("../data/ril2024.gpkg", "zone")
+zone <- st_read("../data/ril.gpkg", "nbPoints")
+mf_map(zone, col = NA, add = T)
+mf_label(zone, var = "nom")
+zone <- zone [-c(4,5),]
+st_write(zone,"../data/ril2025.gpkg", "zone")
 ```
 
 elles sont dessinées sous qgis, puis l'intersection est faite sous R
+
+
+```{r}
+ril <- st_read("../data/ril2025.gpkg","mars2025")
+zone <- st_read("../data/ril2025.gpkg", "zone")
+```
+
 
 
 ```{r}
@@ -121,7 +133,7 @@ st_crs(zone) <- 2154
 ril <- st_intersection(ril, zone)
 str(ril)
 ril <- ril [, c("numero", "repetition", "complement", "type_voie", "libelle", "nombre_logements", "numero_permis", "commentaire", "nom")]
-st_write(ril, "../data/ril2024.gpkg", "rilMars2024", delete_layer = T)
+st_write(ril, "../data/ril2025.gpkg", "mars2025", delete_layer = T)
 str(ril)
 write.csv(st_drop_geometry(ril),"../data/ril.csv", fileEncoding = "UTF-8")
 ```
@@ -133,7 +145,7 @@ agg <- aggregate(ril [, "nom"], by = list(ril$nom), length)
 # verif
 sum(agg$nom)
 zone <- merge (st_drop_geometry(agg), zone, by.x = "Group.1", by.y = "nom")
-st_write(zone, "../data/ril2024.gpkg", "zonesDeSortie", delete_layer = T)
+st_write(zone, "../data/ril2025.gpkg", "zonesDeSortie", delete_layer = T)
 ```
 
 
@@ -152,7 +164,13 @@ write.csv(rilRoutage, "../data/rilRoutage.csv", fileEncoding = "UTF-8")
 ```
 
 
+photos RIL
 
 
+Pour faire l'atlas avec photo avt après
+
+```{r}
+
+```
 
 

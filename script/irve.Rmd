@@ -25,6 +25,8 @@ knitr::opts_chunk$set(warning = FALSE)
 Les statistiques sur le fichier opendata des IRVE rendent des résultats étranges dans Qgis.
 (compter les pts dans les polygones)
 
++ spatialisation propositions SIGEIF
+
 # Environnement
 
 
@@ -34,6 +36,7 @@ Les statistiques sur le fichier opendata des IRVE rendent des résultats étrang
 ```{r}
 library(sf)
 library(mapsf)
+library(mapview)
 ```
 
 
@@ -99,4 +102,13 @@ mf_layout("Bornes IRVE tampon 5 km autour Bondy", "Mairie de Bondy \ DGST\nJanvi
 dev.off()
 ```
 
+
+# Spatialisation des IRVE
+
+```{r}
+data <- read.csv("../data/irveProp.csv", fileEncoding = "UTF-8")
+data <- st_as_sf(data, coords = c("lat", "long"), crs = 4326)
+mapview(data)
+st_write(data, "../data/bornesElectriques.gpkg", "propositions2025", delete_layer = T)
+```
 

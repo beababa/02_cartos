@@ -26,6 +26,7 @@ un seul modèle de donnée pour le stationnement
 - livraison
 - PMR
 - payante
+- dépose minute (mars 2025)
 
 ```{r}
 library(sf)
@@ -37,7 +38,7 @@ library(mapsf)
 
 
 ```{r, eval = T}
-chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data")
 chemin <- "G:/Mon Drive/05_DATA/"
 ```
 
@@ -52,13 +53,14 @@ fichiers finaux dans VOIRIE et data...
 st_layers("../data/stationnement.gpkg") 
 zone <- st_read("../data/stationnement.gpkg", "zone2024")
 bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
-irve <- st_read(paste0(chemin, "08_VOIRIE/bornesElectriques.gpkg"))
-st_layers(paste0(chemin, "08_VOIRIE/bornesElectriques.gpkg"))
+irve <- st_read(paste0(chemin, "/08_VOIRIE/bornesElectriques.gpkg"))
+st_layers(paste0(chemin, "/08_VOIRIE/bornesElectriques.gpkg"))
 pmr <- st_read("../data/stationnement.gpkg", "placePMRAdresse")
 # livraison
-st_layers(paste0(chemin, "08_VOIRIE/stationnement.gpkg"))
-livraison <- st_read(paste0(chemin, "08_VOIRIE/stationnement.gpkg"), "plLivraison")
+st_layers(paste0(chemin, "stationnement.gpkg"))
+livraison <- st_read(paste0(chemin, "/08_VOIRIE/stationnement.gpkg"), "plLivraison")
 ```
+
 
 fichiers data de Zemri, possibles jointure ?
 
@@ -68,10 +70,49 @@ Référentiel rue
 attention pl fichiers. pour le mot clé c'est data/rue.csv
 
 ```{r}
-rue <- st_read(paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue2023")
+rue <- st_read(paste0(chemin, "/03_SOCLE/rue2023.gpkg"), "rue")
+rue$NOM
 st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
 rue <- read.csv("../data/rue.csv")
 ```
+
+# Cas dépose minute
+
+## Jointure par rue
+
+
+```{r}
+deposeMinute <- read.csv2("../data/deposeMinute.csv", fileEncoding = "UTF-8")
+deposeMinute$Adresse
+deposeMinute$NOM <- c("PIERRE BROSSOLETTE", "LIBERTE", "VERDUN", "JACQUELINE AURIOL", "EDOUARD VAILLANT", "HENRI BARBUSSE", "VILLEMOMBLE")
+joint <- merge(rue, deposeMinute, by = "NOM")
+joint <- joint [, c("Site", "Adresse", "Nombre.de.places", "Durée")]
+setdiff(deposeMinute$NOM, joint$NOM)
+mf_map(joint)
+st_write(joint,"../data/stationnement.gpkg", "rueDeposeMinute", delete_layer = T)
+```
+
+## BAN
+
+API Ban
+
+```{r}
+library(dplyr)
+library(banR)
+```
+
+
+```{r}
+joint$insee <- 93010
+joint <- st_drop_geometry(joint)
+res <- geocode_tbl(joint, adresse = Adresse, code_insee = insee)
+res_sf <- as.data.frame(res)
+res_sf <- st_as_sf(res_sf, coords = c("longitude", "latitude"), crs = 4326)
+res <- res_sf [, c(1:4)]
+st_write(res, "../data/stationnement.gpkg", "deposeMinute", delete_layer = T)
+```
+
+
 
 # indicateurs
 
