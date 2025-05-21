@@ -1,0 +1,130 @@
+---
+title: "Mot clé rues"
+author: "B. Maranget"
+date: "13/07/2022"
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Reprise et exploitation des clés noms de rue à partir de la BD TOPO
+
+test sur les grandes lessives
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Chemins
+
+
+
+Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D093_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D093-ED2024-03-15/TRANSPORT/VOIE_NOMMEE.shp
+
+C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D093_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D093-ED2024-03-15/TRANSPORT
+
+```{r}
+home <- Sys.getenv("HOME")
+chemin <- paste0(home,"/03_SIG/03_03_Data/")
+cheminRUE <- paste0(chemin,"03_SOCLE/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D093_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D093-ED2024-03-15/TRANSPORT/" )
+```
+
+
+## Données 
+
+
+### Suppression des doublons
+
+```{r}
+rue <- st_read(paste0(cheminRUE, "VOIE_NOMMEE.shp"))
+rue <- rue [rue$CODE_INSEE == 93010,]
+rue <- rue [order(rue$MOT_DIR), c("MOT_DIR", "NOM_MIN", "TYPE_VOIE"), drop = T]
+rue$statut <- "original"
+# duplicated va nous indiquer les doublons mais n'extraira pas l'ensemble des doublons
+table(duplicated(rue$MOT_DIR))
+rue [duplicated(rue$MOT_DIR),]
+# doublon éventuel = on couple avec le type de voie
+doublons <-rue$MOT_DIR [duplicated(rue$MOT_DIR)] # 55
+sel <- rue [rue$MOT_DIR %in% doublons,]
+unique <- rue [!(rue$MOT_DIR %in% doublons),]
+# 304
+sel <- sel [order (sel$MOT_DIR),]
+sel$MOT_DIR  <- paste0(sel$MOT_DIR , ' ', sel$TYPE_VOIE )
+sel$statut <- "modif"
+# reconstitution de rue
+rue <- rbind(sel, unique)
+# on répète l'opération
+doublons <- rue$MOT_DIR [duplicated(rue$MOT_DIR)] # plus que 4 !
+sel <- rue [rue$MOT_DIR %in% doublons,]
+unique <- rue [!(rue$MOT_DIR %in% doublons),]
+write.csv(st_drop_geometry(sel), "../data/selDoublons.csv", row.names = F,fileEncoding = "UTF-8")
+# Modfication directe dans le tableur
+sel <- read.csv("../data/selDoublonsModifie.csv", fileEncoding = "UTF-8")
+sel$statut <- "modif2"
+rue <- rbind(sel, unique)
+# 359 c'est ok
+table(rue$statut)
+# on convertit
+rue$MOT_DIR2 <- toupper(rue$MOT_DIR)
+rue$MOT_DIR2 <- gsub("É|Ë|È|È", "E", rue$MOT_DIR2)
+rue$MOT_DIR2 <- gsub("Í", "I", rue$MOT_DIR2)
+rue$MOT_DIR2 <- gsub("Â", "A", rue$MOT_DIR2)
+# export pour pense bête
+write.csv(rue [order(rue$MOT_DIR),], "../data/rueMotCleIGN.csv", fileEncoding = "UTF-8", row.names = F)
+```
+
+Modification de Molière, et av de l'est (NA)
+
+```{r}
+rue <- read.csv("../data/rueMotCleIGNmodifie.csv")
+```
+
+
+### Lessives
+
+
+
+```{r}
+lessive <- read.csv(paste0(chemin, "23_PROPRETE/01. TABLEAU DES OPÉRATIONS.csv"), fileEncoding = "UTF-8")
+liste <- strsplit(lessive$RUES,';')
+nb <- sapply(liste, length)
+nb <- rep (nb, nb)
+seq <- unlist(liste)
+df <- data.frame("rue" = seq, "num" = nb)
+joint <- merge(df, rue, by.x = "rue", by.y = "MOT_DIR2")
+# 37 sur 44
+setdiff(df$rue, joint$rue)
+
+```
+
+
+
+```{r}
+lessive$RUES
+
+Encoding(rue$MOT_DIR)
+
+```
+

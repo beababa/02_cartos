@@ -1,0 +1,57 @@
+---
+title: "Cadastre Evolution"
+author: "B. Maranget"
+date: "16/04/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+L'évolution du cadastre est rapide surtout sur les projets.
+
+Essayer de trouver une méthode permettant de recouper les parcelles.
+
+C'est la 1e démarche par rapport à l'archivage...
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+https://files.data.gouv.fr/cadastre/etalab-cadastre/2022-01-01/geojson/communes/93/93010/
+
+```{r}
+url <- "https://files.data.gouv.fr/cadastre/etalab-cadastre/2022-01-01/geojson/communes/93/93010/"
+url <- c(url, "https://cadastre.data.gouv.fr/data/etalab-cadastre/2023-01-01/geojson/communes/93/93010/")
+url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2024-01-01/geojson/communes/93/93010/")
+url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2025-01-01/geojson/communes/93/93010/")
+nom <- c("cadastre-93010-parcelles.json.gz")
+url <- paste0(url, nom)
+destfile <- c("cadastre2022.geojson", "cadastre2023.geojson", "cadastre2024.geojson", "cadastre2025.geojson")
+destfile <- paste0("../data/", destfile)
+cadastreURL <- function(url, fic){
+  download.file(url, fic)
+}
+for (i in 1:4){
+  print(i)
+  cadastreURL(url [i], destfile[i])
+}
+fic <- list.files("../data/", "cadastre[202]")
+
+```

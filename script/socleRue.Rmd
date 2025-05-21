@@ -52,7 +52,7 @@ chemin <- "D:/03_SIG/03_03_Data/"
 ```
 
 
-données
+# Socle données
 
 Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
 
@@ -60,57 +60,69 @@ Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
 st_layers(paste0(chemin, "03_SOCLE/rue.gpkg"))
 st_layers(paste0(chemin, "03_SOCLE/socle2024.gpkg"))
 # nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
-rue <- st_read(paste0(chemin,"03_SOCLE/socle2024.gpkg"), "rues")
-str(rue)
-#386 rues au 16/06
+rue2024 <- st_read(paste0(chemin,"03_SOCLE/socle2024.gpkg"), "rues")
+# 386 rues au 16/06
 # 387 au 9/11 impasse benhamou et voie tram train
+str(rue2024)
 # 373 au 10/12/2024
 # maj longueur
-rue$Longueur <- round(st_length(rue$geom),0)
-sum(rue$Longueur)
-
+# 371 au 25/04/2025
+rue2024$Longueur <- round(st_length(rue2024$geom),0)
+sum(rue2024$Longueur)
 # verif doublon
-tab <- table(rue$NOM_1_G)
+tab <- table(rue2024$NOM_1_G)
 tab [tab >1]
+# Etienne Dolet c'est logique, partie privée et publique (IMP et R d'ailleurs)
 # carto pour voir pb
-select <- rue [rue$NOM_1_G %in% names (tab [tab > 1]), ]
+select <- rue2024 [rue2024$NOM_1_G %in% names (tab [tab > 1]), ]
 mf_init(st_buffer(select [1,], 100))
 fond()
 mf_map(select [c(1:2),], lwd= 2, col = "red",add = T)
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
-mf_label(rue, "NOM" , overlap = F, lines = T)
+mf_label(rue2024, "NOM" , overlap = F, lines = T)
+mf_layout("Doublon rue Etienne Dolet", "fonction fond()\nAvril 2025")
 ```
 
 
-Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
-
+Une correction est effectuée dans QGis si nécessaire (projet cadastreRue, ou grilleRue)
 
 les corrections sont effectuées sous socle2024.gpkg / rues
-
 
 le raccourci sans les articles dans rue.csv
 
 à noter également le mot clé utilisé dans la BDTOPO
 
+
+# Traitement
+
+A priori, le traitement est fait. Il sera peut-être utile à nouveau.
+
+
 ```{r}
-rue <- read.csv("../data/rue.csv")
-
-rue
-
+rue <- rue2024
 ```
 
+L'indice pourrait être 2024-25 etc...
 
+## Extractions nom numéro
 
 ```{r}
 # extraction tableau rue numero
-num <- rue[!is.na(rue$NOMnumero),]
-num <- num [order (as.integer(num$NOM)), c("NATURE", "NOMnumero"), drop = T]
-num [16,1] <- 16
+num <- rue[!is.na(rue2024$NOMnumero),]
+names(num)
+num <- num [order (as.integer(num$NOM)), c("NATURE", "NOMnumero", "NOM"), drop = T]
+num
 write.csv(num, "../data/numRue.csv", fileEncoding = "UTF-8")
 # remplacementNONNumero
 num <- as.character(seq(1,16))
 rue$NOM_1_G [rue$NOM %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
 rue[!is.na(rue$NOMnumero),]
+```
+
+## Nature
+
+Y compris l'agrégation par nature pour verif
+
+```{r}
 # extraction type rue
 explode <- strsplit(rue$NOM_1_G, " ")
 rue$NATURE <- sapply(explode, "[",1)
@@ -120,34 +132,38 @@ agg <- aggregate(rue$Longueur, by = list(rue$NATURE), sum )
 knitr::kable(agg)
 # extraction type rue / isolement
 motif <- agg$Group.1
+motif <- motif [!motif%in% c( "D78", "AUTOPONT")]
 motif
-ch <- as.character(seq(1,17))
-motif <- motif [!(motif %in% ch)]
-motif <- motif [!motif%in% c("Sans", "D78")]
-motif
+# constitution de la chaine de nature pour l'expression régulière
+# Attention il faut que cela soit en début de phrase sinon pb sur les R
 motif <- paste0("^",motif, " |")
 motif [motif == "^VOIE |"] <- "VOIE "
 motif <- paste(motif, collapse = "")
-
 nchar(motif)
 motif
+# on retire la nature
 rue$NOM <- gsub(motif, "", rue$NOM_1_G)
 str(rue)
-
 ```
 
 
-suppression des articles dans le nom des rues pour l'index
+## Suppression des articles dans le nom des rues pour l'index
+
+Permet de repérer les pb, on rajoute BENOITE pour B GROULT CHARLES pour C GOUNOD
 
 ```{r}
 rue$NOM
-motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE|^D\'")
+motif <- c("^DES |^DU |^DE LA |^DE L\'|^DE |^D\'")
 rue$NOM <- gsub(motif, "", rue$NOM)
 rue$NOM <- gsub("^ ", "", rue$NOM)
 str(rue)
 ```
 
-enregistrement rue2023
+enregistrement rue2024
+
+Bof, les changements ont été faits directement sous QGIS
+
+On le laisse pour mémoire mais voir surtout l’enregistrement des listes apèrs
 
 ```{r}
 # attention suppression
@@ -162,9 +178,10 @@ st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage",
 
 
 ```{r}
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
-liste <- rue [, c("NOM_1_G",  "NOM", "NATURE", "usage"), drop = T]
-write.csv(liste [order (liste$"NOM" ),], "../data/listeRues.csv", fileEncoding = "UTF-8")
+rue <- st_read(paste0(chemin,"03_SOCLE/socle2024.gpkg"), "rues")
+rue$longueur <- round(st_length(rue$geom),0)
+liste <- rue [, c("NOM_1_G",  "NOM", "NATURE", "usage", "longueur"), drop = T]
+write.csv(liste [order (liste$"NOM" ),], "../data/listeRues.csv", fileEncoding = "UTF-8", row.names = F)
 write.csv(rue [!is.na(rue$NOMnumero),c("NOM", "NOMnumero"), drop=T] , "../data/listePetiteRue.csv")
 ```
 
@@ -182,8 +199,11 @@ rue$longueur <- st_length(rue)
 voie Public / Privé
 
 ```{r}
-table(rue$usage)
-aggregate(rue [, "longueur", drop = T], by =list(rue$usage), sum)
+table(rue$usage, useNA = "always")
+rue$usage [is.na(rue$usage)] <- "public"
+aggregate(rue [, "longueur", drop = T], by = list(rue$usage), sum)
+# et pour le coup on enregistre
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/socle2024.gpkg"), "rues", delete_layer = T)
 ```
 
 
@@ -192,11 +212,80 @@ On extrait les rues publiques uniquement
 
 ```{r}
 ruePub <- rue [rue$usage != 'privé',]
-# 292 verif pour les sans nom (on a nommé, palais des sports)
+# 281. On a fini par supprimer les rues sans nom (on a supprimé notamment le palais des sports)
 ruePub [ruePub$NATURE == 'Sans',]
+
 agg <- aggregate(ruePub [, c("longueur"), drop=T], by = list(ruePub$NATURE, ruePub$IMPORTANCE), sum)
 write.csv2(agg, "../data/aggRue.csv", row.names = FALSE)
 ```
+
+# Les places
+
+En 2025, suite à la mise en place de la place Anatole France, la question des places ressurgit
+Avant, elles existent en POI.
+Mais, il semble pertinent de les rajouter avec leur superficie.
+Certaines places ont un linéaire voirie (ex : ESPL CLAUDE FUZIER)
+Donc, rajout d'une colonne pour les rues avec zéro en linéaire.
+
+On a saisit toutes les places concernées avec place=square dans osm
+
+```{r}
+q <- opq (bbox = 'Bondy, France')
+q <- add_osm_feature (q, key = 'place', value = 'square') # any named objects
+osmdata_xml (q, 'place.osm')
+st_layers('place.osm')
+place <- st_read('place.osm', 'multipolygons' )
+mf_map(place)
+mf_label(place, var ="name", overlap = F)
+#mf_map(place [2,], col = "red", add = T)
+#place$name [2] <- "Place Charles De Gaulle"
+```
+
+Rajout nomCourt
+
+```{r}
+rue$NOM_1_G
+place$name
+place$NOM_1_G <- toupper(place$name)
+place$NOM_1_G <- gsub("É", "E", place$NOM_1_G)
+place$NOM_1_G <- gsub("ESPLANADE", "ESPL", place$NOM_1_G)
+place$NOM_1_G <- gsub("PLACE", "PL", place$NOM_1_G)
+place$NATURE <- "PL"
+motif <- c("DU |DE LA |DES |^ES ")
+place$NOM <- gsub(motif, "", place$NOM)
+# pour échapper à l'afficher du nom
+place$IMPORTANCE <- 7
+place$NOMnumero <- NA
+place$NOM <- gsub("PL", "",place$NOM_1_G)
+place$usage <- 'public'
+place <- place [, c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")]
+st_write(place, paste0(chemin, "03_SOCLE/socle2024.gpkg"), "place", delete_layer = T)
+place$aire <- round(st_area(place$geometry), 0)
+place$aire
+```
+
+jointure avec la liste des rues
+
+
+```{r}
+listeRue <- read.csv("../data/listeRues.csv", fileEncoding = "UTF-8")
+listePlace <- st_drop_geometry(place)
+joint <- merge (listeRue, listePlace [, c("NOM_1_G", "aire")], by = "NOM_1_G", all.x = T)  
+joint2 <- merge (listeRue, listePlace [, c("NOM_1_G", "aire")], by = "NOM_1_G")  
+```
+
+Il reste 6 places sans voirie
+
+```{r}
+noms <- names(joint)
+listePlace$longueur <- NA
+listePlaceSel <- listePlace [!(listePlace$NOM_1_G  %in% joint2$NOM_1_G),]
+joint2
+listePlaceSel <- listePlaceSel [, c(noms)]
+listeFin <- rbind(joint, listePlaceSel)
+write.csv(listeFin, "../data/listeRuesPlace.csv", fileEncoding = "UTF-8")
+```
+
 
 
 
@@ -207,16 +296,14 @@ Les quartiers
 
 ```{r}
 quartier <- st_read(paste0(chemin, "03_SOCLE/limites.gpkg"), "quartiers")
-nom <- names (table(quartier$nom)) 
-raccourci <- c("MVeuve",  "Mainguy","Saule", "Merisiers" ,"NC-TSB")
-equiv <- data.frame(nom, raccourci)
-rue <- st_read(paste0(chemin,"03_SOCLE/rue2023.gpkg"), "rue")
+raccourci <- c("MVeuve", "Saule", "Merisiers", "NC-TSB" ,"Mainguy")
+quartier <- cbind(quartier,raccourci)
+quartier
+# attention nom fichier
+rue <- st_read(paste0(chemin,"03_SOCLE/socle2024.gpkg"), "rues")
 inter <- st_intersection(rue, quartier)
 interSansGeom <- st_drop_geometry(inter)
-interSansGeom <- interSansGeom [, c("NATURE", "NOM2", "nom", "raccourci")]
-# equiv
-jointure <- merge(interSansGeom, equiv, by = "nom" )
-jointure <- jointure  [, c("NATURE", "NOM2", "raccourci")]
+interSansGeom <- interSansGeom [, c("NATURE", "NOM",  "raccourci")]
 names(jointure ) <- c("NATURE", "NOM", "QUARTIER")
 write.csv(jointure [ order (jointure$NOM), ], "../data/listeRueQuartier.csv", fileEncoding= "UTF-8")
 ```
@@ -228,20 +315,9 @@ La grille
 ```{r}
 grille <- st_read(paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille")
 mf_map(grille)
+mf_label(grille, var="case")
 mf_map(rue, add = T)
 ```
-
-
-Pb nom numéros
-
-
-```{r}
-rue$NOM_1_G[!is.na(rue$NOMnumero)] <- rue$NOMnumero [!is.na(rue$NOMnumero)] 
-rue$NOM_1_G[!is.na(rue$NOMnumero)] 
-motif <- c("ALL |^R |SEN |IMP ")
-rue$NOM [!is.na(rue$NOMnumero)] <- gsub(motif, "", rue$NOM [!is.na(rue$NOMnumero)])
-```
-
 
 
 

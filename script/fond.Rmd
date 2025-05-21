@@ -201,9 +201,7 @@ st_write(bat, paste0(chemin, "fond.gpkg"), "bat", delete_layer = T)
 
 ```{r, eval = TRUE}
 ch <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
-ch <- "D:/03_SIG/03_03_Data/03_SOCLE/"
-#readOGR(paste0(chemin, "logement.gpkg"))
-#st_read(paste0(chemin, "fond.gpkg"))
+#ch <- "D:/03_SIG/03_03_Data/03_SOCLE/"
 couche <- st_layers(paste0(ch, "fond.gpkg"))
 tmp <- couche$name
 for (i in 1:length(tmp)){
@@ -211,6 +209,7 @@ for (i in 1:length(tmp)){
     assign(tmp [i], objet)
 }
 length(couche$name)
+couche$name
 ```
 13 couches
 

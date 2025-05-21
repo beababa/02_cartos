@@ -33,6 +33,8 @@ Commissariat Général au Développement Durable
 
 carto bailleurs et parcellaires pour Zem en août 2023
 
+analyse du rpls 2023
+
 
 ```{r}
 library(sf)
@@ -79,21 +81,41 @@ write.csv(rpls2022Bondy, "../data/rpls2022.csv")
 9605 pts
 
 
+2023
+
+```{r}
+rpls2023 <- read.csv2(paste0(chemin, "rpls_2023_OD_GEOLOC_DiDo.csv"), skip = 3)
+rpls2023 <- rpls2023 [rpls2023$CODEPOSTAL == 93140,]
+```
+
+9625 pts
+
+
 Puisqu'il s'agit de traiter pl fichiers, on va tout mettre en fonctions ?
 
 ```{r}
-fic <- rpls2022Bondy
+fic <- rpls2023
 names(fic)
+head(fic)
+# vérifcation pour le nb d'étages et le nb de voies
 verif <- function(fic) {
-  ind <- grep("voie", names(fic))
+  ind <- grep("NOMVOIE",names(fic))
   # on suppose que le nom voie sera tjrs en 2e position
-  ind <- names(fic)[ind[3]]
+  ind <- names(fic)[ind]
   tab <- table(fic[,ind], useNA = "always")
   ind <- grep("ETAGE", names(fic), ignore.case = T)
   tab1<- table(fic[,ind], useNA = "always")
   return(list(tab,tab1))
 }
-verif(rpls2022Bondy)
+res <- verif(fic)
+res
+# nb de voie
+par(mar = c(0,12,0,2))
+barplot(res [[1]], las = 2, horiz = T, cex.names = 0.3, main = "nb lgts sociaux par rue")
+df <- as.data.frame(res [[1]])
+summary(df)
+df <- df [df$Freq > 50,]
+barplot(df$Freq, las = 2, horiz = T, names = df$Var1, main = "nb lgts sociaux par rue > 50", cex.names = 0.5)
 agg <- function(fic){
   ind <- grep("ETAGE", names(fic), ignore.case = T)
     # cellules vides et RC à zéro
@@ -102,16 +124,17 @@ fic [, ind] <-  gsub("00|RC", "0", fic [,ind])
 ind2 <- which(fic [,ind]=="")
 fic [ind2, ind] <- "0"
 fic [,ind] <- as.integer(fic[,ind])
-# creation de la clé
-cle <- grep("voie", names(fic))
-fic$cle <- paste0(fic [,cle[1]], fic [,cle[2]], fic [,cle[3]])
+# creation de la clé num et nom voie
+cle <- grep("nomvoie", names(fic), ignore.case = T)
+fic$cle <- sapply(rbind(fic [, cle]), paste0)
+head(fic$cle)
 # agg etage
 aggEtageMax <- aggregate(fic [, ind], by = list(fic$cle), max)
 aggNbAppart <- aggregate(fic$cle, by = list(fic$cle), length)
 # jointure
 joint <- merge(aggNbAppart, aggEtageMax, by = "Group.1")
 names(joint) <- c("cle", "appartement", "etage")
-geo <- unique( fic [,c("cle", "Nom.du.Programme",  "Année.de.construction" ,"Coordonnée.X", "Coordonnée.Y") ])
+geo <- unique( fic [,c("cle",   "CONSTRUCT" ,"X", "Y") ])
 joint2 <- merge(joint, geo, by ="cle")
 #data <- st_transform(data, crs = 2154)
 data <- st_as_sf(joint2, 
@@ -119,7 +142,7 @@ data <- st_as_sf(joint2,
                  crs = 2154)
 return(data)
 }
-rpls2022 <- agg(rpls2022Bondy)
+rpls <- agg(rpls2023)
 st_write(rpls2022, "../data/RPLS.gpkg", "rpls2022", delete_layer = T)
 ```
 
