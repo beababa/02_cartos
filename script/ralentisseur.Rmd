@@ -1,0 +1,286 @@
+---
+title: "Ralentisseurs"
+author: "B. Maranget"
+date: "21/05/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+reprise fichier ralentisseur
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(osmdata)
+library(tidyverse)
+library(banR)
+```
+
+
+chemins
+
+```{r}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <- ("D:/03_SIG/03_03_Data/")
+```
+
+# fichier csv
+
+On rectifie quelques noms de rue, et remplacement , par /
+
+puis enregistremetn en , et UTF-8 dans excel
+
+
+```{r}
+# encodage par défaut
+Sys.getlocale()
+Sys.getlocale("LC_CTYPE")
+data <- read.csv2("../data/ralentisseur.csv")
+```
+
+
+# constitution adresse
+
+On crée num + rue
+
+## Non conforme
+
+Il y a 2 infos : num et hauteur
+
+```{r}
+sel <- data [data$NON.CONFORME !="",c(1,2)]
+sel
+sel$id <- seq(1:8)
+sel
+eclat <- strsplit(sel$NON.CONFORME, "n°")
+nb <- sapply(eclat, length)
+eclat <- unlist(eclat)
+id <- rep(1:8,  nb)
+df <- data.frame(eclat, id = id)
+df <- merge(df, sel, by = "id")
+df
+```
+
+Recup taille ralentisseur
+
+```{r}
+eclat <- strsplit(df$eclat, "\\(")
+# recup numéro
+num <- sapply(eclat, "[",1)
+#seq <- rep(1:(length(num)),  nb)
+hauteur <- sapply(eclat, "[",2)
+hauteur <- gsub("/",".", hauteur)
+hauteur <- gsub("cm\\)","", hauteur)
+hauteur <- gsub("\\)","", hauteur)
+hauteur <- gsub("\\. $|\\.$", "", hauteur)
+hauteur <- gsub(",", ".", hauteur)
+#hauteur <- gsub("[^0-9,]", "", hauteur)
+hauteur <- as.double(hauteur)
+hauteur
+```
+
+
+```{r}
+num <- gsub(",$", "", num)
+num <- gsub("\\/","", num)
+num
+num <- as.integer(num)
+df$num <- num
+df$hauteur <- hauteur
+df <- df [!is.na(df$hauteur),]
+df$id <- seq(1,14)
+df
+df <- df [, c("id", "hauteur", "num", "RUE")]
+df
+write.csv(df, "../data/ralentisseurNONCONFORME.csv", row.names = F)
+```
+
+14
+
+
+## les autres
+
+La table des données
+
+
+```{r}
+nom <- names(data) [3:6]
+df <- NULL
+for (n in nom){
+  num <- data [,n]
+  statut <- n
+  rue <- data [,1]
+  df_tmp <- data.frame(num, statut, rue)
+  df <- rbind(df,df_tmp)
+}
+df <- df [df$num!="",]
+table(df$statut)
+write.csv(df, "../data/ralentisseurListeAutres.csv", row.names = F)
+```
+
+99 obs
+
+
+Les numéros
+
+On isole les chiffres séparés par les barres
+
+```{r}
+df$num <- gsub("n°", "", df$num)
+df$num <- gsub(",", "/", df$num)
+indice <- grep("*2)", df$num)
+df$double <- "non"
+df$double [indice] <- "double"
+# attention aux caractères d'espacement sur la ( et l'*)
+df$num [df$double == "double"] <- gsub("\\(\\*2\\)||\\( \\*2\\)", "", df$num [df$double == "double"])
+df$id <- seq(1:length(df$num))
+```
+
+split
+
+```{r}
+eclat <- strsplit(df$num, "/")
+nb <- sapply(eclat,length)
+id <- rep(1:length(eclat), nb)
+eclat <- unlist(eclat)
+df2 <- data.frame(id, eclat)
+joint <- merge(df2, df, by = "id")
+joint <- joint [, c("eclat", "statut", "rue", "double")]
+joint$eclat <- as.integer(joint$eclat)
+write.csv(joint, "../data/ralentisseursAutres.csv", row.names = F)
+```
+
+# Géocodage
+
+## non conforme
+
+## les autres
+
+```{r}
+rue <- read.csv("../data/ralentisseursAutres.csv")
+table(rue$statut)
+head(rue)
+table_test <- tibble::tibble(
+adresse = paste0(rue$eclat, " ", rue$rue),
+y = c("93140")
+)
+geoc1 <- geocode_tbl(tbl = table_test, adresse = adresse, code_postal = y)
+```
+
+point pb
+
+Suite aux rectif du fichier (prolongée / l'est / av République), 1 seule varsovie
+
+```{r}
+table(is.na(geoc1$longitude))
+# 1 erreur
+pb <- geoc1 [is.na(geoc1$longitude),]
+knitr::kable(pb$adresse)
+# on placera les points à la main
+write.csv(pb [, c("adresse")], "../data/listePbGeocodageRalentisseur.csv", row.names = F)
+pb <- read.csv("../data/listePbGeocodageRalentisseurModifie.csv")
+pb
+```
+
+
+```{r}
+table_test <- tibble::tibble(
+adresse = pb$adresseModif,
+y = c("93140")
+)
+geoc2 <- geocode_tbl(tbl = table_test, adresse = adresse, code_postal = y)
+geoc2
+# recup du nom d'origine
+joint2 <-  merge(geoc2 [c("adresse", "longitude", "latitude")], pb, by.x = "adresse", by.y = "adresseModif")
+joint2 <- joint2 [, c( "longitude", "latitude","adresse.y")]
+names(joint2) [3] <- "modif"
+```
+
+
+```{r}
+names(geoc1)
+names (joint2)
+geoc1$modif <- geoc1$adresse
+geoc <- rbind(geoc1  [c( "longitude", "latitude","modif")],joint2)
+geoc <- geoc [!is.na(geoc$longitude),]
+```
+
+184 pt géolocalisés
+
+```{r}
+geoc <- geoc1
+```
+
+
+Jointure avec fichier rue épuré
+
+
+```{r}
+rue <- read.csv( "../data/ralentisseursAutres.csv")
+# 184
+rue$adresse <- paste0(rue$eclat, " ", rue$rue)
+rue$cle <- paste0(rue$adresse, rue$statut, rue$double)
+table(duplicated(rue$cle))
+ind <- which(duplicated(rue$cle))
+pb <- rue$cle [ind]
+# 3  doublons
+rue <- rue [!duplicated(rue$cle),]
+geoc <- data.frame(geoc)
+geoc
+joint <- merge(rue, geoc [, c("adresse" ,"longitude", "latitude")],  by = "adresse")
+```
+
+184 ! youpi !
+
+Retirer Varsovie
+
+```{r}
+joint <- joint [!is.na(joint$longitude),]
+```
+
+
+
+
+# Carto
+
+
+```{r}
+loc <- st_as_sf(joint, coords = c("longitude", "latitude"), crs = 4326 )
+library(mapview)
+mapview(loc)
+st_write(loc, "../data/ralentisseur.gpkg", "geolocAutres", delete_layer = T)
+```
+
+
+# Contrôle
+
+
+```{r}
+deb <- read.csv("../data/ralentisseursAutres.csv")
+fin <- st_read("../data/ralentisseur.gpkg", "geolocAutres")
+# 184
+deb$adresse <- paste0(deb$eclat, " ", deb$rue)
+setdiff(deb$adresse, fin$adresse)
+setdiff(fin$adresse, deb$adresse)
+```
+
+On rajoute Varsovie /  Versailles / de l'est sous Qgis
