@@ -31,6 +31,9 @@ library(leaflet)
 ```
 
 
+remarque : bizarre le qpv qui exclue tout le nord de l'av. Jouhaux
+
+
 # Chemin data
 
 
@@ -67,5 +70,14 @@ inter <- st_transform(inter, 4326)
 ```{r}
 leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
   addPolylines(data=inter, weight = 8 )
+```
+
+
+```{r}
+qpv <- st_transform(qpv, 4326)
+qpv <- qpv [qpv$insee_dep == 93,] 
+qpv <- qpv [grep("Bondy", qpv$lib_com),]
+leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
+  addPolylines(data=qpv, weight = 8 )
 ```
 

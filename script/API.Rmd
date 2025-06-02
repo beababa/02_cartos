@@ -22,16 +22,25 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Récup API
+Explorations autour des API
+
+## Récup API
 
 
 https://thinkr.fr/les-api-un-enfer/
 
+## les API IGN
+
+```{r}
+library(happign)
+```
 
 
 # Import
 
 ```{r}
+library(sf)
+library(mapsf)
 library(jsonlite)
 library(httr)
 library(tesseract)
@@ -56,4 +65,138 @@ GET ("https://10.61.0.26/")
 
 ```
 
+
+# IGN
+
+https://paul-carteron.github.io/happign/articles/Getting_started.html
+
+Cadastre / urba / cp / géoportail ... et appellations viticoles
+
+
+```{r}
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+mf_map(bondy)
+```
+
+## Limites
+
+```{r}
+administratif_wfs <- get_layers_metadata(data_type ="wfs")
+head(administratif_wfs)
+bondy_borders <- get_wfs(x = bondy,
+                            layer = "LIMITES_ADMINISTRATIVES_EXPRESS.LATEST:commune")
+mf_map(bondy_borders)
+mf_layout("Autour de Bondy", "happign\nMai 2025")
+```
+
+
+tables codes insee
+
+```{r}
+com_2024 [grep('^bond',com_2024$LIBELLE, ignore.case = T),]
+com_2024 [grep('^93',com_2024$COM, ignore.case = T),]
+```
+
+
+
+## Cadastre et urba
+
+
+```{r}
+cadastre <- get_apicarto_cadastre(bondy, type = "parcelle")
+mf_map(cadastre)
+mf_map(bondy_borders, add = T, col = NA, border = "red")
+```
+
+
+
+```{r}
+zonage <- get_apicarto_gpu( bondy, ressource = "zone-urba")
+zonage$libelle
+mf_map(type = "typo", zonage, var = "libelong")
+mf_map(bondy_borders,  col = NA, lwd=3, add = T)
+```
+
+
+```{r}
+ressources <- c("prescription-lin", "prescription-pct")
+prescriptions <- get_apicarto_gpu(bondy, ressource = ressources)
+prescriptions$`/api/gpu/prescription-lin` [[7]]
+lineaire <- prescriptions [[1]]
+mf_map(lineaire, var = "libelle", type = "typo")
+pct <- prescriptions  [[2]]
+mf_init(pct)
+mf_map(cadastre, add = T)
+mf_map(pct, var = "libelle", type = "typo", add = T, leg_pos =NA)
+mf_layout("Arbres remarquables", "hapign\nmai 2025")
+```
+
+## Que fait l'API
+
+
+pb de la transformation du json en geojson (manipulation des listes)
+
+
+vu au hackhaton IGN
+
+```{r}
+library(httr)
+library(jsonlite)
+rqt <- "https://rnb-api.beta.gouv.fr/api/alpha/buildings/?addresses_id=&cursor=2&insee_code=93010"
+res <- httr::GET(rqt)
+res <- fromJSON(rawToChar(res$content))
+res <- res$results
+names(res)
+```
+
+On veut récupérer le shape
+
+```{r}
+# depart
+(jsonShape <- res$shape [1,])
+class(jsonShape)
+# arrivee
+bondy$geom
+```
+
+Récup 1 polygone
+
+```{r}
+jsonToSf <- function(jsonShape){
+  # extraction des coordinates
+  coord <- unlist(jsonShape$coordinates)
+  # matrice
+  mat <- matrix(coord, nrow=2, byrow=TRUE)
+  # inversion de matrice
+  mat <- t(mat)
+  # objet sfg
+  po <- st_polygon(list(mat))
+  # sfc
+  sfc <- st_as_sfc(list(po), crs = 2154)
+  # sf
+  sf <- st_as_sf(sfc, crs = 2154)
+}
+sf <- jsonToSf (tmp$shape [1,])
+mf_map(sf)
+```
+
+
+Récup pl polygones
+
+combinaison de plusieurs objets sf
+
+
+```{r}
+df_sf <- lapply(res$shape, jsonToSf)
+# ne fonctionne pas, on fait une boucle
+tot <- NULL
+unlist(res$shape [1, 2])
+length(res$shape [1,])
+for (i in 1:length(res$shape [,2])){
+  print(i)
+  tmp <- jsonToSf(res$shape [i,])
+  tot <- rbind(tot, tmp) 
+}
+mf_map(tot)
+```
 
