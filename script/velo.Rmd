@@ -1,0 +1,235 @@
+---
+title: "velo"
+author: "B. Maranget"
+date: "2/6/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Kilométrage piste cyclable
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+## Data
+
+OSM / voie verte = bicycle designated / unidirectionnelle = highway = "cycleway"
+
+```{r}
+piste <- st_read("../data/velo.geojson")
+piste <- st_transform(piste, 2154)
+longueur <- sum(st_length(piste))
+voieVerte <- st_union(piste [piste$bicycle == 'designated',])
+unidirectionnelle <- st_union(piste [piste$highway == 'cycleway',])
+mf_map(voieVerte, col = "green")
+mf_map(unidirectionnelle, lty = "dashed", col = "green",add = T)
+st_length(voieVerte)
+st_length(unidirectionnelle)
+```
+
+
+
+# Données
+
+```{r}
+str(ril)
+```
+
+
+
+
+```{r}
+ril <- read.csv("../data/rilMai2025.csv", header = T, fileEncoding = "UTF-8", na.strings = "", dec =".", skip = 0)
+names(ril)
+ril <- ril [,c(1:15, 22,23)]
+ril$cle <- rownames(ril)
+str(ril)
+```
+
+Gros pb mars 2024, le fichier a trop de commentaire. on ne prend que les 15 colonne
+
+On peut repérer le termes 2154 et extraire les 40 caractères avant
+
+
+```{r}
+coords <- read.csv2("../data/mars2024.csv", header = T)
+
+extractionCoord <- function(ch){
+  ind <- unlist(gregexpr('2154', ch))
+  substr(ch, ind-27,ind-2)
+}
+names(coords) <- ""
+coords <- sapply(coords,extractionCoord)
+coords
+X <- substring(coords,1,12)
+Y <- substring(coords, 14)
+df <- data.frame("X"=X, "Y"=Y)
+names(df) <- c("X", "Y")
+```
+
+
+
+
+
+```{r}
+# spatialisation
+ril_sf <- st_as_sf(ril, coords = c("x", "y"), crs = 2154 )
+mf_map(ril_sf)
+# jointure
+ril_sf$cle <- rownames(ril_sf)
+str(ril_sf)
+ril <- merge(ril_sf, ril, by="cle")
+str(ril)
+st_write(ril_sf,"../data/ril2025.gpkg", "mai2025", delete_layer = T)
+ril <- st_drop_geometry(ril)
+write.csv(ril, "../data/rilMai2025.csv")
+```
+
+les zones de sortie
+
+```{r}
+zone <- st_read("../data/ril2025.gpkg", "zonesDeSortie")
+mf_map(zone, col = NA, add = T)
+mf_label(zone, var = "nom")
+zone <- zone [-c(4,5),]
+st_write(zone,"../data/ril2025.gpkg", "zone")
+```
+
+elles sont dessinées sous qgis, puis l'intersection est faite sous R
+
+
+```{r}
+ril <- st_read("../data/ril2025.gpkg","mai2025")
+zone <- st_read("../data/ril2025.gpkg", "zonesDeSortie")
+names(zone) [2:3] <- c("nb", "nom")
+mf_map(zone)
+```
+
+
+
+```{r}
+st_crs(ril) <- 2154
+st_crs(zone) <- 2154
+ril <- st_intersection(ril, zone)
+str(ril)
+ril$nom <- ril$Group.1.y
+ril <- ril [, c("numero", "repetition", "complement", "type_voie", "libelle", "nombre_logements", "numero_permis", "commentaire", "nom")]
+st_write(ril, "../data/ril2025.gpkg", "mai2025", delete_layer = T)
+str(ril)
+write.csv(st_drop_geometry(ril),"../data/ril.csv", fileEncoding = "UTF-8")
+```
+
+nb de points pour chaque sortie
+
+```{r}
+ril
+table(ril$nom,useNA = "always")
+agg <- aggregate(ril [, "nom"], by = list(ril$nom), length)
+mf_map(agg, col = "red", add = T)
+# verif
+sum(agg$nom)
+names(agg)
+names(zone)
+zone <- merge (st_drop_geometry(agg), zone, by.x = "Group.1", by.y = "nom")
+st_write(zone, "../data/ril2025.gpkg", "zonesDeSortie", delete_layer = T)
+```
+
+
+cheminement
+
+http://map.vroom-project.org/?
+
+```{r}
+ril <- read.csv("../data/ril.csv", fileEncoding = "UTF-8")
+rilRoutage <- cbind(ril [, c("numero", "type_voie", "libelle")])
+
+rilRoutage <- sapply(rilRoutage, paste)
+sapply(rilRoutage, paste)
+
+write.csv(rilRoutage, "../data/rilRoutage.csv", fileEncoding = "UTF-8")
+```
+
+
+# photos RIL
+
+
+Pour faire l'atlas avec photo avt après, on cumule les photos dans 
+rorcal 2025
+
+```{r}
+photo2024 <- st_read("c:/Users/bmaranget/Documents/03_SIG/03_03_Data/11_RIL/rorcal2024.gpkg", "photos")
+photo2025 <- st_read("C:/Users/bmaranget/10_photosGPS/data/ril2025.gpkg", "rilPhotoMars2025")
+photo2025Avril <- st_read("C:/Users/bmaranget/10_photosGPS/data/ril2025.gpkg", "rilPhotoAvril2025")
+st_layers("C:/Users/bmaranget/10_photosGPS/data/ril2025.gpkg")
+```
+
+
+```{r}
+names(photo2024)
+names(photo2025Avril)
+names(photo2025)
+```
+
+nom = nom photo
+sourceFile = répertoire photo origine
+sourceFile2 = répertoire photo réduite
+jour = jour prise
+
+```{r}
+photo2024 <- photo2024 [,c("filename","photo", "timestamp")]
+photo2024$jour <- format(photo2024$timestamp, format = "%d/%m/%y")
+names(photo2024) [1:2] <- c("nom", "sourceFile")
+photo2024$sourceFile2 <- photo2024$sourceFile
+photo2024$nom <- substring(photo2024$nom,14,99)
+
+photo2024 <- photo2024 [, c("nom", "sourceFile", "jour", "sourceFile2")]
+head(photo2024)
+```
+
+
+```{r}
+photo2025 <- photo2025 [, c("FileName", "SourceFile", "jour.x", "nom")]
+
+names(photo2025) [1:4] <- c("nom", "sourceFile", "jour", "sourceFile2")
+```
+
+```{r}
+photo2025Avril <- photo2025Avril [, c("FileName", "SourceFile", "jour.x", "nom")]
+names(photo2025Avril) [1:4] <- c("nom", "sourceFile", "jour", "sourceFile2")
+```
+
+
+```{r}
+photo <- rbind(photo2024, photo2025, photo2025Avril)
+photo$id <- rownames(photo)
+mf_map(photo)
+
+st_write(photo, "../data/ril.gpkg", "photo", delete_layer = T)
+```
+
+
