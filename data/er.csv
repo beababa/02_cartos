@@ -1,16 +1,18 @@
-,"LIBELLE","TXT"
-"1","Bretelle d’accès à l’autoroute A3 et liaison piétonne parallèle à l’autoroute","ERE1"
-"2","Création de la voirie parallèle à l’allée des Dahlias au Sud Emprise de 5 m","ERBd5"
-"3","Équipement public sur le bâtiment des Salins","ERBd6"
-"4","Création d’un cheminement public pour assurer le maillage dans le prolongement de la rue Borel","ERBd10"
-"5","Programme mixte : logements et équipement public","ERBd9"
-"6","Elargissement de la rue Auguste Polissard, du 7 au 15 (parcelles cadastrées Pn°23 à 26) – D1","ERD1"
-"7","Création d’un accès à l’ensemble Albert Thomas - Emprise de 16 m","ERBd4"
-"8","Désenclavement du Chêne Rond, rue Edouard Vaillant","ERBd3"
-"9","Redressement de la rue Roger Salengro","ERBd2"
-"10","Création d’une école","ERBd8"
-"11","Elargissement de la V210 (Avenue Anatole France) – Emprise : variable","ERBd1"
-"12","Chemin doux d’accès aux berges du canal de l’Ourcq","ERBd7"
-"13","Elargissement unilatéral sud de l’avenue Henri Barbusse (RD10 entre les numéros 79 et 93, avec une emprise de 18 mètres) – D2","ERD2"
-"14","Elargissement des berges du Canal","ERBd11"
-"15","Création d'une allée centrale publique piétonne d'accès au Parc de Bondy","ERBd12"
+,LIBELLE,TXT
+1,Bretelle d’accès à l’autoroute A3 et liaison piétonne parallèle à l’autoroute,ERE1
+2,Création de la voirie parallèle à l’allée des Dahlias au Sud Emprise de 5 m,ERBd5
+3,Équipement public sur le bâtiment des Salins,ERBd6
+4,Création d’un cheminement public pour assurer le maillage dans le prolongement de la rue Borel,ERBd10
+5,Programme mixte : logements et équipement public,ERBd9
+6,"Elargissement de la rue Auguste Polissard, du 7 au 15 (parcelles cadastrées Pn°23 à 26) – D1",ERD1
+7,Création d’un accès à l’ensemble Albert Thomas - Emprise de 16 m,ERBd4
+8,"Désenclavement du Chêne Rond, rue Edouard Vaillant",ERBd3
+9,Redressement de la rue Roger Salengro,ERBd2
+10,Création d’une école,ERBd8
+11,Elargissement de la V210 (Avenue Anatole France) – Emprise : variable,ERBd1
+12,Chemin doux d’accès aux berges du canal de l’Ourcq,ERBd7
+13,"Elargissement unilatéral sud de l’avenue Henri Barbusse (RD10 entre les numéros 79 et 93, avec une emprise de 18 mètres) – D2",ERD2
+14,Elargissement des berges du Canal,ERBd11
+15,Création d'une allée centrale publique piétonne d'accès au Parc de Bondy,ERBd12
+,Désenclavement quartier Blanqui,ERBd13
+,Création d’un lien entre le chemin Latéral et le canal de l’Ourcq,ERBd14

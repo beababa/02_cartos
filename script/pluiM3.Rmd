@@ -75,6 +75,12 @@ st_write(cadastre, "../data/cadastre.gpkg", "parcelle_info", delete_layer = T)
 
 
 ```{r}
+info_surf <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
+prescriptionSurf <- st_read("../data/pluiM3.gpkg", "200057875_PRESCRIPTION_SURF_20250624.shp")
+```
+
+
+```{r}
 # premier envoi
 fic <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/EEversionBrouillon.gpkg"
 # envoi pour transmission operis
@@ -146,7 +152,14 @@ for (n in nom){
 
 # Cartographie
 
-## TA
+## INFO_SURF
+
+```{r}
+info_surf <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
+```
+
+
+### TA
 
 ```{r}
 ta <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
@@ -175,7 +188,7 @@ dev.off()
 ![](../img/ta.png)
 ![](../img/ta2025.png)
 
-## DPU
+### DPU
 
 
 
@@ -205,81 +218,7 @@ dev.off()
 ![](../img/dpu_2025.png)
 
 
-
-## INFO_SURF / ER
-
-
-Les emplacements réservés par rapport à Operis, type de l'emplacement (cf tableau)
-
-```{r}
-prescriptionSurf <- st_read("../data/pluiM3.gpkg", "200057875_PRESCRIPTION_SURF_20250624.shp")
-er <- prescriptionSurf  [prescriptionSurf$LIBELLE == "Emplacement reserve (pour voie ou ouvrages publics, equipements et installations d’interet general, espaces verts)",]
-mapview(er)
-mf_export(x = bondy, filename = "../img/er2025.png", 
-          expandBB = c(0,0,0,0.3),
-          width = 1000, res = 200)
-  mf_init(bondy, theme = "candy")
-  mf_shadow(bondy, add = TRUE)
-  mf_map(bondy, add = TRUE)
-  mf_map(
-    er,
-    col = "green",
-    type = "base",
-    border = NA,
-    add = T
-  )
-  mf_label(er, var="TXT", overlap = F, lines = T,  cex =0.6, bg = "white", halo = T)
-  
-
-mf_layout(title = "Emplacements réservés M3 2025",
-            credits = "Plui M3\nBondy,  juillet 2025")
-dev.off()
-```
-
-
-
-```{r}
-er$TXT
-# carto pour chaque emplacement réservé avec affichage en titre de l'emplacement, fond de carte cadastre.
-nb <- length(er$LIBELLE)
-# 19 2025
-i <- 2
-for (i in 1:nb){
-  mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT [i],"_2025 .png"), 
-          width = 800, height = 800, res = 125)
-  mf_init(st_buffer(er$geom [i],50), expandBB = rep(0,4))
-  mf_map(bondy, col = "cornsilk", add = T, border = NA)
-  #mf_shadow(bondy, add = TRUE)
-  mf_map(cadastre, col = "bisque2", border = "white", add = T)
-  mf_map(
-    er,
-    col = "green",
-    type = "base",
-    border = "darkgreen",
-    lwd = 4,
-    add = T
-  )
-  mf_label(er, var = "TXT", halo = T)
-  mf_layout(credits = "Cadastre 2024, Plui M2\nJuillet 2023" )
-  mf_title(txt = paste0(er$TXT [i], " : ",  er$LIBELLE [i]), pos = "left", bg ="coral2", cex = 0.8, line = 2)
-  dev.off()
-}
-```
-
-
-
-
-
-![](../img/er.png)
-![](../img/er2025.png)
-
-![](../img/erERBd11 .png)
-![](../img/erERBd11_2025 .png)
-
-![](../img/erERBd1 .png) ![](../img/erERBd10 .png)  ![](../img/erERBd12 .png) ![](../img/erERBd2 .png) ![](../img/erERBd3.png) ![](../img/erERBd4 .png) ![](../img/erERBd5 .png) ![](../img/erERBd6 .png) ![](../img/erERBd7 .png) ![](../img/erERBd8 .png) ![](../img/erERBd9 .png) ![](../img/erERD1 .png) ![](../img/erERD2 .png) ![](../img/erERE1 .png)
-
-
-## Zone archéologique
+### Zone archéologique
 
 attention l'intersection prend les parcelles mitoyennes.
 utilisation du whithin sparse avec un which pour les num de lignes fonctionne bien
@@ -356,7 +295,7 @@ PPCOA (ancien sursis à statuerr)
 
 
 ```{r}
-info_surf <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
+
 ppcoa <- info_surf [substring(info_surf$LIBELLE, 1,5) == "PPCOA", ]
 mf_export(x = ppcoa, filename = "../img/ppcoa_2025.png", 
           expandBB = c(0,0,0,0.0),
@@ -446,7 +385,7 @@ AG0162 <- cadastre [3303,]
 ```
 
 
-## ZAC
+### ZAC
 
 ```{r}
 zac <- info_surf[ind, ]
@@ -478,6 +417,96 @@ mf_layout(title = "ZAC",
 dev.off()
 ```
 
+
+
+
+
+## Prescriptions surfaciques
+
+
+
+
+### ER
+
+
+Les emplacements réservés par rapport à Operis, type de l'emplacement (cf tableau)
+
+```{r}
+er <- prescriptionSurf  [prescriptionSurf$LIBELLE == "Emplacement reserve (pour voie ou ouvrages publics, equipements et installations d’interet general, espaces verts)",]
+erTXT <- read.csv("../data/er.csv", fileEncoding = "UTF-8")
+# pour avoir le libellé récupération tableau M2
+joint <- merge(er, erTXT, by = "TXT", all.x = T)
+mapview(joint [, c("TXT", "LIBELLE.y")])
+mf_export(x = bondy, filename = "../img/er2025.png", 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 200)
+  mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(
+    er,
+    col = "green",
+    type = "base",
+    border = NA,
+    add = T
+  )
+  mf_label(joint, var="TXT", overlap = F, lines = T,  cex =0.6, bg = "white", halo = T)
+  
+
+mf_layout(title = "Emplacements réservés M3 2025",
+            credits = "Plui M3\nBondy,  juillet 2025")
+dev.off()
+```
+
+
+
+```{r}
+er <- joint
+# carto pour chaque emplacement réservé avec affichage en titre de l'emplacement, fond de carte cadastre.
+nb <- length(er$LIBELLE.x)
+# 19 2025
+i <- 1
+for (i in 1:nb){
+  print (i)
+  mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT.x [i],"_2025 .png"), 
+          width = 800, height = 800, res = 125)
+  mf_init(st_buffer(er$geometry [i],50), expandBB = rep(0,4))
+  mf_map(bondy, col = "cornsilk", add = T, border = NA)
+  #mf_shadow(bondy, add = TRUE)
+  mf_map(cadastre, col = "bisque2", border = "white", add = T)
+  mf_map(
+    er,
+    col = "green",
+    type = "base",
+    border = "darkgreen",
+    lwd = 4,
+    add = T
+  )
+  sel <- er [i,]
+  #mf_label(sel, var = "TXT", halo = T, cex = 1.2, col = "darkgreen",pos = 4, offset = 5, lines = T)
+  inter <- st_intersection(cadastre, sel)
+  mf_label(inter, var = "code", col = "red", halo = T, overlap = F )
+  mf_layout(credits = "Cadastre 2024, Plui M2\nJuillet 2025" )
+  mf_title(txt = paste0(er$TXT [i], " : ",  er$LIBELLE.y [i]), pos = "left", bg ="coral2", cex = 0.8, line = 2)
+  dev.off()
+}
+```
+
+
+
+
+
+![](../img/er.png)
+![](../img/er2025.png)
+
+![](../img/erERBd11 .png)![](../img/erERBd11_2025 .png)
+![](../img/erERBd11_2025 .png)
+
+![](../img/erERBd1 .png) ![](../img/erERBd10 .png)  ![](../img/erERBd12 .png) ![](../img/erERBd2 .png) ![](../img/erERBd3.png) ![](../img/erERBd4 .png) ![](../img/erERBd5 .png) ![](../img/erERBd6 .png) ![](../img/erERBd7 .png) ![](../img/erERBd8 .png) ![](../img/erERBd9 .png) ![](../img/erERD1 .png) ![](../img/erERD2 .png) ![](../img/erERE1 .png)
+
+```{r}
+st_write(er, "../data/pluiM3.gpkg", "er", delete_layer = T)
+```
 
 
 # ICPE BASIAS BAZOL
