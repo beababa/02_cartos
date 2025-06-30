@@ -1,7 +1,7 @@
 ---
 title: "verif PLUi M3"
 author: "B. Maranget"
-date: "18/07/2023"
+date: "27/06/2025"
 output: 
   html_document: 
     number_sections: yes
@@ -27,6 +27,7 @@ Production cartes de verif pour M3
 ```{r}
 library(sf)
 library(mapsf)
+library(mapview)
 ```
 
 
@@ -39,7 +40,7 @@ le cadastre est issu des couches de sqlite cadastre2024
 # plutôt limites
 st_layers("../data/limitesSocle.gpkg")
 st_layers ("../data/cadastre2024.gpkg")
-st_layers("../data/pluiM2.gpkg")
+st_layers("../data/pluiM3.gpkg")
 cadastre <- st_read("../data/cadastre2024.gpkg", "parcelle_info")
 bondy <- st_read("../data/cadastre2024.gpkg", "bondy")
 ```
@@ -74,7 +75,40 @@ st_write(cadastre, "../data/cadastre.gpkg", "parcelle_info", delete_layer = T)
 
 
 ```{r}
-fic <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/EE.gpkg"
+# premier envoi
+fic <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/EEversionBrouillon.gpkg"
+# envoi pour transmission operis
+nom <- list.files("C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/VF/", ".shp")
+# ouverture des 7 shapes
+nom
+n <- nom [4]
+theme <- NULL
+for (n in nom){
+  tmp <- st_read(paste0("C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/", n))
+  inter <- st_intersection(tmp, bondy)
+  # reprise des themes
+  TMPtheme <- inter [,1, drop = T]
+  TMPcouche <- n
+  TMPdfTheme <- data.frame(TMPcouche,TMPtheme)
+  theme <- rbind(theme, TMPdfTheme)
+  # pb duplication noms colonnes (on retire les colonnes dupliquées)
+  ind <- which(duplicated(tolower(names(inter))))
+  print(length(ind))
+  #inter2 <- ifelse(length(ind) == 1,inter [,-ind], inter)
+  if (length(ind) == 0){
+    st_write(inter, "../data/pluiM3.gpkg", n, delete_layer  = T)
+  } else {
+    print(names(inter)[ind])
+    inter <- inter [,-ind]
+    st_write(inter, "../data/pluiM3.gpkg", n, delete_layer  = T)
+  }
+}
+st_layers(("../data/pluiM3.gpkg"))
+# pour le brouillon
+fic <- "06_URBA/pluiM3bondy4.gpkg"
+# les thèmes
+theme <- unique(theme)
+write.csv(theme,"../data/libelleM3.csv", fileEncoding = "UTF-8", row.names = F)
 ```
 
 ```{r}
@@ -105,7 +139,6 @@ for (n in nom){
   inter <- inter [,-ind]
   st_write(inter, "../data/pluiM3bondy4.gpkg", n, delete_layer = T)
 }
-
 ```
 
 
@@ -113,11 +146,12 @@ for (n in nom){
 
 # Cartographie
 
-ta
+## TA
 
 ```{r}
-
-mf_export(x = bondy, filename = paste0("../img/ta2023.png"), 
+ta <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
+ta <- ta [ta$LIBELLE == "Taxe d'amenagement",]
+mf_export(x = bondy, filename = paste0("../img/ta2025.png"), 
           expandBB = c(0,0,0,0.3),
           width = 1000, res = 200)
   mf_init(bondy, theme = "candy")
@@ -133,18 +167,21 @@ mf_export(x = bondy, filename = paste0("../img/ta2023.png"),
     add = TRUE
   )
 
-mf_layout(title = "Taxe d'aménagement M2 juillet 2022",
-            credits = "Plui M2\nBondy,  juillet 2023")
+mf_layout(title = "Taxe d'aménagement M3 juillet 2025",
+            credits = "Plui M2\nBondy,  juillet 2025")
 dev.off()
 ```
 
-
 ![](../img/ta.png)
+![](../img/ta2025.png)
 
-dpu
+## DPU
+
+
 
 ```{r}
-mf_export(x = bondy, filename = paste0("../img/dpu.png"), 
+dpu <- info_surf [grep( "^Droit", info_surf$LIBELLE),]
+mf_export(x = bondy, filename = paste0("../img/dpu_2025.png"), 
           expandBB = c(0,0,0,0.3),
           width = 1000, res = 200)
   mf_init(bondy, theme = "candy")
@@ -152,26 +189,33 @@ mf_export(x = bondy, filename = paste0("../img/dpu.png"),
   mf_map(bondy, add = TRUE)
   mf_typo(
     dpu,
-    pal = c("orange", "yellow"),
+    pal = c( "cornsilk", "bisque3"),
     border = NA,
     var = "LIBELLE",
     leg_pos = "topright",
     leg_title = "type DPU",
     add = TRUE
   )
-mf_layout(title = "DPU M2 juillet 2022",
-            credits = "Plui M2\nBondy,  juillet 2023")
+mf_layout(title = "DPU M3 juillet 2025",
+            credits = "Plui M3\nBondy,  juillet 2025")
 dev.off()
 ```
 
+![](../img/dpu.png)
+![](../img/dpu_2025.png)
 
 
-INFO_SURF / ER
 
+## INFO_SURF / ER
+
+
+Les emplacements réservés par rapport à Operis, type de l'emplacement (cf tableau)
 
 ```{r}
-library(mapsf)
-mf_export(x = bondy, filename = "../img/er.png", 
+prescriptionSurf <- st_read("../data/pluiM3.gpkg", "200057875_PRESCRIPTION_SURF_20250624.shp")
+er <- prescriptionSurf  [prescriptionSurf$LIBELLE == "Emplacement reserve (pour voie ou ouvrages publics, equipements et installations d’interet general, espaces verts)",]
+mapview(er)
+mf_export(x = bondy, filename = "../img/er2025.png", 
           expandBB = c(0,0,0,0.3),
           width = 1000, res = 200)
   mf_init(bondy, theme = "candy")
@@ -187,18 +231,21 @@ mf_export(x = bondy, filename = "../img/er.png",
   mf_label(er, var="TXT", overlap = F, lines = T,  cex =0.6, bg = "white", halo = T)
   
 
-mf_layout(title = "Emplacements réservés M2 juillet 2022",
-            credits = "Plui M2\nBondy,  juillet 2023")
+mf_layout(title = "Emplacements réservés M3 2025",
+            credits = "Plui M3\nBondy,  juillet 2025")
 dev.off()
 ```
 
 
+
 ```{r}
+er$TXT
 # carto pour chaque emplacement réservé avec affichage en titre de l'emplacement, fond de carte cadastre.
 nb <- length(er$LIBELLE)
-i <- 1
+# 19 2025
+i <- 2
 for (i in 1:nb){
-  mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT [i]," .png"), 
+  mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT [i],"_2025 .png"), 
           width = 800, height = 800, res = 125)
   mf_init(st_buffer(er$geom [i],50), expandBB = rep(0,4))
   mf_map(bondy, col = "cornsilk", add = T, border = NA)
@@ -212,89 +259,40 @@ for (i in 1:nb){
     lwd = 4,
     add = T
   )
- #mf_map(inter, col = "brown2", border = "chocolate4", add = T)
- sel <- inter [inter$LIBELLE == er$LIBELLE [i],]
- selManquant <- jointureManquant [jointureManquant$er == er$TXT [i],]
- selTrop <- jointureTrop [jointureTrop$emplacement.réservés == er$TXT [i],]
- mf_label(sel, var = "code", cex= 1.2,overlap = F, halo = T)
- mf_map(selTrop, col = NA, border = "red", lty = 3, lwd = 4, leg_pos = "topright", add = T)
- mf_map(selManquant, col = NA, border = "darkgreen", lty = 3, lwd = 4, leg_pos = "right", add = T)
- ifelse (length(selManquant$parcelles.manquantes) > 0,
-           mf_label(selManquant, var = "parcelles.manquantes", overlap = F, halo = T),0) 
- 
-  #mf_label(cadastre, var = "code", overlap = F, cex = 0.6)
-  mf_layout(credits = "Cadastre 2022, Plui M2\nJuillet 2023" )
+  mf_label(er, var = "TXT", halo = T)
+  mf_layout(credits = "Cadastre 2024, Plui M2\nJuillet 2023" )
   mf_title(txt = paste0(er$TXT [i], " : ",  er$LIBELLE [i]), pos = "left", bg ="coral2", cex = 0.8, line = 2)
   dev.off()
 }
 ```
 
-ERBd11
-
-On change le format pour voir quelque chose
-
-```{r}
-canal <- st_union(er [3:5,])
-class(canal)
-fichiers <- paste0("![](../img/er",er$TXT,".png)")
-toString(fichiers)
-i <- 3
-mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT [i]," .png"), 
-          width = 3000, height = 1000, res = 250)
-  mf_init(st_buffer(canal,50), expandBB = rep(0,4))
-  mf_map(bondy, col = "cornsilk", add = T, border = NA)
-  #mf_shadow(bondy, add = TRUE)
-  mf_map(cadastre, col = "bisque2", border = "white", add = T)
-  mf_map(
-    er,
-    col = "green",
-    type = "base",
-    border = "darkgreen",
-    lwd = 4,
-    add = T
-  )
- #mf_map(inter, col = "brown2", border = "chocolate4", add = T)
- sel <- inter [inter$LIBELLE == er$LIBELLE [i],]
- selManquant <- jointureManquant [jointureManquant$er == er$TXT [i],]
- selTrop <- jointureTrop [jointureTrop$emplacement.réservés == er$TXT [i],]
- #mf_label(sel, var = "code", overlap = F, halo = T)
- mf_map(selTrop, col = NA, border = "red", lty = 3, lwd = 4,  add = T)
- mf_map(selManquant, col = NA, border = "darkgreen", lty = 3, lwd = 4,  add = T)
-
- mf_label(selManquant, col = "green", halo = T,var = "parcelles.manquantes", overlap = F)
- mf_label(selTrop, var = "en.trop", col= "red", halo= T,overlap= F)
-
-  #mf_label(cadastre, var = "code", overlap = F, cex = 0.6)
-  mf_layout(credits = "Cadastre 2022, Plui M2\nJuillet 2023" )
-  mf_title(txt = paste0(er$TXT [i], " : ",  er$LIBELLE [i]), pos = "left", bg ="coral2", cex = 0.8, line = 2)
-  dev.off()
-
-```
 
 
 
 
 ![](../img/er.png)
+![](../img/er2025.png)
 
 ![](../img/erERBd11 .png)
+![](../img/erERBd11_2025 .png)
 
 ![](../img/erERBd1 .png) ![](../img/erERBd10 .png)  ![](../img/erERBd12 .png) ![](../img/erERBd2 .png) ![](../img/erERBd3.png) ![](../img/erERBd4 .png) ![](../img/erERBd5 .png) ![](../img/erERBd6 .png) ![](../img/erERBd7 .png) ![](../img/erERBd8 .png) ![](../img/erERBd9 .png) ![](../img/erERD1 .png) ![](../img/erERD2 .png) ![](../img/erERE1 .png)
 
 
-zone archéologique
+## Zone archéologique
 
 attention l'intersection prend les parcelles mitoyennes.
 utilisation du whithin sparse avec un which pour les num de lignes fonctionne bien
 
 ```{r}
-archeo <- info_surf [info_surf$LIBELLE == 'Site archeologique',]
+archeo <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
+archeo <- archeo  [archeo$LIBELLE == 'Site archeologique',]
 dedans <- as.vector(st_within(cadastre, archeo, sparse = F))
 dedans <- which(dedans ==TRUE)
 dedans <- cadastre [dedans,]
 cadZa <- cadastre [dedans, ]
 
-bondy <- st_read("../data/limitesSocle.gpkg", "bondy", quiet=F)
-mf_export(x = bondy, filename = "../img/archeo.png", 
+mf_export(x = bondy, filename = "../img/archeo_2025.png", 
           expandBB = c(0,0,0,0.0),
           width = 1000, height = 1000 ,res = 150)
   mf_init(archeo, theme = "candy")
@@ -312,10 +310,14 @@ mf_export(x = bondy, filename = "../img/archeo.png",
 
 mf_label(cadZa,, var = "code", halo = T, cex = 0.5, overlap = F)  
 mf_layout(title = archeo$LIBELLE,
-            credits = "Plui M2\nBondy,  juillet 2023")
+            credits = "Plui M3\nBondy,  juillet 2025")
 dev.off()
 ```
 
+
+![](../img/archeo.png)
+
+![](../img/archeo_2025.png)
 
 RCU
 
@@ -348,12 +350,15 @@ dev.off()
 ```
 
 
+![](../img/rcu.png)
+
 PPCOA (ancien sursis à statuerr)
 
 
 ```{r}
+info_surf <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
 ppcoa <- info_surf [substring(info_surf$LIBELLE, 1,5) == "PPCOA", ]
-mf_export(x = rcu, filename = "../img/ppcoa.png", 
+mf_export(x = ppcoa, filename = "../img/ppcoa_2025.png", 
           expandBB = c(0,0,0,0.0),
           width = 1000, height = 1000 ,res = 150)
   mf_init(ppcoa, theme = "candy")
@@ -371,10 +376,15 @@ mf_export(x = rcu, filename = "../img/ppcoa.png",
   )
 
 mf_layout(title = "PPCOA",
-            credits = "Plui M2\nBondy,  juillet 2023")
+            credits = "Plui M3\nBondy,  juin 2025")
 dev.off()
+```
 
 
+![](../img/ppcoa.png)
+![](../img/ppcoa_2025.png)
+
+```{r}
 # verif
 ppcoa <- ppcoa [3,]
 ppcoa
@@ -434,6 +444,40 @@ dedans <- which(dedans ==TRUE)
 AG0162 <- cadastre [3303,]
 
 ```
+
+
+## ZAC
+
+```{r}
+zac <- info_surf[ind, ]
+ind <- grep("^ZAC", info_surf$LIBELLE)
+mf_map(zac)
+```
+
+
+```{r}
+mf_export(x = zac, filename = "../img/zac_2025.png", 
+          expandBB = c(0,0,0,0.0),
+          width = 1000, height = 1000 ,res = 150)
+  mf_init(zac, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+  mf_map(
+    zac,
+    var = "LIBELLE",
+    col = NA,
+    type = "typo",
+    border = "green",
+    lwd = 3,
+    add = T
+  )
+
+mf_layout(title = "ZAC",
+            credits = "Plui M3\nBondy,  juin 2025")
+dev.off()
+```
+
 
 
 # ICPE BASIAS BAZOL

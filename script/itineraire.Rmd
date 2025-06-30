@@ -1,0 +1,141 @@
+---
+title: "Itinérarie"
+author: "B. Maranget"
+date: "24/06/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Créer itinéraire à partir des balcons à observer
+
+Utilisation d'OSRM
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(osrm)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/15_PARCS ET JARDINS/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+```
+
+
+
+# Comptabiliser les arbres 
+
+## données
+
+
+
+```{r}
+st_layers(paste0(chemin, "balconFleuri.gpkg"))
+data <- st_read(paste0(chemin, "balconFleuri.gpkg"), "adresse")
+str(data)
+```
+
+
+```{r}
+itineraire <- osrmTrip(loc = data, overview = "full", osrm.profile = "car")
+monItinéraire <- itineraire [[1]]$trip
+st_write(monItinéraire,"../data/balconFleuri.gpkg", "itineraire")
+```
+
+
+```{r}
+rue <- st_read(paste0(chemin2,"rue.gpkg"), "rueCadastre")
+head(rue)
+grep ("BENHA", rue$NOM_1_G)
+write.csv(rue [, c("NATURE", "NOM_1_G", "NOM"), drop=T],"../data/rue.csv", fileEncoding = "UTF-8")
+```
+
+
+liste alignement de novembre 2023
+
+La liste comporte de nb erreurs de saisie.
+
+Après avoir tenté de faire un dictionnaire de données, je suis finalement partie sur une jointure classique.
+
+```{r}
+arbres <- read.csv("../data/arbres.csv", fileEncoding = "UTF-8")
+head(rue)
+# ratpatrier les noms de rue à la place des num
+rue$NOM_1_G [  grep("^[0-9]",rue$NOM_1_G )] <- rue$NOMnumero [  grep("^[0-9]",rue$NOM_1_G )]
+arbres$NOM <- toupper(arbres$rue)
+arbres$NOM <- gsub ("É|È", "E", arbres$NOM)
+arbres$NOM <- gsub ("ALLEE", "ALL", arbres$NOM)
+arbres$NOM <- gsub ("ALLEE|ALLE", "ALL", arbres$NOM)
+arbres$NOM <- gsub ("AVENUE", "AV", arbres$NOM)
+arbres$NOM <- gsub ("RUE", "R", arbres$NOM)
+arbres$NOM <- gsub ("RAMPE", "RPE", arbres$NOM)
+arbres$NOM <- gsub ("IMPASSE", "IMP", arbres$NOM)
+arbres$NOM <- gsub ("CHEMIN", "CH", arbres$NOM)
+arbres$NOM <- gsub ("VILLA", "VLA", arbres$NOM)
+arbres$NOM <- gsub ("PLACE", "PL", arbres$NOM)
+# suppression des espaces en fin de caractères
+arbres$NOM <- gsub ("\\s+$", "", arbres$NOM)
+arbres$NOM
+```
+
+jointure
+
+
+
+# recup alignements d'arbres
+
+```{r}
+
+rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rue2023")
+alignement <- read.csv("../data/alignement.csv", fileEncoding = "UTF-8")
+chercher <- function (i, col) {
+  res <- rue$NOM [grep(alignement$CODE [i], rue [, col])]
+  nb <- sapply(res, length)
+  ind <- which(nb >1)
+  res2 <- lapply(ind, chercher)
+  }
+res <- chercher(1, "NOM")
+res <- lapply(c(1:22), chercher)
+
+# tout ceux qui ont 1 ceux qui ont pl de 1 on distigue avec le type
+
+
+joint <- merge(rue, arbres, by.x = "NOM_1_G", by.y = "NOM")
+setdiff(arbres$NOM, joint$NOM_1_G)
+```
+
+
+Pour l'école JF Primaire, poser la question
+
+
+```{r}
+st_write(joint, paste0(chemin, "campagneArbre.gpkg"), "alignement", fileEncoding = "UTF-8", delete_layer = T)
+
+```
+
