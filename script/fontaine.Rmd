@@ -1,0 +1,81 @@
+---
+title: "Lieux de fraicheur leaflet"
+author: "B. Maranget"
+date: "15/07/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Créer une carte leaflet fraicheur
+
+```{r}
+library(sf)
+library(mapsf)
+library(leaflet)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+```
+
+
+# Données
+
+reprise des données finales sur les lieux de fraicheur
+
+```{r}
+couches <- st_layers("../data/fontaine1.gpkg")[[1]]
+ouvrir <- function(c){objet <- st_read("../data/fontaine1.gpkg", c)
+  objet <- st_transform(objet, 4326)
+  nom <- paste0("test_",c)
+  print(nom)
+  assign(nom, objet)}
+res <- sapply(couches, ouvrir)
+```
+
+
+
+
+# Carto leaflet
+
+
+```{r}
+fontaines <- res$fontaines__wc
+pal <- colorFactor(c("orange", "green", "red"),levels(fontaines$comm2025))
+table(fontaines$comm2025)
+```
+
+
+
+```{r}
+leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
+  addMarkers(data=fontaines, color = pal(fontaines$comm2025))
+```
+
+
+
+```{r}
+leaflet()
+mf_map(rue)
+```
+
