@@ -468,7 +468,7 @@ nb <- length(er$LIBELLE.x)
 i <- 1
 for (i in 1:nb){
   print (i)
-  mf_export(x = er$geom [i], filename = paste0("../img/er",er$TXT.x [i],"_2025 .png"), 
+  mf_export(x = er$geometry [i], filename = paste0("../img/er",er$TXT [i],"_2025 .png"), 
           width = 800, height = 800, res = 125)
   mf_init(st_buffer(er$geometry [i],50), expandBB = rep(0,4))
   mf_map(bondy, col = "cornsilk", add = T, border = NA)
