@@ -710,6 +710,54 @@ mf_label(data, "nom_ets", halo=T, overlap=F)
 ```
 
 
+# Renaturation
+
+## Arbres
+
+```{r}
+data <- st_read("D:/03_SIG/03_03_Data/15_PARCS ET JARDINS/campagneArbre.gpkg", "arbreProtege")
+plui <- st_read("../data/pluiM3.gpkg", "200057875_PRESCRIPTION_PCT_20250624.shp")
+M2 <- st_read("../data/pluiM2.gpkg", "pres_pct")
+st_layers("../data/pluiM2.gpkg")
+```
+
+
+19 arbres sélectionnés, 25 points.
+
+
+1 représente la fontaine.
+
+les autres points, les anciens arbres (5)
+
+```{r}
+plui$LIBELLE
+names(plui)
+head(plui)
+mapview(plui  [25,])
+```
+
+
+```{r}
+mapview(M2)
+```
+
+
+```{r}
+mf_map(plui)
+plui$id <- rownames(plui)
+mf_label(plui, "id", overlap = F, cex = 1, halo = T, pos = 4)
+mapview(plui [, "id"])
+data$id <- rownames(data)
+data$id <- as.integer(data$id)+5
+mf_map(data, add = T, col = "red")
+mf_label(data, "id", pos = 1, col = "red" , cex = 1.5, overlap = F)
+```
+
+
+
+```{r}
+write.csv(data  [, c("id", "type", "lieu"), drop = T], "../data/arbreProtege.csv", fileEncoding = "UTF-8") 
+```
 
 
 
