@@ -58,6 +58,10 @@ ban <- ban [!duplicated(paste0(ban$numero, ban$nom_voie)),]
 # TODO explorer les doublons
 # spatialisation
 ban <- st_as_sf(ban, coords = c("lon", "lat"), crs=4326)
+# pour utilisation en js
+banSimple <- ban [, c("numero", "rep", "nom_voie", "certification_commune")]
+st_write(banSimple [banSimple$certification_commune == 0,], "../data/adresse1.geojson")
+st_write(banSimple, "../data/adresse2.geojson", append=FALSE)
 st_write(ban, "../data/adresse.gpkg", "ban", delete_layer = T)
 ```
 
