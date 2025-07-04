@@ -83,14 +83,26 @@ prescriptionSurf <- st_read("../data/pluiM3.gpkg", "200057875_PRESCRIPTION_SURF_
 ```{r}
 # premier envoi
 fic <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/EEversionBrouillon.gpkg"
-# envoi pour transmission operis
+# envoi pour transmission operis (envoi 2)
 nom <- list.files("C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/VF/", ".shp")
+# réinitialisation du .gpkg
+file.remove("../data/pluiM3.gpkg")
 # ouverture des 7 shapes
 nom
-n <- nom [4]
+nom2 <- strsplit(nom,"_")
+mb2 <- sapply(nom2, "[[",2)
+mb3 <- sapply(nom2, "[[",3)
+nom2 <- paste0("M3_",mb2, "_",mb3)
+```
+
+
+```{r}
+#n <- nom [4]
 theme <- NULL
+i <- 0
 for (n in nom){
-  tmp <- st_read(paste0("C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/", n))
+  i <- i+1
+  tmp <- st_read(paste0("C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/VF/", n))
   inter <- st_intersection(tmp, bondy)
   # reprise des themes
   TMPtheme <- inter [,1, drop = T]
@@ -102,11 +114,11 @@ for (n in nom){
   print(length(ind))
   #inter2 <- ifelse(length(ind) == 1,inter [,-ind], inter)
   if (length(ind) == 0){
-    st_write(inter, "../data/pluiM3.gpkg", n, delete_layer  = T)
+    st_write(inter, "../data/pluiM3.gpkg", nom2 [i], delete_layer  = T)
   } else {
     print(names(inter)[ind])
     inter <- inter [,-ind]
-    st_write(inter, "../data/pluiM3.gpkg", n, delete_layer  = T)
+    st_write(inter, "../data/pluiM3.gpkg", nom2[i], delete_layer  = T)
   }
 }
 st_layers(("../data/pluiM3.gpkg"))
@@ -147,6 +159,53 @@ for (n in nom){
 }
 ```
 
+## Traitement des petites zones frontière
+
+
+## identification des zones
+
+```{r}
+zone <- st_read("../data/pluiM3.gpkg", nom2 [7])
+summary(zone)
+table(st_is_valid(zone$geom, reason = T))
+
+table(zone$LIBELLE, zone$TYPEZONE)
+names(zone)
+table(zone$commune)
+table(zone$LIBELONG, zone$LIBELLE)
+# extraction des 3 premiers caracteres
+zone$code <- substring(zone$LIBELLE,1,3)
+zone$code <- gsub('[0-9]', '', zone$code)
+tab <- table(zone$code, zone$LIBELONG)
+mosaicplot(tab, las = 1, main = "code et libelle long")
+prop.table(tab, margin = 1)*100
+```
+
+Anomalie des espaces de loisirs et zone de cimetière
+
+```{r}
+mf_map(cadastre)
+mf_map(type = "typo", zone [zone$code == 'Nc',], var = "LIBELONG", add = T)
+mf_map(type = "typo", var="LIBELONG", zone)
+zone [zone$geom == "GEOMETRYCOLLECTION",]
+mf_map(type = "typo", zone [!is.polygon(zone$geom)],)
+library(units)
+zone$aire <- drop_units(st_area(zone))
+table(zone$aire==0)
+zone <- zone [zone$aire!= 0,]
+hist(zone$aire)
+mf_map(zone [zone$aire < 3,])
+zone <- zone [zone$aire > 3,]
+```
+
+
+
+```{r}
+zone$geom <- st_cast(zone$geom, "POLYGON")
+warnings()
+mf_map(type = "typo", zone, var = "LIBELONG")
+
+```
 
 
 
