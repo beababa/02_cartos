@@ -61,21 +61,48 @@ res <- sapply(couches, ouvrir)
 
 ```{r}
 fontaines <- res$fontaines__wc
-pal <- colorFactor(c("orange", "green", "red"),levels(fontaines$comm2025))
+pal <- colorFactor(c("cornflowerblue", "green", "darkorange"),levels(fontaines$comm2025))
 table(fontaines$comm2025)
+```
+
+
+## Uniquement fontaines et wc (=1 et 2)
+
+```{r}
+fontaines <- fontaines [fontaines$comm2025 > 0,]
+# recodage
+fontaines$comm2025TXT <- ifelse(fontaines$comm2025 == 1, "Fontaine", "WC") 
+```
+
+
+
+```{r}
+leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 30)) %>%
+  addCircleMarkers(data=fontaines, color = ~pal(comm2025)) %>% 
+addLegend(data = fontaines,
+            position = "bottomright",
+            pal = pal, values = ~comm2025TXT,
+            title = "Point d'eau",
+            opacity = 1)
+```
+
+
+
+# icones
+
+
+```{r}
+icons_list <- icons(iconUrl = ifelse(fontaines$comm2025 == "2", 
+                     'https://cdn.pixabay.com/photo/2013/04/01/21/32/restroom-99226_960_720.png',
+                     ifelse(fontaines$comm2025 == "1", "https://cdn.pixabay.com/photo/2014/03/24/13/39/drinking-water-293926_960_720.png", NA)),
+                     iconWidth = c(30, 54), iconHeight = c(30, 54))
+
 ```
 
 
 
 ```{r}
 leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
-  addMarkers(data=fontaines, color = pal(fontaines$comm2025))
-```
-
-
-
-```{r}
-leaflet()
-mf_map(rue)
+  addMarkers(data=fontaines, icon = icons_list)
 ```
 
