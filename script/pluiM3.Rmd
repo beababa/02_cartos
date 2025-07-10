@@ -167,8 +167,6 @@ for (n in nom){
 ```{r}
 zone <- st_read("../data/pluiM3.gpkg", nom2 [7])
 summary(zone)
-table(st_is_valid(zone$geom, reason = T))
-
 table(zone$LIBELLE, zone$TYPEZONE)
 names(zone)
 table(zone$commune)
@@ -178,7 +176,7 @@ zone$code <- substring(zone$LIBELLE,1,3)
 zone$code <- gsub('[0-9]', '', zone$code)
 tab <- table(zone$code, zone$LIBELONG)
 mosaicplot(tab, las = 1, main = "code et libelle long")
-prop.table(tab, margin = 1)*100
+write.table(prop.table(tab, margin = 1)*100,"../data/tab.csv" )
 ```
 
 Anomalie des espaces de loisirs et zone de cimetière
@@ -210,6 +208,84 @@ mf_map(type = "typo", zone, var = "LIBELONG")
 
 
 # Cartographie
+
+
+## Zonages
+
+```{r}
+zone <- st_read("../data/pluiM3.gpkg", "M3_ZONE_URBA")
+mf_map(zone)
+# test sur les doublons
+table(duplicated(zone[,c("LIBELLE", "LIBELONG"), drop=T]))
+```
+
+
+```{r}
+summary(zone$geom)
+# type de la géométrie
+zone$type <- attributes (zone$geom) [[6]]
+table(zone$type)
+```
+
+Collections géométriques
+
+Il faut conserver les 'Espaces verts urbains', les autres correspondent aux zones frontières.
+
+
+```{r}
+geomCollection <- zone [zone$type == "GEOMETRYCOLLECTION",]
+mf_map(geomCollection)
+sum(st_area(geomCollection))
+mf_layout("Objets géométriques atypiques", "PLUi M3\nJuillet 2025")
+extract <- st_collection_extract(geomCollection)
+extract <- st_cast(extract, "POLYGON")
+extract
+mf_map(extract, var ="LIBELONG", type = "typo", border = NA)
+mf_map(extract [extract$LIBELONG == 'Secteur de preservation',])
+mf_map(extract [extract$LIBELONG == 'Infrastructure',])
+mf_map(extract [extract$LIBELONG == 'Espace vert urbain',])
+```
+
+
+```{r}
+zone <- zone [!(zone$type %in% c("GEOMETRYCOLLECTION","POINT", "LINESTRING")),]
+mf_map(zone, var = "type", type="typo")
+# attention à éviter
+zone <- st_cast(zone, "POLYGON")
+```
+
+
+
+```{r}
+# agregation
+agg <- aggregate (zone [, c("LIBELLE")], 
+                  by=list(zone$LIBELLE, zone$LIBELONG),
+                  length)
+names(agg) [1:3] <- c("LIBELLE", "LIBELONG", "nb")
+library(units)
+agg$aire <- drop_units(st_area(agg ))
+agg <- agg [aire > 3,]
+mf_map(agg, type ="typo", var="Group.2", border=NA)
+mf_label(agg, var = "LIBELLE")
+mf_layout("PLUi M3","Zones agrégées", "PLUi M3\nJuillet 2023")
+```
+
+
+```{r}
+tab <- table(agg$LIBELLE, agg$LIBELONG)
+tab <- prop.table(tab, margin = 2)*100
+write.table(tab, "../data/tab.csv", dec = ".")
+```
+
+### Stats
+
+```{r}
+agg$aire <- round(drop_units(st_area(agg)),0)
+class(agg$aire)
+taille <- aggregate(agg$aire, by = list(agg$LIBELLE), sum)
+taille [order(taille$x),]
+```
+
 
 ## INFO_SURF
 
