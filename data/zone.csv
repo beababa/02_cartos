@@ -1,0 +1,161 @@
+,LIBELLE,LIBELONG,TYPEZONE
+13,N,Zone Naturelle,N
+14,N,Zone Naturelle,N
+50,N,Zone Naturelle,N
+55,N,Zone Naturelle,N
+56,N,Zone Naturelle,N
+59,N,Zone Naturelle,N
+63,N,Zone Naturelle,N
+64,N,Zone Naturelle,N
+65,N,Zone Naturelle,N
+66,N,Zone Naturelle,N
+69,N,Zone Naturelle,N
+72,N,Zone Naturelle,N
+73,N,Zone Naturelle,N
+74,N,Zone Naturelle,N
+76,N,Zone Naturelle,N
+80,N,Zone Naturelle,N
+82,N,Zone Naturelle,N
+83,N,Zone Naturelle,N
+87,N,Zone Naturelle,N
+89,N,Zone Naturelle,N
+91,N,Zone Naturelle,N
+70,Nc,Zone naturelle cimetiere,N
+146,Nc,Loisir en zone naturelle,N
+15,UA16B16,Activites economiques,U
+30,UA16B16,Activites economiques,U
+32,UA16B16,Activites economiques,U
+33,UA16B16,Activites economiques,U
+35,UA16B16,Activites economiques,U
+51,UA16B16,Activites economiques,U
+54,UA16B16,Activites economiques,U
+84,UA16B16,Activites economiques,U
+85,UA16B16,Activites economiques,U
+144,UA16B16,Activites economiques,U
+4,UA30A22,Activites economiques,U
+5,UA30A22,Activites economiques,U
+43,UA48E16,Activites economiques,U
+52,UA48E16,Activites economiques,U
+75,UC00A16,Centralite,U
+114,UC00Cb1,Centralite,U
+147,UC00Cb1,Centralite,U
+148,UC00Cb1,Centralite,U
+152,UC00Cb1,Centralite,U
+154,UC10C22,Centralite,U
+156,UC10Cnr,Centralite,U
+41,UC40C19,Centralite,U
+127,UC40C19,Centralite,U
+28,UC48C16,Centralite,U
+29,UC48C16,Centralite,U
+34,UC48C16,Centralite,U
+67,UC48C16,Centralite,U
+71,UC48C16,Centralite,U
+92,UC48C16,Centralite,U
+93,UC48C16,Centralite,U
+122,UE91Anr,Equipement,U
+149,UEh10Anr,Equipement hospitalier,U
+31,UEi90Anr,Infrastructure,U
+60,UEi90Anr,Infrastructure,U
+94,UEi90Anr,Infrastructure,U
+110,UEi90Anr,Infrastructure,U
+118,UEi90Anr,Infrastructure,U
+134,UEi90Anr,Infrastructure,U
+6,UEi91Anr,Infrastructure,U
+96,UEi91Anr,Infrastructure,U
+124,UEi91Anr,Infrastructure,U
+130,UEi91Anr,Infrastructure,U
+45,UEv91Hnr,Espace vert urbain,U
+47,UEv91Hnr,Espace vert urbain,U
+58,UEv91Hnr,Espace vert urbain,U
+79,UEv91Hnr,Espace vert urbain,U
+99,UEv91Hnr,Espace vert urbain,U
+100,UEv91Hnr,Espace vert urbain,U
+101,UEv91Hnr,Espace vert urbain,U
+102,UEv91Hnr,Espace vert urbain,U
+103,UEv91Hnr,Espace vert urbain,U
+104,UEv91Hnr,Espace vert urbain,U
+105,UEv91Hnr,Espace vert urbain,U
+106,UEv91Hnr,Espace vert urbain,U
+107,UEv91Hnr,Espace vert urbain,U
+108,UEv91Hnr,Espace vert urbain,U
+109,UEv91Hnr,Espace vert urbain,U
+111,UEv91Hnr,Espace vert urbain,U
+112,UEv91Hnr,Espace vert urbain,U
+113,UEv91Hnr,Espace vert urbain,U
+115,UEv91Hnr,Espace vert urbain,U
+116,UEv91Hnr,Espace vert urbain,U
+117,UEv91Hnr,Espace vert urbain,U
+119,UEv91Hnr,Espace vert urbain,U
+120,UEv91Hnr,Espace vert urbain,U
+121,UEv91Hnr,Espace vert urbain,U
+125,UEv91Hnr,Espace vert urbain,U
+128,UEv91Hnr,Espace vert urbain,U
+129,UEv91Hnr,Espace vert urbain,U
+138,UEv91Hnr,Espace vert urbain,U
+143,UEv91Hnr,Espace vert urbain,U
+153,UEv91Hnr,Espace vert urbain,U
+1,UH74M10,Secteur de preservation,U
+3,UH74M10,Secteur de preservation,U
+10,UH74M10,Secteur de preservation,U
+11,UH74M10,Secteur de preservation,U
+12,UH74M10,Secteur de preservation,U
+123,UH74M10,Secteur de preservation,U
+135,UH74M10,Secteur de preservation,U
+157,UH74M10,Secteur de preservation,U
+16,UH88E10,Secteur de preservation,U
+17,UH88E10,Secteur de preservation,U
+18,UH88E10,Secteur de preservation,U
+19,UH88E10,Secteur de preservation,U
+20,UH88E10,Secteur de preservation,U
+22,UH88E10,Secteur de preservation,U
+23,UH88E10,Secteur de preservation,U
+48,UH88E10,Secteur de preservation,U
+49,UH88E10,Secteur de preservation,U
+57,UH88E10,Secteur de preservation,U
+77,UH88E10,Secteur de preservation,U
+78,UH88E10,Secteur de preservation,U
+133,UH88E10,Secteur de preservation,U
+137,UH88E10,Secteur de preservation,U
+141,UH88E10,Secteur de preservation,U
+150,UH88E10,Secteur de preservation,U
+151,UH88E10,Secteur de preservation,U
+155,UH88E10,Secteur de preservation,U
+38,UH88F10,Secteur de preservation,U
+36,UH90E10,Secteur de preservation,U
+37,UH92E10,Secteur de preservation,U
+145,UH92E10,Secteur de preservation,U
+39,UH96E10,Secteur de preservation,U
+40,UH98E10,Secteur de preservation,U
+95,UM24L13,Zone mixte,U
+97,UM24L13,Zone mixte,U
+21,UM68D13,Zone mixte,U
+46,UM68D13,Zone mixte,U
+86,UM68D13,Zone mixte,U
+139,UM68D13,Zone mixte,U
+140,UM68D13,Zone mixte,U
+142,UM68D13,Zone mixte,U
+42,UP Bd1,Secteur de projet,U
+98,UP No1,Secteur de projet,U
+2,UP No7,Secteur de projet,U
+88,UR190C19,Secteur de renouvellement,U
+136,UR20D22,Secteur de renouvellement,U
+8,UR60C16,Secteur de renouvellement,U
+9,UR60C16,Secteur de renouvellement,U
+7,UR70E19,Secteur de renouvellement,U
+160,UR90C16,Secteur de renouvellement,U
+158,UR90C19,Secteur de renouvellement,U
+62,UR90D19,Secteur de renouvellement,U
+68,UR90D19,Secteur de renouvellement,U
+81,UR90D19,Secteur de renouvellement,U
+53,UR90D22,Secteur de renouvellement,U
+24,UR90F16,Secteur de renouvellement,U
+25,UR90F16,Secteur de renouvellement,U
+26,UR90F16,Secteur de renouvellement,U
+27,UR90F16,Secteur de renouvellement,U
+44,UR90F16,Secteur de renouvellement,U
+61,UR90F16,Secteur de renouvellement,U
+90,UR90F16,Secteur de renouvellement,U
+126,UR90F16,Secteur de renouvellement,U
+131,UR90F16,Secteur de renouvellement,U
+132,UR90F16,Secteur de renouvellement,U
+159,UR90F16,Secteur de renouvellement,U

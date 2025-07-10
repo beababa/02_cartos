@@ -1,3 +1,14 @@
-"","10","12","14","16","18","2","24","3","30","4","56","6","8","9","NA"
-"bicycle_parking",8,1,1,1,1,17,1,1,1,14,1,10,7,1,1
-"NA",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ N Nc UA UC UE UEh UEi UEv UH UM "UP " UR
+"Activites economiques" 0 0 100 0 0 0 0 0 0 0 0 0
+Centralite 0 0 0 100 0 0 0 0 0 0 0 0
+Equipement 0 0 0 0 100 0 0 0 0 0 0 0
+"Equipement hospitalier" 0 0 0 0 0 100 0 0 0 0 0 0
+"Espace vert urbain" 0 0 0 0 0 0 0 100 0 0 0 0
+Infrastructure 0 0 0 0 0 0 100 0 0 0 0 0
+"Loisir en zone naturelle" 0 100 0 0 0 0 0 0 0 0 0 0
+"Secteur de preservation" 0 0 0 0 0 0 0 0 100 0 0 0
+"Secteur de projet" 0 0 0 0 0 0 0 0 0 0 100 0
+"Secteur de renouvellement" 0 0 0 0 0 0 0 0 0 0 0 100
+"Zone mixte" 0 0 0 0 0 0 0 0 0 100 0 0
+"Zone Naturelle" 100 0 0 0 0 0 0 0 0 0 0 0
+"Zone naturelle cimetiere" 0 100 0 0 0 0 0 0 0 0 0 0
