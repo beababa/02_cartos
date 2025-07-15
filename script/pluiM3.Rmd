@@ -166,7 +166,7 @@ for (n in nom){
 ## identification des zones
 
 ```{r}
-zone <- st_read("../data/pluiM3.gpkg", nom2 [7])
+zone <- st_read("../data/pluiM3.gpkg", "M3_ZONE_URBA")
 summary(zone)
 table(zone$LIBELLE, zone$TYPEZONE)
 names(zone)
@@ -183,14 +183,22 @@ write.table(prop.table(tab, margin = 1)*100,"../data/tab.csv" )
 Anomalie des espaces de loisirs et zone de cimetière
 
 ```{r}
-mf_map(cadastre)
-mf_map(type = "typo", zone [zone$code == 'Nc',], var = "LIBELONG", add = T)
+png("../img/M3_NC.png", width = 1000, height = 1200, res = 200)
+mf_map(cadastre, col="wheat", border = NA)
+mf_map(type = "typo", zone [zone$code == 'Nc',], border= NA, var = "LIBELONG", add = T, leg_pos = "right")
+mf_label(zone [zone$LIBELLE == 'Nc',], var = "LIBELLE")
+mf_layout("Libellé long pour les 2 cimetières", credits = "M3 PLUI\njuillet 2025")
+dev.off()
+```
+
+
+```{r}
 mf_map(type = "typo", var="LIBELONG", zone)
 zone [zone$geom == "GEOMETRYCOLLECTION",]
 mf_map(type = "typo", zone [!is.polygon(zone$geom)],)
 library(units)
 zone$aire <- drop_units(st_area(zone))
-table(zone$aire==0)
+tablepn
 zone <- zone [zone$aire!= 0,]
 hist(zone$aire)
 mf_map(zone [zone$aire < 3,])
@@ -206,6 +214,33 @@ mf_map(type = "typo", zone, var = "LIBELONG")
 
 ```
 
+# Calcul d'angle
+
+trouver les angles aigus
+
+```{r}
+angle <- function(x,y){
+  dot.prod <- x%*%y 
+  norm.x <- norm(x,type="2")
+  norm.y <- norm(y,type="2")
+  theta <- acos(dot.prod / (norm.x * norm.y))
+  as.numeric(theta)
+}
+plot(zone$geom [67])
+z <- zone$geom [67]
+z <- st_cast(z, "MULTILINESTRING")
+p <- st_cast(z, "POINT") 
+library(lwgeom)
+eclat <-lwgeom::st_split(z, p)
+ecla
+l <- st_collection_extract(eclat, "LINESTRING")
+v <- st_drop_geometry(l)
+angle(v [1], v[2])
+as.matrix(v)
+```
+
+
+transformer les linestring en vecteurs
 
 
 # Cartographie
