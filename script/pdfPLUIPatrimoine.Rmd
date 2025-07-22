@@ -1,0 +1,288 @@
+---
+title: "PDF PLUi Patrimoine"
+author: "B. Maranget"
+date: "15/07/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+# Objet
+
+Reprise des données du patrimoine pour extraire la liste autrefois excel (snif) 90 à 104
+
+
+PdfTools suffit
+
+Utilisation d'OCR pour les livrets patrimoine qui sont un scan d'un document papier.
+
+
+# Outils
+
+## Librairies
+
+```{r}
+library(pdftools)# pdf_subset
+```
+
+```{r}
+library(sf)
+library(mapsf)
+library(filesstrings)# pour le move
+```
+
+
+## Chemins
+
+```{r}
+home <- Sys.getenv("HOME")
+chemin <- "S:/VOIRIE PLANS/04_URBA/04_EE/M3/"
+chemin <- paste0(home, "/03_SIG/03_03_Data/06_URBA/PATRIMOINE/" ) 
+```
+
+# PDF propre : annexe patrimoine M3
+
+## Récupération des données
+
+```{r, eval = FALSE}
+# au cas où second passage pour verif
+fic <- paste0(chemin,"5.2 Annexe PatrimoineM3.pdf")
+ficSel <- pdf_subset(fic, "../data/pdfSel.pdf", pages = c(seq(89,104)))
+texte <- pdf_text(ficSel)
+texte2 <- strsplit(texte, "\n")
+texte3 <- unlist(texte2)
+texte4 <- texte3 [grep ("93140 Bondy", texte3)]
+texte5 <- strsplit(texte4,"93140 Bondy")
+adresse <- sapply(texte5, "[[",1)
+typologie <- sapply(texte5, "[[",2)
+df <- data.frame(adresse = adresse, typo = typologie)
+df <- df[gsub("^\\s+|\\s+$", "", df) 
+df$adresse <- gsub("^\\s+|\\s+$", "", df$adresse) 
+df$typo <- gsub("^\\s+|\\s+$", "", df$typo)
+```
+
+Le niveau
+
+```{r, eval = FALSE}
+df$niveau <- substring(df$typo, nchar(df$typo)-1, nchar(df$typo))
+df$niveau
+```
+
+```{r}
+table(df$niveau)
+df [df$niveau %in% c("cs", "es"),]
+df$niveau [df$niveau == "cs"] <- "2"
+```
+
+
+
+
+```{r}
+df$adresse [df$niveau =='es'] <- "164 Avenue Henri Barbusse / 2 rue de Trémeuge"
+df$niveau [df$niveau =='es'] <- "2"
+```
+
+```{r}
+table(df$niveau)
+```
+
+
+La typo
+
+```{r, eval = FALSE}
+df$typo <- gsub ("[2-3]", "", df$typo)
+df$typo <- gsub("^\\s+|\\s+$", "", df$typo) 
+table(df$typo)
+
+df$code <- 93010
+```
+
+### Correction
+
+'blic' pour 'Architecture administrative - équipements publics'
+
+
+```{r}
+df$typo [df$typo == 'blics'] <- "Architecture administrative - équipements publics"
+table(df$typo)
+```
+
+
+Piscine Tournesol 100 Route de Villemomble (Piscine Tournesol)
+
+```{r}
+df [grep('Piscine', df$adresse),]
+ind <- grep('sol', df$adresse)
+df$adresse [ind] <- '100 Route de Villemomble (Piscine Tournesol)'
+
+```
+
+### Niveau de protection
+
+
+```{r}
+df
+```
+
+
+```{r}
+write.csv(df, "../data/typologiePatrimoineM3.csv", fileEncoding = "UTF-8")
+```
+
+
+
+
+## Géocodage
+
+```{r}
+library(banR)
+library(sf)
+tibble <- geocode_tbl(df,adresse = adresse, code_insee = code)
+hist(tibble$result_score)
+data <- st_as_sf(tibble [!is.na(tibble$longitude),], coords = c("longitude", "latitude"), crs = 4326)
+pb <- tibble [is.na(tibble$longitude),]
+st_write(data, "../data/pluiM3.gpkg", "patrimoine")
+```
+
+
+
+
+
+
+# Annexe patrimoine M2
+
+## test avec pdf uniquement
+
+```{r}
+fic <- paste0(chemin,"5.2 Annexe patrimoine (Bondy-livret).pdf")
+ficSel <- pdf_subset(fic, "../data/pdfSel.pdf", pages = 9)
+texte <- pdf_text(ficSel)
+texte2 <- strsplit(texte, "\n")
+texte2
+```
+
+Il faut passer à l'OCR image (tesseract)
+
+## Extraction et fusion
+
+Sur les 3 livrets, c'est la même page
+
+```{r}
+fic <- list.files(chemin, "livret")
+for (f in fic){
+  nom <- f
+  ficSel <- pdf_subset(paste0(chemin, f), paste0("../data/", nom), pages = 9)
+}
+fic <- paste0("../data/", fic)
+pdf_combine(fic, output = "../data/fusion.pdf")
+png <- pdf_convert("../data/fusion.pdf", dpi = 600)
+```
+
+
+```{r}
+library(magick)
+library(tesseract)
+library(purrr)#map
+path <- dir(path = ".", pattern = "fusion")
+img <- map(path,image_read)
+texte <- map(img, ocr)
+```
+
+Le texte est en 2 ou 3 colonnes, on splitte l'image en fonction
+
+
+```{r}
+img3col <- img [2]
+img
+img2col <- img [c(1,3)]
+img3col
+colonne1 <- map(img2col, ~image_crop(., geometry = "1900x7016+500+1000"))
+colonne1
+colonne2 <- map(img2col, ~image_crop(., geometry = "2700x7016+2300+1000"))
+colonne2 [[2]]
+colonne1_3 <-  map(img3col, ~image_crop(., geometry = "1600x6462+300+800"))
+colonne2_3 <- map(img3col, ~image_crop(., geometry = "1600x6462+1700+800"))
+colonne3_3 <- map(img3col, ~image_crop(., geometry = "1600x6462+3000+800"))
+colonne1_3 
+colonne2_3
+colonne3_3
+```
+
+Traitement colonne 1 / livret 1 et 3
+
+```{r}
+organiser <- function(colonne){
+  # ocr sur le texte + premier unlist pour créer un vecteur
+  texte <- unlist(map(colonne, ocr))
+    # recup sur le texte \n
+  texte2 <- strsplit(texte, "\n")
+}
+faireSeq <- function(nb){
+    res <- NULL
+    tour <- length(nb)
+    for (i in c(1:tour)){
+      tmp <- rep(i,nb [i])
+      res <- c(res, tmp)
+    }
+    return(res)
+}
+```
+
+Colonne 1
+
+```{r}
+texte <- organiser(colonne1)
+nb <- sapply(texte, length) # nb d'éléments dans chacune des listes
+texte <- unlist(texte)
+livret <- faireSeq(nb)
+index <- data.frame(texte, livret) 
+# correction manuelle du num de livret
+index$livret [index$livret == 2] <- 3
+index
+```
+
+colonne 2
+
+```{r}
+texte <- organiser(colonne2)
+nb <- sapply(texte, length) # nb d'éléments dans chacune des listes
+texte <- unlist(texte)
+livret <- faireSeq(nb)
+index2 <- data.frame(texte, livret) 
+# correction manuelle du num de livret
+index2$livret [index2$livret == 2] <- 3
+index2
+```
+
+livret 2
+
+```{r}
+col <- c(colonne1_3, colonne2_3, colonne3_3)
+texte <- unlist(organiser(col))
+livret <- rep(2, length(texte))
+index3 <- data.frame(texte, livret) 
+```
+
+
+fusion
+
+```{r}
+tot <- rbind(index, index2, index3)
+write.csv(tot,"../data/indexPatrimoine.csv", fileEncoding = "UTF-8", row.names = FALSE)
+```
+
+
+

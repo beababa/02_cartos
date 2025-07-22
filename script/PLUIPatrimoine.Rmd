@@ -1,0 +1,123 @@
+---
+title: "PLUi Patrimoine"
+author: "B. Maranget"
+date: "22/07/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+# Objet
+
+Données cadastre sur les bâtiments : table local10 champs parcelle et jannat (date bâti)
+
+
+
+# Outils
+
+## Librairies
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(RSQLite)# pour le move
+```
+
+
+## Chemins
+
+```{r}
+home <- Sys.getenv("HOME")
+chemin <- "S:/VOIRIE PLANS/04_URBA/04_EE/M3/"
+chemin <- paste0(home, "/03_SIG/03_03_Data/03_SOCLE/" ) 
+```
+
+
+## Base RSQLite
+
+```{r, eval = FALSE}
+# au cas où second passage pour verif
+
+con <- dbConnect(drv=RSQLite::SQLite(), dbname=paste0(chemin,"cadastre2024.sqlite"))
+tables <- dbListTables(con)
+res <- dbGetQuery(conn=con, statement=paste("SELECT parcelle, jannat FROM local10"))
+dbDisconnect(con) 
+```
+
+```{r}
+table(res$jannat, useNA = "always")
+res <- res [res$jannat !="0000",]
+res <- res [!is.na(res$jannat),]
+```
+
+
+
+
+```{r, eval = FALSE}
+st_layers("../data/cadastre2024.gpkg")
+cadastre <- st_read("../data/cadastre2024.gpkg", "parcelle_info")
+head(cadastre$geo_parcelle)
+head(res$parcelle)
+```
+
+
+jointure
+
+```{r, eval = FALSE}
+joint <- merge(cadastre ["geo_parcelle"], res, by.x = "geo_parcelle", by.y = "parcelle")
+agg <- aggregate (joint [, c("geo_parcelle")], by = list(joint$geo_parcelle), length)
+names(agg) [1:2] <-  c("geo_parcelle", "nb_dates")
+mf_map(agg, type = "choro", var ="nb_dates", border = NA)
+mf_layout("Nb dates de construction par parcelles", "cadastre 2024\nDGST/Mairie de Bondy")
+hist(agg$nb_dates)
+summary(agg$nb_dates)
+aggMax <- agg [agg$nb_dates > 20,]
+hist(aggMax$nb_dates)
+maxJoint <- joint [joint$geo_parcelle %in% aggMax$geo_parcelle,]
+max(table(joint$geo_parcelle))
+mf_map(cadastre, col = "wheat", border = "cornsilk")
+mf_map(maxJoint, col = "indianred", border = NA, add = T)
+mf_layout("Parcelles avec bcp de dates",  "cadastre 2024\nDGST/Mairie de Bondy")
+```
+
+Plusieurs dates par parcelle.
+
+Mais également plusierus batiments par parcelle... donc des doublons
+
+```{r, eval = FALSE}
+maxJoint <- maxJoint [!duplicated(maxJoint),]
+joint <- joint [!duplicated(joint),]
+```
+
+Effectivement, on passe de 36 M à 342 et de 47 M à 5979
+
+
+```{r, eval = FALSE}
+summary(maxJoint$jannat)
+maxJoint$jannat <- as.integer(maxJoint$jannat)
+mf_choro(maxJoint, var = "jannat", border = NA)
+```
+
+Enregistremetn
+
+```{r, eval = FALSE}
+st_write(joint, "../data/pluiM3.gpkg", "cadastreAnnee", delete_layer = T)
+```
+
+
+```{r, eval = FALSE}
