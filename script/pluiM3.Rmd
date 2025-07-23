@@ -40,7 +40,7 @@ le cadastre est issu des couches de sqlite cadastre2024
 # plutôt limites
 st_layers("../data/limitesSocle.gpkg")
 st_layers ("../data/cadastre2024.gpkg")
-st_layers("../data/pluiM3.gpkg")
+st_layers("../data/pluiM3OLD.gpkg")
 cadastre <- st_read("../data/cadastre2024.gpkg", "parcelle_info")
 bondy <- st_read("../data/cadastre2024.gpkg", "bondy")
 ```
@@ -95,6 +95,7 @@ nom2 <- paste0("M3_",mb2, "_",mb3)
 #n <- nom [4]
 theme <- NULL
 i <- 0
+n <-  nom [6]
 for (n in nom){
   i <- i+1
   tmp <- st_read(paste0("C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/M3/VF/", n))
@@ -339,8 +340,13 @@ taille [order(taille$x),]
 ## INFO_SURF
 
 ```{r}
+<<<<<<< HEAD
 info_surf <-  st_read("../data/pluiM3.gpkg", "M3_INFO_SURF")
 table(unique(info_surf$LIBELLE))
+=======
+info_surf <- st_read("../data/pluiM3OLD.gpkg","M3_INFO_SURF")
+table(info_surf$LIBELLE)
+>>>>>>> a3a4350253a61bdb04d391054ac4ba570e13c864
 ```
 
 
@@ -657,12 +663,19 @@ dev.off()
 
 ## Prescriptions surfaciques
 
+```{r}
+prescriptionSurf <- st_read("../data/pluiM3OLD.gpkg", "M3_PRESCRIPTION_SURF")
+table(prescriptionSurf$LIBELLE)
+```
+
+### OAP
 
 ```{r}
 prescriptionSurf <- st_read("../data/pluiM3.gpkg", "M3_PRESCRIPTION_SURF")
 ```
 
 
+<<<<<<< HEAD
 ### OAP
 
 ```{r}
@@ -672,6 +685,42 @@ mf_map(oap [1,])
 summary(oap$geom)
 ```
 TODO cartographier les OAP et poser la question.
+=======
+```{r}
+OAP <- prescriptionSurf [grep("OAP", prescriptionSurf$LIBELLE), ]
+agg <- aggregate(OAP, by = list(OAP$LIBELLE), length)
+agg <- agg [, c(1,2)]
+names(agg) [1:2] <- c("LIBELLE", "nb")
+# on soustrait Plaine l'Ourcq et Grand chemin
+agg <- agg [c(1,2,4),]
+par(mfrow = c(1,3))
+i <-  1
+for (i in c(1:3)){
+  mf_init(agg [i,])
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, col = "wheat", add = TRUE)
+  mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
+  mf_map(agg [i,], col= NA, border = "red", lwd=2, add = T)
+  mf_layout(agg$LIBELLE [i], "PLUi M3\nJuillet 2025")
+}
+```
+
+
+2 OAP couvrent toute la surface de la ville, on reprend la couche EE
+
+
+
+
+```{r}
+EE <- st_read("../data/pluiM3OLD.gpkg", "OAP_EE")
+par(mfrow = c(1,2))
+mf_map(aggEE [1,])
+mf_layout(aggEE$Group.1 [1], "PLUI M3 \nJuillet 2025")
+mf_map(aggEE [2,])
+mf_layout(aggEE$Group.1 [2], "PLUI M3 \nJuillet 2025")
+```
+
+>>>>>>> a3a4350253a61bdb04d391054ac4ba570e13c864
 
 ### ER
 

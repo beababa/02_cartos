@@ -1,0 +1,32 @@
+{
+"type": "FeatureCollection",
+"name": "arbreOSM",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.474466038320166, 48.902564621324487 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.474897269606206, 48.902106646309662 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.480078383443806, 48.903002170799141 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.477886231372019, 48.895063598810303 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.478637330689244, 48.894556822115781 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.49157836377358, 48.916502341958811 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.482338060145133, 48.91112859649845 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.487494886786469, 48.911274829524615 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.487358528266068, 48.911055316757199 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.488657124581674, 48.907363032581706 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.482483594558037, 48.904768864065318 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.487957509891249, 48.901799798837374 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.48186961212034, 48.904449772850008 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.474921503505211, 48.900835422893962 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.481136841095902, 48.898850173290235 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.476494032575051, 48.892925010640695 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.475342088446449, 48.893504224235549 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.481590258497562, 48.894629934406183 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.482455602958509, 48.894479977995211 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.493913116249641, 48.90211442602498 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.479836936093766, 48.897384804433067 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.474361681686655, 48.894049311074575 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.48196188601918, 48.910464944859655 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.481841748060716, 48.910509187277462 ] } },
+{ "type": "Feature", "properties": { "natural": "tree", "source": "PLUi M3 Est Ensemble Arbres remarquables" }, "geometry": { "type": "Point", "coordinates": [ 2.479444809216639, 48.901171031130495 ] } }
+]
+}
