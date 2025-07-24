@@ -74,11 +74,6 @@ st_write(cadastre, "../data/cadastre.gpkg", "parcelle_info", delete_layer = T)
 
 
 
-```{r}
-info_surf <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
-prescriptionSurf <- st_read("../data/pluiM3.gpkg", "200057875_PRESCRIPTION_SURF_20250624.shp")
-```
-
 
 ```{r}
 # premier envoi
@@ -170,8 +165,15 @@ zone <- st_read("../data/pluiM3.gpkg", "M3_ZONE_URBA")
 summary(zone)
 table(zone$LIBELLE, zone$TYPEZONE)
 names(zone)
-table(zone$commune)
+# filtre sur la commune : la manière la plus rapide d'identifier le pb !
+# sinon pb sur les géométries
+table(zone$Commune) 
+mf_map(zone [zone$Commune != 'Bondy',])
+zone <- zone [zone$Commune == 'Bondy',]
+st_write(zone, "../data/pluiM3.gpkg", "M3_ZONE_URBA", delete_layer = T)
 table(zone$LIBELONG, zone$LIBELLE)
+table(zone$PLUiLIBELL, zone$PLUiLIBLON)
+# le champ PLUiLIBELL et PLUiLIBELL ?
 # extraction des 3 premiers caracteres
 zone$code <- substring(zone$LIBELLE,1,3)
 zone$code <- gsub('[0-9]', '', zone$code)
@@ -191,18 +193,19 @@ mf_layout("Libellé long pour les 2 cimetières", credits = "M3 PLUI\njuillet 20
 dev.off()
 ```
 
+![](../img/M3_NC.png)
+
 
 ```{r}
 mf_map(type = "typo", var="LIBELONG", zone)
-zone [zone$geom == "GEOMETRYCOLLECTION",]
-mf_map(type = "typo", zone [!is.polygon(zone$geom)],)
 library(units)
 zone$aire <- drop_units(st_area(zone))
-tablepn
-zone <- zone [zone$aire!= 0,]
+mf_map(zone, type="choro", var = "aire")
+mf_label(zone, var = "code", cex = 0.5, col = "white")
 hist(zone$aire)
-mf_map(zone [zone$aire < 3,])
-zone <- zone [zone$aire > 3,]
+summary(zone$aire)
+mf_map(zone [zone$aire < 50000,])
+mf_label(zone, var = "code", cex = 0.5, overlap=F )
 ```
 
 
@@ -210,13 +213,23 @@ zone <- zone [zone$aire > 3,]
 ```{r}
 zone$geom <- st_cast(zone$geom, "POLYGON")
 warnings()
-mf_map(type = "typo", zone, var = "LIBELONG")
-
+mf_map(type = "typo", zone, var = "LIBELLE")
+liste <- (unique(sort(zone$LIBELLE)))
 ```
+
+## Comparaison avec onglet zonage operis
+
+
+```{r}
+operis <- read.csv("../data/operis.csv", header = F)
+setdiff(operis$V1, liste)
+```
+
+
 
 # Calcul d'angle
 
-trouver les angles aigus
+trouver les angles aigus, pour détecter les mauvaises géométries
 
 ```{r}
 angle <- function(x,y){
@@ -258,7 +271,7 @@ table(duplicated(zone[,c("LIBELLE", "LIBELONG"), drop=T]))
 
 ```{r}
 summary(zone$geom)
-# type de la géométrie
+# type de la géométrie si pb mais comme on a supprimé les zones hors bondy...
 zone$type <- attributes (zone$geom) [[6]]
 table(zone$type)
 ```
@@ -300,10 +313,11 @@ agg <- aggregate (zone [, c("LIBELLE")],
 names(agg) [1:3] <- c("LIBELLE", "LIBELONG", "nb")
 library(units)
 agg$aire <- drop_units(st_area(agg ))
+summary(agg$aire)
 agg <- agg [aire > 3,]
-mf_map(agg, type ="typo", var="Group.2", border=NA)
-mf_label(agg, var = "LIBELLE")
-mf_layout("PLUi M3","Zones agrégées", "PLUi M3\nJuillet 2023")
+mf_map(agg, type ="typo", var="LIBELONG", border=NA)
+mf_label(agg, var = "LIBELLE", overlap = F)
+mf_layout("PLUi M3","Zones agrégées", "PLUi M3\nJuillet 2025")
 ```
 
 
@@ -326,16 +340,51 @@ taille [order(taille$x),]
 ## INFO_SURF
 
 ```{r}
+<<<<<<< HEAD
+info_surf <-  st_read("../data/pluiM3.gpkg", "M3_INFO_SURF")
+table(unique(info_surf$LIBELLE))
+=======
 info_surf <- st_read("../data/pluiM3OLD.gpkg","M3_INFO_SURF")
 table(info_surf$LIBELLE)
+>>>>>>> a3a4350253a61bdb04d391054ac4ba570e13c864
 ```
 
 
+### Alea
+
+
+```{r}
+alea <- info_surf [ grep('Alea',info_surf$LIBELLE),]
+table(alea$LIBELLE)
+alea$forme <- attributes(alea$geom)[[5]]
+alea <- alea [alea$forme != "GEOMETRYCOLLECTION",]
+mf_export(x = bondy, filename = paste0("../img/alea2025.png"), 
+          expandBB = c(0,0,0,0.3),
+          width = 1000, res = 200)
+  mf_init(bondy, theme = "candy")
+  mf_shadow(bondy, add = TRUE)
+  mf_map(bondy, add = TRUE)
+  mf_typo(
+    alea,
+    pal = c("orange", "yellow"),
+    border = NA,
+    var = "LIBELLE",
+    leg_pos = "topright",
+    leg_title = "Montant (%)",
+    add = TRUE
+  )
+
+mf_layout(title = "Aleas M3 juillet 2025",
+            credits = "Plui M3\nBondy,  juillet 2025")
+dev.off()
+```
+
+
+![](../img/alea2025.png)
 ### TA
 
 ```{r}
-ta <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
-ta <- ta [ta$LIBELLE == "Taxe d'amenagement",]
+ta <- info_surf [info_surf$LIBELLE == "Taxe d'amenagement",]
 mf_export(x = bondy, filename = paste0("../img/ta2025.png"), 
           expandBB = c(0,0,0,0.3),
           width = 1000, res = 200)
@@ -396,12 +445,12 @@ attention l'intersection prend les parcelles mitoyennes.
 utilisation du whithin sparse avec un which pour les num de lignes fonctionne bien
 
 ```{r}
-archeo <- st_read("../data/pluiM3.gpkg", "200057875_INFO_SURF_20250624.shp")
-archeo <- archeo  [archeo$LIBELLE == 'Site archeologique',]
+archeo <- info_surf  [info_surf$LIBELLE == 'Site archeologique',]
 dedans <- as.vector(st_within(cadastre, archeo, sparse = F))
 dedans <- which(dedans ==TRUE)
 dedans <- cadastre [dedans,]
 cadZa <- cadastre [dedans, ]
+mf_map(cadZa)
 
 mf_export(x = bondy, filename = "../img/archeo_2025.png", 
           expandBB = c(0,0,0,0.0),
@@ -418,8 +467,8 @@ mf_export(x = bondy, filename = "../img/archeo_2025.png",
     lwd = 3,
     add = T
   )
-
-mf_label(cadZa,, var = "code", halo = T, cex = 0.5, overlap = F)  
+mf_map(ppcoa, border = "red", col=NA, add = T)
+mf_label(cadZa, var = "code", halo = T, cex = 0.5, overlap = F)  
 mf_layout(title = archeo$LIBELLE,
             credits = "Plui M3\nBondy,  juillet 2025")
 dev.off()
@@ -430,15 +479,25 @@ dev.off()
 
 ![](../img/archeo_2025.png)
 
+Remarques :
+
+Le PPCOA n'englobe pas la zone archéologique
+
+Qu'en est-il de la ZPPA de l'atlas des patrimoines ?
+
+
+
+
 RCU
 
 ```{r}
 rcu <- info_surf [substring(info_surf$LIBELLE, 1,4) == "Zone", ]
 dedans <- as.vector(st_within(cadastre, rcu, sparse = F))
 dedans <- which(dedans ==TRUE)
+# En 2025 pas de parcelle cadastrale
 dedans <- cadastre [dedans,]
 cadZa <- cadastre [dedans, ]
-mf_export(x = rcu, filename = "../img/rcu.png", 
+mf_export(x = rcu, filename = "../img/rcu2025.png", 
           expandBB = c(0,0,0,0.0),
           width = 1000, height = 1000 ,res = 150)
   mf_init(rcu, theme = "candy")
@@ -456,12 +515,12 @@ mf_export(x = rcu, filename = "../img/rcu.png",
 
 mf_label(cadZa,, var = "code", halo = T, cex = 0.5, overlap = F)  
 mf_layout(title = rcu$LIBELLE,
-            credits = "Plui M2\nBondy,  juillet 2023")
+            credits = "Plui M2\nBondy,  juillet 2025")
 dev.off()
 ```
 
 
-![](../img/rcu.png)
+![](../img/rcu2025.png)
 
 ### PPCOA (ancien sursis à statuerr)
 
@@ -498,6 +557,7 @@ dev.off()
 ```{r}
 # verif
 ppcoa <- ppcoa [3,]
+mf_map(ppcoa)
 ppcoa
 dedans <- as.vector(st_within(cadastre, ppcoa, sparse = F))
 dedans <- which(dedans ==TRUE)
@@ -506,27 +566,34 @@ cadZa <- cadastre [dedans, ]
 ```
 
 
-pb AJ12
+pb AJ12 : Pas de souci en 2025
 
 
 ```{r}
 AJ12 <- cadastre [cadastre$code == "AJ0012",]
-AJ12 <- cadastre [3774,]
-ppcoa
+AJ12
+AJ12 <- cadastre [3798,]
 mf_init(st_buffer(AJ12, 30))
 mf_map(cadastre, col = "cornsilk", border = "wheat", add = T)
 mf_map(ppcoa,  border = "green",  col = NA,  lwd = 5,add = TRUE)
-mf_label(AJ12, var = "code", cex = 1.5)
-mf_layout("PPCOA et parcelle AJ12 : inclusion", credits = "Bondy / DGST\nPLUi M2, juillet 2023")
+#mf_label(AJ12, var = "code", cex = 1.5)
+mf_label(cadZa, var="code")
+mf_layout("PPCOA et parcelle AJ12 : inclusion ?", credits = "Bondy / DGST\nPLUi M2, juillet 2025")
 ```
 
 
 pb I41
 
 ```{r}
+pres_lin <- st_read("../data/pluiM3.gpkg", "M3_PRESCRIPTION_LIN")
+```
+
+
+
+```{r}
 I41   <- cadastre [cadastre$code == " I0041",]
 grep("I0041", cadastre$code)
-I41 <- cadastre [1233,]
+I41 <- cadastre [1251,]
 lineaire <- pres_lin [substring(pres_lin$LIBELLE, 10, 14) == "actif", ]
 arbre <- pres_lin [substring(pres_lin$LIBELLE, 14, 19)== "arbres",]
 mf_init(st_buffer(I41, 10))
@@ -563,6 +630,7 @@ AG0162 <- cadastre [3303,]
 zac <- info_surf[ind, ]
 ind <- grep("^ZAC", info_surf$LIBELLE)
 mf_map(zac)
+zac <- zac [1,]
 ```
 
 
@@ -602,7 +670,22 @@ table(prescriptionSurf$LIBELLE)
 
 ### OAP
 
+```{r}
+prescriptionSurf <- st_read("../data/pluiM3.gpkg", "M3_PRESCRIPTION_SURF")
+```
 
+
+<<<<<<< HEAD
+### OAP
+
+```{r}
+oap <- prescriptionSurf [grep("OAP", prescriptionSurf$LIBELLE),]
+mf_map(oap)
+mf_map(oap [1,])
+summary(oap$geom)
+```
+TODO cartographier les OAP et poser la question.
+=======
 ```{r}
 OAP <- prescriptionSurf [grep("OAP", prescriptionSurf$LIBELLE), ]
 agg <- aggregate(OAP, by = list(OAP$LIBELLE), length)
@@ -637,6 +720,7 @@ mf_map(aggEE [2,])
 mf_layout(aggEE$Group.1 [2], "PLUI M3 \nJuillet 2025")
 ```
 
+>>>>>>> a3a4350253a61bdb04d391054ac4ba570e13c864
 
 ### ER
 

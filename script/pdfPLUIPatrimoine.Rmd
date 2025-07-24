@@ -61,6 +61,11 @@ chemin <- paste0(home, "/03_SIG/03_03_Data/06_URBA/PATRIMOINE/" )
 # au cas où second passage pour verif
 fic <- paste0(chemin,"5.2 Annexe PatrimoineM3.pdf")
 ficSel <- pdf_subset(fic, "../data/pdfSel.pdf", pages = c(seq(89,104)))
+```
+
+
+```{r, eval = FALSE}
+ficSel <- ("../data/pdfSel.pdf")
 texte <- pdf_text(ficSel)
 texte2 <- strsplit(texte, "\n")
 texte3 <- unlist(texte2)
@@ -150,11 +155,13 @@ write.csv(df, "../data/typologiePatrimoineM3.csv", fileEncoding = "UTF-8")
 ```{r}
 library(banR)
 library(sf)
+df$code <- '93010'
 tibble <- geocode_tbl(df,adresse = adresse, code_insee = code)
 hist(tibble$result_score)
 data <- st_as_sf(tibble [!is.na(tibble$longitude),], coords = c("longitude", "latitude"), crs = 4326)
 pb <- tibble [is.na(tibble$longitude),]
-st_write(data, "../data/pluiM3.gpkg", "patrimoine")
+pb
+st_write(data, "../data/pluiM3.gpkg", "geocodePatrimoineM3")
 ```
 
 
