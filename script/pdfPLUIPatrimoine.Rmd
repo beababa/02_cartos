@@ -29,6 +29,8 @@ PdfTools suffit
 
 Utilisation d'OCR pour les livrets patrimoine qui sont un scan d'un document papier.
 
+Extraction de toutes les photos des livrets
+
 
 # Outils
 
@@ -292,4 +294,46 @@ write.csv(tot,"../data/indexPatrimoine.csv", fileEncoding = "UTF-8", row.names =
 ```
 
 
+# Extraction des photos
+
+On repart du fic des 3 livrets
+
+```{r}
+ficSel <- pdf_subset(paste0(chemin,fic [1]), 10, "../data/fichePatrimoine.pdf")
+texte <- pdf_text(ficSel)
+texte
+```
+
+
+
+```{r}
+library(magick)
+library(tesseract)
+png <- pdf_convert("../data/fichePatrimoine.pdf", dpi = 400)
+img <- image_read(png)
+# recherche du titre
+texte <- ocr(img)
+texte2 <- substring(texte, 1, 58)
+texte3 <- gsub("\n|:", "_", texte2)
+texte4  <- gsub(" ","_", texte3)
+texte5  <- gsub("___","_", texte4)
+```
+
+
+L'image 
+
+```{r}
+taille <- image_info(img)[2:3]
+hauteur <-  taille [2]
+largeur <- taille [1]
+largeur < hauteur
+hauteurPhoto <- hauteur * (100/297 )
+largeurPhoto <- largeur *  (1000/210)
+ht <-  round(hauteur * (160/297),0)
+lg <-  round(largeur * (90/210),0)
+photo <- image_crop(img, geometry = paste0( largeurPhoto,"x", hauteurPhoto-175,"+",lg+50,'+',ht/2.3+5))
+photo <- image_trim(photo)
+photo
+image_write(photo, path = paste0("../img/", texte5, ".png"), format="png")
+```
 

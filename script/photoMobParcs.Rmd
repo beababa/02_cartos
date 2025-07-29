@@ -100,10 +100,11 @@ st_layers("../data/mobParc.gpkg")
 wp <- st_read("../data/mobParc.gpkg", "wp2")
 # suppression altitude
 wp <- st_zm(wp,drop = T)
-st_write(wp, "../data/mobParc.gpkg", "wp2", append = F)
+st_write(wp, "../data/mobParc.gpkg", "wp2", delete_layer = T)
 ```
 
-20 wp pour le 16/02
+20 wp pour le 16/02 (retraité en juillet 2025)
+-2 pts de départ en mairie
 
 ### Carto
 
@@ -115,11 +116,14 @@ mf_layout("Points GPS mobilier parcs", "recup 16 février 2024")
 ```
 
 
+## Traitement de tous les points
+
 Identifier les zones par la densité des points
 
 
 
 ```{r}
+wp <- st_read("../data/mobParc.gpkg", "wp")
 zone <- st_union(st_buffer(wp, 40))
 mf_map(zone)
 mf_map(wp, add = T)
@@ -214,11 +218,11 @@ attention les métadonnées ont changé il faut reprendre celle du .csv
 ### Filtre sur les photos
 
 
-2 sorties 26/12 et 16/02
+6 sorties déc 2023 - 12 déc (24), 8 janvier (7), 13 (1), 16 (18), 19 (1) et 28 (25) février au total
 
 ```{r}
 photoMeta$jour <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d" )
-unique(photoMeta$jour)
+table(photoMeta$jour)
 photoMeta <- photoMeta [photoMeta$jour == "2024-02-16 CET" ,]
 ```
 
@@ -235,6 +239,8 @@ L'appareil photo non réglé : différence de 1 h 03 mn
 
 Il pourrait ensuite suffire d'aligner les photos mais c'est plus sûr mais comme le nombre est différent.
 
+
+### Pot de fleur près de la mairie
 
 la troisième
 
@@ -275,12 +281,42 @@ wp$time2 <- wp$time + 120
 class(wp$time2)
 ```
 
+### 16/02 bambou
+
+
+tournée de verif à la mare à la veuve
+
+
+photo du bambou
+
+point wp
+
+```{r}
+wp <- st_read("../data/mobParc.gpkg", "wp2")
+(wpBambou <- wp$time [wp$name == '020'])
+```
+
+point photo
+
+```{r}
+photoMeta$FileModifyDate [16]
+```
+
+
+```{r}
+# 2 minutes de différence
+(wpBambou <- wpBambou + 120)
+# pour toutes les photos
+wp$time2 <- wp$time + 120
+```
+
+## Boucle
 
 
 ```{r}
 p <- photoMeta$FileModifyDateCET [1]
 str(photoMeta)
-photoMeta <- read.csv("../data/photoMeta.csv")
+#photoMeta <- read.csv("../data/photoMeta.csv")
 photoMeta$FileModifyDateCET  <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d %H:%M:%S", tz = "CET")
 str(photoMeta)
 # pour éviter d'utiliser deux fois la même photo, on va supprimer les
@@ -338,18 +374,11 @@ Enregistrement
 
 ```{r}
 names(joint)
-st_write(joint [, c("time2", "SourceFile", "name", "cmt")],"../data/mobParc.gpkg", "photoFEV2024", append = F)
+st_write(joint [, c("time2", "SourceFile", "name", "cmt")],"../data/mobParc.gpkg", "photoFEV2024", delete_layer = T)
 # enregistrement ds la base de saisie
 st_write(joint [, c("time2", "SourceFile", "name", "cmt")],"../data/mobParc.gpkg", "photo", append = T)
 ```
 
-
-Recup ancienne copie
-
-```{r}
-tmp <- st_read("../data/tmp.gpkg", "pt_gps")
-st_write(tmp, "../data/mobParc.gpkg", "photo", append = F)
-```
 
 
 
@@ -371,11 +400,13 @@ curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_
 
 ```{r, eval=TRUE}
 cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
-data <- st_read("../data/mobParc.gpkg", "2m")
+data <- st_read("../data/mobParc.gpkg", "photoFEV2024")
 data <- st_transform(data, crs = 4326)
+data$name
+data$SourceFile
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
   addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
-  addPopupImages(data$chemin, group = "photos", width = 500) 
+  addPopupImages(data$SourceFile, group = "photos", width = 500) 
 ```
 
