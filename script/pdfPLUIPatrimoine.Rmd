@@ -376,3 +376,40 @@ photo
 image_write(photo, path = paste0("../img/", texte5, ".png"), format="png")
 ```
 
+# Annotations préparatoires à la M3
+
+## Extraction adresse et commentaire
+
+```{r}
+data <- read.csv2("../data/22072025_CITAVIZ_ANNOTATIONS.csv", fileEncoding = "UTF-8")
+data$Observation <- gsub(":","\n", data$Observation)
+data$Observation <- gsub("2. ","\n", data$Observation)
+eclate <- strsplit(data$Observation, "\n")
+data$adresse <- sapply(eclate, "[[",1)
+data$adresse
+data$detail <- sapply(eclate, "[",2)
+data$detail
+write.csv(data,"../data/CITAVIZ.csv", fileEncoding = "UTF-8", row.names = F)
+```
+
+Encore bcp de modif à la main.
+
+
+## Géocodage
+
+```{r}
+df <- read.csv("../data/CITAVIZmodifie.csv", fileEncoding = "UTF-8")
+library(banR)
+library(sf)
+df$code <- '93010'
+tibble <- geocode_tbl(df,adresse = adresse , code_insee = code)
+hist(tibble$result_score)
+# spatialisation
+data <- st_as_sf(tibble [!is.na(tibble$longitude),], coords = c("longitude", "latitude"), crs = 4326)
+pb <- tibble [is.na(tibble$longitude),]
+pb$adresse
+st_write(data, "../data/pluiM3.gpkg", "geocodeCITAVIZ", delete_layer = T)
+write.csv(pb, "../data/geocodeCITAVIZpb.csv", fileEncoding = "UTF-8")
+```
+
+
