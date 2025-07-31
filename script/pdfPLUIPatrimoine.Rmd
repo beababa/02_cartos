@@ -293,6 +293,45 @@ tot <- rbind(index, index2, index3)
 write.csv(tot,"../data/indexPatrimoine.csv", fileEncoding = "UTF-8", row.names = FALSE)
 ```
 
+De nombreuses modifications sont apportées (mauvaise qualité du document de départ)
+Egalement, un *num* correspondant à l'ordre
+
+```{r}
+df <- read.csv("../data/indexPatrimoineCorrige.csv", fileEncoding = "UTF-8")
+df$numAd <- substring(df$texte, nchar(df$texte) - 5, nchar(df$texte))
+ind <- grep("bis|ter", df$numAd) 
+
+df$numAd
+df$numAd2 <- " "
+df$numAd2 [ind] <- df$numAd [ind] 
+df$numAd2 <- gsub("[^bis|ter]", "", df$numAd2)
+table(df$numAd2)
+df$numAd <- gsub ("[^0-9]", "", df$numAd)
+df$numAd2 <- gsub("ebis|tbis|sbis", "bis", df$numAd2)
+df$numAd2 <- gsub("ster", "ter", df$numAd2)
+df$rue <- gsub ("[0-9]", "", df$texte)
+df$rue
+```
+
+
+## Géocodage
+
+```{r}
+library(banR)
+library(sf)
+df$code <- '93010'
+df$adresse <- paste0(df$numAd, df$numAd2, " ",df$rue)
+adresse
+tibble <- geocode_tbl(df,adresse = adresse , code_insee = code)
+hist(tibble$result_score)
+data <- st_as_sf(tibble [!is.na(tibble$longitude),], coords = c("longitude", "latitude"), crs = 4326)
+pb <- tibble [is.na(tibble$longitude),]
+pb$texte
+st_write(data, "../data/pluiM3.gpkg", "geocodePatrimoineM2", delete_layer = T)
+write.csv(pb, "../data/geocodePatrimoineM2pb.csv", fileEncoding = "UTF-8")
+```
+
+
 
 # Extraction des photos
 
