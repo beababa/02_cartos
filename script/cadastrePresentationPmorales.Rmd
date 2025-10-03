@@ -87,7 +87,7 @@ Un travail est d'abord effectué sur la variable propriété de parcelle_info
 
 ```{r, eval = F}
 # lecture du fichier
-cadastre <- st_read(paste0(chemin,"/01_SOCLE/cadastre/cadastre2022.sqlite"), "parcelle_info")
+cadastre <- st_read(paste0(chemin,"/03_SOCLE/cadastre2025/cadastre2025.sqlite"), "parcelle_info")
 # enregistrement pour présentation
 st_write(cadastre, "../data/cadastre.gpkg", "parcelle_info", delete_layer = T)
 ```
@@ -156,7 +156,7 @@ st_write(agg, "../data/cadastre.gpkg", "agg", delete_layer = T)
 Il existe un fichier proprietaire dans la base sqlite, elle contient la personne morale.
 
 ```{r, eval = FALSE}
-proprio <- st_read(paste0(chemin,"/01_SOCLE/cadastre/cadastre2022.sqlite"), "proprietaire")
+proprio <- st_read(paste0(chemin,"/03_SOCLE/cadastre2025/cadastre2025.sqlite"), "proprietaire")
 st_write(proprio, "../data/cadastre.gpkg", "proprio", delete_layer = T)
 ```
 
@@ -174,7 +174,7 @@ names(proprio) <-c("nom", "categorie", "dsiren")
 length(proprio$categorie[is.na(proprio$nom)])
 # les propriétaires sans nom ne sont pas catégorisés : il y en 18 653 / 20 333 en 2022
 proprio <- proprio [!is.na(proprio$nom),]
-table(is.na(proprio$nom))
+table(is.na(proprio$nom), useNA = "always")
 # tous les proprio ont un nom.
 head(proprio$nom [is.na(proprio$categorie)])
 proprio <- unique(proprio)

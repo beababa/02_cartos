@@ -30,7 +30,9 @@ sur la notion  public / privé autour du cadastre.
 Etats, CT, bailleurs, Etablissement publics et instituionnales, autres (copro, personne morale non remarquable, personne physique et absence de donnée ou mutation en cours)
 
 
-Version du cadastre de juillet 2022 puis 2023
+Version du cadastre de juillet 2022 puis 2023 puis 2025
+
+
 
 ```{r}
 library(sf)
@@ -45,15 +47,19 @@ library(mapsf)
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 #chemin <- "G:/Mon Drive/05_DATA"
 # changer le chemin chaque année
-cadastre <- "03_SOCLE/cadastre2023/cadastre2023.sqlite"
+chCadastre <- "03_SOCLE/cadastre2025d.sqlite"
 ```
 
 
+Verif cadastre.gpkg
+
 ```{r}
-couches <- unlist(st_layers("../data/cadastre.gpkg"))
+couches <- (st_layers("../data/cadastre.gpkg"))
+couches <- couches$name
 #couches importantes : 1, 9,14
-for (i in c(1,9,14)){
+for (i in c(1:length(couches))){
   tmp <- st_read("../data/cadastre.gpkg", couches [i])
+  assign(couches [i], tmp)
   st_write(tmp, "../data/cadastreBase.gpkg", couches [i], delete_layer = T)
 }
 ```
@@ -79,7 +85,7 @@ png("../img/section.png", width = 800, height = 800, res = 100)
 mf_map(section, col = "antiquewhite1", border = "grey", lwd = 0.5)
 arrows (st_coordinates(pts) [-55,"X"], st_coordinates(pts) [-55,"Y"], st_coordinates(pts) [-1, "X"], st_coordinates (pts) [-1,"Y"],  col = "ivory", lwd = 4, length = 0.10 )
 mf_label(section, var = "section3", halo = T, bg = "white", cex = 1)
-mf_layout("Sections cadastrales : ordre", "DGST / mai 2022\nDGFiP, 2021")
+mf_layout("Sections cadastrales : ordre", "DGST / oct 2025\nDGFiP, 2025")
 dev.off()
 ```
 
@@ -95,8 +101,8 @@ dev.off()
 Parcelle_info semble le fichier le plus intéressant : num parcelle et proprio
 
 ```{r}
-# attention chemin 03/SOCLE/cadastre2022.sqlite pour travail en mairie
-cadastre <- st_read(paste0(chemin,cadastre), "parcelle_info")
+# attention chemin 03/SOCLE/cadastre2025.sqlite pour travail en mairie
+cadastre <- st_read(paste0(chemin,chCadastre), "parcelle_info")
 str(cadastre)
 ```
 
@@ -111,8 +117,6 @@ cadastre$code
 table(sapply(cadastre$code, nchar))
 # 6 caractères pour tout le cadastre, il faut enlever le 1er
 cadastre$code <- gsub("^ ", "", cadastre$code)
-cadastre$num <- nchar(cadastre$code)
-cadastre$code [cadastre$num == 6]
 ```
 
 
@@ -131,7 +135,7 @@ tmp <- strsplit(proprio, split= "\\-")
 proprio <- sapply(tmp, "[",2)
 proprio <- gsub("^ | $",x =  proprio, "")
 cadastre$proprio <- proprio
-st_write(cadastre, "../data/cadastre.gpkg", "proprio2023b", delete_layer = T)
+st_write(cadastre, "../data/cadastre.gpkg", "proprio2025", delete_layer = T)
 ```
 
 
@@ -139,7 +143,7 @@ si on fait juste l'éclatement en - cela fonctionne aussi
 
 ```{r, eval = F}
 # attention chemin 03/SOCLE/cadastre2022.sqlite pour travail en mairie
-cadastre <- st_read(paste0(chemin,cadastre), "parcelle_info")
+cadastre <- st_read(paste0(chemin,chCadastre), "parcelle_info")
 chaine <- strsplit(cadastre$proprietaire, " - ")
 # récupération du 2e terme
 cadastre$nom <- sapply(chaine, "[",2)
@@ -185,19 +189,20 @@ repere [,1] / repere [,2]
 On repart de parcelle_info donc proprio
 
 ```{r}
-cadastre <- st_read("../data/cadastre.gpkg", "proprio")
+cadastre <- st_read("../data/cadastre.gpkg", "proprio2025")
 ind <- grep("COMMUNE DE BONDY", cadastre$proprio)
 parcellesMairie <- cadastre [ind,]
-png("../img/cadastre2023parcellesMairie.png", width = 6000, height = 6000, res = 800)
+png("../img/cadastre2025parcellesMairie.png", width = 6000, height = 6000, res = 800)
 mf_init(parcellesMairie)
 mf_map(cadastre, col="antiquewhite1", border=NA, add =T)
 mf_map(parcellesMairie, type="typo", var = "parcelle_batie", add = T, border=NA)
-mf_layout("Propriétés mairie (293 parcelles)", credits = "Cadastre 2023\nMairie / DGST\nSeptembre 2023")
+titre <- paste0("Propriétés mairie (",length(parcellesMairie$geo_parcelle) , " parcelles)")
+mf_layout(titre, credits = "Cadastre 2025\nMairie / DGST\nSeptembre 2025")
 #mf_label(parcellesMairie, "code", overlap = F, cex=0.5)
 dev.off()
 ```
 
-![](../img/cadastre2023parcellesMairie.png)
+![](../img/cadastre2025parcellesMairie.png)
 
 
 ```{r}
@@ -230,7 +235,7 @@ Il existe un fichier proprietaire dans la base sqlite, qui permet d'avoir les ca
 
 ```{r}
 # voir remarque paragraphe précedente
-proprio <- st_read(paste0(chemin,cadastre), "proprietaire")
+proprio <- st_read(paste0(chemin,chCadastre), "proprietaire")
 str(proprio)
 head(proprio)
 # Le champs personne morale est ccogrm
@@ -259,7 +264,7 @@ jointure <- merge(agg, proprio, by = "nom", all.x = T)
 st_write(jointure, "../data/cadastre.gpkg", "pmorale", delete_layer = T)
 ```
 
-5571 en jointure seulement.
+5427 en jointure seulement.
 
 
 
