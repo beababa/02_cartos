@@ -1,0 +1,106 @@
+---
+title: "Avignon préparation entretier"
+author: "B. Maranget"
+date: "6/10/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Analyse spatiale gestion de patrimoine
+
+Identifier la répartition spatiale, quartiers sous-dotés ? (grille / densité)
+
+Occupation du sol : bâti / naturelle (cadastre / OSM / photo)
+
+suivi foncier : prix vente (dvf)
+
+priorisation rénovation thermique (bndb)
+
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+```{r}
+st_layers("../data/avignon.gpkg")
+```
+
+```{r}
+pmorale <- st_read("../data/avignon.gpkg", "pmorale")
+mf_map(pmorale)
+```
+
+
+```{r}
+pmorale <- st_transform(pmorale, 2154)
+pmorale$aire <- round(st_area(pmorale$geom)/10000,0)
+library(units)
+pmorale$aire <- drop_units(pmorale$aire)
+par(mfrow = c(1,2))
+hist(pmorale$aire, xlab = "aire (ha)", ylab = "Nb de parcelles", col = "coral", border = NA, main = "Foncier mairie - 1660 obs")
+grosFoncier <- pmorale [pmorale$aire > 1,]
+hist(grosFoncier$aire, col ="coral", border = NA, ylab = " ", xlab="aire (ha)", main = "Grosses parcelles, 60 obs")
+mf_map (pmorale [pmorale$aire > 0.9,], border = NA)
+mf_layout("Foncier : parcelles de plus d'1 hac", "data.gouv\nOct 2025")
+# densite
+grille <- st_make_grid(pmorale, 1000)
+mf_map(grille, add =T)
+class(grille)
+num <- seq(1,130)
+grille <- st_as_sf(data.frame(grille, num))
+inter <- st_intersection(grille, pmorale [, c("code")])
+agg <- aggregate(inter, by =  list(inter$num), length)
+names(agg) [1:2] <- c("num", "nb")
+agg <- st_drop_geometry(agg)
+jointure <- merge(grille, agg [, c("num", "nb")], by="num")
+hist(jointure$nb)
+mf_map(jointure, var = "nb", type = "choro", breaks = c(0,40,100,140) , nbreaks = 3,border = NA, pal = "Teal")
+mf_map(bat, add = TRUE, pch = 20, cex = 0.3 )
+```
+
+
+```{r}
+bat <- st_read("../data/batAvignon.geojson")
+bat <- st_transform(bat, 2154)
+names(bat)
+bat <- bat [, c("name", "building", "alt_name")]
+
+bat <- st_centroid(bat)
+grosBat <- st_intersection(grosBat, bat)
+grosBat <- grosBat [, c("name", "building", "code", "aire", "alt_name")]
+mf_label(grosBat, var = "name", overlap = F)
+```
+
+
+```{r}
+st_write(grosBat, "../data/avignon.gpkg", "grosBat", delete_layer = T)
+```
+
+
+
+
+```{r}
+nom <- st_read("../data/gros/nomsAgvignon.geojson")
+
+```
+

@@ -49,10 +49,21 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 
 
 ```{r}
+fic <- c("PM_19_NB_640.txt")
 #02_URBA pour le drive 06 pour pc mairie
 data <- read.csv2(paste0(chemin,"06_URBA/personne morale opendata/PM_22_NB_930.txt"), fileEncoding = "latin3")
-data <- data [ data$Nom.Commune..Champ.géographique.== "BONDY",    ]
+data <- read.csv2(paste0("../data/gros/", fic))
+data <- read.csv2("../data/gros/PM_20_NB_840.txt", fileEncoding = "latin3")
+sel <- "AVIGNON"
+sel <- "BONDY"
+table(data$Département..Champ.géographique.)
+nom <-  names(table(data$Nom.Commune..Champ.géographique.))
+nom [grep("AVI", nom)]
+data <- data [ data$Nom.Commune..Champ.géographique.== sel, ]
 str(data)
+library(sf)
+cadastre <- st_read("../data/gros/cadastre-84007-parcelles.json")
+
 st_layers("../data/cadastre.gpkg") 
 cadastre <- st_read("../data/cadastre.gpkg", "parcelle_info")
 str(cadastre)
@@ -86,6 +97,35 @@ doublons <- names(tab2)
 #data [data$code %in% doublons,]
 ```
 
+
+```{r}
+cadastre$numero
+cadastre$section
+cadastre$code <- paste0(cadastre$section, cadastre$numero)
+data$N..plan..Références.cadastrales.
+data$Section..Références.cadastrales.
+data$code <- paste0(data$Section..Références.cadastrales.,data$N..plan..Références.cadastrales.)
+jointure <- merge(cadastre, data, by="code")
+library(mapsf)
+mf_map(jointure)
+```
+
+
+Avignon
+
+```{r}
+jointure$Dénomination..Propriétaire.s..parcelle.
+nom <- "COMMUNE D AVIGNON"  
+sel <- jointure [jointure$Dénomination..Propriétaire.s..parcelle. == nom,]
+mf_map(sel)
+st_write (sel, "../data/avignon.gpkg", "pmorale")
+st_write(cadastre, "../data/avignon.gpkg", "cadastre")
+png("../img/avignon.png")
+mf_map(cadastre)
+mf_map(sel, add = T, col = "red")
+mf_layout("Avignon, propriété mairie", "data.gouv,2025")
+dev.off()
+```
 
 Première jointure et carto
 
