@@ -1,0 +1,256 @@
+---
+title: "Photos poubelledouble flux"
+author: "B. Maranget"
+date: "29/10/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Utilisation du script reproductible pour la propreté
+
+Un article : https://marionlouveaux.fr/fr/blog/gpx-tracks-and-leaflet-interactive-map/#go-to-folding-div permet de faire avec R et Leaflet...
+
+
+L'objet de ce script est de créer un outil encore plus reproductible quelque soit l'objet
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(dplyr)
+library(ggplot2)
+library(leaflet)
+library(leafpop)
+library(lubridate)
+library(purrr)
+library(readr)
+library(sf)
+library(mapsf)
+library(tibble)
+library(tidyr)
+library(exiftoolr) # metadonnées photo
+library(mapview)
+```
+
+
+## Chemins
+
+
+```{r}
+cheminGPX <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
+# on a modifié le GPX pour rajout un point sous Qgis
+cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/23_PROPRETE/"
+cheminBase <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+cheminPhoto <-   "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/"
+```
+
+
+
+# Données
+
+
+```{r}
+cadastre <- st_read("../data/gros/cadastre.gpkg", "parcelle_info")
+cadastre4326 <- st_transform(cadastre, 4326)
+poi <- st_read(paste0(cheminBase, "socle2024.gpkg"), "poi")
+poi4326 <- st_transform(poi,4326)
+```
+
+
+
+## Waypoint
+
+Sous QGIS on a modifié le fichier, rajout et suppression de points
+
+```{r}
+wpPoubelles <- st_read(paste0(cheminGPX, "poubelles.gpkg"), "wp_doubleFlux")
+wpPoubelles
+```
+
+
+```{r}
+wpPoubelles <- wpPoubelles [, "name"]
+data <- read.csv2(paste0(cheminGPX, "biflux.csv"))
+data
+wpPoubelles <- merge(wpPoubelles, data, by.x = "name", by.y = "N.")
+
+```
+
+Carto de verification
+
+```{r}
+mf_init(wpPoubelles)
+mf_map(cadastre4326, col = "wheat", border=NA, add = T)
+mf_map(wpPoubelles, add=T)
+mf_label(wpPoubelles, "SITES", halo=T,overlap = F, cex = 0.5)
+mf_layout("Emplacements prévus poubelles double flux", "Terrain\nOctobre 2025")
+```
+
+```{r}
+st_write(wpPoubelles, paste0(cheminGPX, "poubelles.gpkg"), "wp_doubleFlux_site" , delete_layer = T)
+```
+
+
+
+
+## Photos
+
+
+```{r}
+cheminPhoto <- paste0(cheminPhoto, "poubelleDoubleFlux/")
+photo <- list.files(path.expand(cheminPhoto), pattern = "*.JPG")
+photo
+```
+
+
+
+
+## Récup métadonnées photo
+
+```{r}
+lireMeta <- function(fic){
+  exif_read(path.expand(paste0(cheminPhoto, fic)))
+} 
+test <- lireMeta(photo)
+test$FileCreateDate
+test$FileModifyDate
+test$FileAccessDate
+test$SourceFile
+test$GPSHPositioningError
+test$GPSLatitude
+test$GPSLongitude
+#install_exiftool()
+```
+
+Filtre colonne
+
+```{r}
+photos <- test [,c("ModifyDate", "GPSLatitude", "GPSLongitude", "SourceFile", "FileName")]
+```
+
+
+# Reduction taille photos
+
+
+Copie de la boucle du script photo reproductible photo
+
+```{r}
+test$SourceFile
+i <- 1
+for (i in  c(1:length(test$FileModifyDate))){
+  nom <- test$FileName [i]
+  img <- image_read(test$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "300")
+  image_write(img2, path = paste0("../img/poubelle/", nom), format = NULL, quality = NULL,
+              depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
+}
+```
+
+Tri des photos dans le rep img/poubelle
+
+
+```{r}
+fic <- list.files("../img/poubelle/")
+photos <- photos [photos$FileName %in% fic,]
+photos$petit <- paste0("../img/poubelle/", photos$FileName)
+photos <- st_as_sf(photos, coords = c("GPSLongitude", "GPSLatitude"), crs=4326)
+st_write(photos,paste0(cheminGPX,"poubelles.gpkg"), "photos", delete_layer=T)
+```
+
+Verif carto
+
+```{r}
+mf_map(photos, var="FileName")
+mf_label(photos, var ="FileName", overlap = F, halo = T)
+```
+
+Rectification photo vue ou croix
+
+
+```{r}
+car <- c(
+  rep(c("vue", "croix"),12), 
+  ("croix") ,
+  rep(c("vue", "croix"),2), 
+  c("croix", "vue", "croix"))
+photos$vue <- car
+```
+
+
+
+
+
+
+# Lien photo - wp 
+
+L'identiant sera numero lieu + vue ou croix
+
+
+Pour le numéro de lieu, intersection spatiale
+
+```{r}
+tampon <- st_buffer(wpPoubelles [, c("name", "SITES")] ,50)
+mf_map(tampon, col = NA)
+mf_label(tampon, var = "name")
+inter <- st_intersection(photos, tampon)
+```
+
+
+
+
+
+```{r}
+inter$id <- paste0(inter$name, "_", inter$vue)
+mf_label(inter, var ="id", overlap = F, halo = T)
+st_write(inter, paste0(cheminGPX, "poubelles.gpkg"), "photosVue", delete_layer = T)
+```
+
+Sous Ggis, on supprime les points en trop.
+On évite de les déplacer...
+
+
+```{r}
+wpPoubelles <- st_read(paste0(cheminGPX, "poubelles.gpkg"), "wp_doubleFlux_site")
+# 19 pg
+photosVue <- st_read(paste0(cheminGPX, "poubelles.gpkg"), "photosVue")
+# 36
+```
+
+
+
+
+# Leaflet
+
+
+data : poi4326 avec etik2_plus_clair / photosVue avec petit / wpPoubelles avec name
+
+
+
+
+```{r, eval=TRUE}
+leaflet() %>%
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data=wpPoubelles, label = ~SITES) %>% 
+  addCircleMarkers(data = photosVue, label = ~id,  group = "photos") %>%
+  addPopupImages(photosVue$petit, group = "photos", width = 500) 
+```
+

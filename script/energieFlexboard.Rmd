@@ -1,0 +1,141 @@
+---
+title: "Energie"
+date: "10/11/2025"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: journal
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = FALSE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+library(flexdashboard)
+#library(shiny)
+#library(jsonlite)
+#library(maptools)
+#library(ggplot2)
+#library(tidyr)
+library(dplyr)
+#library(purrr)
+library(leaflet)
+#library(plotly)
+library(sf)
+library(mapsf)
+library(mapview)
+#library(htmltools)
+```
+
+
+
+
+
+Column {data-width=700}
+-----------------------------------------------------------------------
+
+### Interventions énergie sites municipaux
+
+
+
+
+```{r}
+data <- st_read("../data/energie.gpkg", "secteur")
+openGST <- st_read("../data/socle2025.gpkg", "batOpenGST")
+ou <- names(table(data$Catégorie))
+# couleurs rouge / bleu / vert
+library(RColorBrewer)
+paletteType <- rev(brewer.pal(2, "Set1"))
+paletteOu <- rev(brewer.pal (14, "Set2"))
+palQui <- colorFactor(rev(paletteType), domain = c("Brahim", "Nordine" ))
+palOu <- colorFactor(rev(paletteOu), domain = ou)
+leaflet(options = leafletOptions(zoomControl = TRUE,
+                                 minZoom = 13, maxZoom = 18)) %>%  
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(data=data, group = "Qui",  opacity = 1,radius = 12, color = paletteType [2], fill = FALSE) %>% 
+  addCircles(data= data ,group = "Categorie", color = paletteOu [14], radius = 2, fillOpacity = 1) %>% 
+  addCircles(data = openGST, group = "Categorie") %>% 
+  addLegend("topright", palQui, values = c("Nordine", "Mahi"),
+            title = "Intervenant") 
+```
+
+
+
+
+Column {data-width=300 .tabset}
+-----------------------------------------------------------------------
+
+
+
+### Avertissement
+
+#### Type de bâtiments
+
+14 types de bâtiment.
+
+
+```{r}
+table(data$Catégorie)
+```
+
+
+
+
+#### Lien avec openGST
+
+
+
+```{r}
+tab <- table(openGST$Type)
+```
+
+#### Source
+
+fichier énergie ou OpenGST ?
+
+
+
+```{r}
+
+```
+
+
+
+
+
+### Nombre d'interventions
+
+
+```{r}
+knitr::kable(tab, col.names = c("Année", "Nb"))
+```
+
+
+### Historisation
+
+
+
+```{r}
+knitr::kable(tab, col.names = c("Année", "Nb"))
+```
+
+
+#### Rappel
+
+Il peut y avoir plusieurs véhicules par accident corporel, et il y a des accidents corporels dont le véhicule n'est pas précisé.
+
+
+
+```{r}
+knitr::kable(tab)
+```
+
+
+
+
+
+
+
+

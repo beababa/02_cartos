@@ -1,0 +1,243 @@
+---
+title: "carto DPU M3 Plui"
+author: "B. Maranget"
+date: "15/10/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Extraction rues DPU et DPU R
+
+```{r}
+library(sf)
+library(mapsf)
+library(mapview)
+```
+
+
+Les couches de bases se trouvent dans trois .gpkg, limitesSocle, cadastre, et plui
+
+le cadastre est issu des couches de sqlite cadastre2024 (à mettre à jour avec cadastre2025)
+
+# Données
+
+```{r}
+#bondy <- st_read("../data/limitesSocle.gpkg", "bondy", quiet=F)
+# plutôt limites
+st_layers("../data/limitesSocle.gpkg")
+st_layers ("../data/gros/cadastre.gpkg")
+st_layers("../data/pluiM3OLD3.gpkg")
+cadastre <- st_read("../data/gros/cadastre.gpkg", "parcelle_info")
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+dpu <- st_read("../data/pluiM3OLD3.gpkg", "M3_INFO_SURF")
+dpt <- dpu [dpu$TXT == "Bondy",]
+dpu <- dpu [grep("Droit de",dpu$LIBELLE), ]
+# carto
+mf_map(dpu, type = "typo", var ="LIBELLE", border = NA)
+mf_layout("DPU Bondy M3", "PLUi M3\nOctobre 2025")
+dpu <- dpu [,c("LIBELLE")]
+mapview(dpu, popup = FALSE)
+```
+
+On télécharge la ban en .csv (mise à jour régulière)
+
+```{r}
+url <- "https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-93.csv.gz"
+download.file(url, "../data/ban.csv")
+ban <- read.csv2("../data/ban.csv", fileEncoding = "UTF-8", dec = ".")
+head(ban)
+ban <- ban [ban$code_postal == '93140',]
+```
+
+
+```{r}
+ban <- st_as_sf(ban, coords = c("x", "y"), crs = 2154)
+st_write(ban, "../data/ban.gpkg", "ban", delete_layer = T)
+```
+
+# Leaflet
+
+
+```{r}
+library(leaflet)
+library(webmap)
+```
+
+
+Rajout couche parcelle et champs de recherche adresse
+
+
+```{r}
+parcelle <- cadastre [, c("code")]
+parcelle4326 <- st_transform(parcelle, 4326)
+section <- st_read("../data/gros/cadastre.gpkg", "section")
+section <- section [, c("tex")]
+mapview(section)
+```
+
+
+On peut prendre également la couche parcelle cadastrale en WMTS
+
+
+
+```{r}
+dpu$LIBELLE <- gsub( "urbain$", "simple", dpu$LIBELLE)
+dpu4326 <- st_transform(dpu,4326)
+```
+
+
+
+```{r}
+factpal <- colorFactor(c("blue", "green"), dpu$LIBELLE)
+```
+
+
+```{r}
+leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
+  addPolygons(data=dpu4326, color = ~factpal(LIBELLE), weight = 8 )  %>%
+  addLegend(data=dpu, pal=factpal, values = ~LIBELLE, title = NULL, opacity = 1)
+```
+
+
+```{r}
+basemap <- leaflet() %>% addProviderTiles(providers$CartoDB.Positron,options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
+  addPolygons(data=dpu4326, color = ~factpal(LIBELLE), weight = 8 )  %>%
+  addLegend(data=dpu, pal=factpal, values = ~LIBELLE, title = NULL, opacity = 1) %>% 
+  addPolygons(data=parcelle4326, color = "black", weight = 0.5,
+              label=~code, group = "parcelles") 
+ 
+  
+```
+
+
+```{r}
+grep("ign",providers)
+parcelle4326$code <- gsub("^ ", "", parcelle4326$code)
+centre_parcelle4326 <- st_centroid(parcelle4326)
+```
+
+
+
+```{r}
+ban10 <- head(ban)
+make_map(basemap)
+```
+
+
+```{r}
+make_map(maps = "OSM")|>
+  leaflet::addPolygons(
+    data=parcelle4326, 
+    color = "black", 
+    weight = 0.5,
+    label=~code 
+    )|> 
+  leaflet::addPolygons(
+     data=dpu4326, 
+     color = ~factpal(LIBELLE), 
+    )|>
+leaflet::addLabelOnlyMarkers(
+    lng = ~lon,
+    lat = ~lat,
+    group = "ban",
+    label = paste0(~numero, " ", ~nom_voie),
+    data=ban
+) |>
+add_search_button(
+  group = "ban",
+  property_name = "label",
+  text_placeholder = "Recherche adresse..."
+) |>
+  leaflet::addLegend(
+    data=dpu, 
+    pal=factpal, 
+    values = ~LIBELLE, 
+    title = NULL, 
+    opacity = 1)
+```
+
+
+```{r}
+str(ban)
+ban$adresse <- paste0(ban$numero, " ", ban$rep, " ", ban$nom_voie )
+ban10 <- ban [c(1:10),]
+ban10 <- st_as_sf(ban10, coords = c("lon", "lat"), crs = 4326)
+ban10
+mf_map(ban10)
+```
+
+Exemple de départ
+
+```{r}
+make_map(maps = "Topo") |>
+  leaflet::addLabelOnlyMarkers(
+    lng = ~lng,
+    lat = ~lat,
+    label = ~name,
+    group = "marker",
+    data = us_cities
+  ) |>
+  add_search_button(
+    zoom = 15,
+    group = "marker",
+    text_placeholder = "Search city names..."
+  )
+```
+
+```{r}
+us_cities
+```
+
+
+```{r}
+make_map(maps = "OSM")|>
+  leaflet::addPolygons(
+     data=dpu4326, 
+     color = ~factpal(LIBELLE)
+    ) |>
+
+  leaflet::addLegend(
+    data=dpu, 
+    pal=factpal, 
+    values = ~LIBELLE, 
+    title = NULL, 
+    opacity = 1
+  ) |>
+  leaflet::addPolygons(
+    data=parcelle4326, 
+    color = "black", 
+    weight = 0.5,
+    label=~code 
+    )|>
+leaflet::addLabelOnlyMarkers(
+    lng = ~lon,
+    lat = ~lat,
+    group = "ban",
+    label =  ~adresse,
+    data=ban
+    )|>
+add_search_button(
+  group = "ban",
+  property_name = "label",
+  zoom = 40,
+  text_placeholder = "Recherche adresse...")
+
+```
+
+

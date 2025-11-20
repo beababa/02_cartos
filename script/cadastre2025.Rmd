@@ -37,7 +37,6 @@ library(mapsf)
 # Chemin data
 
 
-```{r, eval = T}
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 #chemin <- "G:/Mon Drive/05_DATA"
 # changer le chemin chaque année
@@ -49,20 +48,21 @@ cadastre <- "03_SOCLE/cadastre2025/cadastre2025.sqlite"
 
 ```{r}
 # lecture du fichier
-cadastre <- st_read(paste0(chemin,"/03_SOCLE/cadastre2025/cadastre2025.sqlite"), "parcelle_info")
+cadastre <- st_read(paste0(chemin,"/03_SOCLE/cadastre2025.sqlite"), "parcelle_info")
+# verif champs adresse
 cadastre$adresse
 ```
 
 
 ```{r}
-st_layers("../data/cadastre.gpkg")
-couches <- (st_layers("../data/cadastre.gpkg"))
+st_layers("../data/gros/cadastre.gpkg")
+couches <- (st_layers("../data/gros/cadastre.gpkg"))
 couches <- couches$name
 
 #couches importantes : 1, 9,14
 i <- 3
 for (i in c(1, length(couches))) {
-  tmp <- st_read("../data/cadastre.gpkg", couches [i])
+  tmp <- st_read("../data/gros/cadastre.gpkg", couches [i])
   assign(couches [i], tmp)
   st_write(tmp, "../data/cadastreBase.gpkg", couches [i], delete_layer = T)
 }
@@ -78,7 +78,6 @@ parcelle_info
 adresse
 
 ```{r}
-parce
 cadastre$adresse
 ```
 

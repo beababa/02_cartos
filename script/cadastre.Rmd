@@ -47,18 +47,18 @@ library(mapsf)
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 #chemin <- "G:/Mon Drive/05_DATA"
 # changer le chemin chaque année
-chCadastre <- "03_SOCLE/cadastre2025d.sqlite"
+chCadastre <- "03_SOCLE/cadastre2025.sqlite"
 ```
 
 
 Verif cadastre.gpkg
 
 ```{r}
-couches <- (st_layers("../data/cadastre.gpkg"))
+couches <- (st_layers("../data/gros/cadastre.gpkg"))
 couches <- couches$name
 #couches importantes : 1, 9,14
 for (i in c(1:length(couches))){
-  tmp <- st_read("../data/cadastre.gpkg", couches [i])
+  tmp <- st_read("../data/gros/cadastre.gpkg", couches [i])
   assign(couches [i], tmp)
   st_write(tmp, "../data/cadastreBase.gpkg", couches [i], delete_layer = T)
 }
@@ -77,7 +77,7 @@ objectif : faire une carte de flux.
 ```{r}
 section <- st_read(paste0(chemin, cadastre), "geo_section")
 section$dest <- c(section$tex [-1],"")
-st_write (section, "../data/cadastre.gpkg", "section", delete_layer = T)
+st_write (section, "../data/gros/cadastre.gpkg", "section", delete_layer = T)
 pts <- st_centroid(section)
 st_coordinates(pts) [,"X"]
 section
@@ -135,7 +135,7 @@ tmp <- strsplit(proprio, split= "\\-")
 proprio <- sapply(tmp, "[",2)
 proprio <- gsub("^ | $",x =  proprio, "")
 cadastre$proprio <- proprio
-st_write(cadastre, "../data/cadastre.gpkg", "proprio2025", delete_layer = T)
+st_write(cadastre, "../data/gros/cadastre.gpkg", "proprio2025", delete_layer = T)
 ```
 
 
@@ -158,7 +158,7 @@ agg <- aggregate(cadastre [, ("proprio")], by = list(cadastre$proprio), length)
 # on passe de 7028 à 5476
 names(agg)[1:2] <- c("nom", "nb_parcelles")
 agg$nom <- gsub("^\\s+|\\s+$", "", agg$nom)
-st_write(agg, "../data/cadastre.gpkg", "agg", delete_layer = T)
+st_write(agg, "../data/gros/cadastre.gpkg", "agg", delete_layer = T)
 ```
 
 repères : gros mouvement de concentration !
@@ -166,6 +166,8 @@ repères : gros mouvement de concentration !
 7089 à 5469 2022
 
 7094 à 5443 2023
+
+7126 à 5427 2025
 
 ```{r}
 repere <- read.table("../data/cadastre.csv", header =  T, row.names = 1, sep = ";", fileEncoding = "UTF-8")
@@ -224,7 +226,7 @@ table(parcellesMairie$parcelle_batie, useNA = "always")
 names(inter)
 inter <- inter [,c("code", "Title", "adresse","categorie"), drop=T]
 joint <- merge(parcellesMairie [,c("code", "adresse", "parcelle_batie")], all.x=T ,inter, by="code")
-st_write(joint, "../data/cadastre.gpkg", "parcelleMairie", delete_layer = T)
+st_write(joint, "../data/gros/cadastre.gpkg", "parcelleMairie", delete_layer = T)
 ```
 
 
@@ -261,11 +263,11 @@ proprio$nom
 proprio [proprio$categorie == 9,]
 # 19307 / 19468 proprios répertoriés
 jointure <- merge(agg, proprio, by = "nom", all.x = T)
-st_write(jointure, "../data/cadastre.gpkg", "pmorale", delete_layer = T)
+st_write(jointure, "../data/gros/cadastre.gpkg", "pmorale", delete_layer = T)
 ```
 
 5427 en jointure seulement.
-
+5558
 
 
 https://www.collectivites-locales.gouv.fr/sites/default/files/migration/ffs_2020_proprietaires.pdf

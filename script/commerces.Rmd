@@ -29,6 +29,7 @@ Recodage commerces pour établir cartographie plus simple
 
 ```{r}
 library(sf)
+library(mapsf)
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 ```
 
@@ -58,7 +59,7 @@ names(jointure)
 On fait une carte typologique par catégorie d'enseigne.
 
 ```{r}
-
+mf_map(jointure)
 ```
 
 

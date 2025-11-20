@@ -140,9 +140,10 @@ data <- st_zm (data, drop = T)
 
 ```{r}
 cheminPhoto <- paste0(chemin, "2m/")
-cheminPhoto
+cheminPhoto <- "c:/Users/bmaranget/Pictures/"
 photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg")
 photo
+photo <- photo [9:10]
 ```
 
 
@@ -187,7 +188,8 @@ file_names <- list.files(path.expand(chemin), pattern = "*.JPG")
 test <- lireMeta(file_names)
 test$FileModifyDate
 grep("ude", names(test))
-grep("GPS", names(test))
+grep("X", names(test))
+test [54,] 
 ```
 
 pas de long lat, ni de GPS grrrr

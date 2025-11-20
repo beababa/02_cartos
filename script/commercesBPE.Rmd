@@ -54,7 +54,7 @@ On fait une carte typologique par catégorie d'enseigne.
 commerceSel <- commerce [commerce$DEPCOM == '93010',]
 commercesf <- st_as_sf(commerceSel, coords = c("LAMBERT_X", "LAMBERT_Y"), crs = 2154)
 mf_map(commercesf)
-st_write(commercesf,"../data/commerces.gpkg","BPE2021")
+st_write(commercesf,"../data/commerces.gpkg","BPE2021", delete_layer = T)
 ```
 
 table d'équivalences
@@ -74,4 +74,36 @@ mf_map(commerce, type = "typo", var = "LIB_TYPEQU")
 str(commerce)
 ```
 
+# Liste en interne
+
+```{r}
+epicerie <- read.csv("../data/epicerie.csv", sep = "-", header = F )
+write.csv(epicerie, "../data/epicerie2.csv", row.names = F)
+```
+
+
+On corrige sous libre office
+
+
+```{r}
+commerce <- read.csv("../data/epicerie3.csv")
+commerce$cp <- "93140"
+library(banR)
+geoc <- geocode_tbl(commerce, adresse = adresse, code_postal = cp)
+geoc_sf <- st_as_sf(geoc, coords = c("longitude", "latitude"), crs = 4326)
+mf_map(geoc_sf)
+mf_label(geoc_sf, var = "nom", overlap = F)
+st_write(geoc_sf, "../data/commerce.gpkg", "epicerieXY")
+```
+
+Avec Dorling
+
+```{r}
+library(cartogram)
+data <- st_transform(geoc_sf, crs = 2154)
+dorl<-cartogram_dorling(
+  data, k = 5,
+  m_weight = 1, itermax = 1000
+)
+```
 

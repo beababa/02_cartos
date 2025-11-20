@@ -15,7 +15,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(cache = TRUE)
 # Passer la valeur suivante à TRUE pour reproduire les extractions.
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(eval = TRUE)
 knitr::opts_chunk$set(warning = FALSE)
 ```
 
@@ -41,15 +41,19 @@ library(mapsf)
 ```
 
 
+# Data
+
 ```{r}
-st_layers("../data/avignon.gpkg")
+st_layers("../data/gros/avignon.gpkg")
 ```
 
 ```{r}
-pmorale <- st_read("../data/avignon.gpkg", "pmorale")
+pmorale <- st_read("../data/gros/avignon.gpkg", "pmorale")
 mf_map(pmorale)
 ```
 
+
+# Traitement : aire parcelle
 
 ```{r}
 pmorale <- st_transform(pmorale, 2154)
@@ -62,10 +66,17 @@ grosFoncier <- pmorale [pmorale$aire > 1,]
 hist(grosFoncier$aire, col ="coral", border = NA, ylab = " ", xlab="aire (ha)", main = "Grosses parcelles, 60 obs")
 mf_map (pmorale [pmorale$aire > 0.9,], border = NA)
 mf_layout("Foncier : parcelles de plus d'1 hac", "data.gouv\nOct 2025")
-# densite
+```
+
+
+
+# Densité
+
+
+```{r}
 grille <- st_make_grid(pmorale, 1000)
-mf_map(grille, add =T)
-class(grille)
+mf_map(grille)
+mf_map (pmorale [pmorale$aire > 0.9,], border = NA, add = T)
 num <- seq(1,130)
 grille <- st_as_sf(data.frame(grille, num))
 inter <- st_intersection(grille, pmorale [, c("code")])
@@ -74,17 +85,19 @@ names(agg) [1:2] <- c("num", "nb")
 agg <- st_drop_geometry(agg)
 jointure <- merge(grille, agg [, c("num", "nb")], by="num")
 hist(jointure$nb)
-mf_map(jointure, var = "nb", type = "choro", breaks = c(0,40,100,140) , nbreaks = 3,border = NA, pal = "Teal")
-mf_map(bat, add = TRUE, pch = 20, cex = 0.3 )
 ```
 
 
 ```{r}
+grosBat <- st_read("../data/gros/avignon.gpkg","grosBat")
 bat <- st_read("../data/batAvignon.geojson")
 bat <- st_transform(bat, 2154)
-names(bat)
 bat <- bat [, c("name", "building", "alt_name")]
-
+bat <- st_centroid(bat)
+mf_map(jointure, var = "nb", type = "choro", breaks = c(0,40,100,140) , nbreaks = 3,border = NA, pal = "Teal")
+mf_map(bat, add = TRUE, pch = 20, cex = 0.3 )
+mf_layout("Densité nombre bâtiments mairie d'Avignon", "cadastre opendata, 2025")
+bat <- bat [, c("name", "building", "alt_name")]
 bat <- st_centroid(bat)
 grosBat <- st_intersection(grosBat, bat)
 grosBat <- grosBat [, c("name", "building", "code", "aire", "alt_name")]
@@ -96,6 +109,11 @@ mf_label(grosBat, var = "name", overlap = F)
 st_write(grosBat, "../data/avignon.gpkg", "grosBat", delete_layer = T)
 ```
 
+```{r}
+grosBat <- st_read("../data/gros/avignon.gpkg","grosBat")
+mf_map(grosBat, col = "red", add = T)
+mf_label(grosBat, "alt_name")
+```
 
 
 

@@ -44,6 +44,7 @@ les photos dans photos/ril
 
 
 ```{r , eval=TRUE}
+library(mapview)
 library(dplyr)
 #library(ggplot2)
 library(leaflet)
@@ -65,6 +66,7 @@ library(mapsf)
 library(tibble)
 library(tidyr)
 library(exiftoolr) # metadonnées photo
+library(magick)
 ```
 
 
@@ -74,7 +76,7 @@ library(exiftoolr) # metadonnées photo
 ```{r}
 chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/11_RIL/"
 cheminSocle <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
-cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/"
+cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/rorcal2025/octobre/"
 cheminPhoto <- "D:/TELETRAVAIL/2024_04_18/ril/"
 cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
 ```
@@ -89,7 +91,7 @@ cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
 On récupère les waypoints (la 1e couche par défaut) uniquement
 
 ```{r}
-fic <- list.files(cheminGPX, "*MARS-24.gpx")
+fic <- list.files(cheminGPX, "OCT-25.gpx|NOV-25.gpx")
 trace <- NULL
 for (f in fic) {
   tmp <- st_read(paste0(cheminGPX,f), "waypoints")
@@ -97,7 +99,7 @@ for (f in fic) {
 }
 # enlever l'altitude
 trace <- st_zm (trace, drop = T)
-st_write(trace,"../data/ril2024.gpkg", "rilMars2024Trace", delete_layer=T)
+st_write(trace,"../data/ril2025.gpkg", "rilNov2025Trace", delete_layer=T)
 ```
 
 
@@ -105,24 +107,26 @@ Première carto
 
 ```{r}
 trace 
-png("../img/ptRIL2024.png")
+png("../img/ptRIL2025.png")
 mf_init(trace)
-fond()
+#fond()
 mf_map(trace, add = T)
 mf_label(trace, var ="name", overlap = F , halo = T, cex = 1)
-mf_layout("Points GPS sorties RIL", "recup avril 2024")
+mf_layout("Points GPS sorties RIL", "recup oct nov 2025")
 dev.off()
 ```
 
 
+![](../img/ptRIL2025.png)
 
 concaténation de tous les waypoints dans le ril2024.gpkg       
 
 ```{r}
-st_layers("../data/ril2024.gpkg")
-trace <- st_read("../data/ril2024.gpkg", "rilMars2024Trace")
+st_layers("../data/ril2025.gpkg")
+trace <- st_read("../data/ril2025.gpkg", "rilNov2025Trace")
 ```
 
+67
 
 Verif date et heure au cas échéant
 
@@ -148,7 +152,8 @@ Cette seconde classe permet de représenter les dates également, mais en tennan
 ```{r}
 photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg|*.JPG")
 ```
-72 photos
+
+60 photos (le répertoire est spécifique à chaque campagne RIL)
 
 
 ## Récup métadonnées photo
@@ -167,6 +172,9 @@ test$SourceFile
 
 
 mais date sur le modify date. il faut sauvegarder nom photo et modify date
+
+
+# Photo avec GPS intégré
 
 
 ```{r}
@@ -198,13 +206,11 @@ Autre essai : appareil photo
 
 
 ```{r}
-chemin <- "C:/Users/bmaranget/Pictures/photo/"
-file_names <- list.files(path.expand(chemin), pattern = "*.JPG")
-test <- lireMeta(file_names)
-test$FileModifyDate
 grep("ude", names(test))
 grep("GPS", names(test))
-test <- test [test$Make!="HUAWEI",]
+names(test)
+names(test) [grep("GPS", names(test))]
+test [,"GPSVersionID"]
 ```
 
 pas de long lat, ni de GPS grrrr
@@ -212,55 +218,140 @@ pas de long lat, ni de GPS grrrr
 mais date sur le modify date.
 
 
-# Jointure equiv et data
+# Règlages heure GPX et appareil photo
+
+```{r}
+photoMeta <- test
+photoMeta <- photoMeta [, c("FileName", "SourceFile", "FileModifyDate")]
+table(substring(photoMeta$FileModifyDate,1,10))
+```
+
+4 jours de campagne terrain
 
 
-Jointure equiv et trace
+## Réduction taille photo
+
+On stocke dans rep photo du projet / on en profite pour renommer selon le thème (ril / fo)
+
+```{r}
+i <- 1
+for (i in  c(1:length(photoMeta$FileModifyDate))){
+  nom <- photoMeta$FileName [i]
+  img <- image_read(photoMeta$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "200")
+  image_write(img2, path = paste0("../photo/ril_", nom), format = NULL, quality = NULL,
+              depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
+  photoMeta$nom [i] <- paste0("../photo/ril_", nom)
+}
+```
+
+Jour et herue
+
+```{r}
+photoMeta$jour <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d" )
+photoMeta$heure  <- as.POSIXct(photoMeta$FileModifyDate, format="%Y:%m:%d %H:%M:%S", tz = "CET")
+photoMeta$nom
+```
+
+
+calcul différence entre les 2 dates
+
+
+On recherche la photo d'un lieu connu / et on couple avec le point
+
+pt 954 et IMG_1179.JPG
+
+
+```{r}
+photo1 <- photoMeta [photoMeta$FileName == "IMG_1179.JPG",]
+pt1 <- trace [trace$name == "954",]
+```
+
+5 rue des ormes
+
+```{r}
+mapview(trace)
+```
 
 
 
 ```{r}
-joint <- merge(data, equiv, by.x = "name", by.y="GPS")
-# 2 pts perdus
-setdiff(data$name, joint$name)
-equiv$GPS
-# pas de doublons
-table(data$name)
-png("../img/mobUrbain2m.png")
-mf_init(joint)
-fond()
-mf_map(joint, add =T)
-
-mf_label(joint, var="TERRAIN", halo = T, overlap= F, cex = 1)
-mf_layout("Mobilier urbain 2m²", "trace GPS\nDéc 2023")
-dev.off()
+dif <- photo1$heure - pt1$time 
+class(photo1$heure)
+class(pt1$time)
+dif
 ```
 
-![](../img/mobUrbain2mAvt.png)![](../img/mobUrbain2m.png)
-
-Vérif
-
-2 points 193
-
-```{r, eval=FALSE}
-pt <- data [data$name %in% c(193,194,195),]
-png("../img/pointGPS.png")
-mf_init(st_buffer(pt,500))
-fond()
-mf_map(pt, add =T)
-mf_label(pt, var = "name", halo = T)
-mf_layout ("pb PTS Av Galliéni", "pts GPS\ndéc 2023")
-dev.off()
-```
-
-![](../img/pointGPS.png)
-
-Enregistrement
+54.05 mn diff entre le gps et l'appareil photo. Attention, 27*60 pourles calculs 
 
 ```{r}
+dif <- 54.05*60
+photo1$heure == pt1$time + dif
+photo1$heure
+pt1$time + dif
+photoMeta$heureAjustee <- photoMeta$heure - ( dif )
+class(photoMeta$heureAjustee)
+photoMeta [, c("heure", "heureAjustee")]
+```
+
+On cherche la différence minimum entre l'heure ajustée et l'heure du wp
+
+test sur la photo 1
+
+```{r}
+ind <- (which.min(abs(difftime(photoMeta$heureAjustee [1], trace$time))))
+trace [ind,]
+photoMeta$heureAjustee [1]
+```
+
+
+```{r}
+p <- photoMeta$heureAjustee
+# pour éviter d'utiliser deux fois la même photo, on va supprimer les
+# photos au fur et à mesure
+photoMetaBoucle <- photoMeta
+trace$timePhoto <- NA
+for (p in photoMeta$heureAjustee){
+  # c'est une heure
+  # indice de ligne du vecteur de difference de tmps entre les deux prise
+  print(abs(difftime(p,trace$time)))
+  tmp <- which.min(abs(difftime(p,trace$time)))
+  print(tmp)
+  # c'est à dire lg photo
+  # on récupère l'heure de la photo ds la table des wp
+  # cas de pl photos sur un meme pt
+  if (is.na (trace$timePhoto [tmp])){
+    trace$timePhoto [tmp] <- p
+  } else {
+    # on rajoute un pt 
+    tmp2 <- length (trace$timePhoto)+1
+    trace <- rbind(trace , trace[tmp,])
+    trace$timePhoto [tmp2] <- p
+  }
+  # pour éviter que la photo soit reprise, on supprime la photo
+  photoMetaBoucle <- photoMetaBoucle [-tmp,]
+}
+length(trace$timePhoto[!is.na(trace$timePhoto)])
+# il y a bien60 photos
+
+```
+
+
+Jointure
+
+
+
+```{r}
+joint <- merge(trace [, c("time", "name", "timePhoto")], photoMeta, by.x = "timePhoto", by.y="heureAjustee")
 names(joint)
-st_write(joint,"../data/mobPublicitaire.gpkg", "2m", append = F)
+# enregistrement
+st_write(joint [, c("timePhoto", "time", "name", "FileName", "nom")], "../data/ril2025.gpkg", "jointure", delete_layer = T) 
+mapview(joint)
 ```
+
+
+Verif leaflet
+
 
 
 # Leaflet
@@ -272,35 +363,64 @@ Il s'agit maintenant de récupérer les photos et de projeter en leaflet
 pour mémoire, les photos sont dans file_names
 
 ```{r}
-joint$chemin <- paste0(cheminPhoto, joint$PLAN, ".jpg")
-joint$chemin
-st_write(joint,"../data/mobPublicitaire.gpkg", "2m", append=F)
+data <- st_read("../data/ril2025.gpkg", "jointure")
+data
 ```
 
-Icone appareil photo
 
-```{r}
-curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_and_leaflet_map/240px-Icone_appareil_photo.png",
-                    destfile = "../img/240px-Icone_appareil_photo.png")
-```
 
 ```{r, eval=TRUE}
-cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
 
-data <- st_read("../data/ril2024.gpkg", "photoMetaAvril")
 data <- st_transform(data, crs = 4326)
 data$name <- rownames(data)
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
-  addPopupImages(data$SourceFile, group = "photos", width = 500) 
+  addMarkers(data = data, label = ~name, group = "photos") %>%
+  addPopupImages(data$nom, group = "photos", width = 200) 
+```
 
-data <- st_read("../data/mobPublicitaire.gpkg", "2m")
-data <- st_transform(data, crs = 4326)
+
+On superpose avec la couche ril
+
+
+```{r}
+ril <- st_read("../data/ril2025.gpkg", "octobre")
+ril <- st_transform (ril, 4326)
 leaflet() %>%
   addProviderTiles("OpenStreetMap.France") %>%
-  addMarkers(data = data, label = ~name, group = "photos", icon = ~cameraIcon) %>%
-  addPopupImages(data$chemin, group = "photos", width = 500) 
-
+  addMarkers(data = data, label = ~name, group = "photos") %>%
+  addPopupImages(data$nom, group = "photos", width = 200) %>% 
+  addCircleMarkers(data = ril, label = ~libelle)
 ```
+
+
+# Récup adresse photo
+
+ril a l'adresse
+data a le chemin photo
+
+```{r}
+mf_map(st_buffer(ril,30))
+mf_map(data, add = T)
+inter <- st_intersection(st_buffer(ril,30), data )
+inter <- inter [, c("numero","repetition","type_voie","libelle","nombre_logements","nom.1","FileName")]
+```
+
+
+```{r}
+mapview(data)
+```
+
+# Récuperer les photos sans points
+
+# Archivage des données
+
+
+Pour afficher les photos dans l'atlas Qgis, on utilise la fonction overlaynearest
+
+entre la couche cible photos et le champs photo qui indique le chemin de la photo
+
+il existe de nombreuses couches photos
+
+L'idée est de concaténer afin de récupérer toutes les photos dans un seul fichier photo.gpkg (qui ne contient que des liens pour mémoire)
 

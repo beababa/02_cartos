@@ -1,0 +1,112 @@
+---
+title: "Energie"
+date: "10/11/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Objet
+
+Le service Energie demande l'exploitation de son fichier.
+
+
+•	Classification par catégorie et secteur des équipements (écoles, gymnases, bâtiments administratifs, etc.)
+
+•	Différenciation par couleur selon les deux agents responsables
+
+•	Suivi des interventions périodiques et historique des actions sur l’énergie, l’eau et les fluides
+
+•	Ajout d’annotations, photos et documents par site
+
+•	Filtres et recherche avancée pour faciliter la consultation
+
+•	Possibilité d’historiser et planifier les interventions
+
+OpenGST peut répondre à ces demandes. Il s'agit donc d'une bonne opportunité pour questionner l'utilisation du logiciel et l'export sous forme de carte interactive.
+
+
+
+
+# Librairies et chemin
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = FALSE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+library(flexdashboard)
+#library(shiny)
+#library(jsonlite)
+#library(maptools)
+#library(ggplot2)
+#library(tidyr)
+library(dplyr)
+#library(purrr)
+library(leaflet)
+#library(plotly)
+library(sf)
+library(mapsf)
+library(mapview)
+#library(htmltools)
+```
+
+
+```{r setup, include=FALSE}
+rep <- "/03_SIG/03_03_Data/"
+chemin <-  paste0(Sys.getenv('HOME'), rep)
+data <- read.csv2(paste0(chemin, "27_ENERGIE/secteur.csv"))
+openGST <- read.csv2(paste0(chemin, "03_SOCLE/opengst-SiteREF.csv"))
+```
+
+```{r}
+# comme il y a des adresses géocodage mais à terme pb bat
+library(banR)
+adresses <-  tibble::tibble(
+  x= data$Adresse,
+  y = "93140"
+)
+res <- geocode_tbl(tbl = adresses, adresse = x, code_postal = y)
+res <- res [!is.na(res$longitude),]
+res <- st_as_sf(res, coords = c("longitude", "latitude"), crs = 4326)
+mapview(res)
+```
+
+
+
+```{r}
+jointure <- merge(res [,"x"], data, by.x = "x", by.y= "Adresse")
+st_write(jointure, "../data/energie.gpkg", "secteur", delete_layer = T)
+data <- st_read("../data/energie.gpkg", "secteur")
+```
+
+pour OpenGST
+
+```{r}
+# comme il y a des adresses géocodage mais à terme pb bat
+library(banR)
+openGST$x <- paste0(openGST$Street, ' ', openGST$Street2)
+adresses <-  tibble::tibble(
+  x= openGST$x,
+  y = "93140"
+)
+res <- geocode_tbl(tbl = adresses, adresse = x, code_postal = y)
+res <- res [!is.na(res$longitude),]
+res <- st_as_sf(res, coords = c("longitude", "latitude"), crs = 4326)
+mapview(res)
+```
+
+
+
+```{r}
+jointure <- merge(res [,"x"], openGST, by= "x")
+jointure <- jointure [, c("x", "id", "Nom", "Street2", "Street", "Type", "Floor.surface")]
+st_write(jointure, "../data/socle2025.gpkg", "batOpenGST", delete_layer = T)
+```
+

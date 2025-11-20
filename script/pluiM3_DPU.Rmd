@@ -1,0 +1,296 @@
+---
+title: "carto DPU M3 Plui"
+author: "B. Maranget"
+date: "15/10/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Extraction rues DPU et DPU R
+
+```{r}
+library(sf)
+library(mapsf)
+library(mapview)
+```
+
+
+Les couches de bases se trouvent dans trois .gpkg, limitesSocle, cadastre, et plui
+
+le cadastre est issu des couches de sqlite cadastre2024 (à mettre à jour avec cadastre2025)
+
+# Données
+
+```{r}
+#bondy <- st_read("../data/limitesSocle.gpkg", "bondy", quiet=F)
+# plutôt limites
+st_layers("../data/limitesSocle.gpkg")
+st_layers ("../data/cadastre.gpkg")
+st_layers("../data/pluiM3OLD3.gpkg")
+cadastre <- st_read("../data/cadastre2024.gpkg", "parcelle_info")
+bondy <- st_read("../data/cadastre2024.gpkg", "bondy")
+dpu <- st_read("../data/pluiM3OLD3.gpkg", "M3_INFO_SURF")
+dpu <- dpu [grep("Droit de",dpu$LIBELLE) & dpu$TXT == 'Bondy', ]
+# carto
+mf_map(dpu, type = "typo", var ="LIBELLE", border = NA)
+mf_layout("DPU Bondy M3", "PLUi M3\nOctobre 2025")
+dpu <- dpu [,c("LIBELLE")]
+mapview(dpu, popup = FALSE)
+```
+
+On télécharge la ban en .csv (mise à jour régulière)
+
+```{r}
+url <- "https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-93.csv.gz"
+download.file(url, "../data/ban.csv")
+ban <- read.csv2("../data/ban.csv", fileEncoding = "UTF-8")
+head(ban)
+ban <-ban [ban$code_insee == 93010, c("numero", "nom_voie", "rep")]
+```
+
+
+```{r}
+ban <- st_as_sf(ban, coords = c("x", "y"), crs = 2154)
+st_write(ban, "../data/ban.gpkg", "ban", delete_layer = T)
+```
+
+8316 pts
+
+# Intersection DPUR et rues
+
+Comme on n'a pas les rues (à retrouver, j'ai dû faire un rep gros)
+
+```{r}
+inter <- st_intersection(ban [, c("numero", "nom_voie", "rep")], dpu [dpu$LIBELLE == "Droit de preemption urbain renforce", "geom"])
+inter
+mf_map(dpu, type = "typo", var ="LIBELLE", border = NA)
+mf_map(inter, add = T)
+mf_layout("DPU Bondy M3", "PLUi M3\nOctobre 2025")
+```
+
+```{r}
+length(inter$numero)
+```
+
+
+555 points
+
+# Agregation numéros
+
+Si on veut uniquement partir de l'intersection de la frontière
+
+
+```{r}
+aggMin <- aggregate(inter [,c("numero", "rep"), drop = T], by = list(inter$nom_voie), min)
+aggMax <- aggregate(inter [,c("numero", "rep"), drop = T], by = list(inter$nom_voie), max)
+aggMax
+names(aggMin) <- c("nom_voie", "numero", "rep")
+aggMin$etendue <- "min"
+names(aggMax) <- c("nom_voie", "numero", "rep")
+aggMax$etendue <- "max"
+jointureMin <- st_as_sf(merge(aggMin, inter, by = c("nom_voie", "numero","rep")))
+jointureMax <-st_as_sf(merge(aggMax, inter, by = c("nom_voie", "numero", "rep")))
+jointure <- rbind(jointureMin, jointureMax)
+mf_map(jointure)
+mf_label(jointure, "numero")
+mapview(jointure)
+st_write(jointure, "../data/pluiM3OLD3.gpkg", "DPU_numeros", delete_layer = T)
+```
+
+67 à 52
+
+On supprime les numéros à la main.
+
+
+# Suppression numéros intérieurs
+
+
+Afin de diminuer le nombre de point, on travaille uniquement sur la zone frontière
+
+```{r}
+dpuR <- dpu [dpu$LIBELLE == "Droit de preemption urbain renforce",]
+dpuRg <- st_geometry(dpuR)
+# on reprend vignette sf
+centroid <- st_centroid(dpuRg)
+dpuR2 <- (dpuRg - centroid)*.75 + centroid
+mf_map(dpuR)
+mf_map(dpuR2, add = T, col = "wheat")
+```
+
+
+```{r}
+dpuR2 <- st_as_sf(dpuR2, crs =2154)
+diff <- st_difference(dpuR,dpuR2)
+mf_map(diff)
+```
+
+
+```{r}
+inter <- st_intersection(ban [, c("numero", "nom_voie", "rep")], diff)
+mf_map(inter)
+st_write(inter, "../data/pluiM3OLD.gpkg", "dpuPtInterPetit")
+```
+
+204
+
+On refait les aggrégations du dessus
+
+On passe de 67 à 52
+
+
+# Liste de toutes les rues
+
+Après avoir supprimé les numéros, on rassemble rues entières et rues partielles
+
+```{r}
+inter <- st_intersection(ban, dpuR2)
+mf_map(dpuR)
+mf_map(dpuR2, add = T, col = "wheat")
+mf_map(inter, add = T)
+rues <- inter [, c("nom_voie"), drop = T]
+rues <- unique(rues)
+rues
+```
+
+
+Lecture du DPU_numeros modifie
+
+```{r}
+modif <- st_read("../data/pluiM3OLD3.gpkg", "DPU_numeros_modif")
+```
+
+
+32
+
+
+Pair et impair
+
+
+```{r}
+modif$parite <- modif$numero %% 2
+modif$parite
+modif [order(modif$nom_voie),]
+```
+
+
+
+
+Concaténation rue entière et rue numérotée
+
+```{r}
+rues
+numero <- "rue entière"
+rep <- NA
+tot <- data.frame(rues, numero, rep)
+names(tot)[1] <- "nom_voie"
+modif <- modif  [, c("nom_voie", "numero", "rep"), drop= T]
+dpuPT <- rbind(modif, tot)
+# sauvegarde pour fonction epurer
+write.csv(dpuPT, "../data/dpu.csv", fileEncoding = "UTF-8", row.names = F)
+
+```
+
+64
+
+Filtre : si num existe alors on supprime la rue entière
+
+
+
+```{r}
+rue <- unique(dpuPT$nom_voie)
+```
+
+38
+
+```{r}
+# initialisation du fichier dpuEpure
+dpuPT <- read.csv("../data/dpu.csv", fileEncoding = "UTF-8")
+write.csv(dpuPT, "../data/dpuEpure.csv", row.names = F, fileEncoding = "UTF-8")
+r <- rue [1]
+epurer <- function(r){
+  # on lit le fichier modifié par la fonction
+  dpuLOC <- read.csv("../data/dpuEpure.csv", fileEncoding = "UTF-8")
+  tmp <- dpuPT [dpuPT$nom_voie== r & !is.na(tmp$nom_voie),]
+  length(tmp$nom_voie)
+  if (length(tmp$nom_voie > 1)) {
+    i <- which(dpuPT$nom_voie == r & dpuPT$numero == "rue entière")
+    write.csv(dpuPT [-i,], "../data/dpuEpure.csv", fileEncoding = "UTF-8", row.names = F)
+    print(r)
+    }
+}
+res <- lapply(rue, epurer)
+res <- read.csv("../data/dpuEpure.csv")
+```
+
+
+Recup du dpu modifie
+
+```{r}
+dpuModif <- read.csv("../data/dpuVerifie.csv", fileEncoding = "UTF-8")
+dpuModif <- dpuModif [dpuModif$verif != "non",]
+```
+
+59
+
+Alignement pair / impair
+
+
+```{r}
+dpuModif$parite <- ifelse(dpuModif$numero != 'rue entiere', as.integer(dpuModif$numero) %% 2, "pas de parité")
+dpuModif$parite
+```
+
+```{r}
+ldata <- split.data.frame(dpuModif, list(dpuModif$parite))
+pairs <- ldata [[1]]
+impairs <- ldata [[2]]
+lpairs <- split.data.frame(pairs, list(pairs$verif))
+max <- lpairs [[1]]
+min <- lpairs [[2]]
+pairs <- merge(min, max, by = "nom_voie")
+```
+
+
+```{r}
+limpairs <- split.data.frame(impairs, list(impairs$verif))
+max <- limpairs [[1]]
+min <- limpairs [[2]]
+impairs <- merge(min, max, by = "nom_voie")
+```
+
+```{r}
+rues <- rbind(pairs, impairs)
+rues <- rues [, c("nom_voie", "numero.x", "rep.x", "numero.y", "rep.y")]
+rues$numeros <- paste0(rues$numero.x, rues$rep.x, "-", rues$numero.y, rues$rep.y)
+rues <- rues [, c("nom_voie", "numeros")]
+ruesEntieres <- dpuModif [is.na(dpuModif$parite), c("nom_voie", "numero")]
+names(ruesEntieres) [2] <- "numeros"
+tot <- rbind(rues, ruesEntieres)
+write.csv(tot, "../data/rueDpuR.csv", row.names = F, fileEncoding = "UTF-8")
+```
+
+
+# Leaflet
+
+avec barre de recherches adresse
+
+```{r}
+
+```
+
