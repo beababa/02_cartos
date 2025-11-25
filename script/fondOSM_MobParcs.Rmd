@@ -1,7 +1,7 @@
 ---
-title: "fond des parcs pour parcs et jardins"
+title: "Abris bus version 2025"
 author: "B. Maranget"
-date: "11/01/2024"
+date: "25/11/2025"
 output: 
   html_document: 
     number_sections: yes
@@ -22,9 +22,7 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-saisie mobilier parcs et jardins (bancs et poubelles), faire correspondre aux photos.
-
-81 wp et 43 photos
+spatialisation du fichier pour envoi au prestataire poubelle de flux.
 
 
 
@@ -36,18 +34,10 @@ saisie mobilier parcs et jardins (bancs et poubelles), faire correspondre aux ph
 
 
 ```{r , eval=TRUE}
-#(dplyr)
-#library(ggplot2)
 library(leaflet)
 library(leafpop)
-#library(lubridate)
-#library(purrr)
-#library(readr)
 library(sf)
 library(mapsf)
-#library(tibble)
-#library(tidyr)
-library(exiftoolr) # metadonnées photo
 ```
 
 
