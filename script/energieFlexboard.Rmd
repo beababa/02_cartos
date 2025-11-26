@@ -41,25 +41,52 @@ Column {data-width=700}
 
 
 
-```{r}
+```{r, include=FALSE}
 data <- st_read("../data/energie.gpkg", "secteur")
 openGST <- st_read("../data/socle2025.gpkg", "batOpenGST")
 ou <- names(table(data$Catégorie))
 # couleurs rouge / bleu / vert
 library(RColorBrewer)
-paletteType <- rev(brewer.pal(2, "Set1"))
+paletteType <- (brewer.pal(4, "Set1"))
+paletteType <- paletteType [1:2]
 paletteOu <- rev(brewer.pal (14, "Set2"))
-palQui <- colorFactor(rev(paletteType), domain = c("Brahim", "Nordine" ))
-palOu <- colorFactor(rev(paletteOu), domain = ou)
-leaflet(options = leafletOptions(zoomControl = TRUE,
-                                 minZoom = 13, maxZoom = 18)) %>%  
-  addProviderTiles(providers$CartoDB.Positron) %>% 
-  addCircleMarkers(data=data, group = "Qui",  opacity = 1,radius = 12, color = paletteType [2], fill = FALSE) %>% 
-  addCircles(data= data ,group = "Categorie", color = paletteOu [14], radius = 2, fillOpacity = 1) %>% 
-  addCircles(data = openGST, group = "Categorie") %>% 
-  addLegend("topright", palQui, values = c("Nordine", "Mahi"),
-            title = "Intervenant") 
+palQui <- colorFactor((paletteType), levels = data$Agent)
+palOu <- colorFactor(rev(paletteOu), levels = data$Catégorie)
 ```
+
+
+```{r}
+# définition du texte quand on clique sur la parcelle
+click <- paste0(
+  openGST$Nom, "<br/>",
+  openGST$Floor.surface, " m²"
+)
+legendCateg <- unique(data$Catégorie)
+
+
+
+# carte
+leaflet(options = leafletOptions(zoomControl = TRUE,
+                                 minZoom = 13, maxZoom = 18)) %>%
+
+  addProviderTiles("CartoDB.Positron", group = "Positron") %>%
+  addTiles(urlTemplate = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", "© Google", group = "Satellite") %>% 
+  setView(lng = 2.4893100, lat = 48.9018000, zoom = 15) %>% 
+  addCircleMarkers(data=data, group = "Energie",  opacity = 1,radius = 15, color = ~palQui (Agent), fill = FALSE) %>% 
+  addCircleMarkers(data= data ,group = "Energie", color = ~palOu (Catégorie), radius = 8, fillOpacity = 1) %>% 
+  addCircleMarkers(data = openGST, popup = click,group = "OpenGST", radius = 5, fillOpacity = 1, color = "black") %>% 
+    addLayersControl(baseGroups = c("Positron", "Satellite"),
+      overlayGroups = c("Energie", "OpenGST"), options = layersControlOptions(collapsed = FALSE)) %>% 
+    #overlayGroups = c("OpenGST"), options = layersControlOptions(collapsed = FALSE)) %>% 
+  addLegend("topright", palQui, values = c("Brahim", "Nordine"),
+            title = "Intervenant") %>% 
+ addLegend("topright", palOu, values = legendCateg,
+            title = "Type lieu Energie") 
+```
+
+
+
+
 
 
 
@@ -69,73 +96,109 @@ Column {data-width=300 .tabset}
 
 
 
-### Avertissement
-
-#### Type de bâtiments
-
-14 types de bâtiment.
+### Carte et graphiques
 
 
-```{r}
-table(data$Catégorie)
+#### Un outil simple
+
+Un simple fichier web qui permet une visu rapide
+
+```{r, out.width="85%"}
+tab <- table(data$Secteur,data$Agent)
+knitr::kable(tab)
+barplot(tab, col = (paletteType)[c(1,2)], border = NA, main = "Nb d'interventions", horiz = T)
 ```
 
 
 
+#### SIG Est Ensemble, plus complexe
 
-#### Lien avec openGST
+
+L'outil SIG Est Ensemble qui sera utilisé.
 
 
+[Potentiel de développement des ENRR](https://sigterritorial.est-ensemble.fr/portal/apps/webappviewer/index.html?id=ffd89a40e61e4d7ba912674f53e8f0bd)
+
+
+
+##### Observer
+
+
+- l'adresse
+
+- le filtre sur le type de bâti
+
+- la source d'énergie de chauffage réelle
+
+
+##### Un bon fond de plan ?
+
+
+![](../img/jeuxDataEnergie.png)
+
+
+### Utiliser openGST
+
+#### Profil 
+
+[OpenGST](https://bondy.opengst.fr)
+
+
+
+
+#### Catégories de bâtiments OpenGST
+
+
+16 types de bâtiment dans OpenGST (233 bâtiments)
 
 ```{r}
 tab <- table(openGST$Type)
+knitr::kable(tab, col.names = c("Type", "Nb"))
 ```
 
-#### Source
 
-fichier énergie ou OpenGST ?
+#### Fichier énergie
 
+14 types de bâtiment dans le fichier énergie (84 bâtiments)
 
 
 ```{r}
-
+tab <- table(data$Catégorie)
+knitr::kable(tab, col.names = c("Type", "Nb"))
 ```
 
 
+#### Situer les PDL
+
+Dans OpenGST ou sur les plans bâtiment ?
 
 
+### Flux applicatifs
 
-### Nombre d'interventions
+#### Quelles autres applications ?
 
+Hors OpenGST, il existe des applis tiers, il est possible de récupérer les données
+concernant Bondy
 
-```{r}
-knitr::kable(tab, col.names = c("Année", "Nb"))
-```
+##### Enedis
 
+![](../img/enedis.png)
 
-### Historisation
+##### Idex
 
-
-
-```{r}
-knitr::kable(tab, col.names = c("Année", "Nb"))
-```
+![](../img/idex.png)
 
 
-#### Rappel
+##### GRDF
 
-Il peut y avoir plusieurs véhicules par accident corporel, et il y a des accidents corporels dont le véhicule n'est pas précisé.
-
-
-
-```{r}
-knitr::kable(tab)
-```
+![](../img/grdf2.png)
 
 
+Techniquement c'est facile si les prestataires acceptent de transmettre leurs données.
+
+#### En résumé
 
 
-
-
+![](../img/openGST.png)
 
 

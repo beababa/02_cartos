@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
 title: "carto DPU M3 Plui"
+=======
+title: "verif PLUi M3"
+>>>>>>> a95722df9b62ff71a21ec23b02815ad5e4c5fc7b
 author: "B. Maranget"
 date: "15/10/2025"
 output: 
@@ -285,6 +289,7 @@ tot <- rbind(rues, ruesEntieres)
 write.csv(tot, "../data/rueDpuR.csv", row.names = F, fileEncoding = "UTF-8")
 ```
 
+<<<<<<< HEAD
 
 # Leaflet
 
@@ -294,3 +299,5 @@ avec barre de recherches adresse
 
 ```
 
+=======
+>>>>>>> a95722df9b62ff71a21ec23b02815ad5e4c5fc7b
