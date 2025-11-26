@@ -1,0 +1,108 @@
+Numéro,Type,Adresse,Ville ,Code Postal,Latitude,Longitude,Nom d'arrêt
+1,PUB,18 Rue du Verger,Bondy,93140,48.918712 ,2.476233,Jardins de La Noue
+2,PUB,57 Avenue Henri Varagnat,Bondy,93140,48.917272 ,2.484665,Rabelais
+3,Casquette,Rue Lucien Chapelain,Bondy,93140,48.913921 ,2.491242,Lycée Claude Nicolas Ledoux
+4,PUB,Rue Lucien Chapelain,Bondy,93140,48.913969 ,2.491071,Lycée Claude Nicolas Ledoux
+5,Casquette,1 Rue Lucien Chapelain,Bondy,93140,48.913223 ,2.487246,Ronsard Villon
+6,PUB,26 Av. Henri Varagnat,Bondy,93140,48.91435 ,2.483503,Suzanne Buisson
+7,PUB,26 Av. Henri Varagnat,Bondy,93140,48.91428 ,2.483192,Suzanne Buisson
+8,PUB,107 Route d'Aulnay,Bondy,93140,48.911581 ,2.480969,Route d'Aulnay - Jean Moulin
+9,Casquette,15 Av. Marx Dormoy,Bondy,93140,48.911432 ,2.484055,Maison de Retraite
+10,Casquette,15 Av. Marx Dormoy,Bondy,93140,48.911343 ,2.484016,Maison de Retraite
+11,PUB,95 route d'Aulnay,Bondy,93140,48.910782 ,2.480666,Paul Renaud
+12,Casquette,10 Av. Léon Blum,Bondy,93140,48.914032 ,2.478802,Suzanne Buisson
+13,PUB,24 Av. Léon Blum,Bondy,93140,48.917408 ,2.479698,Jouhaux Blum
+14,PUB,7 Chemin du Pont,Bondy,93140,48.908813 ,2.490084,Hôpital Jean Verdier
+15,PUB,3 Chemin du Pont,Bondy,93140,48.908245 ,2.489983,Hôpital Jean Verdier
+16,PUB,174 Av. Gallieni,Bondy,93140,48.906672,2.486832,Pasteur - Hôpital Jean Verdier
+17,PUB,181 Av. Gallieni,Bondy,93140,48.906861 ,2.486428,Pasteur - Hôpital Jean Verdier
+18,PUB,108 Av. Gallieni,Bondy,93140,48.90586 ,2.481393,Auguste Polissard
+19,PUB,111 Av. Gallieni,Bondy,93140,48.906162 ,2.481001,Auguste Polissard
+20,PUB,2 Route d'Aulnay,Bondy,93140,48.906414 ,2.480241,Auguste Polissard
+21,PUB,58 Av. Gallieni,Bondy,93140,48.905056 ,2.476471,Gâtine Rn3
+22,PUB,Avenue Gallieni,Bondy,93140,48.903979 ,2.471854,Avenue de Rosny
+23,PUB,Avenue Gallieni,Bondy,93140,48.903908 ,2.471441,Avenue de Rosny
+24,PUB,Avenue Gallieni,Bondy,93140,48.90449 ,2.471853,Avenue de Rosny
+25,PUB,Avenue de Rosny,Bondy,93140,48.903601 ,2.470851,Pont de Bondy - Avenue de Rosny
+26,PUB,1 Rue Jules Guesde,Bondy,93140,48.904084 ,2.473812,Lycée Vionnet - Renoir
+27,PUB,75 Rue Jules Guesde,Bondy,93140,48.903178 ,2.480674,Eglise
+28,Casquette,20 Rue Roger Salengro,Bondy,93140,48.902502 ,2.479557,Eglise
+29,PUB,25 Av. Henri Barbusse,Bondy,93140,48.90208 ,2.483783,Cimetière - Hôtel de Ville
+30,PUB,16 Av. Henri Barbusse,Bondy,93140,48.901923 ,2.483975,Cimetière - Hôtel de Ville
+31,PUB,1 Av. Pasteur,Bondy,93140,48.903407 ,2.483733,Place Carnot
+32,PUB,39 Av. Henri Barbusse,Bondy,93140,48.901789 ,2.48675,Pierre Brossolette
+33,PUB,42 Av. Henri Barbusse,Bondy,93140,48.901577 ,2.48764,Pierre Brossolette
+34,PUB,Av. Henri Barbusse,Bondy,93140,48.900665 ,2.491142,Professeur Vaillant
+35,PUB,Av. Henri Barbusse,Bondy,93140,48.900535 ,2.49113,Professeur Vaillant
+36,PUB,163 Av. Henri Barbusse,Bondy,93140,48.899742 ,2.496356,Marcel Sembat
+37,Casquette,49 Av. Carnot,Bondy,93140,48.900386 ,2.48181,Blanqui - Carnot
+38,Casquette,90 Rue Roger Salengro,Bondy,93140,48.898056 ,2.477474,Baudin
+39,Casquette,121 Av. Carnot,Bondy,93140,48.89685 ,2.480147,Edouard Vaillant - Carnot
+40,Casquette,136 Rue Roger Salengro,Bondy,93140,48.895589 ,2.477284,Gare de Bondy RER
+41,PUB,Rue de la Liberté,Bondy,93140,48.895014 ,2.478335,Gare de Bondy RER
+42,PUB,Rue de la Liberté,Bondy,93140,48.894911 ,2.478613,Gare de Bondy RER
+43,PUB,Rue de la Liberté,Bondy,93140,48.894842 ,2.478788,Gare de Bondy RER
+44,Casquette,5 Rue de Varsovie,Bondy,93140,48.893587 ,2.478508,Varsovie
+45,PUB,104 Rte de Villemomble,Bondy,93140,48.892712 ,2.485646,L'étoile / Remise à Jorelle
+46,PUB,21 Route de Villemomble,Bondy,93140,48.891212 ,2.490455,La Sablière
+47,PUB,Avenue Pasteur,Bondy,93140,48.906304,2.487873,Galliéni
+48,PUB,Rue Jean Moulin,Bondy,93140,48.912188,2.480977,Route d'Aulnay - Jean Moulin
+49,PUB,27 Avenue du 14 Juillet,Bondy,93140,48.911242,2.491097,Villageoise
+50,PUB,1 Avenue Pasteur,Bondy,93140,48.903245,2.483282,Place Carnot
+51,PUB,1 Route d'Aulnay,Bondy,93140,48.906432,2.480441,Auguste Polissard
+1,Planimètre,11 Rond Point du Verger,Bondy,93140,48.918076,2.477257,
+2,Planimètre,1 Léon Jouhaux,Bondy,93140,48.918044,2.479781,
+3,Planimètre,1 Boulevard de Paris,Bondy,93140,48.913912,2.491494,
+4,Planimètre,11 Avenue Marx Dormoy,Bondy,93140,48.912177,2.481608,
+5,Planimètre,56 Chemin de Groslay,Bondy,93140,48.907946,2.47234,
+6,Planimètre,1 Rue Jules Guesde,Bondy,93140,48.904336,2.473279,
+7,Planimètre,1 Rue Jules Guesde,Bondy,93140,48.90416,2.473218,
+8,Planimètre,21 Avenue Galliéni,Bondy,93140,48.904893,2.473104,
+9,Planimètre,50 Avenue Galliéni,Bondy,93140,48.904824,2.47536,
+10,Planimètre,41 Avenue Galliéni,Bondy,93140,48.905506,2.475765,
+11,Planimètre,39 Avenue Galliéni,Bondy,93140,48.905648,2.476957,
+12,Planimètre,93 Avenue Galliéni,Bondy,93140,48.905835,2.478489,
+13,Planimètre,88 Avenue Galliéni,Bondy,93140,48.905441,2.478643,
+14,Planimètre,95 Avenue Galliéni,Bondy,93140,48.905801,2.479342,
+15,Planimètre,107 Avenue Galliéni,Bondy,93140,48.906118,2.480444,
+16,Planimètre,2 Rue Auguste Polissard,Bondy,93140,48.905712,2.480403,
+17,Planimètre,114 Avenue Galliéni,Bondy,93140,48.906033,2.481747,
+18,Planimètre,130 Avenue Galliéni,Bondy,93140,48.9061,2.48302,
+19,Planimètre,135 Avenue Galliéni,Bondy,93140,48.906349,2.482289,
+20,Planimètre,33 Avenue Marguerite,Bondy,93140,48.906587,2.484582,
+21,Planimètre,178 Avenue Galliéni,Bondy,93140,48.906744,2.487294,
+22,Planimètre,2 Avenue de Verdun,Bondy,93140,48.906734,2.488572,
+23,Planimètre,207 Avenue Galliéni,Bondy,93140,48.907307,2.489411,
+24,Planimètre,190 Avenue Galliéni,Bondy,93140,48.906977,2.488894,
+25,Planimètre,3 Chemin du Pont,Bondy,93140,48.908601,2.489937,
+26,Planimètre,Rue Auguste Polissard,Bondy,93140,48.9043,2.48033,
+27,Planimètre,Rue Auguste Polissard,Bondy,93140,48.90455,2.48046,
+28,Planimètre,2 Rue Roger Salengro,Bondy,93140,48.90307,2.480091,
+29,Planimètre,73 Rue Jules Guesde,Bondy,93140,48.903305,2.480031,
+30,Planimètre,1 Rue du Breuil,Bondy,93140,48.90381,2.476268,
+31,Planimètre,93bis Rue Jules Guesde,Bondy,93140,48.902759,2.481697,
+32,Planimètre,72 Av du Mal de Lattre de Tassigny,Bondy,93140,48.902439,2.482431,
+33,Planimètre,11 Avenue Henri Barbusse,Bondy,93140,48.90227,2.48231,
+34,Planimètre,26 Avenue Henri Barbusse,Bondy,93140,48.90185,2.48579,
+35,Planimètre,8 Place Georges Lyssandre,Bondy,93140,48.900787,2.490458,
+36,Planimètre,27bis Avenue Carnot,Bondy,93140,48.901306,2.482103,
+37,Planimètre,37 Rue Paul Vaillant-couturier,Bondy,93140,48.901035,2.478667,
+38,Planimètre,13 Rue de la Liberté,Bondy,93140,48.894933,2.478905,
+39,Planimètre,22 Place de la République,Bondy,93140,48.89516,2.47797,
+40,Planimètre,5 Avenue Jules Ferry,Bondy,93140,48.893768,2.476002,
+41,Planimètre,2 Rue Etienne Dolet,Bondy,93140,48.894,2.47651,
+42,Planimètre,31 Allee Marguerite Duras,Bondy,93140,48.89502,2.4888,
+43,Planimètre,36b Rue Saint-louis Prolongée,Bondy,93140,48.890489,2.496032,
+44,Planimètre,46 Rue Saint-louis Prolongée,Bondy,93140,48.890369,2.495855,
+45,Planimètre,RN3 avant MCDO,Bondy,93140,48.90744,2.49044,
+46,Planimètre,Avenue de Rosny face rue Alexandre Pottier,Bondy,93140,48.90323,2.47075,
+47,Planimètre,Bd de Strasbourg,Bondy,93140,48.9182765,2.4796055,
+48,Planimètre,Chemin du Pont,Bondy,93140,48.9082654,2.4899333,
+49,Planimètre,75 rue Roger Salengro,Bondy,93140,48.8970731,2.4770823,
+50,Planimètre,Av. Anatole France,Bondy,93140,48.8898804,2.4958785,
+P1,Panneau grand format,48 Avenue Galiéni ,Bondy,93140,48.9045754,2.4741182,
+P2,Panneau grand format,60 avenue Galliéni ,Bondy,93140,48.9052143,2.4771385,
+P3,Panneau grand format,176 Avenue Galiéni ,Bondy,93140,48.90676,2.48754,
+P4,Panneau grand format,205 Avenue Galiéni ,Bondy,93140,48.9072008,2.4887703,
+P5,Panneau grand format,141 Avenue Galiéni ,Bondy,93140,48.9064454,2.4831162,
+P6,Panneau grand format,14 Route d'Aulnay,Bondy,93140,48.9069147,2.4804259,
