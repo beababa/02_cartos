@@ -1,0 +1,153 @@
+---
+title: "Energie brouillon"
+date: "27/11/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Objet
+
+Le service Energie demande l'exploitation de son fichier.
+
+
+Cela passerait par la mise en place de filtres / menu déroulant
+
+Je reprends https://geotribu.fr/articles/2021/2021-06-25_webmapping_avec_r/#prerequis
+
+
+
+
+
+# Librairies et chemin
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = FALSE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+library(tidyverse) # https://cran.r-project.org/web/packages/tidyverse/index.html
+library(geojsonsf) # https://cran.r-project.org/web/packages/geojsonsf/index.html
+library(crosstalk) # https://cran.r-project.org/web/packages/crosstalk/index.html
+library(rnaturalearth) # https://cran.r-project.org/web/packages/rnaturalearth/index.html
+library(rgdal) # https://cran.r-project.org/web/packages/rgdal/index.html
+library(geosphere) # https://cran.r-project.org/web/packages/geosphere/index.html
+library(RColorBrewer) # https://cran.r-project.org/web/packages/RColorBrewer/index.html
+library(DT) # https://cran.r-project.org/web/packages/DT/index.html
+library(sf) # https://cran.r-project.org/web/packages/sf/index.html
+library(mapsf)
+library(flexdashboard) # https://cran.r-project.org/web/packages/flexdashboard/index.html
+```
+
+
+```{r}
+# https://github.com/dmurdoch/leaflet
+devtools::install_github("dmurdoch/leaflet@crosstalk4")
+library(leaflet)
+```
+
+
+```{r}
+data <- st_read("../data/energie.gpkg", "secteur")
+openGST <- st_read("../data/socle2025.gpkg", "batOpenGST")
+```
+
+
+```{r}
+# définition du n°dpt
+dpt <- "93"
+
+# définition du n°insee communal
+insee <- "93010"
+url <- "https://cadastre.data.gouv.fr/data/etalab-cadastre/latest/geojson/communes/"
+
+parcelles <- st_as_sf(geojson_sf(gzcon(url(paste0(
+  url, dpt, "/", insee,
+  "/cadastre-", insee, "-parcelles.json.gz"
+)))))
+
+# pour avoir un rendu pas trop moche et des parcelles qui, quand on
+# les sélectionne au hasard, ressemblent à des parcelles agricoles,
+# on récupère aussi les bâtiments
+
+batiments <- st_as_sf(geojson_sf(gzcon(url(paste0(
+  url,  dpt, "/", insee,
+  "/cadastre-", insee, "-batiments.json.gz"
+)))))
+```
+
+```{r}
+mf_init(st_buffer(st_centroid(batiments [1,]),200))
+mf_map(parcelles, add = T, col = "wheat", border = NA)
+mf_map(batiments, add = T, col="burlywood", border = NA)
+mf_layout("Cadastre 2025","Nov 2025")
+```
+
+zone
+
+```{r}
+zone <- st_buffer(st_centroid(batiments [1,]),200)
+interP <- st_intersection(parcelles,zone)
+interB <- st_intersection(batiments, zone)
+mf_init(zone)
+mf_map(interP, add = T, col = "wheat", border = NA)
+mf_map(interB, add = T, col="burlywood", border = NA)
+mf_layout("Zone cadastre 2025","Nov 2025")
+```
+
+
+
+
+```{r}
+dedans <- st_within(parcelles, batiments, sparse = T)
+vecBinaire <- sapply(dedans, length)
+sel <- parcelles [vecBinaire == 1,]
+mf_map(sel, add = T, col = NA, border= "red", lwd = 2)
+```
+Remarque le bâtiment recouvre toute la parcelle...
+
+```{r}
+interBP <- st_intersection (interB, interP)
+interBP <- interBP [,c("section", "numero")]
+summary(interBP)
+# on repère les géométries autres que polygon
+id <- grep("GEOMETRYCOLLECTION",st_as_text(interBP$geometry))
+interBP  <- interBP [-id,]
+interBP$code <- paste0(interBP$section, interBP$numero)
+agg <- aggregate(interBP [, c("code")] , by = list(interBP$code), length)
+mf_map(agg)
+names(agg)[1:2] <- c("code","nb")
+mf_label(agg, var = "code" , overlap = F)
+```
+
+
+```{r}
+agg$etage <- sample(1:5, size = length(agg$code), replace = T)
+table(agg$etage)
+st_write(agg, "../data/test.gpkg", "flexboard", delete_layer = T)
+```
+
+
+Crée un flexboard par section !
+
+```{r}
+agg$section <- substring(agg$code,1,1)
+section <- unique(agg$section)
+for (s in section){
+  tmp <- agg [agg$section == s,]# filtre section
+  nom <- paste0("section", s)
+  rmarkdown::render("energieBrouillonFlexboard.Rmd",
+  output_file = paste0(nom,".html"), quiet = T) # rendu par section
+  cat("carte ",s,"/3\n")
+}
+section <- unique(data$section)
+```
+
+
+

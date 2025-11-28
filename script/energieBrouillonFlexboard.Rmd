@@ -1,0 +1,96 @@
+---
+title: "Section"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme : lumen
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(crosstalk)
+library(leaflet) # attention il faut bien avoir la bonne version !
+library(DT)
+library(sf)
+library(ggplot2)
+
+# les données ds environnement crosstalk
+data_sf <- st_read("../data/test.gpkg", "flexboard")
+data <- st_drop_geometry(data_sf)
+sd <- SharedData$new(data, key=~code)
+#sd_df <- SharedData$new(data@data, group = sd$groupName())
+sd_df <- sd
+```
+
+Carte {data-icon="fa-map"}
+=====================================  
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+
+#```{r}
+#filter_select("Section", "section", sd_df, ~section, allLevels=TRUE)
+#```
+
+```{r}
+class(sd)
+#sd_df <- SharedData$new(data@data, group = sd$groupName())
+gg <- ggplot(sd,  aes(etage, nb)) + geom_point()
+library(plotly)
+ggplotly(gg)
+```
+
+
+
+
+
+Row {data-height=700}
+-------------------------------------
+###
+```{r}
+click <- paste0(
+  data_sf$section, "<br/>",
+  data_sf$code, "<br/>",
+  data_sf$etage
+)
+
+
+leaflet(data_sf) %>% 
+  addProviderTiles("CartoDB.Positron", group = "Positron") %>% 
+  addTiles(urlTemplate = "https://wxs.ign.fr/choisirgeoportail/geoportail/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&STYLE=PCI vecteur&TILEMATRIXSET=PM&FORMAT=image/png&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}", "© IGN", group = "Cadastre") %>%
+    addPolygons(
+    fillOpacity = 0.7, weight = 0.5,
+    popup = click, group = "Parcelles") %>% 
+  addLayersControl(baseGroups = c("Positron", "Cadastre"),
+      overlayGroups = c("Parcelles"), options = layersControlOptions(collapsed = FALSE))
+```
+
+
+
+Row {data-height=300}
+-------------------------------------
+
+###
+
+```{r}
+datatable(sd, editable = T,
+  rownames = FALSE, extensions = c("Scroller", "Buttons"),
+  options = list(dom = "Blrtip", scrollY = 300, scroller = TRUE,
+                 buttons = list('copy', 'csv', 'excel')))
+```
+
+
+
+Information {data-orientation=rows data-icon="fa-info-circle"}
+=====================================
+
+### Comment utiliser cet outil ?
+
+
+### À propos
+
+
+#### Contact
+
