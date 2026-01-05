@@ -1,0 +1,1185 @@
+---
+title: "OCR arrêté"
+author: "B. Maranget"
+date: "20/07/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+# Objet
+
+Projet voirie = lecture de l'arrêté et extraction dates / nom / rues
+
+Les arrêtés sont traités mois par mois. (Nécessité de vérif manuelle)
+
+
+objectif date / nom / rue dans tableau
+
+
+
+reprise du projet fin 2025 = 
+- nom fichier A2024_numArrete
+- tableau date / nom / rue
+- renommer arrêté pas nécessaire
+
+
+ok pour decembre1
+
+
+le scan est à faire en couleurs et en 400 pp
+
+# Sources
+
+<https://www.datanovia.com/en/blog/easy-image-processing-in-r-using-the-magick-package/>
+
+<https://pyimagesearch.com/2020/08/03/tesseract-ocr-for-non-english-languages/>
+
+# Librairies
+
+```{r}
+library(pdftools)# pdf_subset pdf_info
+library(tidyverse)
+library(tesseract)
+library(magick)
+library(tictoc)
+```
+
+```{r}
+library(sf)
+library(mapsf)
+library(filesstrings)# pour le move
+```
+
+# Fonctions diverses
+
+```{r}
+# OCR
+ocrEssai <- function() {
+  text_list <- map(images, ocr)
+# 40 secondes / 81 pages (correspond au nb de fichier)
+# 18 s / si on filtre sur les premières pages
+  stext <- str_split(text_list, "\n")
+}
+
+# Recherches de chaîne
+
+
+chercherNum <- function (chaine) {
+   ind <- grep("^ARRETE",chaine, ignore.case = FALSE,value = FALSE)
+   res <-  chaine[ind] 
+}
+premiereOccurence <- function(liste) {
+  vecteur <-  NULL
+  i <- 1
+  for (i in 1:length(liste)) {
+    tmp <- liste [[i]][1]
+    vecteur <- c(vecteur, tmp)
+  }
+  return(vecteur)
+}
+chercherArticle <- function(chaine){
+  ind <- grep("^ARTICLE",chaine, ignore.case = FALSE,value = FALSE)
+  # on supprime la 1e occurrence, car c'est forcement le titre
+  res <- chaine[ind] 
+}
+
+chercherDate <- function (chaine) {
+  # 1e recherche sur l'article
+  ind <- grep("^ARTICLE",chaine, ignore.case = FALSE,value = FALSE)
+  # recherche sur le jour
+  res <- chaine[ind] 
+  ind <- grep(jour, res, ignore.case = FALSE, value = FALSE )
+  res <- chaine[ind] 
+}
+```
+
+```         
+vLoc <- c("rue","allée","villa","chemin","avenue","place","voies","Esplanade")
+chercherLoc <- function (chaine) {
+  lg_loc <- grep("rue|allée|villa|chemin|avenue|place|voies|Esplanade",chaine, ignore.case = TRUE,value = FALSE)
+  res <- chaine[lg_loc]
+}
+```
+
+Pour le lieu, fonction alternative, les 2 lg après le num arrêté plus
+efficace qu'avec un motif
+
+Le terme d'arrêté en majuscule n'apparaît qu'une fois sur la 1e page
+
+```{r}
+chercherLoc <- function (chaine) {
+   ind <- grep("^ARRETE",chaine, ignore.case = TRUE,value = FALSE)
+   res <-  chaine[ind+1]
+   res <- paste0 (res, chaine [ind+2])
+   # Suppression LE MAIRE DE BONDY qui peut constituer la 3e lg
+   res <- gsub("LE MAIRE DE BONDY,", "", res)
+}
+```
+
+# Chemins
+
+```{r}
+Sys.getenv("HOME")
+cheminGen <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/03_SOCLE/")
+# maison
+cheminGen <- "D:/03_SIG/03_03_Data/03_SOCLE/"
+chemin <- "S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/"
+chemin <- "G:/Mon Drive/03_SIG/03_03_DATA/06_VOIRIE/"
+```
+
+# Les images
+
+A priori, on ne le fait qu'une fois. Attention aux pages uniquement avec
+le tampon qui ne seront traitées qu'une fois.
+
+pour le scan, penser à la couleur, 2 3 paquets par mois et 400 pp 
+
+## Lecture de tous les fichiers .pdf et conversion en image
+
+
+initialisation des .pdf et .png ficPDF et ficPNG
+
+```{r, eval = FALSE}
+# si 1er passage ne pas jouer
+ficPDF <- dir (path = chemin, pattern = "*.pdf", full.names = TRUE)
+# ordre
+ficPDF
+# On conserve fic / nb (nb pages par fichier)
+info <- NULL
+nb <- NULL
+for (f in ficPDF){
+  info <- pdf_info(f)
+  nb <- c(nb,info$pages)
+#  pngfile <- pdftools::pdf_convert(f,  dpi = 200)
+}
+cbind(ficPDF, nb)
+write.csv(cbind(ficPDF, nb),"../data/paginationFic.csv", fileEncoding = "UTF-8")
+# Nb totales de pages du pdf (info$pages)
+sum(nb)
+# attention fichier temporaire, il sera écrasé à chq nel import
+# liste de tous les png 31 pour decembre1 / 40 decembre2
+ficPNG <- dir(path =".", pattern = "*.png", full.names = T)
+ficPNG
+# L'ordre change !
+# déplacements de fichiers pour archivage
+file.move(ficPDF,  paste0(chemin,"/03_archive"))
+# on renomme pour indexation
+file.move(ficPNG, "../data/pdf/", overwrite = TRUE)
+# tout sera mis dans chemin 01_fait
+```
+
+31 images pour décembre1
+40 decembre2
+10 pour le dernier paquet de 2024
+
+44 images pour dec 2025 sur 4 paquets
+
+
+Comment garder la correspondance avec les fichiers de départ ?
+
+Eclater les fichiers par arrêté
+
+Attention, la production des pdf a respecté un ordre numérique
+il est nécessaire que la lecture des .png respecte ce même ordre
+sinon coupure impossible en fin de parcours !
+
+
+(cela me prend plusieurs jours pour arriver à une solution...)
+
+Solution : on éclate le nom du fichier pour trier sur le nom, puis l'indice
+
+Attention à longueur du nom de fichier.
+
+
+```{r}
+ficPNG
+nbCar <- nchar(ficPNG)
+# calcul à partir nb caractères variable 1 ou 2
+leCut <- ifelse(nbCar==max(nbCar), 3,2)
+# on doit couper l'extension et  le max
+leCut2 <- nbCar-4-leCut
+nom <- substring(ficPNG,3,leCut2)
+fin <- substring(ficPNG,leCut2+2,leCut2+3 )
+num <- as.integer(gsub("\\.","", fin))
+nomFicPNG <- data.frame(ficPNG, nom, num)
+```
+
+data/pdf est le répertoire temporaire. C'est à partir des images que
+l'on travaille.
+
+
+```{r, eval = TRUE}
+ficPNG_ordre <- nomFicPNG$ficPNG [order(nomFicPNG$nom, nomFicPNG$num)]
+# intégration des images dans R
+images <- map(paste0("../data/pdf/",ficPNG_ordre), magick::image_read)
+```
+
+pour dec1, 31 images, dec2 40, le paquet 10
+
+pour 2025, 44 images
+
+???? il y a des pertes à chaque fois (pas sur decembre 1 et 2 en tous cas)
+
+```{r}
+images [[3]]
+```
+
+
+
+## Reconnaissance de l'écriture (ocr) et mise en liste
+
+tic toc sont là pour mesurer le temps la fonction éclate le fichier sur
+les lignes (/n) peut-être envisager sur ARTICLE ?
+
+```{r}
+tic()
+stext <- ocrEssai()
+toc()
+```
+
+44 s pour dec1 / 53 pour dec2 / 11 pour le paquet / 100 pour dec 2025
+
+msg images too smal... 
+
+Vérif nb pages images / stext / info$pages même si msg (?)
+
+
+
+
+```{r}
+nb
+sapply(stext, length)
+nomFicPNG
+```
+
+
+1 page n'est pas ocr-isée TO DO si pb ?
+
+
+## Extraction numéro et nettoyage
+
+### Uniquement 1e page de tous les arrêtés
+
+```{r}
+liste <- lapply(stext, chercherNum)
+numArrete <- premiereOccurence(liste)
+```
+
+### Extraction ARRETE qlq chose
+
+On regarde si la définition stricte ARRETE ou juste NA permet de repérer les arrêtes
+
+
+
+```{r}
+# les lg où NA et ARRETE tout seul, cas ARRETE E
+ind <- which (is.na(numArrete))
+ind <- c(ind,grep("^ARRETE$", numArrete))
+#ind <- c(ind, grep("ARRETE E",numArrete))
+# combien d'images (automatisation du traitement)
+serie <- seq(1,length(numArrete))
+# on exclue les pages avec ARRETE tout seul et NA
+indOK <- serie [-ind]
+# Numeros des pages num arrêté
+indOK
+# veri
+(num <- numArrete [indOK])
+```
+
+On a donc 11 arrêtés pour dec1 / 13 pour dec2 / 5 pour le paquet / 22 pour dec 2025
+
+Dés cette étape on vérifie et on rectifie en regardant le .pdf
+
+
+pb titre : manque 
+- le 434 (22e page), 
+- 431 (24e page)
+- 414 (32e page)
+- 412 (37e page)
+
+
+Erreur du titre : verif sur les images
+
+```{r}
+# reprise des paquets pour tester les images 1 de chq paquet
+paginationFic <- read.csv("../data/paginationFic.csv")
+images [[3]]
+images [[13]]# 2e paquet
+images [[19]]# 3e paquet
+numArrete [c(22,24,32,37)]
+# on remplace dans numArrete et rejoue num (lg 269)
+numArrete [c(22,24,32,37)] <- 
+  paste0(("ARRETE N°A2024 "), c("434", "431", "414", "412"))
+```
+
+
+
+Pour décembre 1, pas d'erreur
+
+Pour décembre 2, après rectification on passe de 13 à 16 arrêtés
+
+
+pour dec 2025 (4 fichiers), l'ordre des arrêtés pose pb, correction sur le nb de car
+du nom de fichier
+
+
+
+### Détection article 1 pour verif
+
+
+```{r}
+article1 <- premiereOccurence(  lapply(stext, chercherArticle))
+article1
+# on a besoin des num d'indice pour les images
+# mais le rownames conserve ce num
+# on reprend le nb d'arrete repéré avec le titre indOK
+indImage <- seq(1,length(article1))
+df <- data.frame(indImage, article1)
+# suppression 10 et 11
+ind <- grep("ARTICLE 10|ARTICLE 11| ARTICLE [4-6]", df$article1)
+ind <- grep("ARTICLE [4-9]", df$article1)
+df <- df [-ind,]
+ind <- grep("ARTICLE 1|ARTICLE l|ARTICLE J", df$article1)
+df <- df [ind,]
+numImage <- df$indImage
+```
+
+
+Vérification : indImage et indOK doivent correspondre / cela permet de modifier le 
+filtre sur ARTICLE 1
+
+```{r}
+df$indImage
+indOK
+setdiff(indOK, df$indImage)
+setdiff(df$indImage, indOK)
+```
+
+Verif si différence
+
+```{r}
+images [[38]]
+df [df$indImage == 38,]
+```
+
+
+
+
+### Nettoyage du numéro d'arrêté
+
+```{r}
+numModif <- gsub("2025", "", num)
+numModif <- gsub("[^0-9]","", numModif)
+numModif <- gsub("2025", "2025_", numModif)
+numModif <-numModif [!is.na(numModif)]
+```
+
+```{r}
+numModif
+```
+
+Les arrêtes sont bien sur 3 chiffes
+
+```{r}
+# nb ce caractères
+lg <- sapply(numModif, nchar)
+# recherche >3 
+(ind <-which(lg!=3))
+```
+
+
+cas arrêté 325 (on retirait les 2025|25 ah ah...)
+
+###  Vérification : affichage des scans en mosaïque
+
+
+
+1ere verif de visu, on a bien tous les arrêtés de stext
+
+ok pour dec1 à partir directement du pdf
+
+calage de la fenêtre crop sur les 2 premières images
+
+
+```{r}
+indOK  
+# extraction des images concernées
+verifImage <- unlist(images [indOK])
+# visionner pas uniquement la 1e image ?
+# objet external pointer of class 'magck-image'
+
+i <-1
+test <- c(verifImage [[i]], verifImage [[i+1]])
+# on coupe une image de 300 largeur sur 300 hauteur,
+# en commençant à partir de 800 à droite.
+test2 <- image_crop(test, "300x200+800+300")
+image_append(test2)
+```
+
+
+On visualise tous les arrêtés
+
+```{r}
+# constitution d'une mosaique d'extrait
+nb <- length(verifImage)
+test <- NULL
+test <- image_crop(verifImage [[1]], "300x300+800+300")
+verifImage [[13]]
+for (i in 2:nb){
+  tmp <- image_crop(verifImage [[i]], "300x300+800+300")
+  test <- c(test, tmp )
+}
+# image par image
+test
+verifImage [[13]]
+# attention toutes les images ne s'affichent pas dans le défilé !!!!!
+# mosaique
+test2 <- image_crop(test, "300x300+800+300")
+image_append(test2, stack = F)
+numModif
+```
+
+
+
+### Erreurs relevées
+
+En principe, à ce stade, comme il s'agit de la deuxième verif, pas d'erreur
+
+
+## Pagination
+
+### Nb pages pour chq arrete
+
+Pour chq arrêté, on détermine le nb de pages 
+
+indOK est l'indice de la lg d'extraction d'arrêté
+
+la fin est le indOK suivant - 1 (vectorisation !)
+
+
+```{r}
+deb <- indOK
+indOK - 1
+fin <- c(indOK-1, length(liste))
+# suppression du 1er element
+fin <- fin [-1]
+pagination <- data.frame(deb=deb,fin=fin)
+# pour le nb de pages, rajout de 1 pour compter la pg de garde
+pagination$nbPages <- pagination$fin-pagination$deb + 1
+pagination$nbPages
+pagination$num <- numModif
+pagination
+```
+
+#### Vérification sur les images
+
+En regardant le pdf on voit page blanche pdf mais pages
+scanné 
+
+```{r}
+ind <- which(pagination$nbPages == 7)
+pagination [ind,]
+images [[pagination$deb [ind]]]
+# 7 pages
+nb <- seq(ind+1,ind+7)
+tot <- images[[pagination$deb [ind]]]
+nb
+for (n in nb ) {
+  print(n)
+  tot <- c(tot,images[[pagination$deb [n]]])
+}
+tot
+
+```
+
+##  Réunion des fichiers traités en un seul
+
+Afin que le subset ne porte que sur un seul fichier, on concatène
+
+
+```{r}
+ficPDF
+```
+
+
+### Cumul sur tous les fichiers
+
+Pour chq fichier, on a déterminé le nb de pages au moment de
+la transformation pdf - png
+
+```{r}
+paginationFic <- read.csv("../data/paginationFic.csv", fileEncoding = "UTF-8") 
+```
+
+cumul du nb de pages
+
+```{r}
+paginationFic
+# simplication chemin devient nom de fichier
+paginationFic$fic <- gsub(chemin, "", paginationFic$fic)
+fin <- length(paginationFic$nb)
+paginationFic$cumul <- NULL
+paginationFic$cumul [1] <- paginationFic$nb [1]
+for (i in (2:fin)){
+  paginationFic$cumul [i] <- paginationFic$cumul [i-1]+ paginationFic$nb [i]
+}
+paginationFic$cumul
+```
+
+jointure via le cumul
+
+```{r}
+pagination <- merge(pagination, paginationFic, by.x = "fin", by.y = "cumul", all.x = T)
+```
+
+La jointure ne suffit pas, il faut remplir les lg NA
+
+
+Ainsi pagination contient deb fin nbPages, num arrêté, nom fichier
+On peut voir les absences de num d'arrêté
+
+```{r}
+pagination <- cbind(pagination,numModif)
+pb <- which((pagination$numModif)=="") 
+```
+
+
+
+
+
+### Pagination par fichier
+
+
+Plutôt que de faire des boucles, on construit des séries
+
+
+
+```{r}
+serie <- seq(1,length(pagination$fin))
+absent <- which(is.na(pagination$fic))
+present <- serie [-absent]
+limite <- cut( serie, breaks = c(0,present))
+length(limite)
+tab <- table(limite)
+serie <- rep(present, tab)
+equiv <- pagination$fic [pagination$X]
+pagination$fic <- equiv
+pagination
+```
+
+Puis on ajoute le cumul par fichier
+
+
+```{r}
+eclate <- split(pagination [, c("nbPages", "fic")], pagination$fic)
+liste <- sapply(eclate, "[",1)
+pagination$cumulFic<- unlist(sapply(liste , cumsum))
+```
+
+
+```{r}
+pagination
+```
+
+
+# Sauvegarde des .pdf avec un numéro d'arrete
+
+L'opération finale consiste à renommer les fichiers . pdf avec le num d'arrêté
+
+
+Parcours des fichiers pdf pour les éclater et les renommer arrêté par arrêté.
+
+Variables et initialisation
+
+```{r}
+pagination <- read.csv("../data/paginationFinale.csv")
+# liste des 7 fichiers avec nb pages différentes
+ficPDF
+# pagination des 29 arretes
+pagination
+# initialisation compteurs
+# le fichier
+f <- ficPDF [1]
+```
+
+
+
+Boucle
+
+Parcours de pagination, pour chq fichier (x)
+
+```{r}
+pdf_combine(ficPDF, "../data/pdf/total.pdf")
+# fusion de tous les .pdf pour les subset
+```
+
+
+Cas pl numeros sur un paquet
+
+```{r}
+pagination$doublon <- duplicated(pagination$num)
+# recodage
+pagination$doublon <- ifelse(pagination$doublon != FALSE, "b", "")
+```
+
+
+
+```{r}
+pagination
+ficPDF <- unique(pagination$fic)
+f <- ficPDF [1]
+chemin
+for (f in ficPDF){
+  print(f)
+  # selection du fic
+  tmp <- pagination [pagination$fic == f,]
+  tmp
+  for (i in c(1: length(tmp$deb))){
+      print(i)
+      deb <- tmp$deb [i]
+      fin <- tmp$fin [i]
+      numArr <- tmp$num [i]
+      doublon <- tmp$doublon [i]
+      pdf_subset("../data/pdf/total.pdf", pages = deb:fin,  
+      output =  paste0("../data/pdf/arrete_2025_",numArr, doublon,".pdf"), )
+  }
+
+}
+```
+
+Verif sur le nb d'arreté
+
+
+Comparaison des doublons 
+
+
+```{r}
+doublon <- stext[grep ("331", stext)]
+setdiff(doublon [[1]], doublon [[2]])
+doublon <- stext[grep ("334", stext)]
+```
+
+
+
+Déplacement pour validation
+
+```{r}
+fic <- dir("../data/pdf/", pattern =  ".pdf", full.names = T )
+length(fic)  # total.pdf
+file.move(fic,  paste0(chemin,"/01_fait"))
+```
+
+
+TODO c'est presque bon ! (28 février 2025)
+
+
+# Base image définitive
+
+vérifier 11 arrêtés à traiter
+
+```{r}
+images <- images[indOK]
+images 
+```
+
+La base images est stable, on refait un OCR car seule la 1e page nous
+intéresse
+
+```{r, eval = FALSE}
+tic()
+stext <- ocrEssai()
+toc()
+```
+
+51 s à la maison...
+
+Impossible de sauvegarder une liste (on ne sait pas faire), puis ce
+n'est pas franchement utile. On sauvegardera les extractions
+
+Tentative d'utiliser séparateur ARTICLE non poursuivie
+
+
+
+# Extraction d'éléments
+
+## Titre arrêté (cf chercherLoc)
+
+Récupération sommaire précédent
+
+```{r}
+df <- read.csv("../data/arrete.csv")
+names(df)
+df
+```
+
+
+
+```{r}
+titre <- premiereOccurence(lapply(stext, chercherLoc))
+titre
+images [[22]]
+stext [[22]]
+titre [indOK]
+df2 <- data.frame(num = numModif, titre = titre[indOK], annee= 2025)
+df <- rbind(df, df2)
+write.csv(df,"../data/arrete.csv", fileEncoding = "UTF-8", row.names = FALSE)
+```
+
+
+
+## Articles
+
+On ne retient que le premier
+
+```{r}
+article1 <- premiereOccurence(  lapply(stext, chercherArticle))
+article1
+images[[25]]
+write.csv(article1,"../data/article1.csv", fileEncoding = "UTF-8")
+```
+
+Rmq : arrêté stationnement le 402 (pas d'article en page 1)
+
+## Extraction des lieux et dates et numéros des arrêtés
+
+### Origine
+
+après A2024 titre de l'arrêté on extrait les termes avec les rues etc...
+(1er filtre) puis on prend la 1e occurrence
+
+```{r}
+liste <- lapply(stext, chercherLoc)
+lieu <- premiereOccurence(liste)
+lieu
+# simplification après examen de la liste
+lieu <- gsub(".*stationnement|circulation",
+             "", 
+             ignore.case=TRUE,lieu)
+lieu [indOK]
+# enlever les accents
+lieu <- iconv(lieu [indOK], to="ASCII//TRANSLIT")
+# certains accents restent exemple : mésarmes
+lieu <- gsub("é","e", lieu)
+# les apostrophes
+lieu <- gsub("'", " ", lieu)
+lieu <- toupper(lieu)
+lieu
+# Sauvegarde du lieu# Sauvegarde du résultat
+write.csv(lieu, "../data/lieuCorrige.csv", fileEncoding = "UTF-8")
+```
+
+```{r}
+# vérification du titre du 20e arrêté
+images [[20]]
+liste <- lapply(stext, chercherDate)
+date <- premiereOccurence(liste)
+```
+
+### Filtrage précis
+
+#### Ñom rues
+
+On récupère la liste des rues et on cherche toutes les rues
+correspondantes.
+
+##### Table de référence
+
+```{r}
+st_layers(paste0(cheminGen, "socle2026.gpkg"))
+rues <- st_read(paste0(cheminGen, "socle2026.gpkg"),"rues")
+```
+
+le fichier .csv a été fait à partir du socle mais sans les géométries.
+
+On a isolé le mot clé du nom. On modifie le fichier en fonction des
+besoins (ex = est ou l'est ?)
+
+La jointure se fera sur le champs complet (NOM_1_G), on peut modifier le
+champs (NOM)
+
+Dernier rajout AUTOPONT (29/1/2025)
+
+###### Doublons rues ?
+
+```{r}
+nb <- length(rues$NOM_1_G)
+# 372 rues
+# Attention on enlève les mots clés en doublons
+doublons <- rues$NOM [duplicated(rues$NOM)]
+# 17
+doublons
+```
+
+Il y a beaucoup de doublons, cela vaut le coup, de traiter à part en
+fonction du jeu d'arrêté de départ filtré sur les doublons.
+
+##### Repérer les noms de rue
+
+###### Arretes multi lieux
+
+Du coup, on éclate la liste des lieux
+
+```{r}
+lieu <- read.csv("../data/lieuCorrige.csv")
+# vectorisation
+lieu <- lieu$x
+# on éclate chq lieu avec les espaces
+liste_lieu <- strsplit(lieu, " ")
+```
+
+triple boucle : - parcours de la liste des lieux - parcours de chaque
+mot ds la liste des lieux - parcours de la liste des rues pour trouver
+correspondance avec grep
+
+```{r}
+nb <- length(liste_lieu)
+nb2 <- length(rues$NOM)
+lg <- 1
+lmot <- NULL
+lmotF <- NULL
+indF <- NULL
+ind <- NULL
+indMot <- NULL
+# parcours de la liste des lieux
+for (lg in (1:nb)){
+    mots <- liste_lieu [[lg]]
+# parcours de la lg de la liste des lieux
+    for (m in mots){
+      # parcours des rues ##############
+        for (i in (1:nb2)) {
+          ind <- grep(rues$NOM [i], m, ignore.case = T)
+          # seuls les indices non nulls nous intéressent
+          if (length(ind)>0){
+            indF <- c(indF, i)}
+        }
+      ###################################
+        # tous les indices du 1er mot de la ligne
+        indMot <- c(indMot,indF)
+        indF <- NULL
+    }
+     # tous les indices de la ligne
+    lmot <- c(lmot,indMot)
+    lmot <- (rues$NOM[lmot])
+    indMot <- NULL
+    # toutes les lignes
+    lmotF <- append(lmotF, list(lmot))
+    lmot <- NULL
+}
+```
+
+On a le numéro d'arrêté en liste fiable. Cela fera ts les rownames.
+
+```{r}
+num <- read.csv("../data/numArrete.csv")
+# 29
+num <- as.vector(num$x)
+```
+
+```{r}
+liste_motCle <- lmotF
+num <- paste0("Arr_", num)
+# chaque num arrete en names
+names(liste_motCle) <- num
+```
+
+###### Détection des arrete sans localisation
+
+correction (cas av de l'est) ou suppression qd sur tte la commune
+
+```{r}
+ind <-  which(sapply(liste_motCle, length)==0)
+# on regarde les lieux et on voit les soucis
+lieu [ind]
+# on repère pb av de l'est sur l'indice 3
+liste_motCle [ind [3]] <- "L'EST"
+# on sort des pb
+ind <- ind [-3]
+# ce sont des arrêtés sur la commune
+liste_motCle [ind] <- "COMMUNE"
+# liste à traiter la 2
+liste_motCle2 <- liste_motCle [-ind]
+lieu2 <- lieu [-ind]
+#  verif de la longueur
+length(liste_motCle2)==length(lieu2)
+# df à garder pour traitement ultérieur
+liste_motCle1 <- liste_motCle [ind]
+dfReste <- as.data.frame(do.call(rbind, liste_motCle [ind]))
+names(dfReste) <- "NOM"
+write.csv(dfReste, "../data/arreteSansRue.csv", fileEncoding = "UTF-8")
+```
+
+Pour meilleure correction
+
+On transforme en csv
+
+```{r}
+motCle <- unlist(liste_motCle2) # les mots clé sans COMMUNE
+names(motCle)
+# les num d'arrete
+arr <- substring(names(motCle), 5,7)
+df <- data.frame(motCle, arr)
+lieu2
+arr <- unique(arr)
+df2 <- data.frame(lieu2, arr)
+jointure <- merge(df, df2, by= "arr")
+write.csv(jointure, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F)
+```
+
+On repère trois erreurs MAI et AUTOPONT DAUBIE sur le .csv
+
+correction sur la liste directement suite à examen des mots clés (cas
+autopont)
+
+```{r}
+liste_motCle2$Arr_144 <- "AUTOPONT"
+liste_motCle2$Arr_439 <- "PERMANENT"
+# on retire l'arrete
+dfReste <- rbind(dfReste, liste_motCle2$Arr_439)
+row.names(dfReste)
+row.names(dfReste) [6] <- "Arr_439"
+# et on enlève l'arreté
+liste_motCle2
+element1Liste <- sapply(liste_motCle2, "[",1)
+ind <- which(element1Liste == "PERMANENT")
+liste_motCle1b <- liste_motCle [ind]
+liste_motCle3 <- liste_motCle2 [-ind]
+lieu3 <- lieu2 [-ind]
+liste_motCle3
+# repérage dernière erreur D'Aubier pour DAUBIE
+liste_motCle3$Arr_155[2] <- "DAUBIE"
+liste_motCle3
+```
+
+On a une liste bonne qui correspond pour l'indexage à lieu3
+Reconstituion des listes des 29 arrêtes
+
+```{r}
+liste_motCle4 <- c(liste_motCle1, liste_motCle1b, liste_motCle3 )
+```
+
+29 éléments
+
+On écrase pour nommer le fichier
+
+```{r}
+aplatir <- function(vecteur){
+  #rajout du séparateur
+  tmp <- ifelse(length(vecteur) > 1, paste0(vecteur , sep="_", collapse = ""),vecteur)
+  # suppression du dernier séparateur
+  tmp <- gsub("_$", "", tmp)
+}
+res <- sapply(liste_motCle4, aplatir)
+nom <- gsub("Arr", "2024", names(res))
+df <- data.frame(nom,res)
+names(df) <- c("num","lieu")
+write.csv(df,"../data/nomArrete.csv", fileEncoding = "UTF-8" , row.names = F)
+```
+
+Attention l'indice de lieu ne correspond plus. On fait une jointure par
+le num d'arrêté pour récupérer l'indice du fichier (de l'image.)
+
+```{r}
+num <- read.csv("../data/numArrete.csv")
+lieu <- read.csv("../data/nomArrete.csv")
+lieu$num2 <- substring(lieu$num, 6,8)
+num
+```
+
+#### Nature des rues
+
+2 cas : avec ou sans doublon
+
+##### Avec doublons
+
+On identifie uniquement les doublons dans liste_motCle3 Recherche du
+terme dans le txt d'origine choix du terme
+
+On filtre sur la longueur \> 1
+
+```{r}
+longueur <- sapply(liste_motCle3, length)
+ind <- which(longueur > 1 )
+liste_motCle4 <- liste_motCle3 [ind]
+liste_motCle4
+lieu4 <- lieu3 [ind] 
+# la fonction va permettre de repérer les doublons
+doublonListe <- function(item){
+  ind <-  which(duplicated(item))
+} 
+# test sur un arrete
+ind <- doublonListe (liste_motCle4$Arr_407)
+# toute la liste
+listeInd <- sapply(liste_motCle4, doublonListe)
+ind <- which (sapply(listeInd, length) > 0)
+listeInd2 <- listeInd [ind]
+listeInd2
+liste_motCle5$Arr_407 [listeInd2$Arr_407]
+liste_motCle5$Arr_413 [listeInd2$Arr_413]
+# uniquement 2 items en doublons mais avec un sous-item pas en doublon
+lieu5 <- lieu4 [ind]
+lieu5
+```
+
+correction à la main
+
+```{r}
+liste_motCle5$Arr_407 <- c("GALLIENI", "STAINS")
+liste_motCle5$Arr_407
+liste_motCle5$Arr_413 <- "CARNOT"
+```
+
+A REVOIR
+
+```{r}
+# table d'équivalence constituée peu à peu à partir de jointure
+EXTR <- c("Avenue", "Route")
+NATURE <- c("AV", "RTE")
+equiv <- data.frame(NATURE,EXTR)
+e <- equiv$EXTR[1]
+for (e in equiv$EXTR){
+  print(e)
+  ind <- grep(e, doublons3$lieu, ignore.case = T )
+  print(ind)
+  print(doublons3 [ind,])
+  doublons3$EXTR [ind] <- e 
+}
+doublons3
+doublons3 <- unique(jointureDoublons)
+jointureDoublons$EXTR [2] <- "Route"
+jointureDoublons
+jointure <- merge(jointureDoublons,equiv, by=c("EXTR"))
+jointure
+
+```
+
+##### Sans doublons
+
+on repère le motif correspondant à une clé, et on joint pour récupérer
+le motif de reférence
+
+table de référence
+
+```{r}
+df <- data.frame(NOM=unique(unlist(liste_motCle3)))
+df
+rues <- read.csv("../data/rueIndex.csv")
+rues$NOM
+refRue <- merge(rues, df, by="NOM")
+```
+
+On garde uniquement les bons doublons
+
+```{r}
+refRue <- refRue [-c(5,6),] 
+```
+
+A revoir. qu'arrive t il si on a besoin ailleurs ? 2 tables de ref, une
+avec les doublons, une sans on aucun doublon
+
+#### Récupération des géométries rues TODO
+
+```{r}
+ruesGeom <- st_read("../data/cadastre2024.gpkg", "rue")
+```
+
+### Dates
+
+```{r}
+article1 <- read.csv("../data/article1.csv")
+article1$arr <- num$x
+article1
+# on renomme la colonne
+names(article1) [2] <- "texte"
+# suppression terme article
+# on n'utilise qu'un seul séparateur, le ":"
+article1$texte <- gsub("-|;|—", ":", article1$texte)
+# on éclate avec le :
+list_article1 <- strsplit(article1$texte, ":")
+date <- sapply(list_article1, "[",2)
+# on garde les numéros d'arrete en titre de colonne
+names(date) <- num
+```
+
+```{r}
+jour <- c("lundi|mardi|mercredi|vendredi|samedi|dimanche")
+```
+
+cas des sans dates
+
+```{r}
+article1 [25,]
+lieu [25]
+# On le supprime
+article1 <- article1 [-25,]
+# on cherche l'année
+ind <- grep("2024|2025", date)
+# A revoir
+date [-ind]
+date <- date [ind]
+date
+```
+
+On repère la place du mot du jour et on récupère les 2 mots d'après
+
+```{r}
+date2 <- gsub("A compter du ", "", date)
+date2
+date3 <- gsub(" Le | Du ", "", date2)
+date3
+ind <- grep(jour, date3)
+date4 <- date3 [ind]
+date5 <- gsub("et jusqu’au| au ", "STOP", date4)
+date5
+liste_date <- strsplit(date5, "STOP")
+liste_date
+dateDeb <- sapply(liste_date, "[", 1)
+# enlever espaces au début et à la fin
+dateDeb2 <- gsub("^ || $", "", dateDeb)
+dateDeb2
+ind <- which(names(dateDeb2)=="Arr_408")
+dateDeb2 [ind] <- paste(dateDeb2[ind], "2025")
+dateDeb3 <- as.Date(dateDeb2 , format = "%A %d %B %Y")
+dateDeb3
+annee <- format(dateDeb3,  "%Y")
+dateDeb3 [15]
+date4 [15]
+dateFin <- sapply(liste_date, "[",2)
+dateFin <- gsub("yendredi", "vendredi", dateFin)
+dateFin
+dateFin2 <- gsub("^ || $", "", dateFin)
+liste_date  <- strsplit(dateFin2, " ")
+jour <- lapply(liste_date, "[",1:3)
+fusionJour <- function(vecteur){
+  chaine <- paste0(vecteur) 
+ jour <-paste0(chaine, collapse =  " ")
+}
+test <- fusionJour(jour [[1]])
+jour2 <- sapply(jour, fusionJour)
+jour2
+dateFin3 <- paste(jour2, annee, sep=" ")
+dateFin3
+dateFin4 <- as.Date(dateFin3 , format = "%A %d %B %Y")
+dateFin4
+```
+
+modification manuelle
+
+```{r}
+dateFin4 [7] <- NA
+dateFin4 [15] <- gsub("NA", "2025", dateFin4 [15])
+dateFin4
+```

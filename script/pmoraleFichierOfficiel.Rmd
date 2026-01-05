@@ -27,7 +27,9 @@ https://www.data.gouv.fr/fr/datasets/fichiers-des-locaux-et-des-parcelles-des-pe
 
 version 2022 : fichier des locaux (situation 2022).zip
 
+version 2025 : https://data.economie.gouv.fr/explore/dataset/fichiers-des-locaux-et-des-parcelles-des-personnes-morales/information/
 
+directement sur le site du ministère de l'économie
 
 
 ```{r}
@@ -49,31 +51,26 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 
 
 ```{r}
-fic <- c("PM_19_NB_640.txt")
 #02_URBA pour le drive 06 pour pc mairie
-data <- read.csv2(paste0(chemin,"06_URBA/personne morale opendata/PM_22_NB_930.txt"), fileEncoding = "latin3")
-data <- read.csv2(paste0("../data/gros/", fic))
-data <- read.csv2("../data/gros/PM_20_NB_840.txt", fileEncoding = "latin3")
-sel <- "AVIGNON"
+data <- read.csv2(paste0(chemin,"06_URBA/personne morale opendata/PM_25_NB_930.csv"))
 sel <- "BONDY"
-table(data$Département..Champ.géographique.)
-nom <-  names(table(data$Nom.Commune..Champ.géographique.))
-nom [grep("AVI", nom)]
-data <- data [ data$Nom.Commune..Champ.géographique.== sel, ]
+table(data$Département)
+table(data$Nom.de.la.commune)
+data <- data [ data$Nom.de.la.commune== sel, ]
 str(data)
-library(sf)
-cadastre <- st_read("../data/gros/cadastre-84007-parcelles.json")
-
-st_layers("../data/cadastre.gpkg") 
-cadastre <- st_read("../data/cadastre.gpkg", "parcelle_info")
-str(cadastre)
+st_layers("../data/cadastreBase.gpkg")
+cadastre <- st_read("../data/cadastreBase.gpkg", "proprio2025")
 ```
 
+7126 parcelels
 
 espaces avt le code dans cadastre
 
 ```{r}
+cadastre$code
 cadastre$code <- gsub(" ", "", cadastre$code)
+cadastre <- cadastre [unique(cadastre$code),]
+st_write(cadastre, "../data/cadastreBase.gpkg", "parcelle_info", delete_layer = T)
 ```
 
 # Jointure
@@ -86,27 +83,26 @@ Préparation jointure : le code est sur 5 caractères
 On rajoute des zéros en fonction.
 
 ```{r}
+table(nchar(cadastre$code))
+head(cadastre [nchar(cadastre$code == 6,), c("code", "adresse")])
 # calcul du nb de caractères
 # ajout de zéros A0008 
-nb <- nchar(data$N..plan..Références.cadastrales.)
+table(nb <- nchar(data$N..plan))
+table(nchar(data$N..plan))
 data$nb2 <- ifelse(nb == 3, '0', ifelse(nb==2, '00', '000'))
-data$code <- paste0(data$Section..Références.cadastrales.,  data$nb2, data$N..plan..Références.cadastrales.)
+data$code <- paste0(data$Section,  data$nb2, data$N..plan)
 tab <- table(data$code)
 tab2 <- tab [tab > 1]
 doublons <- names(tab2)
-#data [data$code %in% doublons,]
+data [data$code %in% doublons,]
 ```
 
 
+114 doublons
+
 ```{r}
-cadastre$numero
-cadastre$section
-cadastre$code <- paste0(cadastre$section, cadastre$numero)
-data$N..plan..Références.cadastrales.
-data$Section..Références.cadastrales.
-data$code <- paste0(data$Section..Références.cadastrales.,data$N..plan..Références.cadastrales.)
+cadastre$code
 jointure <- merge(cadastre, data, by="code")
-library(mapsf)
 mf_map(jointure)
 ```
 

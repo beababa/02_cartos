@@ -1,0 +1,168 @@
+---
+title: "Certificat de numérotage 2025"
+
+author: "B. Maranget"
+date: "8/12/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Récupération des parcelles traitées en 2025 et verif dans la BAN
+
+```{r}
+library(sf)
+library(mapsf)
+library(mapview)
+```
+
+chemin
+
+```{r}
+home <- Sys.getenv("HOME")
+chemin <- "/03_SIG/03_03_Data/06_URBA/__ certificat adressage TEMP/Certificat d'alignement/"
+tot <- paste0(home,chemin)
+fic <- list.files(tot)
+# extraction des 5 premiers caractères
+res <- substring(fic, 1,6)
+section <- substring(res,1,2)
+parcelle <- substring(res, 3,6)
+parcelle <- as.numeric(parcelle)
+table(is.na(parcelle))
+# 60 parcelles à problème, on les traite après
+df <- data.frame(section, parcelle)
+dfOK <- df [!is.na(df$parcelle),]
+dfOK$section2 <- gsub("-[A:Z]","", dfOK$section)
+dfOK$section2 <- gsub(" ", "", dfOK$section2)
+dfOK$section2 <- toupper(dfOK$section2)
+dfOK$cle <- paste0(dfOK$section2, dfOK$parcelle)
+dfOK <- dfOK[!duplicated(dfOK),]
+```
+
+Extraction multi parcelles
+
+```{r}
+nb <- nchar(fic)
+data <- data.frame(fic, nb)
+hist(nb)
+data <- data [data$nb > 40,]
+data$fic <- gsub("alignement et numérotage|.doc|.pdf| atfd|et ","",data$fic)
+data <- data [-1,]
+# 9 rue du verger
+data <- unique(data)
+data
+eclate <-  strsplit(data$fic, " ")
+data$section <- sapply(eclate, "[",1)
+parcelles <- NULL
+soustraire <- function (id) {
+  parcelles <- gsub(data$section [id],"", data$fic  [id])
+}
+parcelle <- sapply(c(1:length(data$fic)), soustraire)
+data$parcelles <- parcelle
+# on recherche les lettres restantes
+id <- grep("[A:Z]", data$parcelles)
+data[length(data$section)+1 , "section"]  <- gsub("[0-9]","",data$parcelles [id])
+mot <- eclate [[id]]
+mot <- mot [-1]
+id <- grep("[A-Z]", mot)
+data$parcelles [length(data$parcelles)] <- mot [ (id + 1)] 
+```
+
+
+
+
+
+
+Liste complete parcelles
+
+```{r}
+eclate <- strsplit(data$parcelles, " ")
+longueur <- sapply(eclate, length)
+id <- 1
+code <- NULL
+for (id in 1:length(data$parcelles)){
+  tmp <- eclate [[id]]
+  df <- data.frame(section = data$section [id],parcelle  = tmp)  
+  tmpCode <- paste0(df$section,df$parcelle)
+  code <- c(code, tmpCode)
+}
+code <- code [-grep("[A-Z]$", code)]
+code <- gsub(" ", "", code)
+```
+
+
+Rajout dans la table
+
+
+```{r}
+code2 <- dfOK$cle
+code <- unique(c(code2, code))
+code <- toupper(code)
+```
+
+111 parcelles
+
+
+
+code du cadastre 5 digits
+
+```{r}
+st_layers("../data/cadastreBase.gpkg")
+cadastre <- st_read("../data/cadastreBase.gpkg", "parcelle_info")
+cadastre$code
+cadastre$section <- substring(cadastre$code,1,2)
+cadastre$parcelle <- substring(cadastre$code,3,6)
+cadastre$section <- gsub("-[A:Z]","",cadastre$section)
+cadastre$section <- gsub(" ", "", cadastre$section)
+cadastre$parcelle <- gsub("^0|^00|^000", "", cadastre$parcelle)
+cadastre$cle <- paste0(cadastre$section,cadastre$parcelle)
+```
+
+
+
+Filtre
+
+```{r}
+sel <- cadastre [cadastre$cle %in% code,]
+setdiff(code,sel$cle)
+# 2 pb
+png("../img/certif2025_parcelle.png", width = 2500, height = 3500, res = 300)
+mf_map(sel)
+mf_label(sel, "cle", overlap = F)
+mf_layout("Certificats 2025", "internes et DGFIP \nDecembre 2025")
+dev.off()
+```
+
+
+```{r}
+agg <- aggregate(sel [,c("adresse")], by=list(sel$adresse), length)
+png("../img/certif2025_adresse.png", width = 2500, height = 3500, res = 300)
+mf_map(agg)
+mf_label(agg, "Group.1", overlap = F, cex = 0.5)
+mf_layout("Certificats 2025", "internes et DGFIP \nDecembre 2025")
+dev.off()
+```
+
+
+Enregistrement tableur
+
+```{r}
+sel
+write.csv(sel [,c("cle", "contenance","adresse"), drop=T],"../data/certif.csv", fileEncoding = "UTF-8")
+```
+
