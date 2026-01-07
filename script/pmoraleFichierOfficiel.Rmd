@@ -27,6 +27,8 @@ https://www.data.gouv.fr/fr/datasets/fichiers-des-locaux-et-des-parcelles-des-pe
 
 version 2022 : fichier des locaux (situation 2022).zip
 
+maj début 2026
+
 version 2025 : https://data.economie.gouv.fr/explore/dataset/fichiers-des-locaux-et-des-parcelles-des-personnes-morales/information/
 
 directement sur le site du ministère de l'économie
@@ -42,8 +44,8 @@ library(mapsf)
 
 
 ```{r}
-chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
-#chemin <- "G:/Mon Drive/05_DATA/"
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/06_URBA/personne morale opendata")
+chemin <- "G:/Mon Drive/03_SIG/03_03_DATA/02_URBA/"
 ```
 
 
@@ -52,24 +54,33 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 
 ```{r}
 #02_URBA pour le drive 06 pour pc mairie
-data <- read.csv2(paste0(chemin,"06_URBA/personne morale opendata/PM_25_NB_930.csv"))
+data <- read.csv2(paste0(chemin,"/PM_25_NB_930.csv"))
 sel <- "BONDY"
 table(data$Département)
 table(data$Nom.de.la.commune)
 data <- data [ data$Nom.de.la.commune== sel, ]
 str(data)
-st_layers("../data/cadastreBase.gpkg")
-cadastre <- st_read("../data/cadastreBase.gpkg", "proprio2025")
 ```
 
-7126 parcelels
+
+champs multiple intéressants SUF / Nature.culture/ Code.droit / Groupe.personne / Forme juridique / Dénomination.par
+
+```{r}
+st_layers("../data/cadastreBase.gpkg")
+cadastre <- st_read("../data/cadastreBase.gpkg", "proprio2025")
+mf_map(cadastre)
+```
+
+7126 parcelles
 
 espaces avt le code dans cadastre
 
 ```{r}
 cadastre$code
 cadastre$code <- gsub(" ", "", cadastre$code)
-cadastre <- cadastre [unique(cadastre$code),]
+# test sur les doublons
+table(duplicated(cadastre$code), useNA = "always")
+cadastre <- cadastre [!duplicated(cadastre$code),]
 st_write(cadastre, "../data/cadastreBase.gpkg", "parcelle_info", delete_layer = T)
 ```
 
@@ -84,17 +95,25 @@ On rajoute des zéros en fonction.
 
 ```{r}
 table(nchar(cadastre$code))
-head(cadastre [nchar(cadastre$code == 6,), c("code", "adresse")])
+tail(cadastre$code)
 # calcul du nb de caractères
 # ajout de zéros A0008 
 table(nb <- nchar(data$N..plan))
 table(nchar(data$N..plan))
+table(nchar(data$Section))
+data$Section <- gsub(" ", "", data$Section)
+table(data$Section)
 data$nb2 <- ifelse(nb == 3, '0', ifelse(nb==2, '00', '000'))
 data$code <- paste0(data$Section,  data$nb2, data$N..plan)
+
+table(nchar(data$code))
 tab <- table(data$code)
+
 tab2 <- tab [tab > 1]
 doublons <- names(tab2)
-data [data$code %in% doublons,]
+data [data$code %in% doublons, c("code", "N..voirie", "Indice.de.répétition", "Nom.voie")]
+data <- data [!duplicated(data$code),]
+data
 ```
 
 
@@ -107,32 +126,41 @@ mf_map(jointure)
 ```
 
 
-Avignon
+1335 parcelles
 
 ```{r}
-jointure$Dénomination..Propriétaire.s..parcelle.
-nom <- "COMMUNE D AVIGNON"  
-sel <- jointure [jointure$Dénomination..Propriétaire.s..parcelle. == nom,]
+nom <- "COMMUNE"  
+sel <- jointure [grep(nom, jointure$proprio),]
 mf_map(sel)
-st_write (sel, "../data/avignon.gpkg", "pmorale")
-st_write(cadastre, "../data/avignon.gpkg", "cadastre")
-png("../img/avignon.png")
-mf_map(cadastre)
-mf_map(sel, add = T, col = "red")
-mf_layout("Avignon, propriété mairie", "data.gouv,2025")
+st_write (sel, "../data/cadastreBase.gpkg", "OPENDATAcommune", delete_layer = T)
+```
+
+Propriété communale (y compris Villemomble)
+
+```{r}
+png("../img/bondyFoncier.png", width = 10000, height = 14000, res = 1000)
+mf_map(cadastre, col = "wheat", border = NA)
+mf_map(sel, type = "typo", var ="proprio", add = T,  border = "wheat", leg_pos = "topright")
+mf_layout("Bondy, propriété commune", "data.gouv,2025")
+mf_label(sel, overlap = F, var = "code", cex = 0.3)
 dev.off()
 ```
 
-Première jointure et carto
+Carto plus générale
 
 ```{r}
-jointure <- merge (cadastre, data, by = "code")
-mf_map(cadastre)
-mf_map(jointure, col = "red",add = T)
-mf_layout("première exploration Personne morale opendata", "source : cadastre 2022 & personne morale 2022")
+png("../img/pMorale.png", width = 10000, height = 14000, res = 1000)
+mf_map(cadastre, col = "wheat", border = NA)
+mf_map(jointure, col = "cadetblue3",add = T, border = NA)
+mf_layout("première exploration Personne morale opendata", "source : cadastre 2025 & personne morale 2025")
+dev.off()
 ```
 
 pas mal 1396 éléments sur 1400...
+en 2025, 1335 sur 1338
+
+
+
 
 ## Exploration des données
 
@@ -142,8 +170,9 @@ L fonctionnaire logé...
 
 ```{r}
 str(jointure)
-barplot(table(jointure$Code.droit..Propriétaire.s..parcelle.))
-mf_map(jointure, type = "typo", var = "Code.droit..Propriétaire.s..parcelle.", border = NA)
+par(mar = c(4,16,4,4))
+barplot(table(jointure$Code.droit...par), las = 2, main = "Type propriété", border = NA, horiz = T)
+mf_map(jointure, type = "typo", var = "Code.droit...par", border = NA)
 ```
 
 G gérant, P propriétaire, S syndic coproprio Z gestionnaire d'un bien de l'Etat
@@ -171,7 +200,7 @@ Certaines parcelles ont plusieurs proprio. On garde les doublons sur les noms pa
 
 ```{r}
 names(data)
-data <- data [, c("code", "Groupe.personne..Propriétaire.s..parcelle.", "Forme.juridique..Propriétaire.s..parcelle.", "Forme.juridique.abrégée..Propriétaire.s..parcelle."  ,  "Dénomination..Propriétaire.s..parcelle." )]
+data <- data [, c("code", "Groupe.personne...par", "Forme.juridique...par", "Forme.juridique.abrégée...par"  ,  "Dénomination...par" )]
 res <- data  [!duplicated (data),]
 head(res)
 ```
@@ -222,7 +251,6 @@ knitr::kable(agg$Group.1)
 ### Cartographie
 
 ```{r}
-jointure <- merge (cadastre, doublons, by = "code")
 png("../img/etik.png", width = 1200, height = 1200, res = 120)
 mf_init(jointure)
 mf_map(cadastre, col = "antiquewhite2", border = "antiquewhite1", add = T)
@@ -234,13 +262,22 @@ dev.off()
 
 ![](../img/etik.png)
 
-## Jointure
+# Cartos sur le type de groupe de personne
 
 ```{r}
-jointure <- merge (cadastre, data, by = "code")
-table(jointure$Forme.juridique.abrégée..Propriétaire.s..parcelle, jointure$Groupe.personne..Propriétaire.s..parcelle.)
-mf_map(jointure, type = "typo", var = "Forme.juridique.abrégée..Propriétaire.s..parcelle.")
-mf_layout("Personnes morales", "sources : cadastre & personnes morales")
+tab <- table(jointure$Forme.juridique.abrégée...par, jointure$Groupe.personne...par)
+tab
+# on fait une carte par type de groupe de personne
+grPersonne <- colnames(tab)
+g <- grPersonne [1]
+for (g in grPersonne){
+  png(paste0("../img/pMoraleGR", g, ".png"),width = 1200, height = 1200, res = 120)
+  mf_map(jointure [jointure$Groupe.personne...par == g, ], type = "typo", var = "Forme.juridique.abrégée...par", border = NA)
+  mf_layout(paste0("Personnes morales : ", g), "sources : cadastre & personnes morales")
+  dev.off()
+}
+jointure$Groupe.personne...par == g
+jointure$Forme.juridique.abrégée...par
 ```
 
 
@@ -259,7 +296,7 @@ Enregistrement de données
 
 
 ```{r}
-st_write(data, "../data/cadastre.gpkg", "pmoraleOpendata2022", fileEncoding = T, delete_layer = T)
+st_write(data, "../data/jointure.gpkg", "pmoraleOpendata2025", fileEncoding = T, delete_layer = T)
 ```
 
 

@@ -1,0 +1,234 @@
+---
+title: "OCR arrêté"
+author: "B. Maranget"
+date: "20/07/2021"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+# Objet
+
+Astreinte hivernale = 3 pdf (Merci à tous !)
+
+faire une liste à lier aux rues d'osm
+
+
+# Librairies
+
+```{r}
+library(pdftools)# pdf_subset
+library(tidyverse)
+library(tesseract)
+library(magick)
+library(tictoc)
+```
+
+```{r}
+library(sf)
+library(mapsf)
+library(filesstrings)# pour le move
+```
+
+# Fonctions diverses
+
+```{r}
+# OCR
+ocrEssai <- function() {
+  text_list <- map(images, ocr)
+# 40 secondes / 81 pages (correspond au nb de fichier)
+# 18 s / si on filtre sur les premières pages
+  stext <- str_split(text_list, "\n")
+}
+```
+
+
+
+# Chemins
+
+```{r}
+Sys.getenv("HOME")
+cheminGen <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/03_SOCLE/")
+# maison
+cheminGen <- "D:/03_SIG/03_03_Data/03_SOCLE/"
+chemin <- "S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/"
+chemin <- "G:/Mon Drive/03_SIG/03_03_DATA/06_VOIRIE/"
+```
+
+# Les images
+
+A priori, on ne le fait qu'une fois. Attention aux pages uniquement avec
+le tampon qui ne seront traitées qu'une fois.
+
+## Lecture de tous les fichiers .pdf et conversion en image
+
+```{r, eval = FALSE}
+# au cas où second passage pour verif
+chemin <- paste0(chemin,"01_fait")
+# si 1er passage ne pas jouer
+fic <- dir (path = "../data/", pattern = "SCE*", full.names = TRUE)
+# scan
+fic
+for (f in fic){
+  pngfile <- pdftools::pdf_convert(f,  dpi = 400)
+}
+pngfile <- dir(path =".", pattern = "*.png", full.names = T)
+images <- pngfile
+```
+
+
+
+
+# Extraction et mise en forme
+
+tic toc sont là pour mesurer le temps la fonction éclate le fichier sur
+les lignes (/n) peut-être envisager sur ARTICLE ?
+
+```{r}
+tic()
+stext <- ocrEssai()
+toc()
+```
+
+
+```{r}
+centre <- stext [[1]][6:19]
+EV <- stext [[2]][7:34]
+arpenteur <- stext [[3]][6:28]
+secteur <- c(rep("centre", length(centre)),
+                 rep("EV", length(EV)),
+                     rep("arpenteur", length(arpenteur)))
+df <- data.frame(rues = c(centre, EV, arpenteur), secteur = secteur)
+df$rues <- gsub ("> ", "", df$rues)
+```
+
+
+```{r}
+bat <- strsplit(df$rues, "\\(")
+df$rues <- sapply(bat, "[[",1)
+df$bat <- sapply(bat, "[",2)
+head(df)
+df$bat <- gsub("\\)","",df$bat)
+write.csv(df, "../data/astreinte.csv", fileEncoding = "UTF-8")
+```
+
+# Correspondance OSM
+
+rqt overpass
+
+(highway=* and name=*) or building=public or amenity=* or building=school in bondy
+
+
+```{r}
+osm <- st_read("../data/astreinteOSM.geojson")
+osm <- osm [,c( "alt_name", "name", "building", "amenity")]
+st_write(osm, "../data/astreinte.gpkg", "osmTot", delete_layer = T)
+astreinte <- read.csv("../data/astreinteModifie.csv", fileEncoding = "UTF-8") 
+```
+
+
+on cherche les mots clés ds OSM
+
+```{r}
+astreinte$rueCode
+lg <- c(1:length(astreinte$rueCode))
+for (l in lg) {
+  ind <- grep(astreinte$rueCode [l], osm$name, ignore.case = T )
+  ind <- ind [1]
+  print(astreinte$rueCode [l])
+  osm$alt_name [ind] <- astreinte$rueCode [l]
+}
+bat <- osm [osm$building == "public", c("alt_name", "name", "building", "amenity")]
+osm <- osm [!is.na(osm$alt_name), c("alt_name", "name", "building", "amenity")]
+osm <- rbind(osm,bat)
+osm <- osm [!duplicated(osm$name),]
+osm$rmq <-0
+st_write(osm, "../data/astreinte.gpkg", "osm", delete_layer = T)
+```
+
+
+# Recup données
+
+Pointage fastidieux dans les exports OSM du contenu de astreinteModifie
+
+
+récup finale
+
+```{r}
+couches <- st_layers("../data/astreinte.gpkg")
+couches <- couches$name
+# 14 2 3 1 type pt polygone 5
+couches <- st_layers("../data/astreinteOSM.gpkg")
+# 1
+
+```
+
+```{r}
+couches <- couches [c(1,2,3,5,14)]
+c <- "rue"
+for (c in couches){
+  print (c)
+  tmp <- st_read("../data/astreinte.gpkg", c)
+  names(tmp)
+  st_geometry(tmp) <- "geometry"
+  tmp <- tmp [, c("name","alt_name","amenity","building", "rmq")]
+  assign(c, tmp)
+}
+osmLG <- st_read("../data/astreinteOSM.gpkg")
+osmLG <- osmLG [, c("name","alt_name","amenity","building", "rmq")]
+```
+
+Union et filtre
+
+```{r}
+couches <- c(couches, "osmLG")
+tot <- rbind(osmLG, osm, osmTot, poi, poly, rue)
+tot <- tot [tot$rmq == 1&!is.na(tot$rmq),]
+tot$etik <- tot$alt_name
+st_write(tot, "../data/astreinte3.gpkg", "totalPT", delete_layer = T)
+rbind(osmLG, rue)
+osmLG
+names(rue)[6] <- "geom"
+st_geometry(osmLG) <- "geometry"
+```
+
+Jointure pour récupérer l'équipe
+
+
+```{r}
+detail <- read.csv("../data/astreinteModifie.csv", fileEncoding = "UTF-8")
+detail$poiCode
+detail$rueCode
+jointure1 <- merge(tot, detail, by.x = "alt_name", by.y = "poiCode")
+jointure2 <- merge(tot, detail, by.x = "alt_name", by.y = "rueCode") 
+```
+
+
+```{r}
+# gouches
+```
+
+
+# Astreinte SEPUR
+
+
+```{r}
+sepur <- st_read("../data/astreinte2.gpkg", "sepur")
+mf_map(sepur)
+st_crs(sepur) <- 2154
+st_write(sepur, "../data/astreinte3.gpkg", "sepur", delete_layer = T)
+```
+
