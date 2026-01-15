@@ -31,10 +31,17 @@ Commissariat Général au Développement Durable
 	en août 2022
 
 
+en janvier 2026
+
+https://data.statistiques.developpement-durable.gouv.fr:443/dido/api/v1/datafiles/f3c2f2cb-8fb1-40fd-8733-964247744c9a/spatial/geojson?millesime=2024-01&geoField=DEP
+
+interface permettant le filtre
+
 carto bailleurs et parcellaires pour Zem en août 2023
 
 analyse du rpls 2023
 
+rpls 2024
 
 ```{r}
 library(sf)
@@ -91,16 +98,31 @@ rpls2023 <- rpls2023 [rpls2023$CODEPOSTAL == 93140,]
 9625 pts
 
 
+
+2024
+
+```{r}
+rpls2024 <- read.csv2("../data/rpls2024.csv", skip = 1,  dec= ".")
+```
+
+9287 en geojson puis en .csv puisque tout est fait
+9286 en csv
+
 Puisqu'il s'agit de traiter pl fichiers, on va tout mettre en fonctions ?
 
 ```{r}
-fic <- rpls2023
+fic <- rpls2024
 names(fic)
 head(fic)
+# pb pour 2024 sur le nom de voie
+table(fic$NOMVOIE)
+fic$NOMVOIE <- gsub ("[0-9]", "", fic$NOMVOIE)
+# X Y verif également
+fic<- fic [!is.na(fic$X),]
 # vérifcation pour le nb d'étages et le nb de voies
 verif <- function(fic) {
   ind <- grep("NOMVOIE",names(fic))
-  # on suppose que le nom voie sera tjrs en 2e position
+  # on suppose que le nom voie sera tjrs en 2e position 19e pour 2024
   ind <- names(fic)[ind]
   tab <- table(fic[,ind], useNA = "always")
   ind <- grep("ETAGE", names(fic), ignore.case = T)
@@ -108,14 +130,16 @@ verif <- function(fic) {
   return(list(tab,tab1))
 }
 res <- verif(fic)
+# 2 tableaux pour voir le nom des voies et les étages
 res
 # nb de voie
-par(mar = c(0,12,0,2))
+par(mar = c(5,12,2,2))
 barplot(res [[1]], las = 2, horiz = T, cex.names = 0.3, main = "nb lgts sociaux par rue")
 df <- as.data.frame(res [[1]])
 summary(df)
-df <- df [df$Freq > 50,]
-barplot(df$Freq, las = 2, horiz = T, names = df$Var1, main = "nb lgts sociaux par rue > 50", cex.names = 0.5)
+df <- df [df$Freq > 70,]
+barplot(df$Freq, las = 2, horiz = T, names = df$Var1, main = "nb lgts sociaux par rue > 70", cex.names = 0.5)
+# agregation par étage
 agg <- function(fic){
   ind <- grep("ETAGE", names(fic), ignore.case = T)
     # cellules vides et RC à zéro
@@ -138,12 +162,12 @@ geo <- unique( fic [,c("cle",   "CONSTRUCT" ,"X", "Y") ])
 joint2 <- merge(joint, geo, by ="cle")
 #data <- st_transform(data, crs = 2154)
 data <- st_as_sf(joint2, 
-                 coords = c(x = "Coordonnée.X", y = "Coordonnée.Y"), 
+                 coords = c(x = "X", y = "Y"), 
                  crs = 2154)
 return(data)
 }
-rpls <- agg(rpls2023)
-st_write(rpls2022, "../data/RPLS.gpkg", "rpls2022", delete_layer = T)
+rpls <- agg(fic)
+st_write(rpls, "../data/RPLS.gpkg", "rpls2024", delete_layer = T)
 ```
 
 
@@ -193,7 +217,7 @@ tab <- tab [-7]
 
 ```{r}
 RPLS <- RPLSbailleurs
-table(RPLS$type)
+table(fic$$)
 # cle sur l'adresse
 RPLS$cle <- paste0(RPLS$NUMVOIE, RPLS$TYPVOIE, RPLS$NOMVOIE)
 aggNbAppart <- aggregate(RPLS$cle, by = list(RPLS$cle), length)

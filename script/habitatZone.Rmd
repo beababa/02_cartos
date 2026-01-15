@@ -1,0 +1,98 @@
+---
+title: "Zones Habitat"
+author: "B. Maranget"
+date: "15/01/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Délimitation de zone et filtre sur données carroyage / rpls / dvf
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+```{r, eval = T}
+# on reprend variable HOME en fonction PC
+rep <- Sys.getenv("HOME")
+chemin <- paste0(rep,"/03_SIG/03_03_Data/10_HABITAT/")
+```
+
+
+# Chargement des fichiers
+
+Il y a un premier fichier en opendata, et l'autre comportant le nom des bailleurs.
+
+
+```{r}
+st_layers("../data/RPLS.gpkg")
+rpls <- st_read("../data/RPLS.gpkg", "rpls2024")
+zone <- st_read("../data/zoneExtraction.gpkg")
+zone <- st_transform(zone, 2154)
+st_layers("../data/cadastreBase.gpkg")
+cadastre <- st_read("../data/cadastreBase.gpkg", "proprio2025")
+st_layers("../data/carreaux.gpkg")
+filosofi <- st_read("../data/carreaux.gpkg", "bondy")
+ st_crs(filosofi) <- 2154
+```
+
+
+RPLS Il s'agit du fichier géospatialisé et agrégé à l'immeuble.
+
+
+# Intersections
+
+
+```{r}
+interRpls <- st_intersection(rpls, zone)
+mf_map(zone, col = "wheat")
+mf_map(st_jitter(inter,), type = "typo", var = "etage", add = T)
+mf_layout("Nb étages bâtiments logts sociaux", "RPLS 2024\njanvier 2026")
+
+```
+
+
+```{r}
+interCadastre <- st_intersection(cadastre, zone)
+interFilosofi <- st_intersection(filosofi, zone)
+```
+
+
+```{r}
+st_write(interCadastre, "../data/habitat2026.gpkg", "cadastre")
+st_write(interFilosofi, "../data/habitat2026.gpkg", "filosofi")
+st_write(interRpls, "../data/habitat2026.gpkg", "rpls")
+```
+
+On rajoute les p. morales
+
+```{r}
+pmorale <- st_read("../data/cadastreBase.gpkg", "pmorale")
+pmorale <- st_intersection(pmorale, zone)
+st_write(pmorale, "../data/habitat2026.gpkg", "pmorale")
+```
+
+
