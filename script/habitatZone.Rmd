@@ -22,7 +22,25 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Délimitation de zone et filtre sur données carroyage / rpls / dvf
+Délimitation de zone et filtre sur données 
+
+- carroyage 
+
+- rpls 2022
+
+
+- dvf  
+
+- bpe  
+
+- copro (RNIC)
+
+- cadastre
+
+- périmètres anru
+
+- bndb
+
 
 
 
@@ -38,61 +56,765 @@ library(mapsf)
 ```{r, eval = T}
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
-chemin <- paste0(rep,"/03_SIG/03_03_Data/10_HABITAT/")
+chemin <- paste0(rep,"/03_SIG/03_03_Data/")
 ```
 
+
+Les données sont téléchargées puis intersectées au niveau des zones dessinées sous QGIS.
+
+Les zones sont définies par rapport aux limites des parcelles cadastrales
 
 # Chargement des fichiers
 
-Il y a un premier fichier en opendata, et l'autre comportant le nom des bailleurs.
 
+## Zones
 
 ```{r}
-st_layers("../data/RPLS.gpkg")
-rpls <- st_read("../data/RPLS.gpkg", "rpls2024")
 zone <- st_read("../data/zoneExtraction.gpkg")
 zone <- st_transform(zone, 2154)
-st_layers("../data/cadastreBase.gpkg")
-cadastre <- st_read("../data/cadastreBase.gpkg", "proprio2025")
-st_layers("../data/carreaux.gpkg")
-filosofi <- st_read("../data/carreaux.gpkg", "bondy")
- st_crs(filosofi) <- 2154
 ```
 
 
-RPLS Il s'agit du fichier géospatialisé et agrégé à l'immeuble.
+```{r}
+mf_map(zone)
+zone$etik <- paste0(zone$priorité, "_", zone$Nom2)
+mf_label(zone, "etik")
+mf_layout("Périmètres proposés","Bondy \ DGST\nJanvier 2026")
+```
+
+
+filtre sur les NA
+
+```{r}
+zone <- zone [!is.na(zone$priorité),]
+```
+
+
+
+### Parking APHP
+
+tampon car zone vide 
+
+
+```{r}
+zone [zone$priorité == 3,] <- st_buffer(zone [zone$priorité == 3,], 100)
+```
+
+
+
+## RPLS / FILOSOFI / CADASTRE / BPE / ICU / QPV
+
+```{r}
+st_layers("../data/RPLS.gpkg")
+rpls <- st_read("../data/RPLS.gpkg", "rpls2022")
+
+write.csv(st_drop_geometry(rpls), "../data/HBT2026_tabRPLS2022.csv", fileEncoding = "UTF-8")
+
+st_layers("../data/cadastreBase.gpkg")
+cadastre <- st_read("../data/cadastreBase.gpkg", "proprio2025")
+
+
+pmorale <- st_read("../data/cadastreBase.gpkg", "pmorale")
+
+st_layers("../data/carreaux.gpkg")
+filosofi <- st_read("../data/carreaux.gpkg", "bondy")
+st_crs(filosofi) <- 2154
+
+ban <- st_read("../data/adresse.gpkg", "ban")
+ban <- st_transform(ban,2154)
+
+
+fic <- paste0(chemin, "/10_HABITAT/copro.gpkg")
+st_layers(fic)
+copro <- st_read(paste0(chemin, "/10_HABITAT/copro.gpkg"), "rncdatagouvwithqpv")
+```
+
+## BD TOPO
+
+```{r}
+fic <- paste0(chemin, "03_SOCLE/batiment.gpkg")
+st_layers(fic)
+bat <- st_read(fic, "bdTOPOBondy")
+bat <- st_transform(bat,2154)
+```
+
+
+## RIL 2025
+
+```{r}
+fic <- paste0(chemin, "11_RIL/ril2025.csv")
+# spatialisation
+ril <- read.csv2(fic, fileEncoding = "UTF-8")
+ril <- st_as_sf(ril, coords = c("x", "y"), crs = 2154)
+names(ril)
+ril <- ril [, c(4,5,6,7,8,12,24)]
+st_write(ril, "../data/ril.gpkg", "ril2025", delete_layer = T)
+```
+
+
+
+
+## Pour les cartes de situation (intersections tampon)
+
+```{r}
+fic <- paste0(chemin, "/03_SOCLE/socle2026.gpkg")
+st_layers(fic)
+rues <- st_read(fic, "rues") 
+esp_pub <- st_read(fic, "espaces_publics")
+```
+
+## Equipements
+
+```{r}
+bpe <- st_read("../data/commerce.gpkg", "BPE2024")
+poi <- st_read(fic, "poi")
+```
+
+## QPV ICU BNDB
+
+```{r}
+qpv <- st_read("../data/limitesSocle.gpkg", "neauQPV_2024")
+icu <- st_read("../data/icu.gpkg", "cerema2024")
+```
+
+```{r}
+bndb <- st_read("../data/habitat.gpkg", "bndb")
+```
+
+
+# Recherche / ANRU
+
+```{r}
+fic <- paste0(chemin, "09_ANRU/presentation.shp")
+anru <- st_read(fic)
+mf_map(anru)
+mf_label(anru, "nom")
+st_write(anru, "../data/habitat2026.gpkg", "anru", delete_layer = T)
+```
+
+
 
 
 # Intersections
 
+Si nécessaire tt doit être en 2154
 
 ```{r}
+st_crs(ban)
+st_crs(zone)
+```
+
+
+## ban rpls cadastre
+
+```{r}
+interBan <- st_intersection(ban, zone)
 interRpls <- st_intersection(rpls, zone)
 mf_map(zone, col = "wheat")
-mf_map(st_jitter(inter,), type = "typo", var = "etage", add = T)
-mf_layout("Nb étages bâtiments logts sociaux", "RPLS 2024\njanvier 2026")
-
+mf_map(rpls, add = T)
+mf_map(interRpls, type = "typo", var = "etage", add = T)
+#mf_label(interRpls, var = "cle", cex = 0.5)
+mf_layout("Nb étages bâtiments logts sociaux sur parc total", "RPLS 2024\njanvier 2026")
+interRpls
 ```
 
 
 ```{r}
-interCadastre <- st_intersection(cadastre, zone)
+interCadastre <- st_intersection(cadastre [,c("code","proprio")], zone)
+interPmorale <- st_intersection(pmorale [,c("nom", "nb_parcelles")], zone)
+```
+
+209 et 147
+
+On élimine les petites parcelles (intersections défaillantes)
+
+
+```{r}
+library(units)
+interCadastre$aire <- drop_units( st_area(interCadastre))
+interPmorale$aire <- drop_units(st_area(interPmorale))
+interCadastre <- interCadastre [interCadastre$aire > 6,]
+interPmorale <- interPmorale [interPmorale$aire > 6,]
+```
+
+106 et 65
+
+## filosofi
+
+```{r}
 interFilosofi <- st_intersection(filosofi, zone)
+# simplification interFilosofi
+names(interFilosofi)
+interFilosofi <- interFilosofi [,c(7:34,39)]
+class(interFilosofi)
+```
+
+### Coefficient FILOSOFI
+
+
+```{r}
+# attention coeff / taille carreau
+st_area(filosofi)
+coeff <- st_area(interFilosofi)/40000
+library(units)
+coeff <- drop_units(coeff)
+names(interFilosofi)
+df <- coeff*interFilosofi [,c(1:28), drop = T]
+interFilosofi2 <- cbind (df, interFilosofi [,c(29)])
+interFilosofi <- st_as_sf(interFilosofi2)
+mf_map(interFilosofi)
+```
+
+## BPE POI ICU QPV 
+
+```{r}
+interBpe <- st_intersection(bpe, zone)
+interPoi <- st_intersection(poi, zone)
+interICU <- st_intersection(icu, zone)
+```
+
+## QPV
+
+```{r}
+interQPV <- st_intersection(qpv, zone)
+mf_map(zone)
+mf_map(interQPV, add = T, col = NA, border = "red")
+interQPV$aire <-drop_units( st_area(interQPV))
+interQPV$aire
+```
+
+5 il en manque 2
+
+Récupérer les zones hors QPPV
+
+```{r}
+jointure <- merge(zone, interQPV [,c(3,13,17), drop = T], by = "Nom2", all.x=T)
+jointure$aireZone <-  drop_units(st_area(jointure))
+jointure$proportionQPV <- round( (jointure$aire / jointure$aireZone)*100,0)
+jointure <- jointure [,c(1,4,8)]
+st_write(jointure, "../data/habitat2026.gpkg", "qpv", delete_layer = T)
+```
+
+Attention, la géométrie est celle de la zone et non pas de l'intersection.
+
+## BNDP COPRO BDTOPO RIL
+
+```{r}
+interBndb <- st_intersection(bndb, zone)
+interCopro <- st_intersection(copro [,c("Nombre.total.de.lots", "Nombre.de.lots.à.usage.d.habitation", "Nombre.de.lots.de.stationnement", "Période.de.construction")], zone)
+interBat <- st_intersection(bat, zone)
+interRil <- st_intersection(ril, zone)
+```
+
+
+La couche ICU est particulièrement intéressante car elle contient hauteur bâti, indice végétation
+
+
+## BPE
+
+nb petits artisans
+
+```{r}
+mf_map(zone, col = "wheat")
+mf_map(interBpe, type = "typo", var = "LIB_SDOM", pch= 19, cex = 0.8, add = T)
+mf_layout("Commerces", "BPE 2024\njanvier 2026")
+tab <- table(interBpe$LIB_SDOM, interBpe$Nom2)
+write.csv(tab, "../data/HBT2026_tabBPE.csv", fileEncoding = "UTF-8")
+```
+
+
+
+
+## Enregistrements
+
+```{r}
+st_write(interCadastre, "../data/habitat2026.gpkg", "cadastre", delete_layer = T)
+st_write(interFilosofi, "../data/habitat2026.gpkg", "filosofi", delete_layer = T)
+
+st_write(interRpls, "../data/habitat2026.gpkg", "rpls", delete_layer = T)
+st_write(interBpe, "../data/habitat2026.gpkg", "bpe", delete_layer = T)
+st_write(interICU, "../data/habitat2026.gpkg", "icu", delete_layer = T)
+st_write(interBndb, "../data/habitat2026.gpkg", "bndb", delete_layer = T)
+st_write(interPoi [,c(1:4,10:11,13)], "../data/habitat2026.gpkg", "poi", delete_layer = T)
+st_write(interBan, "../data/habitat2026.gpkg", "ban", delete_layer = T)
+st_write(interCopro, "../data/habitat2026.gpkg", "copro", delete_layer = T)
+st_write(zone, "../data/habitat2026.gpkg", "zone", delete_layer = T)# y compris zone parking plus large
+st_write(interPmorale, "../data/habitat2026.gpkg", "pmorale", delete_layer = T)
+st_write(interBat, "../data/habitat2026.gpkg", "bat", delete_layer = T)
+st_write(interRil, "../data/habitat2026.gpkg", "ril", delete_layer = T)
+```
+
+
+
+# Simplification champs et extractions tableaux
+
+
+```{r}
+st_layers("../data/habitat2026.gpkg")
+```
+
+
+
+
+## BPE
+
+
+```{r}
+bpe <- st_read("../data/habitat2026.gpkg", "bpe")
+head(bpe)
+bpe <- bpe [, c("NOMRS", "CNOMRS", "NUMVOIE","TYPVOIE", "LIBVOIE", "LIB_TYPEQU", "LIB_SDOM", "LIB_DOM", "Nom2")]
+st_write(bpe, "../data/habitat2026.gpkg", "bpe", delete_layer = T)
+```
+
+BNDB
+
+
+```{r}
+bndb <- st_read("../data/habitat2026.gpkg", "bndb")
+```
+
+
+# Rajout infos
+
+numeros adresse dans couche rpls
+
+```{r}
+rpls <- st_read("../data/habitat2026.gpkg", "rpls")
+rpls$num <- gsub("[A-Z]| ","", rpls$cle)
+rpls$num <- as.integer(rpls$num)
+st_write(rpls, "../data/habitat2026.gpkg", "rpls", delete_layer = T)
+```
+
+
+
+pb hauteurs bâti
+
+
+```{r}
+hauteur <- st_read("../data/habitat2026.gpkg", "icu")
+hist(hauteur$hre)
+hauteur [, c("identifier","hre", "Nom2")]
+mf_map(type = "choro", var= "hre", hauteur)
+
+# 15532-FR001L1 (30) et 16417-FR001L1 (37.7)
+ind <- which(hauteur$identifier %in% c("15532-FR001L1","16417-FR001L1" ))
+hauteur [ind,"hre"] <- c(30,37.7)
+st_write(hauteur, "../data/habitat2026.gpkg", "icu", delete_layer = T)
+```
+
+
+
+# Tampon pour carte de situation
+
+
+pour les rues et les esp publics
+
+```{r}
+tampon <- st_buffer(zone, 100)
+mf_map(tampon)
+```
+
+
+Intersection
+
+```{r}
+interRue <- st_intersection(rues, tampon)
+interEsp <- st_intersection(esp_pub, zone)
+st_write(interRue,"../data/habitat2026.gpkg", "rue", delete_layer = T)
+st_write(interEsp,"../data/habitat2026.gpkg", "espPub", delete_layer = T)
+```
+
+
+
+# Dénombrements
+
+
+On reprend le fichier d'origine et le tampon
+
+```{r}
+zone <- st_read("../data/zoneExtraction.gpkg")
+zone <- st_transform(zone, 2154)
+zone <- zone [!is.na(zone$priorité),]
+zone [zone$priorité == 3,] <- st_buffer(zone [zone$priorité == 3,], 100)
+```
+
+## Proportion QPV
+
+
+
+
+
+```{r}
+qpv <- st_read( "../data/habitat2026.gpkg", "qpv")
+mf_map(jointure, type = "choro", var = "proportionQPV")
+mf_layout("Proportion du QPV par zone", "Janvier 2026")
 ```
 
 
 ```{r}
-st_write(interCadastre, "../data/habitat2026.gpkg", "cadastre")
-st_write(interFilosofi, "../data/habitat2026.gpkg", "filosofi")
-st_write(interRpls, "../data/habitat2026.gpkg", "rpls")
+zone <- merge (zone, qpv [,c("proportionQPV", "Nom2"), drop=T], by = "Nom2")
 ```
 
-On rajoute les p. morales
+4 VAR dans zone
+
+## filosofi
 
 ```{r}
-pmorale <- st_read("../data/cadastreBase.gpkg", "pmorale")
-pmorale <- st_intersection(pmorale, zone)
-st_write(pmorale, "../data/habitat2026.gpkg", "pmorale")
+filosofi <- st_read("../data/habitat2026.gpkg", "filosofi")
+filosofi <- interFilosofi
+names(filosofi)
+agg <- aggregate(filosofi [,c(1:28), drop=T], by =list(filosofi$Nom2), sum)
+rownames(agg) <- agg [,1]
+agg <- agg [,-1]
+agg <- round(agg,0)
+names(agg)
+agg <- agg [,-16]
+res2 <- prcomp(agg, scale. = T)
+png("../img/HBT2026_filosofi.png", width = 1000, height = 1000, res =150)
+biplot(res2, main= "Social et copro", col= c("black", "chartreuse"), cex = 0.5)
+dev.off()
+write.csv(agg, "../data/HBT2026_tabFilosofi.csv", fileEncoding = "UTF-8")
 ```
 
+Individus par zone
+
+```{r}
+agg$Nom2 <- rownames(agg)
+agg
+zone <- merge(zone, agg [,c("ind","Nom2")], by = "Nom2" )
+```
+
+Personnes agées
+
+
+```{r}
+agg$ind_65plus <- agg$ind_65_79+agg$ind_80p
+zone <- merge(zone, agg [,c("ind_65plus","Nom2")], by = "Nom2" )
+```
+
+
+```{r}
+mf_map(zone, type = "choro", var ="ind_65plus")
+```
+
+
+
+6 VAR dans zone
+
+## Adresses
+
+```{r}
+ban <- st_read("../data/habitat2026.gpkg", "ban")
+agg <- aggregate(ban$id, by = list(ban$Nom2), length)
+names(agg) <- c("Nom2", "nbAdresses")
+zone <- merge(zone, agg, all.x=T, by="Nom2")
+```
+
+7 VAR
+
+
+```{r}
+ril <- st_read("../data/habitat2026.gpkg", "ril")
+agg <- aggregate(ril [, c("nombre_logements"), drop = T],by = list(ril$Nom2), sum)
+agg
+names(agg) <- c("Nom2", "nbLGTS_ril")
+zone <- merge(zone, agg, all.x=T, by="Nom2")
+```
+
+8 VAR
+
+## Année Construction RPLS
+
+
+```{r}
+rpls <- st_read("../data/habitat2026.gpkg", "rpls")
+anneeConstruc <- (rpls [,c("Année.de.construction", "Nom2"), drop=T])
+anneeConstruc <- anneeConstruc [!duplicated(anneeConstruc),]
+agg <- aggregate(anneeConstruc$Année.de.construction, by = list(anneeConstruc$Nom2), min)
+names(agg) <- c("Nom2", "année")
+zone <- merge(zone, all.x=T, agg, by="Nom2")
+#rpls$nb <- rpls$appartement*4
+#agg <- aggregate(rpls [,c("nb"), drop=T], by=list(rpls$Nom2), sum)
+#names(agg) <- c("Nom2", "Nb habitants")
+```
+
+9 VAR
+
+
+
+
+## COPRO
+
+On ne peut rajuouter que le nb lots copro
+
+```{r}
+copro <- st_read("../data/habitat2026.gpkg", "copro")
+copro
+names(copro)[1:4] <- c("nb lots", "habitation", "stationnement","construction")
+copro
+```
+
+
+```{r}
+liste <- list(copro$Nom2)
+agg <- aggregate(copro [,c("habitation"), drop = T], by = liste, sum)
+names(agg) <- c("Nom2", "NbLotsCopro")
+zone <- merge(zone,all.x=T, agg, by="Nom2")
+st_write(copro, "../data/habitat2026.gpkg", "copro", delete_layer = T)
+write.csv(st_drop_geometry(copro), "../data/HBT2026_Copro.csv", fileEncoding = "UTF-8")
+```
+
+date construction
+
+```{r}
+nom <- unique(copro$Nom2)
+for (n in nom) {
+  tmp <-  copro[copro$Nom2 == n,]
+  const <- paste(tmp$construction, collapse = " ")
+  zone$annéeCopro [zone$Nom2 == n] <- const
+}
+zone
+```
+
+Manque Place St Just
+
+
+
+
+
+10 VAR
+
+## Nb batiment
+
+avec la bndb
+
+
+```{r}
+bndb <- st_read("../data/habitat2026.gpkg","bndb")
+aggNb <- aggregate(bndb [,"Nom2"] , by = list(bndb$Nom2), length)
+aggHauteurMoyenne <- aggregate(bndb [,"alt", drop=T] , by = list(bndb$Nom2), mean, na.rm = T)
+mf_map(aggNb)
+mf_label(aggNb, var ="Nom2", cex = 2)
+```
+Bonne estimation du nb (mieux que bdtopo)
+
+```{r}
+aggNb <- aggNb [,c(1:2), drop=T]
+names(aggNb) <- c("Nom2", "nbBat")
+zone <- merge(zone,all.x=T, st_drop_geometry(aggNb), by="Nom2")
+```
+
+9 VAR
+
+avec bdtopo
+
+
+```{r}
+bat <- st_read("../data/habitat2026.gpkg","bat")
+aggNb <- aggregate(bat [,"Nom2"] , by = list(bat$Nom2), length)
+aggNb
+aggHauteurMoyenne <- aggregate(bat [,"PREC_ALTI", drop=T] , by = list(bat$Nom2), mean, na.rm = T)
+aggHauteurMoyenne
+```
+
+
+en combinant les 2
+
+
+```{r}
+jointure <- st_intersection(bndb, bat)
+library(units)
+jointure <- jointure [drop_units(st_area(jointure)) > 100,]
+mf_map(jointure)
+aggHauteurMoyenne <- aggregate(jointure [,"PREC_ALTI", drop=T] , by = list(jointure$Nom2), mean, na.rm = T)
+aggHauteurMoyenne
+```
+
+
+
+## Nb d'artisans BPE
+
+
+```{r}
+bpe <- st_read("../data/habitat2026.gpkg","bpe")
+agg <- aggregate(bpe [,"Nom2"], by = list(bpe$Nom2), length)
+agg <- st_centroid(agg)
+mf_map(agg)
+mf_label(agg, var = "Nom2", cex = 2)
+names(agg)[1:2] <- c("Nom2", "nbBPE")
+bpe <- agg [,c("Nom2", "nbBPE"), drop=T]
+zone <- merge(zone, bpe, by = "Nom2")
+```
+
+
+
+Enregistrement de zone avec toutes les jointures faites
+
+12 VAR
+
+
+```{r}
+st_write(zone, "../data/habitat2026.gpkg", "zone", delete_layer = T)
+```
+
+verif
+
+```{r}
+zone <- st_read("../data/habitat2026.gpkg", "zone")
+```
+
+% age avancé 
+
+```{r}
+zone$pctAge <- round((zone$ind_65plus/zone$ind)*100,0)
+zone$pctAge
+```
+
+
+# Compléments demandés
+
+## taux de pauvreté
+
+
+# Comparaison avec le quadrillages
+
+
+```{r}
+st_layers("../data/iris.gpkg")
+iris <- st_read("../data/iris.gpkg", "iris2022")
+filo2021 <- read.csv2 ("../data/BASE_TD_FILO_IRIS_2021_DISP.csv", na.strings = c("ns","s", "nd"), dec = ",")
+str(filo2021)
+
+```
+
+
+
+```{r}
+joint <- merge(iris, filo2021, by.x= "CODE_IRIS",by.y = "IRIS" )
+# filtrage
+iris <- joint [joint$INSEE_COM == 93010,]
+mf_map(iris)
+st_write(iris, "../data/habitat2026.gpkg", "iris2021", delete_layer = T)
+# pb sur les chiffres
+iris$DISP_TP6021 <- as.integer(iris$DISP_D121)
+```
+
+```{r}
+st_layers("../data/carreaux.gpkg")
+car <- st_read("../data/carreaux.gpkg")
+mf_map(car)
+mf_map(iris, add = T, col = NA, border = "red")
+perimetre <- st_read("../data/habitat2026.gpkg", "zone")
+mf_map(perimetre, add = T, col = "blue")
+```
+
+
+```{r}
+hist(car$men_pauv)
+hist(iris$DISP_TP6021)
+par(mfrow=c(1,2))
+mf_map(car, type = "choro", "men_pauv", border = NA)
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("Carreaux nb ménages pauvres","insee 2019,\njanvier 2026")
+mf_map(iris, type = "choro", "DISP_TP6021", border = NA)
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("Iris taux de pauvreté","insee 2021,\njanvier 2026")
+```
+
+
+# Jeunes et vieux à partir du quadrillage
+
+indices jeunes et vieux
+
+pour chq carreaux
+
+nombre de - de 20 ans pour 100 personnes de 60 ans et plus
+rapport de la population des 65 ans et plus sur celle des moins de 20 ans.
+
+
+```{r}
+filosofi <- st_read("../data/carreaux.gpkg", "bondy")
+st_crs(filosofi) <- 2154
+```
+
+
+```{r}
+varJ <- filosofi [,c( "ind_0_3", "ind_11_17", "ind_18_24"), drop=T]
+# division par 2 de la dernière classe
+varJ$ind_18_20 <- varJ$ind_18_24/2
+varJ <- varJ [, c("ind_0_3", "ind_11_17", "ind_18_20")]
+# somme des totaux
+filosofi$varJ <- apply(varJ, 1, sum)
+hist(filosofi$varJ)
+
+```
+
+```{r}
+varV60 <- filosofi [,c("ind_55_64", "ind_65_79", "ind_80p" ), drop=T]
+varV60$ind_60_65 <- varV60$ind_55_64/2
+varV60 <- varV60 [, c("ind_60_65", "ind_65_79", "ind_80p" )]
+filosofi$varV60 <- apply(varV60, 1, sum)
+hist(filosofi$varV60)
+```
+
+
+```{r}
+par(mfrow = c(1,2))
+mf_map(filosofi, var = "varJ", type = "choro")
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("Nb jeunes + 20 ans","insee 2019,\njanvier 2026")
+mf_map(filosofi, var = "varV60", type = "choro")
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("Nb p. agées + 60 ans","insee 2019,\njanvier 2026")
+```
+
+
+```{r}
+filosofi$indJ <- (filosofi$varJ)/filosofi$varV60
+hist(filosofi$indJ)
+mf_map(filosofi, var = "indJ", type="choro")
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("Indice jeunesse (nb jeunes / 1 pers + 60 ans)","insee 2019,\njanvier 2026")
+```
+
+```{r}
+filosofi$V65plus <- filosofi$ind_65_79 + filosofi$ind_80p
+filosofi$indV <- filosofi$V65plus/filosofi$varJ
+mf_map(filosofi, var = "indV", type="choro")
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("Indice vieillesse (nb + 65 ans / 1 - de 20 ans)","insee 2019,\njanvier 2026")
+```
+
+
+
+Agrégation par la moyenne (il s'agit d'un taux par zone)
+
+
+```{r}
+inter <- st_intersection(filosofi [c("indJ", "indV")], zone)
+agg <- aggregate (inter [,c("indJ", "indV"), drop = T], by = list(inter$Nom2), mean)
+names(agg)[1] <- "Nom2"
+zone <- merge(zone, agg, by ="Nom2")
+mf_map(zone, var="indJ", type = "choro" )
+mf_map(zone, var="indV", type = "choro" )
+```
+
+
+
+# tx chômage
+
+sans emploi / pop active
+
+```{r}
+iris$DISP_PCHO21
+mf_map(iris, type = "choro", "DISP_PCHO21", border = NA)
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("Iris % : indemnité chomage dans le revenu disponible","insee 2021,\njanvier 2026")
+```
+
+
+
+# tx de qualification
+
+la part des jeunes de 25 à 34 ans titulaires d’un diplôme de l’enseignement supérieur 
 

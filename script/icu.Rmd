@@ -1,0 +1,108 @@
+---
+title: "ICU"
+author: "B. Maranget"
+date: "21/01/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+https://www.data.gouv.fr/datasets/cartographie-des-zones-climatiques-locales-lcz-des-88-aires-urbaines-de-plus-de-50-000-habitants-de-france-metropolitaine
+
+sur datagouv cerema 2022
+
+https://www.cerema.fr/fr/system/files?file=documents/2024/11/1_prez_donnee_lcz_cerema_vf_1.pdf
+
+
+# Environnement
+
+
+Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(mapview)
+```
+
+
+
+
+
+
+# données
+
+
+
+```{r}
+data <- st_read("c:/Users/bmaranget/Downloads/LCZ_SPOT_2022_Paris.shp")
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+```
+
+Une source très complète
+
+
+![](img/ICU_cerema.png)
+
+
+# Inter
+
+```{r}
+inter <- st_intersection(data, bondy)
+summary(inter)
+mf_map(inter, var = "lcz_int", type = "choro")
+```
+
+
+# Carto sur toutes les variables
+
+
+
+```{r}
+var <- names(inter)
+var <- var [c(2:10)]
+titre <- c("Hauteur bâti", "Superficie bâti", "Tx surface bâtie", "Tx surface minéral", "Tx sol nu perméable", "Tx surf eau", "Tx végétation", "Part arbres sur végétation", "LCZ")
+tmp <- inter [,var [1]]
+v <- var [1]
+png("../img/lcz.png", width = 6000, height = 6000, res = 1000)
+par(mfrow  = c(3,3))
+for (v in var) {
+  print(v)
+  ind <- which(v==var)
+  t <- titre [ind]
+  tmp <- inter [,v]
+  class(tmp [,v, drop = T])
+  if (is.numeric(tmp [,v, drop = T]) ) {
+    mf_map(tmp, var = v, type="choro")
+    mf_layout(t, "Janvier 2026")
+  } else {
+    mf_map(tmp, var = v, type="typo")
+    mf_layout(t, "Janvier 2026")
+  }
+}
+dev.off()
+```
+
+Enregistrement
+
+
+```{r}
+st_write(inter,"../data/icu.gpkg", "cerema2024", delete_layer = T)
+```
+

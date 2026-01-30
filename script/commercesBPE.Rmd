@@ -22,7 +22,7 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Utilisation BPE 2021
+Utilisation BPE 2021 puis 2024
 
 
 # Librairies et répertoire
@@ -40,7 +40,14 @@ chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/18_COMMERCE/")
 
 ```{r}
 commerce <- read.csv2(paste0(chemin, "bpe21_ensemble_xy.csv"))
-
+# en 2026 format parquet
+library(arrow)
+cheminTel <- "C:/Users/bmaranget/Downloads/BPE24.parquet"
+bpe <- read_parquet(cheminTel)
+head(bpe)
+bpeBondy <- bpe [bpe$CODPOS == 93140,]
+bpeBondy <- bpeBondy [!is.na(bpeBondy$LONGITUDE),]
+bpe <- st_as_sf(bpeBondy, coords = c("LAMBERT_X", "LAMBERT_Y"), crs = 2154)
 ```
 
 
@@ -53,7 +60,7 @@ On fait une carte typologique par catégorie d'enseigne.
 ```{r}
 commerceSel <- commerce [commerce$DEPCOM == '93010',]
 commercesf <- st_as_sf(commerceSel, coords = c("LAMBERT_X", "LAMBERT_Y"), crs = 2154)
-mf_map(commercesf)
+mf_map(bpe)
 st_write(commercesf,"../data/commerces.gpkg","BPE2021", delete_layer = T)
 ```
 
@@ -63,8 +70,8 @@ table d'équivalences
 equiv <- read.csv2("../data/BPE21_table_passage.csv")
 tail (equiv)
 # jointure
-data <- merge(commercesf, equiv, by.x = "TYPEQU", by.y="TYPEQU")
-st_write(data,"../data/commerces.gpkg","BPE2021", delete_layer = T)
+data <- merge(bpe, equiv, by.x = "TYPEQU", by.y="TYPEQU")
+st_write(data,"../data/commerce.gpkg","BPE2024", delete_layer = T)
 table(data$LIB_SDOM)
 ```
 

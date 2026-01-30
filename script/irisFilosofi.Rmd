@@ -53,11 +53,26 @@ st_layers("../data/iris.gpkg")
 iris <- st_read("../data/iris.gpkg", "iris2022")
 filo2013 <- read.csv2("../data/FILO2013.csv")
 filo2019 <- read.csv2("../data/FILO2019.csv")
+filo2021 <- read.csv2 ("../data/BASE_TD_FILO_IRIS_2021_DISP.csv", na.strings = "ns", dec = ",")
 str(iris)
 str(filo2013)
+str(filo2021)
 ```
 
+https://www.insee.fr/fr/statistiques/8229323#consulter
+
+pour 2021
+
 # traitement
+
+
+```{r}
+joint <- merge(iris, filo2021, by.x= "CODE_IRIS",by.y = "IRIS" )
+# filtrage
+iris <- joint [joint$INSEE_COM == 93010,]
+mf_map(iris)
+iris$DISP_TP6021 <- as.integer(iris$DISP_D121)
+```
 
 
 ```{r}
@@ -92,10 +107,5 @@ En plus joli sous QGIS
 
 
 ![](../img/irisFilosofi.jpg)
-
-```{r}
-
-```
-
 
 

@@ -1,0 +1,64 @@
+---
+title: "Batiments base référentiel"
+author: "B. Maranget"
+date: "19/01/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+reprise fichiers bâtiments BNDB
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(osmdata)
+library(tidyverse)
+```
+
+
+chemins
+
+```{r}
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+fic <- ("C:/Users/bmaranget/Downloads/gpkg/bdnb.gpkg")
+```
+
+bcp de couches
+
+```{r}
+st_layers(fic)
+data <- st_read(fic, "batiment_groupe_compile")
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+inter <- st_intersection(data,bondy)
+str(inter)
+inter <- inter [,c("libelle_adr_principale_ban","bdtopo_bat_altitude_sol_mean","dpe_mix_arrete_annee_construction_dpe", "dpe_mix_arrete_classe_conso_energie_arrete_2012")]
+mf_map(inter, type = "typo", var = "dpe_mix_arrete_classe_conso_energie_arrete_2012" )
+```
+
+
+```{r}
+names(inter)
+names(inter)[1:4] <- c("adresse", "alt", "construction", "dpe")
+st_write(inter, "../data/habitat.gpkg", "bndb", delete_layer = T)
+```
+

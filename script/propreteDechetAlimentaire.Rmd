@@ -1,0 +1,75 @@
+---
+title: "Bornes déchets alimentaires"
+author: "B. Maranget"
+date: "19/01/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+spatialisation du fichier pour envoi au prestataire poubelle de flux.
+
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(leaflet)
+library(leafpop)
+library(sf)
+library(mapsf)
+library(banR)
+```
+
+
+## Chemins
+
+
+```{r}
+chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/23_PROPRETE/"
+```
+
+
+
+## Données
+
+
+```{r}
+data <- read.csv("../data/dechetAlimentaire.csv")
+tbl <- data.frame(adresse = data$adresse, code = 93010)
+res <- geocode_tbl(tbl, adresse = adresse, code_insee= code)
+res <- res [!is.na(res$longitude),]
+res <- st_as_sf(res, coords = c("longitude", "latitude"), crs = 4326)
+mf_map(res)
+st_write(res, "../data/proprete.gpkg", "dechetAlimentaire", delete_Layer = T)
+```
+
+
+
+
+
+
+
+
+
+

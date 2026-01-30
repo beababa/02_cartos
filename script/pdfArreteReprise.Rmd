@@ -164,7 +164,7 @@ nb <- NULL
 for (f in ficPDF){
   info <- pdf_info(f)
   nb <- c(nb,info$pages)
-#  pngfile <- pdftools::pdf_convert(f,  dpi = 200)
+  pngfile <- pdftools::pdf_convert(f,  dpi = 200)
 }
 cbind(ficPDF, nb)
 write.csv(cbind(ficPDF, nb),"../data/paginationFic.csv", fileEncoding = "UTF-8")
@@ -188,6 +188,8 @@ file.move(ficPNG, "../data/pdf/", overwrite = TRUE)
 
 44 images pour dec 2025 sur 4 paquets
 
+
+70 images pour dec 2025 (2e paquet)
 
 Comment garder la correspondance avec les fichiers de départ ?
 
@@ -234,6 +236,8 @@ pour 2025, 44 images
 
 ???? il y a des pertes à chaque fois (pas sur decembre 1 et 2 en tous cas)
 
+pour dec2025 2e paquet 70
+
 ```{r}
 images [[3]]
 ```
@@ -252,6 +256,8 @@ toc()
 ```
 
 44 s pour dec1 / 53 pour dec2 / 11 pour le paquet / 100 pour dec 2025
+
+146 s pour 70 p
 
 msg images too smal... 
 
@@ -314,6 +320,9 @@ pb titre : manque
 
 Erreur du titre : verif sur les images
 
+
+2e paquet dec 28 arreté
+
 ```{r}
 # reprise des paquets pour tester les images 1 de chq paquet
 paginationFic <- read.csv("../data/paginationFic.csv")
@@ -327,6 +336,14 @@ numArrete [c(22,24,32,37)] <-
 ```
 
 
+2e paquet dec 2025
+
+```{r}
+numArrete
+```
+
+
+
 
 Pour décembre 1, pas d'erreur
 
@@ -336,6 +353,11 @@ Pour décembre 2, après rectification on passe de 13 à 16 arrêtés
 pour dec 2025 (4 fichiers), l'ordre des arrêtés pose pb, correction sur le nb de car
 du nom de fichier
 
+pour dec 2025 2e paquet : 1 erreur
+
+```{r}
+num [24] <- "353"
+```
 
 
 ### Détection article 1 pour verif
@@ -350,9 +372,12 @@ article1
 indImage <- seq(1,length(article1))
 df <- data.frame(indImage, article1)
 # suppression 10 et 11
-ind <- grep("ARTICLE 10|ARTICLE 11| ARTICLE [4-6]", df$article1)
-ind <- grep("ARTICLE [4-9]", df$article1)
+ind <- grep("ARTICLE [2-9]", df$article1)
 df <- df [-ind,]
+df
+ind <- grep("ARTICLE 10|ARTICLE 11|ARTICLE 12|ARTICLE 13", df$article1)
+df <- df [-ind,]
+# 2e filtre
 ind <- grep("ARTICLE 1|ARTICLE l|ARTICLE J", df$article1)
 df <- df [ind,]
 numImage <- df$indImage
@@ -366,13 +391,18 @@ filtre sur ARTICLE 1
 df$indImage
 indOK
 setdiff(indOK, df$indImage)
-setdiff(df$indImage, indOK)
+pb <- setdiff(df$indImage, indOK)
 ```
 
 Verif si différence
 
+2e paquet dec 2025
+
 ```{r}
-images [[38]]
+images [[9]]
+# pb article 4*
+images [[pb [6]]]
+images [[67]]
 df [df$indImage == 38,]
 ```
 
@@ -411,6 +441,7 @@ cas arrêté 325 (on retirait les 2025|25 ah ah...)
 1ere verif de visu, on a bien tous les arrêtés de stext
 
 ok pour dec1 à partir directement du pdf
+
 
 calage de la fenêtre crop sur les 2 premières images
 
@@ -595,11 +626,68 @@ pagination$cumulFic<- unlist(sapply(liste , cumsum))
 pagination
 ```
 
+# Lieu
+
+## Premières modifications
+
+```{r}
+liste <- lapply(stext, chercherLoc)
+lieu <- premiereOccurence(liste)
+lieu
+# simplification après examen de la liste
+lieu <- gsub(".*stationnement|circulation",
+             "", 
+             ignore.case=TRUE,lieu)
+lieu [indOK]
+# enlever les accents
+lieu <- iconv(lieu [indOK], to="ASCII//TRANSLIT")
+# certains accents restent exemple : mésarmes
+lieu <- gsub("é","e", lieu)
+# les apostrophes
+lieu <- gsub("'", " ", lieu)
+# caractères spéciaux
+lieu <- gsub("\\|
+             |\\?
+             |\\|
+             \\{
+             |\\}
+             |,", "", lieu)
+lieu <- toupper(lieu)
+lieu
+```
+
+
+## Affinage
+
+```{r}
+lieu <- gsub("ET MODIFICATION MOMENTANEE DE LA|\\|||SUR|ET MODIFICATION DE LA| }", "", lieu)
+lieu <- gsub(".*GRUE MOBILE|.*PERMETTRE DES ","", lieu)
+
+```
+
+espaces début et fin
+
+```{r}
+lieu <- gsub("^ +","", lieu)
+lieu
+```
+
+
+
+## Traitement manuel
+
+```{r}
+# Sauvegarde du lieu# Sauvegarde du résultat
+write.csv(lieu, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F)
+lieuCorrige <- read.csv("../data/lieuModifie2.csv", fileEncoding = "UTF-8")
+pagination$lieu <- lieuCorrige$x
+pagination$lieu
+```
+
 
 # Sauvegarde des .pdf avec un numéro d'arrete
 
-L'opération finale consiste à renommer les fichiers . pdf avec le num d'arrêté
-
+L'opération finale consiste à renommer les fichiers . pdf avec le num d'arrêté et le lieu
 
 Parcours des fichiers pdf pour les éclater et les renommer arrêté par arrêté.
 
@@ -639,9 +727,11 @@ pagination$doublon <- ifelse(pagination$doublon != FALSE, "b", "")
 
 
 ```{r}
-pagination
+pagination$lieu
 ficPDF <- unique(pagination$fic)
 f <- ficPDF [1]
+f
+pagination$fic <- f
 chemin
 for (f in ficPDF){
   print(f)
@@ -654,8 +744,9 @@ for (f in ficPDF){
       fin <- tmp$fin [i]
       numArr <- tmp$num [i]
       doublon <- tmp$doublon [i]
+      lieu <- tmp$lieu [i]
       pdf_subset("../data/pdf/total.pdf", pages = deb:fin,  
-      output =  paste0("../data/pdf/arrete_2025_",numArr, doublon,".pdf"), )
+      output =  paste0("../data/pdf/A2025_",numArr, doublon, "_", tolower(lieu),".pdf"), )
   }
 
 }
@@ -680,7 +771,7 @@ Déplacement pour validation
 ```{r}
 fic <- dir("../data/pdf/", pattern =  ".pdf", full.names = T )
 length(fic)  # total.pdf
-file.move(fic,  paste0(chemin,"/01_fait"))
+file.move(fic,  paste0(chemin,"/01_fait"), overwrite = T)
 ```
 
 
@@ -761,25 +852,7 @@ Rmq : arrêté stationnement le 402 (pas d'article en page 1)
 après A2024 titre de l'arrêté on extrait les termes avec les rues etc...
 (1er filtre) puis on prend la 1e occurrence
 
-```{r}
-liste <- lapply(stext, chercherLoc)
-lieu <- premiereOccurence(liste)
-lieu
-# simplification après examen de la liste
-lieu <- gsub(".*stationnement|circulation",
-             "", 
-             ignore.case=TRUE,lieu)
-lieu [indOK]
-# enlever les accents
-lieu <- iconv(lieu [indOK], to="ASCII//TRANSLIT")
-# certains accents restent exemple : mésarmes
-lieu <- gsub("é","e", lieu)
-# les apostrophes
-lieu <- gsub("'", " ", lieu)
-lieu <- toupper(lieu)
-lieu
-# Sauvegarde du lieu# Sauvegarde du résultat
-write.csv(lieu, "../data/lieuCorrige.csv", fileEncoding = "UTF-8")
+
 ```
 
 ```{r}

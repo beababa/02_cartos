@@ -307,15 +307,15 @@ st_write(data, "../data/RPLS.gpkg", "rpls2021RS", delete_layer = T)
 
 ```{r}
 st_layers("../data/RPLS.gpkg")
-rpls <- st_read("../data/RPLS.gpkg", "rpls2022")
+rpls <- st_read("../data/RPLS.gpkg", "rpls2024")
 ```
 
 ## Nombre d'étages
 
 ```{r}
-st_layers("../data/cadastre.gpkg")
-cadastre <- st_read("../data/cadastre.gpkg", "proprio")
-mf_export(rpls, width = 1000, height = 1000, res = 100, filename = "../img/RPLS2022.png", expandBB = c(10,10,30,10))
+st_layers("../data/gros/cadastre.gpkg")
+cadastre <- st_read("../data/gros/cadastre.gpkg", "proprio2025")
+mf_export(rpls, width = 1000, height = 1000, res = 100, filename = "../img/RPLS2024.png", expandBB = c(10,10,30,10))
 mf_init(rpls)
 mf_theme("candy")
 mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
@@ -330,8 +330,8 @@ mf_map(rpls,  type = "choro", var = "etage", breaks = c(0,2,4,8,16), add = T)
 #barplot(base$x, names.arg = base$proprio, cex.names = 0.8, las = 2, col = "lightblue3", border = NA)
 #barplot(data$nb[data$nb > 5, drop = T], names.arg = data$proprietaire.x [data$nb > 5], las = 2, cex.names =  0.8,  col = "lightblue3", border = NA)
 #mf_inset_off()
-mf_layout(title = "RPLS 2022, nombre d'étages", 
-          credits ="DGST, Mairie de Bondy\n sources : RPLS, 2022")
+mf_layout(title = "RPLS 2024, nombre d'étages", 
+          credits ="DGST, Mairie de Bondy\n sources : RPLS, 2024")
 
 dev.off()
 ```
@@ -341,6 +341,25 @@ dev.off()
 ![](../img/RPLS2022.png)
 
 Pas beaucoup de différence 2021 2022 sf ZAC Ourcq
+
+![](../img/RPLS2024.png)
+
+
+# Doublons
+
+
+
+```{r}
+table(rpls$cle)
+rpls <- rpls [!duplicated(st_drop_geometry(rpls)),]
+mf_map(rpls)
+st_write(rpls, "../data/RPLS.gpkg", "rpls2024", delete_layer = T)
+```
+
+Bcp de doublons d'adresse
+
+
+
 
 ## carte bailleurs
 
