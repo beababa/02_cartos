@@ -191,6 +191,8 @@ file.move(ficPNG, "../data/pdf/", overwrite = TRUE)
 
 70 images pour dec 2025 (2e paquet)
 
+41 images pour janvier 2026
+
 Comment garder la correspondance avec les fichiers de départ ?
 
 Eclater les fichiers par arrêté
@@ -399,20 +401,27 @@ Verif si différence
 2e paquet dec 2025
 
 ```{r}
-images [[9]]
+images [[40]]
 # pb article 4*
 images [[pb [6]]]
 images [[67]]
 df [df$indImage == 38,]
 ```
 
+11 31 40 à rajouter pour janvier 2026
 
 
 
 ### Nettoyage du numéro d'arrêté
 
+
 ```{r}
-numModif <- gsub("2025", "", num)
+num
+```
+
+
+```{r}
+numModif <- gsub("2025|2026", "", num)
 numModif <- gsub("[^0-9]","", numModif)
 numModif <- gsub("2025", "2025_", numModif)
 numModif <-numModif [!is.na(numModif)]
@@ -547,6 +556,8 @@ ficPDF
 ```
 
 
+inutile si un seul fichier
+
 ### Cumul sur tous les fichiers
 
 Pour chq fichier, on a déterminé le nb de pages au moment de
@@ -613,6 +624,9 @@ pagination
 ```
 
 Puis on ajoute le cumul par fichier
+
+inutile si un seul fichier
+
 
 
 ```{r}
@@ -694,6 +708,7 @@ Parcours des fichiers pdf pour les éclater et les renommer arrêté par arrêt�
 Variables et initialisation
 
 ```{r}
+#inutile si un seul fichier
 pagination <- read.csv("../data/paginationFinale.csv")
 # liste des 7 fichiers avec nb pages différentes
 ficPDF
@@ -738,7 +753,9 @@ for (f in ficPDF){
   # selection du fic
   tmp <- pagination [pagination$fic == f,]
   tmp
-  for (i in c(1: length(tmp$deb))){
+  #inutile si un seul fichier, uniquement
+  tmp <- pagination
+    for (i in c(1: length(tmp$deb))){
       print(i)
       deb <- tmp$deb [i]
       fin <- tmp$fin [i]
@@ -746,7 +763,7 @@ for (f in ficPDF){
       doublon <- tmp$doublon [i]
       lieu <- tmp$lieu [i]
       pdf_subset("../data/pdf/total.pdf", pages = deb:fin,  
-      output =  paste0("../data/pdf/A2025_",numArr, doublon, "_", tolower(lieu),".pdf"), )
+      output =  paste0("../data/pdf/A2026_",numArr, doublon, "_", tolower(lieu),".pdf"), )
   }
 
 }
@@ -853,7 +870,6 @@ après A2024 titre de l'arrêté on extrait les termes avec les rues etc...
 (1er filtre) puis on prend la 1e occurrence
 
 
-```
 
 ```{r}
 # vérification du titre du 20e arrêté
@@ -1256,3 +1272,38 @@ dateFin4 [7] <- NA
 dateFin4 [15] <- gsub("NA", "2025", dateFin4 [15])
 dateFin4
 ```
+
+
+
+
+
+
+# Carto
+
+## Géocodage
+
+```{r}
+library(banR)
+tab <- NULL
+tab <- tibble(x = pagination$lieu , y='93010', z=rnorm(18))
+res <- geocode_tbl(tab,adresse=x, code_insee=y)
+res <- res [res$result_score > 0.5,]
+res <- res [!is.na(res$x),]
+jointure <- merge(pagination, res [,c("longitude","latitude","x")], by.x = "lieu", by.y = "x", all.x = T)
+jointure
+pb <- jointure [is.na(jointure$latitude),]
+jointure <- jointure [!is.na(jointure$latitude),]
+data <- st_as_sf(jointure, coords = c("longitude", "latitude"), crs = 4326)
+st_write(data,"../data/arrete.gpkg", "2026_01", delete_layer = T)
+```
+
+
+## Leaflet
+
+
+```{r}
+data$popup <- paste0(data$num, "_", data$lieu)
+library(leaflet)
+leaflet() %>% addProviderTiles(providers$CartoDB.Positron,options = tileOptions(minZoom = 10, maxZoom = 20)) %>% addMarkers(data=data, popup = data$popup) 
+```
+

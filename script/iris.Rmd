@@ -75,7 +75,7 @@ head(data)
 adresse <- data [data$code_insee == "93010",]
 write.csv(adresse,"../data/adresse.csv", fileEncoding = "UTF-8")
 #géolocalisation
-adresse <- st_read("../data/iris.gpkg", "adresse")
+adresse <- st_as_sf(adresse, coords = c("x", "y"), crs = 2154)
 ```
 
 
@@ -110,7 +110,7 @@ write.csv(interCSV,"../data/interIrisAdresse.csv",row.names = F)
 ```
 
 
-# Cartographie
+# Cartographie avec zone de recherche
 
 
 ```{r}

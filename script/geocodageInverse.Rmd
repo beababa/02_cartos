@@ -1,5 +1,5 @@
 ---
-title: "Geocodage inversé"
+title: "Geocodage y compris inversé"
 author: "B. Maranget"
 date: "18/07/2024"
 output: 
@@ -54,7 +54,7 @@ Sys.getenv("HOME")
 cheminPhoto <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/05_PHOTOS/stationnement/")
 cheminPhoto <- "S:/VOIRIE PHOTO STATIONNEMENT/"
 cheminPhoto <- ""
-cheminPhoto
+cheminPhoto <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/05_PHOTOS/nids de poule/")
 chemin <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/")
 ```
 
@@ -76,7 +76,21 @@ data <- st_centroid(data)
 ```
 
 
+## Photos nid de poule
+
+
+```{r}
+fic <- list.files(path = cheminPhoto)
+rue <- substring(fic,1, nchar(fic)-4)
+rue
+```
+
+
+
 # Traitement
+
+
+## Inversé
 
 ```{r}
 reverse_geocode(long = 2.37, lat = 48.357)
@@ -118,7 +132,22 @@ leaflet() %>%
   addMarkers(data = df, group= "df", popup = ~texte) %>%
 addPopupImages(image = df$photoC, group = "df", height = 300, width = 300) 
 ```
+
+
+## Geocdoe
+
+```{r}
+tab_test <- tibble(x = rue, y='93010', z=rnorm(24))
+res <- geocode_tbl(tab_test,adresse=x, code_insee=y)
+pb <- res [is.na(res$latitude),]
+res <- res [!is.na(res$latitude),]
+res <- st_as_sf(res, coords = c("longitude", "latitude"), crs = 4326)
+st_write(res,"../data/voirie.gpkg", "nid")
 ```
 
 
 ```{r}
+pb$x
+```
+
+On place les 3 derniers points à la main.

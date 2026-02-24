@@ -657,6 +657,9 @@ Enregistrement de zone avec toutes les jointures faites
 st_write(zone, "../data/habitat2026.gpkg", "zone", delete_layer = T)
 ```
 
+
++ 3 indJ indV et pctAge
+
 verif
 
 ```{r}
@@ -772,17 +775,25 @@ mf_layout("Nb p. agées + 60 ans","insee 2019,\njanvier 2026")
 ```{r}
 filosofi$indJ <- (filosofi$varJ)/filosofi$varV60
 hist(filosofi$indJ)
-mf_map(filosofi, var = "indJ", type="choro")
-mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
-mf_layout("Indice jeunesse (nb jeunes / 1 pers + 60 ans)","insee 2019,\njanvier 2026")
+
 ```
 
 ```{r}
 filosofi$V65plus <- filosofi$ind_65_79 + filosofi$ind_80p
 filosofi$indV <- filosofi$V65plus/filosofi$varJ
-mf_map(filosofi, var = "indV", type="choro")
+```
+
+
+Cartos
+
+```{r}
+par (mfrow = c(1,2))
+mf_map(filosofi, var = "indJ", type="choro", border = NA)
 mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
-mf_layout("Indice vieillesse (nb + 65 ans / 1 - de 20 ans)","insee 2019,\njanvier 2026")
+mf_layout("- de 20 ans / + 60 ans\nindice jeunesse","insee 2019,\njanvier 2026")
+mf_map(filosofi, var = "indV", type="choro", border = NA)
+mf_map(perimetre, add = T, col = NA, border = "blue", lwd = 3)
+mf_layout("+ 65 ans / - de 20 ans\nindice vieillesse","insee 2019,\njanvier 2026")
 ```
 
 
@@ -794,11 +805,16 @@ Agrégation par la moyenne (il s'agit d'un taux par zone)
 inter <- st_intersection(filosofi [c("indJ", "indV")], zone)
 agg <- aggregate (inter [,c("indJ", "indV"), drop = T], by = list(inter$Nom2), mean)
 names(agg)[1] <- "Nom2"
+agg [,2:3] <- round(agg [, 2:3], 1)
 zone <- merge(zone, agg, by ="Nom2")
+# 16 VAR sur zone
 mf_map(zone, var="indJ", type = "choro" )
 mf_map(zone, var="indV", type = "choro" )
 ```
 
+```{r}
+st_write(zone,"../data/habitat2026.gpkg", "zone", delete_layer = T)
+```
 
 
 # tx chômage
@@ -817,4 +833,6 @@ mf_layout("Iris % : indemnité chomage dans le revenu disponible","insee 2021,\n
 # tx de qualification
 
 la part des jeunes de 25 à 34 ans titulaires d’un diplôme de l’enseignement supérieur 
+
+pas de donnée infra communale ?
 
