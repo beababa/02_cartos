@@ -33,6 +33,7 @@ données autour du RCU
 ```{r}
 library(sf)
 library(mapsf)
+library(osmdata)
 ```
 
 
@@ -46,8 +47,8 @@ library(mapsf)
 
 ```{r}
 ch <- Sys.getenv("HOME")
-chemin <- paste0(ch, "/03_SIG/03_03_Data/08_VOIRIE/RCU/")
-chemin2 <- paste0(ch, "/03_SIG/03_03_Data/03_SOCLE/")
+chemin <- paste0(ch, "/03_SIG/03_03_Data/27_ENERGIE/RCU/")
+chemin2 <- paste0(ch, "S:/VOIRIE PLANS/05_SIG/03_SOCLE/")
 # on dézippe le .kmz
 rcuComplement <- st_read(paste0(chemin, "doc.kml"))
 fic <- paste0(chemin, "doc.kml")
@@ -103,10 +104,10 @@ longueur du réseau
 
 ```{r}
 sum(st_length(data$geom))
+tab <- table(data$Description)
 ind <- grep("existants", names(tab))
 ancien <- data [data$Description %in% names(tab)[ind],]
 nouveau <- data [!(data$Description %in% names(tab)[ind]),]
-tab <- table(data$Description)
 sum(st_length(ancien))
 sum(st_length(nouveau))
 ```
@@ -116,23 +117,45 @@ sum(st_length(nouveau))
 
 # Création de la zone tampon
 
+Est-ce vraiment nécessaire au vu de la précision du tracé itherm ?
 
 ```{r}
-data <- st_read("../data/rcu.gpkg", "itherm")
 tampon <- st_buffer(data,10)
-
-st_layers(paste0(chemin2, "batiment.gpkg"))
-bat <- st_read(paste0(chemin2, "batiment.gpkg"), "BDTOPO")
-mf_map(bat)
-mf_map(tampon, add = T, col = "red")
-poi <- st_read(paste0(chemin2, "batiment.gpkg"), "poi3")
-batPoi <- st_intersection(bat, poi)
-st_write(batPoi, "../data/bat.gpkg", "batpoi", delete_layer = T)
-st_write(bat, "../data/bat.gpkg", "BDTOPO", delete_layer = T)
 ```
 
 
+# Batiments
 
+avec osmdata, cela ne fonctionne pas, on récupère directement d'overpass avec building=public et building=yes
+
+```{r}
+query <- opq(bbox = 'Bondy') %>% add_osm_feature(key = 'building', value = 'public') %>% 
+  osmdata_sf()
+bat <- st_read("../data/bat.geojson")
+bat <- st_transform(bat, 2154)
+bat <- st_collection_extract(bat, "POLYGON")
+```
+
+114 bat publics
+
+12 445 bat = yes
+
+on utilise le script pour les 2 fichiers .geojson
+
+```{r}
+data <- st_read("../data/rcu.gpkg", "itherm")
+mf_map(bat)
+mf_map(tampon, add = T, col = "red")
+inter <- st_intersection(bat [, "id"], data)
+inter <- st_drop_geometry(inter)
+jointure <- merge(bat, inter, by="id")
+mf_map(jointure)
+names(jointure)
+st_write(jointure [,c("name", "building.owner")],  "../data/rcu2.gpkg", "batDivers", delete_layer = T)
+```
+
+
+On a la donnée bat
 
 Tuiles OSM
 
@@ -140,7 +163,6 @@ Tuiles OSM
 data <- st_read("../data/RCU/BONDY-022022.shp")
 data <- st_transform(data, 4326)
 sousStation <- st_read("../data/RCU/STB SST.kml")
-
 library(maptiles)
 osm <- get_tiles(sousStation)
 ```
@@ -151,12 +173,12 @@ osm <- get_tiles(sousStation)
 
 # Exploration fichier RCU
 
-Les fichiers sont écupérés auprès du prestataire (Coriance, DAIDJ Lila <Lila.DAIDJ@groupe-coriance.fr>)
+Les fichiers sont récupérés auprès du prestataire (Coriance, DAIDJ Lila <Lila.DAIDJ@groupe-coriance.fr>)
 
 
 ```{r}
 data <- st_read("../data/RCU/BONDY-022022.shp")
-plot_tiles(osm)
+#plot_tiles(osm)
 mf_map(data, col = "red", lwd = 2,add = T)
 sousStation <- st_read("../data/STB SST.kml")
 sousStation <- st_transform(sousStation, crs = 2154)
@@ -241,3 +263,30 @@ cartoOSM(pain, "pain")
 
 ![](../img/pain.png)
 ![](../img/merisier.png)
+
+# Exploitation liste abonnés 2024
+
+
+```{r}
+library(pdftools)
+library(tidyverse)
+library(tesseract)
+library(magick)
+```
+
+
+
+```{r}
+text <- pdf_text("../data/rcuAbonne.pdf")
+text2 <- strsplit(text, "\n")
+text2 [[1]][7]
+text3 <- text2 [[1]][7-89]
+text4 <- unlist(text3)
+text4 <- text4 [7:87]
+lg <- str_split(text4[20], "            ")
+lg <- substring(text4 [20], 1,15)
+
+```
+
+
+```{r}

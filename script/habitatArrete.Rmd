@@ -1,0 +1,89 @@
+---
+title: "Habitat fichier arrêté"
+author: "B. Maranget"
+date: "8/4/2026"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    theme: cerulean
+  pdf_document:
+    toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Carto à partir des arrêtés de la Direction de l'habitat
+
+
+```{r}
+suppressPackageStartupMessages(library(sf))
+library(mapsf)
+chemin <- "Q:/GEOMATIQUE/habitat 2026/recherche data Mars/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/10_HABITAT/"
+```
+
+
+
+
+# Data
+
+
+```{r}
+data <- read.csv2(paste0(chemin2, "arreteSHS.csv" ))
+library(banR)
+data$insee <- 93010
+loc <- geocode_tbl(data, adresse = adresseGeo, code_insee = insee)
+```
+
+65 loc pour 65 data...
+
+
+```{r}
+hist(loc$result_score)
+pb <- loc [loc$result_score < 0.9,]
+pb [, c("adresseGeo", "result_label")]
+# il s'agit juste de numéros groupés
+loc <- st_as_sf(loc, coords = c("longitude", "latitude"), crs = 4326)
+loc <- st_transform(loc, 2154)
+```
+
+
+```{r}
+png("../img/arreteSHS.png", width = 1000, height = 1200, res = 150)
+mf_init(loc)
+fond()
+mf_map(type = "typo", var = "type", loc, add = T, pch = 19, leg_pos = "topright")
+mf_layout("Arrêtés SHS 2005 - 2021", "Source : fichier interne")
+dev.off()
+```
+
+
+```{r}
+loc$an <- substring(loc$date,7,10)
+loc$an <- as.integer(loc$an)
+```
+
+
+```{r}
+png("../img/arreteSHS_an.png", width = 1000, height = 1200, res = 150)
+mf_init(loc)
+fond()
+mf_map(type = "choro", var = "an", loc, add = T, pal = "Sunset", leg_pos = "topright", leg_val_rnd = 0 )
+mf_layout("Arrêtés SHS 2005 - 2021", "Source : fichier interne")
+dev.off()
+```
+

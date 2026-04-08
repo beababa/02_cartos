@@ -41,6 +41,8 @@ plus détaillé le registre
 ```{r}
 library(sf)
 library(mapsf)
+library(rpostgis)
+library(RPostgreSQL)
 ```
 
 
@@ -52,6 +54,32 @@ chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/06_URBA/"
 chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 ```
 
+```{r}
+conn <- RPostgreSQL::dbConnect(
+  drv      = "PostgreSQL", 
+  host     = "localhost",
+  dbname   = "bondy", 
+  user     = "postgres", 
+  password = "postgres"
+)
+pgPostGIS(conn)
+```
+
+
+```{r}
+# à la fin
+RPostgreSQL::dbDisconnect(conn)
+```
+
+
+```{r}
+cadastre <- dbReadDataFrame(conn, c("cadastre","geo_parcelle"))
+pgListGeom(conn)
+pgGetGeom(conn, c("cadastre", "parcelle_info"), geom ="geom", gid = "geo_parcelle")
+cadastre <- st_read(conn, query = "SELECT * FROM cadastre.parcelle_info")
+rue <- st_read(conn, query = "SELECT * FROM base.rue")
+quartier <- st_read(conn, query = "SELECT * FROM public.quartier")
+```
 
 
 # Données
@@ -61,13 +89,15 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 fileEncoding à retenir "cp1252"
 
 ```{r}
-ads <- read.csv("../data/adsExport2025Avril.csv", fileEncoding = "cp1252")
+ads <- read.csv("../data/exportADS.csv", fileEncoding = "cp1252")
 # 743 à partir de 2022
+# 3797 en 2026
 str(ads)
 ads$annee <- substring(ads$Date.de.dépôt,7,10)
 table(ads$annee)
-sve <- read.csv("../data/sve.csv", fileEncoding = "cp1252")
+sve <- read.csv2("../data/sve2026.csv", fileEncoding = "cp1252")
 sve <- sve [sve$Code.insee.de.la.commune.principale == 93010,]
+#1231 puis en 2026 3779
 ```
 
 ## Indicateurs
@@ -93,14 +123,10 @@ barplot(agg$x, names.arg = paste0(agg$Group.1, agg$Group.2), horiz = F, las=2, b
 # Données cartos : cadastre, rue, quartier
 
 ```{r}
-st_layers("../data/gros/cadastre.gpkg")
-cadastre <- st_read("../data/gros/cadastre.gpkg", "parcelle_info")
-str(cadastre)
-st_layers(paste0(chemin2, "rue2023.gpkg"))
-rue <- st_read(paste0(chemin2, "rue2023.gpkg"), "rue2023")
-st_layers("../data/limitesSocle.gpkg")
-zone <- st_read("../data/limitesSocle.gpkg", "quartier2")
-mf_map(zone)
+mf_map(quartier, col = "cornsilk")
+mf_map(rue, add = T, col = "red")
+mf_map(cadastre, add = T, col = NA, border = "wheat", lwd = 0.001 )
+mf_layout("Quartier, rue et cadastre","Mars 2026")
 ```
 
 
@@ -114,6 +140,17 @@ pl parcelles possibles, par exemple :
 names(ads)
 # ex fusion 
 ads [727,8]
+```
+## Méthode sur toutes les parcelles
+
+
+On expérimente sur toutes les parcelles mais seules les parcelles avec gros projets habitat seront
+cartographiées.
+
+Pb du code dans le cadastre, nécessité d'avoir un code2 sans les zéros
+
+
+```{r}
 # attention à l'espace égalemetn
 cadastre$code <- gsub("^ ","", cadastre$code)
 cadastre$section <- substring(cadastre$code,1,2)
@@ -129,18 +166,27 @@ ads$Parcelles <- gsub(" ","", ads$Parcelles.concernées)
 
 
 Eclatement et recup de la première parcelle et du nb de parcelles
-Constitution d'une table sequence / parcelle
+Constitution d'une table sequence / parcelle où la parcelle est indexée à la lg de l'ads
 
 ```{r}
-liste <- strsplit( ads$Parcelles, ",")
-nb <- sapply(liste, length)
+listeDep <- strsplit( ads$Parcelles, ",")
+# nb de parcelles par lg
+nb <- sapply(listeDep, length)
 nb
+# nb de parcelles total
 sum(nb)
 # 743 liens pour 951 parcelles
-liste <- unlist(liste)
-# on construit une sequence de 1 à 743 avec répétition des items selon le nb
-seq <- rep(seq(1:743), times = nb)
-seq
+# 3797 ads et 5459 parcelles concernées
+hist(nb, main = "ads avec moins de 2 parcelles" )
+table(nb)
+liste <- unlist(listeDep)
+# on construit une sequence de 1 à nb parcelles total avec répétition des items selon l'ads
+seq <- rep(seq(1:length(nb)), times = nb)
+head(nb,10)
+head(seq,10)
+head(listeDep)
+# on observe bien la correspondance entre l'index de ligne
+rep(seq(1:length(nb)), times = 2)
 df <- data.frame(liste, seq)
 head(df,15)
 ```
@@ -152,18 +198,22 @@ Après une jointure, on fusionne les parcelles avec le même numéro de seq
 ```{r}
 joint <- merge(cadastre [, "code2"], df, by.x="code2", by.y = "liste")
 head(joint)
+# 5093 parcelles, on reconstruit les ads
 agg <- aggregate(joint [, c("code2")], by = list(joint$seq), length)
 names(agg) [1:2] <- c("seq", "nb")
 agg2 <- agg [agg$nb > 1,]
 # 81 fusions
+# 597 ads
 mf_map(agg2, type = "choro", pal = "Greens", var = "nb")
 agg3 <- agg [agg$nb > 2,]
 # 40 fusions de plus de 3 parcelles
+# 334 ads de plus de 3 parcelles
 mf_label(agg3, var = "seq", overlap = FALSE, halo = T)
 # 656 seq / 743...
 # quelles sont les parcelles qui n'ont pas trouvé jointure ?
 pb <- setdiff(df$liste,joint$code2)
 # 71 sur 951, rmq on travaille sur 2022-2025, ça fait bcp quand même
+# 255 sur 5459
 setdiff(df$seq,agg$seq)
 # verif
 cadastre$code2 [grep("^AO[0-9]", cadastre$code)]
@@ -262,6 +312,7 @@ Peut-être plus rapide de se focaliser uniquement sur les projets d'habitations
 
 ```{r}
 table(ads$Logements.créés, useNA = "always")
+petitProjet <- ads [ads$Logements.créés < 4 & !is.na(ads$Logements.créés),]
 grosProjet <- ads [ads$Logements.créés > 3 & !is.na(ads$Logements.créés),]
 # attention aux NA
 table(grosProjet$Logements.créés, useNA = "always")
@@ -275,14 +326,16 @@ table(grosProjet$Terrain...Adresse, useNA = "always")
 liste des parcelles avec séquence
 
 ```{r}
+grosProjet <- petitProjet
 liste <- strsplit( grosProjet$Parcelles, ",")
 nb <- sapply(liste, length)
 nb
 sum(nb)
 # 30 liens pour 85 parcelles
+# 75------------204------
 liste <- unlist(liste)
 # on construit une sequence de 1 à 30 avec répétition des items selon le nb (total = 85)
-seq <- rep(seq(1:30), times = nb)
+seq <- rep(seq(1:length(nb)), times = nb)
 seq
 df <- data.frame(liste, seq)
 head(df,15)
@@ -299,7 +352,7 @@ mf_map(agg, type="choro", var="nb", pal = "Terrain 2", border = "wheat1")
 mf_label(agg, var = "seq", overlap = FALSE, halo = T)
 # quelles sont les parcelles qui n'ont pas trouvé jointure ?
 pb <- setdiff(df$liste,joint$code2)
-# 6 sur 85, c'est négligeable
+# 6 sur 85, c'est négligeable 20/
 setdiff(df$seq,agg$seq)
 # verif
 cadastre$code2 [grep("^B[0-9]", cadastre$code)]
@@ -308,19 +361,27 @@ cadastre$code2 [grep("^B[0-9]", cadastre$code)]
 
 ```{r}
 agg
-grosProjet$seq <- seq(1:30)
+grosProjet$seq <- seq(1:length(nb))
 joint <- merge(agg, grosProjet, by="seq")
+joint [9,]
+mf_map(joint[9,])
+mf_map(cadastre, add = T, col = NA)
+mf_label(cadastre, "code2")
+mf_label(rue, "nom")
+mf_layout(joint$Demandeur [9], "Mars 2026")
 ```
 
 
 
+
+
 ```{r}
-st_write(joint [, c("seq", "annee", "Parcelles.concernées", "Terrain...Adresse", "Logements.créés", "Décision...Avis.de.l.autorité.compétente", "Description.du.projet.de.construction")], "../data/ads2025.gpkg", "grands_projets" , delete_layer = T)
+st_write(joint [, c("seq", "annee", "Parcelles.concernées", "Terrain...Adresse", "Logements.créés", "Décision...Avis.de.l.autorité.compétente", "Description.du.projet.de.construction")], "../data/ads2026.gpkg", "petits_projets" , delete_layer = T)
 ```
 
 
 ```{r}
-data <- st_read("../data/ads2025.gpkg", "grands_projets")
+data <- st_read("../data/ads2026.gpkg", "grands_projets")
 library(mapview)
 mapview(data, zcol = "annee")
 ```
@@ -333,12 +394,12 @@ mapview(data, zcol = "annee")
 
 
 ```{r}
-length(zone$nom)
+length(quartier$nom)
 i <-  1
 # quartiers
-for (i in 1:length(zone$nom)) {
-  png(paste0("../img/", zone$nom [i], ".png"), res = 100)
-  mf_init(zone [i, ])
+for (i in 1:length(quartier$nom)) {
+  png(paste0("../img/ADS2026_", quartier$nom [i], ".png"), res = 100)
+  mf_init(quartier [i, ])
   mf_map(cadastre,col = "antiquewhite1",border = NA,add = T)
     mf_map(
       data,
@@ -347,6 +408,7 @@ for (i in 1:length(zone$nom)) {
       border = NA,
       add = T
     )
+    #mf_label(rue [rue$importance < 3,], "nom")
     mf_label(
       data,
       var = "Logements.créés",
@@ -360,3 +422,14 @@ for (i in 1:length(zone$nom)) {
 
 ```
 
+
+cas du multiprojet
+
+```{r}
+multi <- names(table(data$Parcelles.concernées)> 1)
+doublon <- data [duplicated(data$Parcelles.concernées),]
+doublon$Description.du.projet.de.construction
+```
+
+
+TODO ?

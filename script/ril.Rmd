@@ -54,7 +54,7 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 # Données
 
 ```{r}
-rilCSV <- paste0(chemin, "Envoi_liste-2025-10-24-10-29-24.csv")
+rilCSV <- paste0(chemin, "ril2026_1 .csv")
 ```
 
 
@@ -115,9 +115,9 @@ str(ril)
 
 
 ```{r}
-st_write(ril_sf,"../data/ril2025.gpkg", "octobre", delete_layer = T)
+st_write(ril_sf,"../data/ril2026.gpkg", "mars", delete_layer = T)
 ril <- st_drop_geometry(ril)
-write.csv(ril, "../data/rilOct2025.csv")
+write.csv(ril, "../data/rilMars2026.csv")
 ```
 
 ## Les zones de sortie
@@ -187,7 +187,7 @@ mean(mtx_distance)
 library(fpc)
 set.seed(10000)
 # epsilon distance maximum entre 2 pts
-DBSCAN <- dbscan(rilXY, eps = 500 , MinPts = 10)
+DBSCAN <- dbscan(rilXY, eps = 500 , MinPts = 11)
 ril_sf$cluster <- DBSCAN$cluster
 mf_map(ril_sf, type = "typo", var = "cluster")
 table(ril_sf$cluster)
@@ -207,10 +207,16 @@ On rectifiera sous Qgis
 
 
 ```{r}
-st_write(ril_sf, "../data/ril2025.gpkg", "octobre", delete_layer = T)
-st_write(env, "../data/ril2025.gpkg", "env_octobre", delete_layer = T)
+st_write(ril_sf, "../data/ril2026.gpkg", "mars", delete_layer = T)
+st_write(env, "../data/ril2026.gpkg", "env_mars", delete_layer = T)
 ```
 
+```{r}
+zone <- st_read("../data/ril2026.gpkg", "env_mars")
+inter <- st_intersection(ril_sf, zone [, 1])
+inter <- inter [!duplicated(inter$geometry),]
+st_write(inter, "../data/ril2026.gpkg", "mars", delete_layer = T)
+```
 
 
 
@@ -286,4 +292,8 @@ mf_map(photo)
 st_write(photo, "../data/ril.gpkg", "photo", delete_layer = T)
 ```
 
+
+```{r}
+photo <- st_read("../data/ril.gpkg", "photo")
+```
 

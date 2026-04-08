@@ -78,7 +78,7 @@ TO DO nombreux voir invite interactive ?
 chemin <-"C:/Users/bmaranget/Documents/03_SIG/03_03_Data/11_RIL/"
 cheminSocle <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/ril/rilNov2024/"
-cheminPhoto <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/05_PHOTOS/fibre/"
+cheminPhoto <- "S:/VOIRIE PLANS//05_SIG/05_PHOTOS/ril/rorcal2026/"
 cheminPhoto <- "D:/TELETRAVAIL/2024_04_18/ril/"
 cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
 ```
@@ -93,7 +93,9 @@ cheminGPX <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/04_GPX/"
 On récupère les waypoints (la 1e couche par défaut) uniquement
 
 ```{r}
-fic <- list.files(cheminGPX, "08-NOV-24")
+fic <- list.files(cheminGPX, "24-MAR-26|30-MAR-26")
+list.files(cheminGPX)
+fic
 trace <- NULL
 for (f in fic) {
   tmp <- st_read(paste0(cheminGPX,f), "waypoints")
@@ -103,7 +105,7 @@ for (f in fic) {
 trace <- st_zm (trace, drop = T)
 mf_map(trace)
 mf_label(trace, var="name")
-st_write(trace,"../data/ril2024.gpkg", "rilNOv2024Trace_2", delete_layer=T)
+st_write(trace,"../data/ril2026.gpkg", "rilMars2026_2", delete_layer=T)
 st_write(trace,"../data/fo.gpkg", "wp19_07_2024_Trace", delete_layer=T)
 ```
 
@@ -112,7 +114,7 @@ Première carto
 
 ```{r}
 trace <- st_transform(trace, 2154)
-png("../img/ptFibre2024.png")
+png("../img/ptRIL2026.png")
 mf_init(trace)
 fond()
 mf_map(trace, add = T)
@@ -126,16 +128,46 @@ dev.off()
 concaténation de tous les waypoints dans le ril2024.gpkg       
 
 ```{r}
-st_layers("../data/ril2024.gpkg")
-trace <- st_read("../data/ril2024.gpkg", "rilNOv2024Trace_2")
+st_layers("../data/ril2026.gpkg")
+trace <- st_read("../data/ril2026.gpkg", "rilMars2026_2")
 ```
 
+47 pts
 
 Verif date et heure au cas échéant
 
 ```{r}
 class(trace$time)
 ```
+
+
+```{r}
+table(as.Date(trace$time, format="%d" ))
+```
+
+filtre éventuel
+
+Suppression 10 mars
+
+```{r}
+trace <- trace [(as.Date(trace$time, format="%d" )) != "2026-03-10",]
+# suppression colonene
+trace <- trace [,c(2,5)]
+```
+
+repérage campagnes par jour
+
+```{r}
+# filtrer le jour
+trace$jour <-  as.Date(trace$time, format="%d" )
+# rang de l'heure
+trace$num <- rank(trace$time)
+trace$name [trace$jour == "2026-03-19" & min(trace$num)]
+trace$name [trace$jour == "2026-03-23" & min(trace$num)]
+```
+
+
+POSIXct et POSIxt
 
 https://demandred.gitbooks.io/introduction-a-r-pour-les-chatons/content/les-structures-de-donnees-avancees/les-dates-en-r.html
 
@@ -156,7 +188,8 @@ Cette seconde classe permet de représenter les dates également, mais en tenant
 photo <- list.files(path.expand(cheminPhoto), pattern = "*.jpg|*.JPG")
 ```
 
-34 photos
+36 photos
+
 
 
 ## Récup métadonnées photo
@@ -184,12 +217,20 @@ table(substring(photoMeta$FileModifyDate,1,10))
 ```
 
 
-filtre éventuelle sur la date
+filtre éventuel sur la date
 
 ```{r}
-photoMetaSel <- photoMeta [substring(photoMeta$FileModifyDate,1,10) == "2024:11:08", ]
+photoMetaSel <- photoMeta [substring(photoMeta$FileModifyDate,1,10) == "2026:03:03", ]
 photoMeta <-  photoMetaSel
 ```
+
+filtre >
+
+```{r}
+test <- photoMeta$FileModifyDate [35]
+photoMetaSel <- photoMeta [photoMeta$FileModifyDate >  test,]
+```
+
 
 
 on réduit la photo
@@ -235,22 +276,37 @@ calcul différence entre les 2 dates
 
 A priori 1e photo 1er pt (mais verif à faire)
 
+
+pt 153 et photo 1301 
+
+On a rajouté un num fonction du rang afin de confirmer.
+
 ```{r}
-trace <- trace [-1,]
-trace [1, c("name", "time")]
-trace$time
-photoMeta [1,]
-photoMeta$heure [1] - trace$time [1]
+min(trace$name)
+max(trace$name)
+# Rétablir l'ordre temporel
+trace <- trace [order(trace$num),c("name", "time", "num")]
+trace <- trace [trace$num!=1,]
+pt <- trace [trace$num==1, c("name", "time")]
+pt
+photo <- photoMeta [photoMeta$nom == "../photo/ril_IMG_1331.JPG",]
+photo$heure  - pt$time
 ```
 
-30 mn diff entre le gps et l'appareil photo. Attention, 27*60 pourles calculs 
+52 mn diff entre le gps et l'appareil photo. Attention, 42*60 pourles calculs 
 
 ```{r}
-dif <- 30
-photoMeta$heure [1] - trace$time [1] + dif
-photoMeta$heureAjustee <- photoMeta$heure -( dif * 60)
+dif <- photo$heure - pt$time
+class(dif)
+which(photoMeta$nom == photo$nom)
+photoMeta$nom
+# verif le résultat doit être nul
+photoMeta [7, c("nom", "heure")]
+trace$time[1]
+photoMeta$heure [7] - trace$time [1] - (dif)
+photoMeta$heureAjustee <- photoMeta$heure -( dif )
 class(photoMeta$heureAjustee)
-photoMeta [, c("heure", "heureAjustee")]
+photoMeta [7, c("heure", "heureAjustee")]
 ```
 
 On cherche la différence minimum entre l'heure ajustée et l'heure du wp
@@ -261,6 +317,7 @@ test sur la photo 1
 ind <- (which.min(abs(difftime(photoMeta$heureAjustee [1], trace$time))))
 trace [ind,]
 photoMeta$heureAjustee [1]
+photoMeta
 ```
 
 
@@ -310,10 +367,16 @@ setdiff(photoMeta$name, joint$name)
 table(trace$name)
 ```
 
-pourquoi 23 photos au pt 148 ?
+On vérifie les pts avec bcp de photo
 
 ```{r}
-trace [trace$name == '148',]
+trace [trace$name == '153',]
+```
+
+
+```{r}
+st_crs(joint)
+joint <- st_transform(joint,2154)
 ```
 
 
@@ -323,7 +386,7 @@ png("../img/jointurePhotoGPS.png")
 mf_init(joint)
 fond()
 mf_map(joint, add =T)
-joint$TERRAIN <- substring(joint$FileName,4,8)
+joint$TERRAIN <- substring(joint$FileName,5,8)
 mf_label(joint, var="TERRAIN", halo = T, overlap= F, cex = 1)
 mf_layout("Photo et GPS", "trace GPS\nNov 2024")
 dev.off()
@@ -355,7 +418,7 @@ Enregistrement
 
 ```{r}
 names(joint)
-st_write(joint [, c("name", "nom", "TERRAIN", "FileModifyDate", "heure")],"../data/ril2024.gpkg", "photoNov2024_2", delete_layer = T)
+st_write(joint [, c("name", "nom", "TERRAIN", "FileModifyDate", "heure")],"../data/ril2026.gpkg", "photoMars2", delete_layer = T)
 ```
 
 
@@ -378,7 +441,7 @@ curl::curl_download(url = "https://marionlouveaux.fr/blog/2020-10-24_gpx_tracks_
 ```{r, eval=TRUE}
 cameraIcon <- iconList(makeIcon("../img/240px-Icone_appareil_photo.png", iconWidth = 30))
 
-data <- st_read("../data/ril2024.gpkg", "photoNov2024_2")
+data <- st_read("../data/ril2026.gpkg", "photoMars2")
 data <- st_transform(data, crs = 4326)
 data
 data$name <- rownames(data)
@@ -522,7 +585,7 @@ data$occ <-
 ```{r}
 data <- st_jitter(data)
 mf_map(data)
-st_write(data,"../data/ril2024.gpkg", "photoNov2024_2", delete_layer = T)
+st_write(data,"../data/ril2026.gpkg", "photoMars2", delete_layer = T)
 ```
 
 C'est quand même beaucoup plus simple ...

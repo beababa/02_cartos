@@ -22,7 +22,7 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Ouverture fichier excel issu extraction .pdf rue - bureau
+Ouverture fichier excel issu extraction .pdf rue - bureau en 2021
 
 
 # Import
@@ -49,4 +49,190 @@ head(data)
 write.csv2(data, "../../03_03_Data/decoupagePropre.csv")
 ```
 
+# data.gouv
+
+5 ans plus tard... résulats sur data.gouv 3 jours plus tard
+
+
+```{r}
+library(sf)
+data <- read.csv2("../data/municipales-2026-resultats-bv-par-communes-2026-03-20.csv")
+# OU
+data <- read.csv2("../data/municipales-2026-resultats-bureau-de-vote-2026-03-23-16h15.csv")
+bv <- st_read("../data/bvBondy.geojson")
+bv <- bv [, "bureau"]
+bv$num <- as.integer(gsub("93010_","", bv$bureau))
+```
+
+
+# jointure
+
+
+
+```{r}
+data <- data [data$Libellé.commune == 'Bondy',]
+data$num  <- as.integer(data$Code.BV)
+joint <- merge(bv, data, by = "num")
+```
+
+
+```{r}
+secondTour <- joint [, c("num", "Abstentions", "Voix.1","Voix.2")]
+names(secondTour)[2:4] <- c("ABST_2", "HERVE_2", "LFI_2")
+```
+
+Nb votants 
+
+```{r}
+hist(joint$Inscrits)
+abline(v=median(joint$Inscrits), col="red")
+abline(v=mean(joint$Inscrits), col="blue")
+```
+
+```{r}
+plot(st_area(joint), joint$Inscrits, main = "Densité bureau")
+text(st_area(joint), joint$Inscrits, joint$num, pos = 2)
+lm <- lm (joint$Inscrits~st_area(joint))
+abline(lm, col="red")
+```
+
+
+
+```{r}
+mf_map(joint, type = "choro", var = "Inscrits", pal = "PinkYl")
+mf_label(joint, "num", halo = T)
+mf_layout("Nb d'inscrits par bureau élection 2026", "data.gouv\nMars 2026")
+```
+
+
+
+```{r}
+plot(joint$Votants, joint$Abstentions, main = "Rapport votants et abstentions par bureau")
+text(joint$Votants, joint$Abstentions, joint$num, pos = 1)
+lm <- lm (joint$Abstentions~joint$Votants)
+abline(lm, col="red")
+```
+
+
+
+
+Etiquette liste
+
+```{r}
+nom <- grep("abrégé", names(joint))
+joint [,nom] 
+nom <- joint [,nom]
+# pb df / vecteru
+df <- nom [1,]
+df <- st_drop_geometry(df)
+colnames(df) <- df
+nom <- colnames(df)
+nom <- nom [1:6]
+```
+
+Attribution noms extraction nb de voix
+
+```{r}
+nb <- grep("Voix.[1-6]", names(joint))
+joint [,nb]
+nb <- nb [1:6]
+names(joint)[nb] <- nom 
+```
+
+
+
+
+
+```{r}
+nbVoix <- joint [,c(1,nb)]
+```
+
+
+Extraction abstentions
+
+```{r}
+nb <- grep("Abstentions", names(joint))
+joint [,nb]
+names(joint)[nb] <- c("Abstentions", "tx_abstention")
+abstention <- joint [,c(1,nb), drop=T]
+abstention$tx_abstention <- gsub("%", "", abstention$tx_abstention)
+abstention$tx_abstention <- gsub(",", ".", abstention$tx_abstention)
+abstention$tx_abstention <- as.double(abstention$tx_abstention)
+```
+
+
+```{r}
+nbVoix <- merge(nbVoix, abstention, by = "num")
+```
+
+
+
+# Carto
+
+
+Premier tour
+
+```{r}
+palette <- c("Teal", "RedOr", "Burg", "RedOr", "Peach", "Mint", "Sunset", "SunsetDark")
+tete <- c( "HERVE", "OZGUNER", "RACHDI" ,"MALOZZI", "MOGHRANI", "JANKOWSKI", "ABST", "ABST TAUX")
+names(nbVoix) [2:9]<- c("HERVE", "LFI", "Bondy Autrement", "MALOZZI", "MOGHRANI", "JANKOWSKI", "ABST", "ABST TAUX")
+library(mapsf)
+mf_map(joint)
+```
+
+
+```{r}
+png("../img/resElection.png", width = 1200, height = 1000, res = 150)
+par(mfrow = c(2,4))
+for (c in c(2:9)) {
+  print(c)
+  tmp <- nbVoix [,c(1,c)]
+  col  <- names(tmp)[2]
+  mf_map(tmp, type = "choro", var = col, pal = palette [c-1])
+  mf_label(tmp, "num", halo = T, cex = 1.1)
+}
+dev.off()
+```
+
+pb des palettes
+
+couleurs politiques : gauche (rouge), droite (bleu), soc (rose)
+
+Second tour
+
+```{r}
+palette <- c("Sunset", "Teal", "Burg")
+png("../img/resElection2.png", width = 1200, height = 600, res = 150)
+par(mfrow = c(1,3))
+for (c in c(2:4)) {
+  print(c)
+  tmp <- secondTour [,c(1,c)]
+  col  <- names(tmp)[2]
+  mf_map(tmp, type = "choro", var = col, pal = palette [c-1])
+  mf_label(tmp, "num", halo = T, cex = 1.2)
+}
+dev.off()
+```
+
+
+
+# ACP
+
+```{r}
+choix <- nbVoix # secondTour
+rownames(choix) <- choix$num
+choix <- choix [,-c(1,9)]
+acp <- prcomp(st_drop_geometry(choix), scale. = T)
+biplot(acp)
+```
+
+
+
+# Enregistrement
+
+
+```{r}
+st_write(nbVoix, "../data/vote.gpkg", "nbVoix", delete_layer = T )
+st_write(secondTour, "../data/vote.gpkg", "secondTour", delete_layer = T )
+```
 

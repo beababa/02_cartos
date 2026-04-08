@@ -200,12 +200,13 @@ st_write(bat, paste0(chemin, "fond.gpkg"), "bat", delete_layer = T)
 ## Chargement des couches
 
 ```{r, eval = TRUE}
-ch <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+ch <- "S:/VOIRIE PLANS/05_SIG/03_SOCLE/"
 #ch <- "D:/03_SIG/03_03_Data/03_SOCLE/"
 couche <- st_layers(paste0(ch, "fond.gpkg"))
 tmp <- couche$name
 for (i in 1:length(tmp)){
     objet <- st_read(paste0(ch, "fond.gpkg"), tmp [i])
+    objet <- st_transform(objet, 2154)
     assign(tmp [i], objet)
 }
 length(couche$name)
@@ -217,6 +218,7 @@ couche$name
 
 
 ```{r, eval = TRUE}
+library(mapsf)
 mf_init(bondy, theme = "candy")
 
 # Création d'une fonction de fond de carte

@@ -22,11 +22,14 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
+
+
 Fichier rue, constitution grille et liste des rues dans graticules
 
 La grille est dans socleBat
 Le fichier est grille dans bondy.gpkg (ds 03_SOCLE)
 
+changements noms importants delib DCM025_079
 
 Egalement liste des rues dans delib
 
@@ -50,54 +53,100 @@ library(mapview)
 Sys.getenv()
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 # si dd externe
-chemin <- "D:/03_SIG/03_03_Data/"
+chemin <- "S:/VOIRIE PLANS/05_SIG/03_SOCLE/"
 ```
+
+
+## Pb dessin dans qgis
+
+quand modif sous qgis, multiplication des couches. (database locked)
+on ferme qgis et on remplace dans socle2026.gpkg tout en mesurant la taille des tables pour contrôle
+
+
+```{r}
+dir(chemin, pattern = "socle2026")
+st_layers(paste0(chemin, "socle2026d.gpkg"))
+st_layers(paste0(chemin, "socle2026.gpkg"))
+rue <- st_read(paste0(chemin, "socle2026d.gpkg"), "rues_copie")
+st_write(rue, paste0(chemin, "socle2026.gpkg"), "rue", delete_layer = T)
+esp <- st_read(paste0(chemin, "socle2026d.gpkg"), "socle2026c__espaces_publics")
+esp <- esp [, c("NOM","DateOuvert", "NomProp", "CatGenLib", "StatOuvLib")]#90 87 au départ
+st_write(esp, paste0(chemin, "socle2026.gpkg"), "espaces_publics", delete_layer = T)
+```
+
+
 
 
 ## Données
 
-Le nom peut varier en fonction des pb d'enregistrement sur .gpkg dans Qgis
+Chaque année, mise à jour 
 
-
-il existe rue2023 et rue 
+- cadastre (cadastreBase) avec proprio
+- socle (rue / bat)
 
 ```{r}
 # pour le fond le cadastre
-cadastre <- st_read("../data/cadastre.gpkg", "proprio")
+st_layers("../data/cadastreBase.gpkg")
+cadastre <- st_read("../data/cadastreBase.gpkg", "proprio2025")
 # les rues
-st_layers(paste0(chemin, "03_SOCLE/rue.gpkg"))
-# nettoyage et enregistrement en un fichier rue et un fichier rueCadastre
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre3")
+```
+
+
+```{r}
+st_layers(paste0(chemin, "socle2026b.gpkg"))
+# nettoyage et enregistrement en un fichier rue si pb enregistrement suite maj qgis
+rue <- st_read(paste0(chemin,"socle2026b.gpkg"), "rues_copie")
+names(rue)
+head(rue)
+names(rue) [1:6]  <- c("NOMnumero", "NATURE", "IMPORTANCE", "NOM", "NOM_1_G", "usage")
+table(rue$NATURE)
+st_write(rue, paste0(chemin, "socle2026.gpkg"), "rue", delete_layer = T)
+
 # verif NOM
 rue$NOM_1_G
-#386 rues au 16/06 - 385 au 30/10/2023
-# attention suppression
-file.remove(paste0(chemin,"03_SOCLE/rue2023.gpkg"))
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherenc")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
-# maj longueur
+#386 rues au 16/06 - 385 au 30/10/2023 - 386 au 2/3/2026
 rue$Longueur <- round(st_length(rue$geom),0)
 sum(rue$Longueur)
-# 94 982 m au 30/10/2023
-# 
 ```
 
+ 94 982 m au 30/10/2023 98 en mars 2026
 
-le fichier final est dans socle et s'intitule rue2023.gpkg
+
+Vérification dernières saisies
 
 ```{r}
-st_layers(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
-rue <- st_read(paste0(chemin, "03_SOCLE/rue2023.gpkg"))
+rue [grep ("LATERAL", rue$NOM_1_G),]
+rue [104, c("NATURE", "NOM") ] <- c("AV", "JEAN-BAPTISTE DEVILLERS")
+rue [grep ("RIOULT", rue$NOM_1_G),]
+ind <- grep ("DOUCHY", rue$NOM_1_G)
+rue [ind,]
+rue [ind, c("NOM", "NOM_1_G", "NATURE")] <- c("GUSTAVE DOUCHY", "SEN GUSTAVE DOUCHY", "SEN")
 ```
 
-387 au 12/07/2023
+```{r}
+ind <- grep ("DOUCHY", rue$NATURE)
+rue [ind,]
+```
 
 
+
+Vérif par rapport aux R
+
+
+```{r}
+ind <- grep("RIMBAUD", rue$NOM)
+rue [ind,]
+rue [ind, "NOM"] <- "ARTHUR RIMBAUD"
+ind <- grep("SALENGRO", rue$NOM)
+rue [ind, "NOM"] <- "ROGER SALENGRO"
+```
+
+
+
+
+
+```{r}
 # Verif doublon
-
-
-
-```{r}
 tab <- table(rue$NOM_1_G)
 tab [tab >1]
 # on extrait les sans noms
@@ -106,13 +155,20 @@ table(select$NATURE)
 # carto pour voir pb
 select <- select [select$NOM_1_G %in% names (tab [tab > 1]), ]
 select
+```
+
+
+```{r}
 mf_init(st_buffer(select [1,], 100))
 fond()
 mf_map(select [c(1:2),], lwd= 2, col = "red",add = T)
 mf_label(rue, "NOM" , overlap = F, lines = T)
 mf_layout("Pb dessin rues", credits = "")
-# Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
 ```
+
+
+Une correction est effectuée dans QGis si nécessaire (projet cadastreRue)
+
 
 Avec mapvieuw, solution plus simple que l'utilisation du fond
 
@@ -137,43 +193,76 @@ rue <- rue [-96,]
 Enregistrement
 
 ```{r}
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rue", delete_layer = T)
-st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherenc")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
+st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage")], paste0(chemin, "socle2026.gpkg"), "rue", delete_layer = T)
+#st_write(rue [,c("NATURE", "IMPORTANCE", "NOMnumero", "NOM", "NOM_1_G", "usage", "cadastre", "incoherenc")], paste0(chemin, "03_SOCLE/rue2023.gpkg"), "rueCadastre", delete_layer = T)
 ```
 
 
 
 # Rue très petites numérotées (version 1)
 
-en principe 15
-ALL MARIE-JOSE CHOMBART DE LAUWE la 16e
+en principe 18
+ALL MARIE-JOSE CHOMBART DE LAUWE la 18e
 
 essai plus bas pour numérotation / longueur rue ?
 
 ```{r}
 rue$NOMnumero [!is.na(rue$NOMnumero)]
 # extraction tableau rue numero
-num <- rue[!is.na(rue$NOMnumero), drop =F]
+num <- rue[!is.na(rue$NOMnumero), drop = F]
+```
+
+carto
+
+```{r}
 sel <- num [num$NOMnumero == "ALL MIGNARD",]
 mf_init(st_buffer(sel,10))
 mf_map(cadastre, add = T, lty=2)
 mf_map(num, add = T, col = "antiquewhite1", lwd = 4)
 mf_label(num, var = "NOMnumero", overlap = F, lines = T)
-mf_layout("petites rues", credits = "sept 2023")
-num <- num [order (as.integer(num$NOM)), c("NATURE", "NOMnumero"), drop = T]
-write.csv(num, "../data/numRue.csv", fileEncoding = "UTF-8")
-# remplacementNONNumero
-num <- as.character(seq(1,16))
-rue$NOM_1_G [rue$NOM %in% num] <- rue$NOMnumero [rue$NOM_1_G %in% num]
+mf_layout("petites rues", credits = "mars 2026")
+```
+
+attribution numéro
+
+Le numéro doit correspondre à l'ordre alphabétique du nOM
+
+```{r}
+num <- num [order (num$NOM), c("NATURE", "NOMnumero", "NOM_1_G", "NOM"), drop = T]
+# Extraction ALL R et SEN
+num$NOM <- gsub( "^ALL |^R |^SEN |^IMP ", "", num$NOMnumero)
+num$NOM_1_G <- seq(1:length(num$NOM_1_G))
+names(num) <- c("NATURE", "NOMtot", "num", "NOM")
+write.csv(num [, c("num", "NOM", "NATURE")], "../data/numRue.csv", fileEncoding = "UTF-8", row.names = F)
 knitr::kable(rue[!is.na(rue$NOMnumero), c("NOM_1_G", "NOM")])
+```
+
+
+Remplacement dans tableau principal
+
+
+```{r}
+jointure <- merge(rue, num [,c("num", "NOMtot", "NOM")], by.x = "NOMnumero", by.y = "NOMtot", all.x=T)
+jointure$NOMnumero
+jointure$NOM.x [!is.na(jointure$NOMnumero)]
+jointure$NOM.y [!is.na(jointure$NOMnumero)]
+jointure$NOM.x [!is.na(jointure$NOMnumero)]  <- jointure$NOM.y [!is.na(jointure$NOMnumero)]
+jointure$NOM_1G [!is.na(jointure$NOMnumero)]
+jointure$num [!is.na(jointure$NOMnumero)]
+jointure$NOM_1_G [!is.na(jointure$NOMnumero)]  <- jointure$num [!is.na(jointure$NOMnumero)]
+jointure <- jointure [,c(1:6)]
+names(jointure)[4] <- "NOM"
+tail(jointure)
+st_write(jointure,paste0(chemin, "socle2026.gpkg"), "rue" , delete_layer = T)
 ```
 
 
 
 
-
-
 # constitution index
+
+
+
 
 ## extraction type rue
 
@@ -364,7 +453,7 @@ Voir script stationnement.
 # Intersections diverses
 
 
-Les quartiers
+## Les quartiers
 
 ```{r}
 quartier <- st_read("../data/limitesSocle.gpkg", "quartiers")
@@ -426,53 +515,86 @@ write.csv(tot [,c("NOM", "NATURE", "NOM2", "raccourci"), drop = T],  "../data/in
 ```
 
 
-La grille
+## La grille
+
+
+
 
 longueur du carreau 673 m (pour refléter la grille des panneaux (6*4 sur l'aire de Bondy)
 
 ```{r}
 sqrt(st_area(grille))
-grille <- st_read(paste0(chemin, "03_SOCLE/bondy.gpkg"), "grille")
+grille <- st_read(paste0(chemin, "bondy.gpkg"), "grille")
 mf_map(grille)
 mf_map(rue, add = T)
 mf_layout("grille 6*4, 673 m environ", credits = "Mairie de Bondy \ DGST")
 ```
 
 
-Intersection grille / rue
+### Intersection grille / rue
 
 
 ```{r}
+rue <- st_read(paste0(chemin, "socle2026.gpkg"), "rue")
 inter <- st_intersection(rue, grille)
-inter <- inter [, c("NATURE",  "NOM2", "case"), drop = T]
+inter <- inter [, c("NATURE",  "NOM", "NOM_1_G", "case", "NOMnumero"), drop = T]
 ```
 
-Suprression des doublons rues
+
+### Supression des sans nom
+
+
+```{r}
+table(inter$NATURE)
+inter <- inter [inter$NATURE != "Sans", ] 
+```
+
+
+### Cas des NOMnumero
+
+On rectifie une nelle fois NOM
+
+
+```{r}
+inter$NOM_1_G [!is.na(inter$NOMnumero)] <- inter$NOMnumero [!is.na(inter$NOMnumero)]
+inter$NOM_1_G [!is.na(inter$NOMnumero)] 
+
+inter$NOM [!is.na(inter$NOMnumero)]  <- gsub( "^ALL |^R |^SEN |^IMP ", "", inter$NOM_1_G [!is.na(inter$NOMnumero)])
+inter$NOM [!is.na(inter$NOMnumero)] 
+inter <- inter [,-5]
+head(inter)
+```
+
+
+
+### Suprression des doublons rues
 
 L'idée est de garder une seule occurence et d'aligner toutes les références
 
 
-
-
 ```{r}
 inter$id <- rownames(inter)
-inter$NOM <- paste(inter$NATURE, inter$NOM2)
 names(inter)
 doublons <- inter [grep("\\.", inter$id),]
-# 163 doublons
-liste <- unique (doublons$NOM)
+# 165 doublons
+liste <- unique (doublons$NOM_1_G)
 fin <- NULL
+sel <- NULL
+l <- liste [1]
 for (l in liste){
-  sel <- inter [inter$NOM == l,]
+  sel <- inter [inter$NOM_1_G == l & !is.na(inter$NOM_1_G),]
+  print(sel$case)
   sel$case2 <- paste(sel$case, collapse = " ")
   # on ne retient que la 1e lg
   sel <- sel [1,]
   fin <- rbind(sel, fin)
 }
 # contrôle sur une rue Liberté
-doublons [doublons$NOM2 == "LIBERTE",]
-inter [inter$NOM2 == "LIBERTE",]
-fin [fin$NOM2 == "LIBERTE",]
+doublons [doublons$NOM == "LIBERTE",]
+inter [inter$NOM == "LIBERTE",]
+fin [fin$NOM == "LIBERTE",]
+# doublons dans les croisements
+fin [55,]
 # enregistrement
 partie1 <- inter [-(grep("\\.", inter$id)),]
 head(partie1)
@@ -480,15 +602,16 @@ head(fin)
 # 385
 names(partie1)
 names(fin)
-tot <- merge(partie1 [, c("NOM", "NATURE", "NOM2", "case")], fin, by = "NOM", all.x = T)
+tot <- merge(partie1 [, c("NOM", "NATURE", "NOM_1_G", "case")], fin, by = "NOM", all.x = T)
 names(tot)
 head(tot)
-# 385
-tot <- tot [ , c("NOM2.x", "NATURE.x", "case.x")]
+# remplacement cases si pl occurences
+tot$case2 [is.na(tot$case2)]  <- tot$case.x [is.na(tot$case2)]
+# 384
+tot <- tot [ , c("NOM", "NATURE.x", "case2")]
 names(tot) <- c("Nom court","NATURE", "case")
-# suppression des sans noms
-tot <- tot [tot$NATURE != "Sans",]
-tot <- tot [order (tot$`Nom court`),]
+tail(tot)
+tot <- tot [-384,]
 write.csv(tot, "../data/interRueGrille.csv", fileEncoding = "UTF-8", row.names = F)
 ```
 

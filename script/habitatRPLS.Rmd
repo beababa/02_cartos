@@ -43,6 +43,11 @@ analyse du rpls 2023
 
 rpls 2024
 
+
+rpls 2025
+
+https://www.statistiques.developpement-durable.gouv.fr/catalogue?page=datafile&datafileRid=f3c2f2cb-8fb1-40fd-8733-964247744c9a
+
 ```{r}
 library(sf)
 library(mapsf)
@@ -55,7 +60,7 @@ library(mapsf)
 ```{r, eval = T}
 # on reprend variable HOME en fonction PC
 rep <- Sys.getenv("HOME")
-chemin <- paste0(rep,"/03_SIG/03_03_Data/10_HABITAT/")
+chemin2 <- paste0(rep,"/03_SIG/03_03_Data/10_HABITAT/")
 ```
 
 
@@ -65,11 +70,10 @@ Il y a un premier fichier en opendata, et l'autre comportant le nom des bailleur
 
 
 ```{r}
-RPLS <- read.csv2(paste0(chemin,"RPLS2019_detail_IDF_DEP_93.csv"), 
+rpls2019 <- read.csv2(paste0(chemin2,"RPLS2019_detail_IDF_DEP_93.csv"), 
                   #fileEncoding = 'UTF-8', 
                   stringsAsFactors = F,  header = T)
-RPLS <- RPLS [RPLS$CODEPOSTAL == 93140,]
-str(RPLS)
+rpls2019 <- rpls2019 [rpls2019$CODEPOSTAL == 93140,]
 ```
 
 9390 pts
@@ -108,10 +112,24 @@ rpls2024 <- read.csv2("../data/rpls2024.csv", skip = 1,  dec= ".")
 9287 en geojson puis en .csv puisque tout est fait
 9286 en csv
 
+
+
+2025
+
+
+```{r}
+rpls2025 <- st_read(paste0(chemin2, "rpls2025.geojson"))
+# 9706 logements
+# trop long pb géométrie, plus rapide avec le .csv qu'on spatialise
+rpls2025 <- read.csv2(paste0(chemin, "rpls2025.csv"), dec = ".", skip = 1)
+```
+
+9706
+
 Puisqu'il s'agit de traiter pl fichiers, on va tout mettre en fonctions ?
 
 ```{r}
-fic <- rpls2024
+fic <- rpls2025
 names(fic)
 head(fic)
 # pb pour 2024 sur le nom de voie
@@ -122,8 +140,8 @@ fic<- fic [!is.na(fic$X),]
 # vérifcation pour le nb d'étages et le nb de voies
 verif <- function(fic) {
   ind <- grep("NOMVOIE",names(fic))
-  # on suppose que le nom voie sera tjrs en 2e position 19e pour 2024
-  ind <- names(fic)[ind]
+  # on suppose que le nom voie sera tjrs en 2e position 19e pour 2024 / 18 pour 2025
+  #ind <- names(fic)[ind]
   tab <- table(fic[,ind], useNA = "always")
   ind <- grep("ETAGE", names(fic), ignore.case = T)
   tab1<- table(fic[,ind], useNA = "always")
@@ -167,7 +185,7 @@ data <- st_as_sf(joint2,
 return(data)
 }
 rpls <- agg(fic)
-st_write(rpls, "../data/RPLS.gpkg", "rpls2024", delete_layer = T)
+st_write(rpls, "../data/RPLS.gpkg", "rpls2025", delete_layer = T)
 ```
 
 
@@ -307,7 +325,7 @@ st_write(data, "../data/RPLS.gpkg", "rpls2021RS", delete_layer = T)
 
 ```{r}
 st_layers("../data/RPLS.gpkg")
-rpls <- st_read("../data/RPLS.gpkg", "rpls2024")
+rpls <- st_read("../data/RPLS.gpkg", "rpls2025")
 ```
 
 ## Nombre d'étages
@@ -315,7 +333,7 @@ rpls <- st_read("../data/RPLS.gpkg", "rpls2024")
 ```{r}
 st_layers("../data/gros/cadastre.gpkg")
 cadastre <- st_read("../data/gros/cadastre.gpkg", "proprio2025")
-mf_export(rpls, width = 1000, height = 1000, res = 100, filename = "../img/RPLS2024.png", expandBB = c(10,10,30,10))
+mf_export(rpls, width = 1000, height = 1000, res = 100, filename = "../img/RPLS2025.png", expandBB = c(10,10,30,10))
 mf_init(rpls)
 mf_theme("candy")
 mf_map(cadastre, col = "antiquewhite1", border = NA, add = T)
@@ -330,13 +348,13 @@ mf_map(rpls,  type = "choro", var = "etage", breaks = c(0,2,4,8,16), add = T)
 #barplot(base$x, names.arg = base$proprio, cex.names = 0.8, las = 2, col = "lightblue3", border = NA)
 #barplot(data$nb[data$nb > 5, drop = T], names.arg = data$proprietaire.x [data$nb > 5], las = 2, cex.names =  0.8,  col = "lightblue3", border = NA)
 #mf_inset_off()
-mf_layout(title = "RPLS 2024, nombre d'étages", 
-          credits ="DGST, Mairie de Bondy\n sources : RPLS, 2024")
+mf_layout(title = "RPLS 2025, nombre d'étages", 
+          credits ="DGST, Mairie de Bondy\n sources : RPLS, 2025")
 
 dev.off()
 ```
 
-![](../img/RPLS2021.png)
+![](../img/RPLS2025.png)
 
 ![](../img/RPLS2022.png)
 
@@ -657,5 +675,18 @@ ref2 <- rbind(ref2, c("SEQUENS", 1, "bailleur"),
               c("Batigere", 1 , "bailleur"),
               c("SNC", 1 , "bailleur"))
 
+```
+
+
+# PLAI
+
+
+Sur 2025, le CUS ne donne pas le code 11 (PLAI), voir les autres années
+
+
+```{r}
+table(rpls2025$CUS)
+table(rpls2024$CUS)
+table(rpls2019$CUS)
 ```
 
