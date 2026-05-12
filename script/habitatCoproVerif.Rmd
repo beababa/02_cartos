@@ -30,14 +30,15 @@ Vérifier les données de l'OCLEE (Outil de suivi de la Construction des Logemen
 
 en priorité livraison 2025 et après 
 
-état programmationation différent de livré
+état programmation différent de livré
 
+Il est nécessaire de trouver un process puisque cette vérification intervient tous les ans.
 
 Idées :
 
 - filtre fait sur le tableau
 
-- croiser RIL et données urba
+- croiser RIL (connaissance terrain), données urba (données plus récentes) avec l'OCLEE
 
 
 ```{r}
@@ -66,15 +67,56 @@ oclee <- oclee [oclee$etat_prog != "Livré" & oclee$ann_lvr >= 2025, ]
 ```
 
 
+## Géolocalisation
+
+
+méthode 1 : à partir de l'adresse
+
+
+```{r}
+library(dplyr)
+library(banR)
+tab <- tibble(x = oclee$adr , y='93010', z=rnorm(83))
+res <- geocode_tbl(tab,adresse=x, code_insee=y)
+hist(res$result_score)
+(pb <- res [res$result_score < 0.7 & !is.na(res$x),])
+res <- res [res$result_score > 0.5,]
+res <- res [!is.na(res$x),]
+```
+
+
+```{r}
+jointure <- merge(oclee, res [,c("longitude","latitude","x")], by.x = "adr", by.y = "x", all.x = T)
+jointure
+pb <- jointure [is.na(jointure$latitude),]
+jointure <- jointure [!is.na(jointure$latitude),]
+data <- st_as_sf(jointure, coords = c("longitude", "latitude"), crs = 4326)
+st_write(data,"../data/habitat2026.gpkg", "oclee", delete_layer = T)
+```
+
+
+
+
+
+# Données urba
+
+Dans le logiciel ADS, on a plus que SITADEL, cela vaut-il le coup ?
+
+
+Exemple sur les numéros de PC : ils existent dans le logiciel de l'urbanisme
+
 
 - pc accordé et vérification PC
 
+manque numéro de PC pour 2 dans les PC accordés
+
 ```{r}
 verif <- oclee [oclee$etat_prog == "PC accordé" & oclee$idpc =='',]
+# seulement 2
 verif
 ```
 
-Export en faisant "Bondy" dans la recherche avanncée = 500 dossiers en limite, vaut mieux passer par statis
+Export Operis en faisant "Bondy" dans la recherche avanncée = 500 dossiers en limite, vaut mieux passer par statis
 
 test sur num PC et année pour voir si num PC correct
 
@@ -83,7 +125,8 @@ table(oclee$idpc=="")
 oclee2 <- oclee [oclee$idpc != "",]
 ```
 
-39 pc on vérifie dans ads
+39 pc / 83 ... on vérifie dans ads 
+
 
 pour export
 
@@ -139,36 +182,14 @@ sel <- ads [ads$ref %in% oclee2$ref,]
 On retrouve 87 résultats ... pb type dossier
 
 
-géolocalisation
+
+# RIL : le retour terrain
 
 
-méthode 1 : à partir de l'adresse
+Constitution d'un atlas des adresses communes OCLEE RIL
 
 
-```{r}
-library(dplyr)
-library(banR)
-tab <- tibble(x = oclee$adr , y='93010', z=rnorm(83))
-res <- geocode_tbl(tab,adresse=x, code_insee=y)
-hist(res$result_score)
-(pb <- res [res$result_score < 0.7 & !is.na(res$x),])
-res <- res [res$result_score > 0.5,]
-res <- res [!is.na(res$x),]
-```
-
-
-```{r}
-jointure <- merge(oclee, res [,c("longitude","latitude","x")], by.x = "adr", by.y = "x", all.x = T)
-jointure
-pb <- jointure [is.na(jointure$latitude),]
-jointure <- jointure [!is.na(jointure$latitude),]
-data <- st_as_sf(jointure, coords = c("longitude", "latitude"), crs = 4326)
-st_write(data,"../data/habitat2026.gpkg", "oclee", delete_layer = T)
-```
-
-```
-
-
+Visite des adresses non RIL
 
 
 
