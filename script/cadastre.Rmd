@@ -126,7 +126,7 @@ La variable *propriétaire* contient toutes les informations intéressantes
 il faut éclater le champs propriétaire | et -, ce qu'on sauvegarde ds le cadastre original
 
 ```{r}
-
+cadastre <- cadastre2025
 # 1er coupure et on récupère uniquement le 1er proprio
 tmp <- strsplit(cadastre$proprietaire, split= "\\|")
 proprio <- sapply(tmp, "[",1)

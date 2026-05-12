@@ -1,0 +1,332 @@
+---
+title: "Autocad"
+author: "B. Maranget"
+date: "26/07/2023"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+suite au départ du dessinateur et à une demande d'emplacements barnum autour de la maire, récupérer les données autocad
+
+projection pour Altius en 2154,  pour la ZAC (Sequano), lambert I (27561)
+
+création répertoire Autocad pour mettre les dxf
+
+mais également traiter des geosjon avec les pb de "consistent type"
+
+
+
+
+# Librairies, chemins, données
+
+```{r}
+library(sf)
+library(mapsf)
+library(units)
+library(mapview)
+```
+
+
+```{r}
+cheminAutocad <- "../../Documents/03_SIG/03_01_Archive/02_AUTOCAD/"
+cheminAutocad <- "S:/VOIRIE PLANS/07_DAO_SIG/"
+```
+
+
+```{r}
+st_layers("../data/limitesSocle.gpkg")
+st_layers("../data/zoneExtraction.gpkg")
+zone <- st_read("../data/limitesSocle.gpkg", "autourMairie")
+zone <- st_read("../data/zoneExtraction.gpkg", "banquette")
+mf_map(zone)
+zone <- zone [zone$Nom2 == "zac",]
+mf_layout("Zones extractions banquette", "mai 2024")
+```
+
+
+boucle pour récupérer les géométries et la projection
+altius 2154
+zac 27 561
+
+
+```{r}
+fic <- list.files(cheminAutocad, "^zac.*dxf$")
+fic <- list.files(cheminAutocad, "_Altius.*dxf$")
+# meta caractère . et quantifier * 
+tot <- NULL
+totLine <- NULL
+totPoly <- NULL
+totPt <- NULL
+#f <- fic [2]
+for (f in fic) { 
+  tmp <- st_read(paste0(cheminAutocad, f))
+  # 11 162
+  st_crs(tmp) <- 2154
+  table(st_is_valid(tmp))
+  tmp <- tmp [st_is_valid(tmp),]
+  # Extraction un seul calque
+  tmp <- tmp [tmp$Layer == "Altius-TOPO-MUR-CLOTURE",]
+  # 1721
+  pt <- st_collection_extract(tmp, "POINT")
+  # 6
+  poly <- st_collection_extract(tmp, "POLYGON")
+  # 76
+  line <- st_collection_extract(tmp, "LINESTRING")
+  # 1862
+#  mf_map(line)
+ # mf_layout(f)
+  totPt <- rbind(pt, totPt)
+  totPoly <- rbind(poly, totPoly)
+  #mf_map(totPoly)
+  totLine <- rbind(line, totLine)
+}
+```
+
+
+
+```{r}
+table(tmp$Layer)
+table(line$Layer)
+```
+
+
+
+
+Carto pour voir si toutes les géométries sont intéressantes
+
+```{r}
+mf_map(totLine)
+mf_map(totPt, add = T, col = "red")
+mf_map(totPoly, add = T, col ="green")
+mf_layout("Pt (rouge), Lg et poly (vert)")
+```
+
+
+
+
+
+```{r}
+summary(totPoly)
+summary(totLine)
+summary(totPt)
+```
+
+
+On enlève le zm
+
+```{r}
+totPoly <- st_zm(totPoly)
+totLine <- st_zm(totLine)
+totPt <- st_zm(totPt)
+```
+
+
+```{r}
+table(st_is_valid(totPoly$geometry))
+totPoly <- totPoly [st_is_valid(totPoly$geometry),]
+totPoly <- st_cast(totPoly, "POLYGON")
+```
+
+
+```{r}
+table(st_is_valid(totLine$geometry))
+table(st_is_valid(totPt$geometry))
+```
+
+
+Verif projection
+
+```{r}
+mapview(totLine)
+```
+
+
+Intersection pour supprimer le cadre et la légende
+
+
+```{r}
+totPoly <- st_transform (totPoly, st_crs(zone))
+poly <- st_intersection(totPoly[, "Layer"], zone)
+mapview(totLine)
+totLine <- st_transform (totLine, st_crs(zone))
+line <- st_intersection(totLine [,"Layer"], zone)
+pt <- st_intersection(totPt [,"Layer"], zone)
+```
+
+
+
+```{r}
+mf_map(line)
+poly <- st_collection_extract(poly, "POLYGON")
+poly$aire <- st_area(poly)
+mf_map(poly , add = T, "green")
+mf_layout("Lg et poly (vert)")
+```
+
+
+
+
+
+
+
+On regroupe par layer pour les lignes
+
+
+
+```{r}
+agreger <- function(geom){
+  agg <- aggregate(geom [, "Layer"], by = list(geom$Layer), length)
+  names(agg)[1:2] <- c("Layer", "nb")
+  return(agg)
+}
+poly <- agreger(poly)
+mf_map(poly)
+mapview(line)
+line <- agreger(line)
+pt <- agreger(pt)
+mapview(pt)
+```
+
+
+
+
+
+```{r}
+st_write(totPt, "../data/autocad.gpkg", "Curie_pt", delete_layer = T)
+st_write(poly, "../data/autocad.gpkg", "Curie_poly", delete_layer = T)
+st_write(totLine, "../data/autocad.gpkg", "Curie_line", delete_layer = T)
+```
+
+
+
+
+
+```{r}
+st_layers("../data/autocad.gpkg")
+```
+
+
+
+
+
+# rapport lg polygone
+
+les plans de sequano allient les 2 (contour pour les lg, aplats pour les polygones)
+
+cas de la couche lg par-parcelles
+
+
+
+```{r}
+line <- st_read("../data/autocad.gpkg", "zac_line")
+parcelle <- line [line$Layer == 'PAR-PARCELLES',]
+```
+
+
+```{r}
+parcelle <- st_union(parcelle)
+# multilinestring
+polygonisation <- st_polygonize(parcelle)
+summary(polygonisation)
+st_cast(polygonisation, "POLYGON") 
+polygonisation <- polygonisation [st_geometry_type(polygonisation) == "MULTIPOLYGON",]
+(polygonisation)
+```
+
+
+```{r}
+#parcelle <- st_union(parcelle)
+parcelle <- st_transform(parcelle, 2154)
+parcelle <- st_cast(parcelle, "LINESTRING")
+pt <- st_cast(parcelle, "POINT")
+parcelle$id <- rownames(parcelle)
+mf_map(parcelle)
+mf_map(pt, add = T)
+pt$id <- rownames((pt))
+mf_label(pt, var = "id", overlap = F)
+st_write(pt, "../data/autocad.gpkg", "pt_parcelle", delete_layer = T)
+```
+
+Idée : on déconstruit les points, on éclate par indexation, puis avec convex hull on recrée les polygones
+
+```{r}
+pt$id <- substring(pt$id, 3,99)
+eclat <- strsplit(pt$id, "\\.")
+pt$numPoly <- sapply(eclat,"[" ,1)
+```
+
+
+Selection de poly 17 car pb 
+
+
+```{r}
+poly17 <- pt [pt$numPoly == 17,]
+mf_map(poly17, col = "red")
+mf_map(parcelle, add = T)
+mf_label(pt, "id", halo = T, cex = 3, overlap = F)
+```
+
+
+```{r}
+num <- unique(pt$numPoly)
+tot <- NULL
+totNum <- NULL
+for (n in num){
+  tmp <- pt [pt$numPoly == n,]
+  tmp <- st_union(tmp)
+  tmp <- st_convex_hull(tmp)
+  tot <- rbind(tmp, tot)
+  totNum <- c(n, totNum)
+}
+df <- NULL
+df <- st_as_sf (st_as_sfc(tot), crs = 2154)
+names(df) <- c("geom")
+st_geometry(df) <- "geom"
+df$id <- totNum
+summary(df)
+df$forme <-  st_geometry_type(df)
+df <- df [df$forme == "POLYGON",]
+```
+
+
+```{r}
+mf_map(parcelle, col = "red", lwd = 2)
+mf_map(df, col = "wheat", border = NA,  add =T, alpha = 0.5)
+mf_label(df, "id")
+mf_layout("Reconstruction des polygones à partir des points", "idée étrange")
+```
+
+Suppression des polygones pb
+
+
+```{r}
+hist(st_area(df)*1000000)
+```
+
+
+
+
+
+```{r}
+inter <- st_intersection(pt, parcelle)
+table(inter$id.1)
+
+```
+
+

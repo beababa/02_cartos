@@ -1,0 +1,174 @@
+---
+title: "Habitat copro quelques chiffres"
+author: "B. Maranget"
+date: "30/04/2026"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    theme: cerulean
+  pdf_document:
+    toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Vérifier les données de l'OCLEE (Outil de suivi de la Construction des Logements d'Est Ensemble) = fichier annuel
+
+en priorité livraison 2025 et après 
+
+état programmationation différent de livré
+
+
+Idées :
+
+- filtre fait sur le tableau
+
+- croiser RIL et données urba
+
+
+```{r}
+library(sf)
+```
+
+
+# la donnée
+
+```{r}
+st_layers("../data/habitat.gpkg")
+st_layers("../data/habitat2026.gpkg")
+```
+
+
+
+# OCLEE
+
+
+filtre  = 83 obs (202 au départ)
+
+
+```{r}
+oclee <- read.csv2("../data/oclee.csv", fileEncoding = "windows-1252")
+oclee <- oclee [oclee$etat_prog != "Livré" & oclee$ann_lvr >= 2025, ]
+```
+
+
+
+- pc accordé et vérification PC
+
+```{r}
+verif <- oclee [oclee$etat_prog == "PC accordé" & oclee$idpc =='',]
+verif
+```
+
+Export en faisant "Bondy" dans la recherche avanncée = 500 dossiers en limite, vaut mieux passer par statis
+
+test sur num PC et année pour voir si num PC correct
+
+```{r}
+table(oclee$idpc=="")
+oclee2 <- oclee [oclee$idpc != "",]
+```
+
+39 pc on vérifie dans ads
+
+pour export
+
+
+la difficulté est l'extraction
+
+ads
+
+```{r}
+ads <- read.csv2("../data/adsExportMai2026.csv", fileEncoding = "windows-1252")
+ads <- ads [, c("Dossier","Terrain...Adresse","Parcelles.concernées")]
+ads$type <- substring(ads$Dossier, 1,2)
+table (ads$type)
+listeNum <- strsplit(ads$Dossier, "B")
+annee <- sapply(listeNum, "[",1)
+annee <- gsub("^.*93010", "", annee)
+annee <- as.integer(annee)
+table(annee)
+ads$annee <- annee
+(num <- sapply(listeNum, "[",2))
+ads$num <- as.integer(num)
+table(is.na(ads$num))
+```
+
+
+oclee
+
+```{r}
+listeNum <- strsplit(oclee2$idpc, "B")
+oclee2$num <- sapply(listeNum, "[", 2)
+(oclee2$num <- as.integer(oclee2$num))
+(oclee2$ann_pc <- substring(oclee2$ann_pc, nchar(oclee2$ann_pc)-1, nchar(oclee2$ann_pc)))
+table(oclee2$ann_pc)
+```
+
+
+dans Oclee 10 dossiers en 2024 / dans operis, 808
+
+
+```{r}
+oclee2$ref <- paste0(oclee2$ann_pc, oclee2$num)
+ads$ref <- paste0(ads$annee, ads$num)
+```
+
+
+
+```{r}
+oclee2$idpc
+ads <- ads [ads$]
+sel <- ads [ads$ref %in% oclee2$ref,]
+```
+
+On retrouve 87 résultats ... pb type dossier
+
+
+géolocalisation
+
+
+méthode 1 : à partir de l'adresse
+
+
+```{r}
+library(dplyr)
+library(banR)
+tab <- tibble(x = oclee$adr , y='93010', z=rnorm(83))
+res <- geocode_tbl(tab,adresse=x, code_insee=y)
+hist(res$result_score)
+(pb <- res [res$result_score < 0.7 & !is.na(res$x),])
+res <- res [res$result_score > 0.5,]
+res <- res [!is.na(res$x),]
+```
+
+
+```{r}
+jointure <- merge(oclee, res [,c("longitude","latitude","x")], by.x = "adr", by.y = "x", all.x = T)
+jointure
+pb <- jointure [is.na(jointure$latitude),]
+jointure <- jointure [!is.na(jointure$latitude),]
+data <- st_as_sf(jointure, coords = c("longitude", "latitude"), crs = 4326)
+st_write(data,"../data/habitat2026.gpkg", "oclee", delete_layer = T)
+```
+
+```
+
+
+
+
+

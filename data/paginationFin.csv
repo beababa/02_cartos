@@ -1,31 +1,30 @@
-"","fin","deb","nbPages","X","fic","nb"
-"1",2,1,2,1,"/A2024_144-Auto Pont Gallieni.pdf",2
-"2",4,3,2,2,"/A2024_145-Chemin Lateral et Route Aulnay.pdf",2
-"3",6,5,2,3,"/A2024_155-Rue de Lattre de Tassigny et DAubier.pdf",2
-"4",8,7,2,4,"/A2024_156-Règlementation défilé flamme Olympique.pdf",2
-"5",10,9,2,5,"/A2024_158-Rue Blanqui.pdf",2
-"6",12,11,2,NA,NA,NA
-"7",15,13,3,NA,NA,NA
-"8",17,16,2,NA,NA,NA
-"9",20,18,3,NA,NA,NA
-"10",23,21,3,NA,NA,NA
-"11",25,24,2,NA,NA,NA
-"12",28,26,3,NA,NA,NA
-"13",29,29,1,NA,NA,NA
-"14",35,30,6,NA,NA,NA
-"15",37,36,2,NA,NA,NA
-"16",39,38,2,NA,NA,NA
-"17",41,40,2,6,"/decembre1.pdf",31
-"18",44,42,3,NA,NA,NA
-"19",47,45,3,NA,NA,NA
-"20",53,48,6,NA,NA,NA
-"21",55,54,2,NA,NA,NA
-"22",58,56,3,NA,NA,NA
-"23",60,59,2,NA,NA,NA
-"24",66,61,6,NA,NA,NA
-"25",68,67,2,NA,NA,NA
-"26",70,69,2,NA,NA,NA
-"27",75,71,5,NA,NA,NA
-"28",77,76,2,NA,NA,NA
-"29",79,78,2,NA,NA,NA
-"30",81,80,2,7,"/decembre2.pdf",40
+"X.1","cumul","deb","fin","nbPages","num","X","ficPDF","nb","fic","lieu","type","dateDeb","dateFin","dateObs"
+1,36,1,3,3,41,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","EGOUTS DEPARTEMENTAUX","Permanent",2026-02-23,2026-12-31,NA
+2,36,4,5,2,40,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","RUE GATINE","Interdiction",2026-02-11,2026-02-25,NA
+3,36,6,7,2,39,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","RUE DE LA LIBERTE","Modification",2026-02-16,2026-02-27,NA
+4,36,8,9,2,38,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","RUE DU PROFESSEUR VAILLANT","Interdiction",2026-02-16,2026-02-27,NA
+5,36,10,11,2,37,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","RUE BAUDIN","Interdiction",2026-02-09,2026-04-24,NA
+6,36,12,13,2,53,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","PLUSIEURS VOIES DE LA VILLE","Interdiction",2026-03-11,2026-04-10,NA
+7,36,14,15,2,54,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","RUE LOUIS AUGUSTE BLANQUI","Interdiction",2026-03-16,2026-04-03,NA
+8,36,16,19,4,57,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","PLUSIEURS VOIES DE LA VILLE","Réglementation",2026-12-01,2026-12-31,NA
+9,36,20,21,2,51,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","PLACE DE LA REPUBLIQUE","Autorisation",2026-03-02,NA,"A compter du lundi 02 mars et jusqu’au vendredi 13 mars 2026 de 08h00 à 18h00, excepté les mercredis 4 et 11 mars, jours de marché"
+10,36,22,23,2,50,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","PLUSIEURS VOIES DE LA VILLE","Interdiction",2026-03-09,2026-06-26,NA
+11,36,24,25,2,49,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","COURS DE LA REPUBLIQUE","Interdiction",2026-03-09,2026-04-03,NA
+12,36,26,27,2,47,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","RUE DU VERGER","Interdiction",2026-03-09,2026-03-20,NA
+13,36,28,30,3,46,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","AVENUE HENRI BARBUSSE","Interdiction",2026-03-04,NA,NA
+14,36,31,32,2,45,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","LE CHEMIN DE GROSLAY","Interdiction",2026-02-23,2026-03-13,NA
+15,36,33,34,2,44,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","CHANTIER DE LA GARE DE BONDY","Dérogation",2026-12-01,2026-12-31,NA
+16,36,35,36,2,43,1,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/fevrier.pdf",36,"fevrier.pdf","AVENUE DE LA VILLAGEOISE","Interdiction",2026-02-23,2026-03-13,NA
+17,44,37,38,2,105,2,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars1.pdf",8,"mars1.pdf","AU PALAIS DES SPORTS","Interdiction",2026-04-04,NA,NA
+18,44,39,40,2,74,2,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars1.pdf",8,"mars1.pdf","RUE RAOUL","Interdiction",2026-04-10,2026-05-01,NA
+19,44,41,42,2,73,2,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars1.pdf",8,"mars1.pdf","AVENUE HENRI BARBUSSE","Interdiction",2026-04-20,2026-05-01,NA
+20,44,43,44,2,72,2,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars1.pdf",8,"mars1.pdf","PLACE DE LA GARE ET RUE DE LA LIBERTE","Interdiction",2026-03-30,2026-04-17,NA
+21,62,45,46,2,71,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","RUE AUGUSTE BLANQUI","Interdiction",2026-03-20,2026-04-30,NA
+22,62,47,48,2,70,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","RUE DU CHEMIN DE FER PROLONGEE","Interdiction",2026-03-30,2026-04-10,NA
+23,62,49,50,2,66,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","PLACE DE LA GARE","Autorisation",2026-04-07,NA,"Les mardi 07 avril, jeudi 11 juin, mardi 21 juillet, lundi 10 aoiit, jeudi 10 septembre, lundi 05 octobre et jeudi 05 novembre 2026, de 11h00 a 18h00"
+24,62,51,52,2,65,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","RUE DENYS COCHIN","Interdiction",2026-03-30,2026-04-10,NA
+25,62,53,54,2,64,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","RUE CRONSTADT ET RUE FREMIN","Interdiction",2026-03-23,2026-04-17,NA
+26,62,55,56,2,63,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","RUE LUCIE AUBRAC","Interdiction",2026-04-01,2026-05-15,NA
+27,62,57,58,2,62,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","ALLEE DE LA FAUVETTE AVENUE BLERIOT ET RUE DU LEVANT","Interdiction",2026-03-30,2026-04-24,NA
+28,62,59,60,2,61,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","RUE LOUIS AUGUSTE BLANQUI ","Interdiction",2026-04-13,2026-04-30,NA
+29,62,61,62,2,60,3,"S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/mars2.pdf",18,"mars2.pdf","RUE YVONNE","Interdiction",2026-03-30,2026-04-24,NA

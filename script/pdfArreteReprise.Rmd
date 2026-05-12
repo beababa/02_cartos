@@ -97,12 +97,23 @@ chercherArticle <- function(chaine){
   res <- chaine[ind] 
 }
 
+# variable jour
+jour <- c("lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche")
+
 chercherDate <- function (chaine) {
   # 1e recherche sur l'article
-  ind <- grep("^ARTICLE",chaine, ignore.case = FALSE,value = FALSE)
+  ind <- grep("^ARTICLE",chaine, ignore.case = FALSE, value = FALSE)
   # recherche sur le jour
   res <- chaine[ind] 
-  ind <- grep(jour, res, ignore.case = FALSE, value = FALSE )
+  ind2 <- grep(jour, res, ignore.case = TRUE, value = FALSE )
+  res <- chaine[ind [ind2]] 
+}
+
+# uniquement la date
+chercherDate2 <- function (chaine) {
+  # 1e recherche sur l'article
+  ind <- grep(jour,chaine, ignore.case = FALSE, value = FALSE)
+  # recherche sur le jour
   res <- chaine[ind] 
 }
 ```
@@ -136,7 +147,7 @@ chercherLoc <- function (chaine) {
 Sys.getenv("HOME")
 cheminGen <- paste0(Sys.getenv("HOME"),"/03_SIG/03_03_Data/03_SOCLE/")
 # maison
-cheminGen <- "D:/03_SIG/03_03_Data/03_SOCLE/"
+cheminGen <- "S:/VOIRIE PLANS/05_SIG/03_SOCLE/"
 chemin <- "S:/VOIRIE PHOTO STATIONNEMENT/06_arrêtéVoirie/01_arrete/"
 chemin <- "G:/Mon Drive/03_SIG/03_03_DATA/06_VOIRIE/"
 ```
@@ -172,9 +183,12 @@ write.csv(cbind(ficPDF, nb),"../data/paginationFic.csv", fileEncoding = "UTF-8")
 sum(nb)
 # attention fichier temporaire, il sera écrasé à chq nel import
 # liste de tous les png 31 pour decembre1 / 40 decembre2
+# 36 fevrier / 26 ùars
 ficPNG <- dir(path =".", pattern = "*.png", full.names = T)
 ficPNG
 # L'ordre change !
+# sauvegarde ds total.pdf
+pdf_combine(ficPDF, "../data/pdf/total.pdf")
 # déplacements de fichiers pour archivage
 file.move(ficPDF,  paste0(chemin,"/03_archive"))
 # on renomme pour indexation
@@ -193,6 +207,10 @@ file.move(ficPNG, "../data/pdf/", overwrite = TRUE)
 
 41 images pour janvier 2026
 
+36 pour février
+
+18 pour mars
+
 Comment garder la correspondance avec les fichiers de départ ?
 
 Eclater les fichiers par arrêté
@@ -210,16 +228,20 @@ Attention à longueur du nom de fichier.
 
 
 ```{r}
-ficPNG
-nbCar <- nchar(ficPNG)
+ficPNG # 62
+nbCar <- nchar(ficPNG) # 15 ou 16
 # calcul à partir nb caractères variable 1 ou 2
 leCut <- ifelse(nbCar==max(nbCar), 3,2)
 # on doit couper l'extension et  le max
 leCut2 <- nbCar-4-leCut
-nom <- substring(ficPNG,3,leCut2)
-fin <- substring(ficPNG,leCut2+2,leCut2+3 )
-num <- as.integer(gsub("\\.","", fin))
+(nom <- substring(ficPNG,3,leCut2))
+(fin <- substring(ficPNG,leCut2+1,leCut2+3))
+# attention bien vérifier les chiffres - le mieux avoir le _ puis le .
+(nom <- gsub("_", "", nom))
+(num <- as.integer(gsub("\\.|_","", fin)))
 nomFicPNG <- data.frame(ficPNG, nom, num)
+# enregistrement pour base image 2 - attention chemin
+write.csv(nomFicPNG, "../data/nomFicPNG_ordre.csv")
 ```
 
 data/pdf est le répertoire temporaire. C'est à partir des images que
@@ -227,7 +249,7 @@ l'on travaille.
 
 
 ```{r, eval = TRUE}
-ficPNG_ordre <- nomFicPNG$ficPNG [order(nomFicPNG$nom, nomFicPNG$num)]
+(ficPNG_ordre <- nomFicPNG$ficPNG [order(nomFicPNG$nom, nomFicPNG$num)])
 # intégration des images dans R
 images <- map(paste0("../data/pdf/",ficPNG_ordre), magick::image_read)
 ```
@@ -236,12 +258,14 @@ pour dec1, 31 images, dec2 40, le paquet 10
 
 pour 2025, 44 images
 
+février mars 62 ok
+
 ???? il y a des pertes à chaque fois (pas sur decembre 1 et 2 en tous cas)
 
 pour dec2025 2e paquet 70
 
 ```{r}
-images [[3]]
+images [[1]]
 ```
 
 
@@ -260,6 +284,8 @@ toc()
 44 s pour dec1 / 53 pour dec2 / 11 pour le paquet / 100 pour dec 2025
 
 146 s pour 70 p
+
+132 pour 62 p
 
 msg images too smal... 
 
@@ -284,8 +310,80 @@ nomFicPNG
 
 ```{r}
 liste <- lapply(stext, chercherNum)
-numArrete <- premiereOccurence(liste)
+(numArrete <- premiereOccurence(liste))
 ```
+
+
+
+verif 1 : cf détection article 1
+
+
+#### Détection article 1 pour verif et stockage article 1
+
+
+```{r}
+article1 <- premiereOccurence(  lapply(stext, chercherArticle))
+article1
+# on a besoin des num d'indice pour les images
+# mais le rownames conserve ce num
+# on reprend le nb d'arrete repéré avec le titre indOK
+indImage <- seq(1,length(article1))
+df <- data.frame(indImage, article1)
+# suppression 10 et 11
+ind <- grep("ARTICLE [2-9]", df$article1)
+df <- df [-ind,]
+df
+ind <- grep("ARTICLE 10|ARTICLE 11|ARTICLE 12|ARTICLE 13", df$article1)
+df <- df [-ind,]
+# 2e filtre
+ind <- grep("ARTICLE 1|ARTICLE l|ARTICLE J", df$article1)
+df <- df [ind,]
+numImage <- df$indImage
+```
+
+
+Vérification : indImage et indOK doivent correspondre / cela permet de modifier le 
+filtre sur ARTICLE 1
+
+```{r}
+df$indImage
+indOK
+setdiff(indOK, df$indImage)
+pb <- setdiff(df$indImage, indOK)
+```
+
+Verif si différence
+
+2e paquet dec 2025
+
+```{r}
+images [[43]]
+# pb article 4*
+images [[pb [2]]]
+images [[67]]
+df [df$indImage == 38,]
+```
+
+11 31 40 à rajouter pour janvier 2026
+
+Pour févr mars 2023
+On sait numéro 1 et 43 non passés (uniquement terme arrêté), on corrige de suite (pb en tête)
+
+```{r}
+images [[1]]
+numArrete [1] <- "ARRETE N°A2026_041"
+images [[43]]
+numArrete [43] <- "ARRETE N°A2026_072"
+```
+
+Enregistrement df article1 pour traitement sur les dates
+
+```{r}
+images[[50]]
+df <- df [!is.na(df$article1),]
+write.csv(df,"../data/article1.csv")
+```
+
 
 ### Extraction ARRETE qlq chose
 
@@ -294,7 +392,7 @@ On regarde si la définition stricte ARRETE ou juste NA permet de repérer les a
 
 
 ```{r}
-# les lg où NA et ARRETE tout seul, cas ARRETE E
+# les lg où NA et ARRETE tout seul, cas ARRETE E, on contrôle le nb de ind à chq fois
 ind <- which (is.na(numArrete))
 ind <- c(ind,grep("^ARRETE$", numArrete))
 #ind <- c(ind, grep("ARRETE E",numArrete))
@@ -309,6 +407,9 @@ indOK
 ```
 
 On a donc 11 arrêtés pour dec1 / 13 pour dec2 / 5 pour le paquet / 22 pour dec 2025
+
+2026 février mars 29
+
 
 Dés cette étape on vérifie et on rectifie en regardant le .pdf
 
@@ -362,53 +463,7 @@ num [24] <- "353"
 ```
 
 
-### Détection article 1 pour verif
 
-
-```{r}
-article1 <- premiereOccurence(  lapply(stext, chercherArticle))
-article1
-# on a besoin des num d'indice pour les images
-# mais le rownames conserve ce num
-# on reprend le nb d'arrete repéré avec le titre indOK
-indImage <- seq(1,length(article1))
-df <- data.frame(indImage, article1)
-# suppression 10 et 11
-ind <- grep("ARTICLE [2-9]", df$article1)
-df <- df [-ind,]
-df
-ind <- grep("ARTICLE 10|ARTICLE 11|ARTICLE 12|ARTICLE 13", df$article1)
-df <- df [-ind,]
-# 2e filtre
-ind <- grep("ARTICLE 1|ARTICLE l|ARTICLE J", df$article1)
-df <- df [ind,]
-numImage <- df$indImage
-```
-
-
-Vérification : indImage et indOK doivent correspondre / cela permet de modifier le 
-filtre sur ARTICLE 1
-
-```{r}
-df$indImage
-indOK
-setdiff(indOK, df$indImage)
-pb <- setdiff(df$indImage, indOK)
-```
-
-Verif si différence
-
-2e paquet dec 2025
-
-```{r}
-images [[40]]
-# pb article 4*
-images [[pb [6]]]
-images [[67]]
-df [df$indImage == 38,]
-```
-
-11 31 40 à rajouter pour janvier 2026
 
 
 
@@ -453,6 +508,8 @@ ok pour dec1 à partir directement du pdf
 
 
 calage de la fenêtre crop sur les 2 premières images
+
+tests non probants
 
 
 ```{r}
@@ -527,36 +584,28 @@ pagination
 
 #### Vérification sur les images
 
+Nb de pages maximun dans pagination$nbPages
+
 En regardant le pdf on voit page blanche pdf mais pages
 scanné 
 
 ```{r}
-ind <- which(pagination$nbPages == 7)
+ind <- which(pagination$nbPages == 4)
 pagination [ind,]
 images [[pagination$deb [ind]]]
-# 7 pages
-nb <- seq(ind+1,ind+7)
+# on veut visualiser toutes les pages 
+nb <- seq(16,19)
 tot <- images[[pagination$deb [ind]]]
 nb
 for (n in nb ) {
   print(n)
-  tot <- c(tot,images[[pagination$deb [n]]])
+  tot <- c(tot,images[[n]])
 }
 tot
 
 ```
 
-##  Réunion des fichiers traités en un seul
 
-Afin que le subset ne porte que sur un seul fichier, on concatène
-
-
-```{r}
-ficPDF
-```
-
-
-inutile si un seul fichier
 
 ### Cumul sur tous les fichiers
 
@@ -584,11 +633,25 @@ paginationFic$cumul
 
 jointure via le cumul
 
+
+recodage
+
+On parcourt paginationFic$cumul et on le colle sur pagination$cumul en fonction du nb de pages
+
 ```{r}
-pagination <- merge(pagination, paginationFic, by.x = "fin", by.y = "cumul", all.x = T)
+pagination$cumul <- NA
+for (c in paginationFic$cumul){
+  print (c)
+  pagination$cumul [pagination$fin <= c & is.na(pagination$cumul)] <- c
+}
 ```
 
-La jointure ne suffit pas, il faut remplir les lg NA
+
+```{r}
+pagination <- merge(pagination, paginationFic, by = "cumul")
+```
+
+
 
 
 Ainsi pagination contient deb fin nbPages, num arrêté, nom fichier
@@ -674,8 +737,8 @@ lieu
 ## Affinage
 
 ```{r}
-lieu <- gsub("ET MODIFICATION MOMENTANEE DE LA|\\|||SUR|ET MODIFICATION DE LA| }", "", lieu)
-lieu <- gsub(".*GRUE MOBILE|.*PERMETTRE DES ","", lieu)
+lieu <- gsub("ET MODIFICATION MOMENTANEE DE LA|\\|||SUR|ET MODIFICATION DE LA| }|AUTORISATION DE STATIONNER ", "", lieu)
+lieu <- gsub(".*BRUIT DE VOISINAGE POUR LE |.*PERMETTRE DES|.*LES TRAVAUX D ENTRETIEN DES ","", lieu)
 
 ```
 
@@ -693,9 +756,16 @@ lieu
 ```{r}
 # Sauvegarde du lieu# Sauvegarde du résultat
 write.csv(lieu, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F)
-lieuCorrige <- read.csv("../data/lieuModifie2.csv", fileEncoding = "UTF-8")
+lieuCorrige <- read.csv("../data/lieuModifie.csv", fileEncoding = "UTF-8")
 pagination$lieu <- lieuCorrige$x
 pagination$lieu
+write.csv(pagination, "../data/paginationFinale.csv")
+```
+
+
+```{r}
+indOK [20]
+images [[20]]
 ```
 
 
@@ -726,7 +796,8 @@ Boucle
 Parcours de pagination, pour chq fichier (x)
 
 ```{r}
-pdf_combine(ficPDF, "../data/pdf/total.pdf")
+# Pour mémoire fait au début
+#pdf_combine(ficPDF, "../data/pdf/total.pdf")
 # fusion de tous les .pdf pour les subset
 ```
 
@@ -743,7 +814,8 @@ pagination$doublon <- ifelse(pagination$doublon != FALSE, "b", "")
 
 ```{r}
 pagination$lieu
-ficPDF <- unique(pagination$fic)
+pagination$fic
+ficPDF <- unique(pagination$ficPDF)
 f <- ficPDF [1]
 f
 pagination$fic <- f
@@ -800,8 +872,14 @@ TODO c'est presque bon ! (28 février 2025)
 vérifier 11 arrêtés à traiter
 
 ```{r}
-images <- images[indOK]
-images 
+# on récupère les images déplacées
+ficPNG <- dir(path ="../data/pdf", pattern = "fevrier|mars", full.names = T)
+pagination <- read.csv("../data/paginationFinale.csv")
+num <- pagination$deb
+nomficPNG <- read.csv("../data/nomFicPNG_ordre.csv")
+(ficPNG_ordre <- nomFicPNG$ficPNG [order(nomFicPNG$nom, nomFicPNG$num)])
+# intégration des images dans R dans le bon ordre et uniquement les premières pages
+images <- map(ficPNG_ordre [num], magick::image_read)
 ```
 
 La base images est stable, on refait un OCR car seule la 1e page nous
@@ -813,7 +891,7 @@ stext <- ocrEssai()
 toc()
 ```
 
-51 s à la maison...
+57 s pour fevrier mars
 
 Impossible de sauvegarder une liste (on ne sait pas faire), puis ce
 n'est pas franchement utile. On sauvegardera les extractions
@@ -826,456 +904,161 @@ Tentative d'utiliser séparateur ARTICLE non poursuivie
 
 ## Titre arrêté (cf chercherLoc)
 
-Récupération sommaire précédent
+La fonction chercher loc se base sur le terme Arreté, on l'a utilisé pour la localisation.
+On cherche à récupérer le type de l'arreté
 
-```{r}
-df <- read.csv("../data/arrete.csv")
-names(df)
-df
-```
-
+permanent, stationnement (= "interdiction momentanée du stationnement", "autorisation", "dérogation")
 
 
 ```{r}
-titre <- premiereOccurence(lapply(stext, chercherLoc))
-titre
-images [[22]]
-stext [[22]]
-titre [indOK]
-df2 <- data.frame(num = numModif, titre = titre[indOK], annee= 2025)
-df <- rbind(df, df2)
-write.csv(df,"../data/arrete.csv", fileEncoding = "UTF-8", row.names = FALSE)
-```
-
-
-
-## Articles
-
-On ne retient que le premier
-
-```{r}
-article1 <- premiereOccurence(  lapply(stext, chercherArticle))
-article1
-images[[25]]
-write.csv(article1,"../data/article1.csv", fileEncoding = "UTF-8")
-```
-
-Rmq : arrêté stationnement le 402 (pas d'article en page 1)
-
-## Extraction des lieux et dates et numéros des arrêtés
-
-### Origine
-
-après A2024 titre de l'arrêté on extrait les termes avec les rues etc...
-(1er filtre) puis on prend la 1e occurrence
-
-
-
-```{r}
-# vérification du titre du 20e arrêté
+(titre <- premiereOccurence(lapply(stext, chercherLoc)))
+# Rectification manuelle
+images [[1]]
+titre [1] <- "Permanent"
 images [[20]]
-liste <- lapply(stext, chercherDate)
-date <- premiereOccurence(liste)
+titre [20] <- "Interdiction"
+# recodage (extraction du 1er mot) (tout ce qui vient après l'espace est remplacé)
+titre <- gsub( " .*$", "", titre)
+# verif
+table(titre)
+# sauvregarde
+pagination$type <- titre 
 ```
 
-### Filtrage précis
 
-#### Ñom rues
 
-On récupère la liste des rues et on cherche toutes les rues
-correspondantes.
 
-##### Table de référence
+## Dates
+
+
+pour mémoire, la fonction cherche article 1 + date
 
 ```{r}
-st_layers(paste0(cheminGen, "socle2026.gpkg"))
-rues <- st_read(paste0(cheminGen, "socle2026.gpkg"),"rues")
+res <- sapply(stext, chercherDate)
+# contrôle 1 seul terme
+table(sapply(res, length))
+# recup indice pb
+serie <- sapply(res, length)
+seq <- seq(1:29)
+ind <- which(serie!=0)
 ```
 
-le fichier .csv a été fait à partir du socle mais sans les géométries.
-
-On a isolé le mot clé du nom. On modifie le fichier en fonction des
-besoins (ex = est ou l'est ?)
-
-La jointure se fera sur le champs complet (NOM_1_G), on peut modifier le
-champs (NOM)
-
-Dernier rajout AUTOPONT (29/1/2025)
-
-###### Doublons rues ?
+Traitement des lg avec dates
 
 ```{r}
-nb <- length(rues$NOM_1_G)
-# 372 rues
-# Attention on enlève les mots clés en doublons
-doublons <- rues$NOM [duplicated(rues$NOM)]
-# 17
-doublons
-```
-
-Il y a beaucoup de doublons, cela vaut le coup, de traiter à part en
-fonction du jeu d'arrêté de départ filtré sur les doublons.
-
-##### Repérer les noms de rue
-
-###### Arretes multi lieux
-
-Du coup, on éclate la liste des lieux
-
-```{r}
-lieu <- read.csv("../data/lieuCorrige.csv")
-# vectorisation
-lieu <- lieu$x
-# on éclate chq lieu avec les espaces
-liste_lieu <- strsplit(lieu, " ")
-```
-
-triple boucle : - parcours de la liste des lieux - parcours de chaque
-mot ds la liste des lieux - parcours de la liste des rues pour trouver
-correspondance avec grep
-
-```{r}
-nb <- length(liste_lieu)
-nb2 <- length(rues$NOM)
-lg <- 1
-lmot <- NULL
-lmotF <- NULL
-indF <- NULL
-ind <- NULL
-indMot <- NULL
-# parcours de la liste des lieux
-for (lg in (1:nb)){
-    mots <- liste_lieu [[lg]]
-# parcours de la lg de la liste des lieux
-    for (m in mots){
-      # parcours des rues ##############
-        for (i in (1:nb2)) {
-          ind <- grep(rues$NOM [i], m, ignore.case = T)
-          # seuls les indices non nulls nous intéressent
-          if (length(ind)>0){
-            indF <- c(indF, i)}
-        }
-      ###################################
-        # tous les indices du 1er mot de la ligne
-        indMot <- c(indMot,indF)
-        indF <- NULL
-    }
-     # tous les indices de la ligne
-    lmot <- c(lmot,indMot)
-    lmot <- (rues$NOM[lmot])
-    indMot <- NULL
-    # toutes les lignes
-    lmotF <- append(lmotF, list(lmot))
-    lmot <- NULL
-}
-```
-
-On a le numéro d'arrêté en liste fiable. Cela fera ts les rownames.
-
-```{r}
-num <- read.csv("../data/numArrete.csv")
-# 29
-num <- as.vector(num$x)
-```
-
-```{r}
-liste_motCle <- lmotF
-num <- paste0("Arr_", num)
-# chaque num arrete en names
-names(liste_motCle) <- num
-```
-
-###### Détection des arrete sans localisation
-
-correction (cas av de l'est) ou suppression qd sur tte la commune
-
-```{r}
-ind <-  which(sapply(liste_motCle, length)==0)
-# on regarde les lieux et on voit les soucis
-lieu [ind]
-# on repère pb av de l'est sur l'indice 3
-liste_motCle [ind [3]] <- "L'EST"
-# on sort des pb
-ind <- ind [-3]
-# ce sont des arrêtés sur la commune
-liste_motCle [ind] <- "COMMUNE"
-# liste à traiter la 2
-liste_motCle2 <- liste_motCle [-ind]
-lieu2 <- lieu [-ind]
-#  verif de la longueur
-length(liste_motCle2)==length(lieu2)
-# df à garder pour traitement ultérieur
-liste_motCle1 <- liste_motCle [ind]
-dfReste <- as.data.frame(do.call(rbind, liste_motCle [ind]))
-names(dfReste) <- "NOM"
-write.csv(dfReste, "../data/arreteSansRue.csv", fileEncoding = "UTF-8")
-```
-
-Pour meilleure correction
-
-On transforme en csv
-
-```{r}
-motCle <- unlist(liste_motCle2) # les mots clé sans COMMUNE
-names(motCle)
-# les num d'arrete
-arr <- substring(names(motCle), 5,7)
-df <- data.frame(motCle, arr)
-lieu2
-arr <- unique(arr)
-df2 <- data.frame(lieu2, arr)
-jointure <- merge(df, df2, by= "arr")
-write.csv(jointure, "../data/lieu.csv", fileEncoding = "UTF-8", row.names = F)
-```
-
-On repère trois erreurs MAI et AUTOPONT DAUBIE sur le .csv
-
-correction sur la liste directement suite à examen des mots clés (cas
-autopont)
-
-```{r}
-liste_motCle2$Arr_144 <- "AUTOPONT"
-liste_motCle2$Arr_439 <- "PERMANENT"
-# on retire l'arrete
-dfReste <- rbind(dfReste, liste_motCle2$Arr_439)
-row.names(dfReste)
-row.names(dfReste) [6] <- "Arr_439"
-# et on enlève l'arreté
-liste_motCle2
-element1Liste <- sapply(liste_motCle2, "[",1)
-ind <- which(element1Liste == "PERMANENT")
-liste_motCle1b <- liste_motCle [ind]
-liste_motCle3 <- liste_motCle2 [-ind]
-lieu3 <- lieu2 [-ind]
-liste_motCle3
-# repérage dernière erreur D'Aubier pour DAUBIE
-liste_motCle3$Arr_155[2] <- "DAUBIE"
-liste_motCle3
-```
-
-On a une liste bonne qui correspond pour l'indexage à lieu3
-Reconstituion des listes des 29 arrêtes
-
-```{r}
-liste_motCle4 <- c(liste_motCle1, liste_motCle1b, liste_motCle3 )
-```
-
-29 éléments
-
-On écrase pour nommer le fichier
-
-```{r}
-aplatir <- function(vecteur){
-  #rajout du séparateur
-  tmp <- ifelse(length(vecteur) > 1, paste0(vecteur , sep="_", collapse = ""),vecteur)
-  # suppression du dernier séparateur
-  tmp <- gsub("_$", "", tmp)
-}
-res <- sapply(liste_motCle4, aplatir)
-nom <- gsub("Arr", "2024", names(res))
-df <- data.frame(nom,res)
-names(df) <- c("num","lieu")
-write.csv(df,"../data/nomArrete.csv", fileEncoding = "UTF-8" , row.names = F)
-```
-
-Attention l'indice de lieu ne correspond plus. On fait une jointure par
-le num d'arrêté pour récupérer l'indice du fichier (de l'image.)
-
-```{r}
-num <- read.csv("../data/numArrete.csv")
-lieu <- read.csv("../data/nomArrete.csv")
-lieu$num2 <- substring(lieu$num, 6,8)
-num
-```
-
-#### Nature des rues
-
-2 cas : avec ou sans doublon
-
-##### Avec doublons
-
-On identifie uniquement les doublons dans liste_motCle3 Recherche du
-terme dans le txt d'origine choix du terme
-
-On filtre sur la longueur \> 1
-
-```{r}
-longueur <- sapply(liste_motCle3, length)
-ind <- which(longueur > 1 )
-liste_motCle4 <- liste_motCle3 [ind]
-liste_motCle4
-lieu4 <- lieu3 [ind] 
-# la fonction va permettre de repérer les doublons
-doublonListe <- function(item){
-  ind <-  which(duplicated(item))
-} 
-# test sur un arrete
-ind <- doublonListe (liste_motCle4$Arr_407)
-# toute la liste
-listeInd <- sapply(liste_motCle4, doublonListe)
-ind <- which (sapply(listeInd, length) > 0)
-listeInd2 <- listeInd [ind]
-listeInd2
-liste_motCle5$Arr_407 [listeInd2$Arr_407]
-liste_motCle5$Arr_413 [listeInd2$Arr_413]
-# uniquement 2 items en doublons mais avec un sous-item pas en doublon
-lieu5 <- lieu4 [ind]
-lieu5
-```
-
-correction à la main
-
-```{r}
-liste_motCle5$Arr_407 <- c("GALLIENI", "STAINS")
-liste_motCle5$Arr_407
-liste_motCle5$Arr_413 <- "CARNOT"
-```
-
-A REVOIR
-
-```{r}
-# table d'équivalence constituée peu à peu à partir de jointure
-EXTR <- c("Avenue", "Route")
-NATURE <- c("AV", "RTE")
-equiv <- data.frame(NATURE,EXTR)
-e <- equiv$EXTR[1]
-for (e in equiv$EXTR){
-  print(e)
-  ind <- grep(e, doublons3$lieu, ignore.case = T )
-  print(ind)
-  print(doublons3 [ind,])
-  doublons3$EXTR [ind] <- e 
-}
-doublons3
-doublons3 <- unique(jointureDoublons)
-jointureDoublons$EXTR [2] <- "Route"
-jointureDoublons
-jointure <- merge(jointureDoublons,equiv, by=c("EXTR"))
-jointure
-
-```
-
-##### Sans doublons
-
-on repère le motif correspondant à une clé, et on joint pour récupérer
-le motif de reférence
-
-table de référence
-
-```{r}
-df <- data.frame(NOM=unique(unlist(liste_motCle3)))
-df
-rues <- read.csv("../data/rueIndex.csv")
-rues$NOM
-refRue <- merge(rues, df, by="NOM")
-```
-
-On garde uniquement les bons doublons
-
-```{r}
-refRue <- refRue [-c(5,6),] 
-```
-
-A revoir. qu'arrive t il si on a besoin ailleurs ? 2 tables de ref, une
-avec les doublons, une sans on aucun doublon
-
-#### Récupération des géométries rues TODO
-
-```{r}
-ruesGeom <- st_read("../data/cadastre2024.gpkg", "rue")
-```
-
-### Dates
-
-```{r}
-article1 <- read.csv("../data/article1.csv")
-article1$arr <- num$x
-article1
-# on renomme la colonne
-names(article1) [2] <- "texte"
+texte <- unlist(res)
+article1 <- data.frame(ind, texte)
 # suppression terme article
 # on n'utilise qu'un seul séparateur, le ":"
-article1$texte <- gsub("-|;|—", ":", article1$texte)
+(article1$texte <- gsub("-|;|—", ":", article1$texte))
 # on éclate avec le :
 list_article1 <- strsplit(article1$texte, ":")
-date <- sapply(list_article1, "[",2)
-# on garde les numéros d'arrete en titre de colonne
-names(date) <- num
+(article1$texte <- sapply(list_article1, "[",2))
 ```
 
-```{r}
-jour <- c("lundi|mardi|mercredi|vendredi|samedi|dimanche")
-```
 
 cas des sans dates
 
+fonction uniquement sur jour, correction manuelle
+
 ```{r}
-article1 [25,]
-lieu [25]
-# On le supprime
-article1 <- article1 [-25,]
-# on cherche l'année
-ind <- grep("2024|2025", date)
-# A revoir
-date [-ind]
-date <- date [ind]
-date
+ind <- which(serie==0)
+sel <- stext [ind]
+(texte <- sapply(sel,chercherDate2))
+texte [[1]] <- texte [[1]][2]
+texte [c(2,3)] <- "A compter du lundi 01 décembre 2026 jusqu'au lundi 31 décembre 2026"
+texte [[4]] <- texte [[4]][4]
+texte
+article2 <- data.frame(ind, texte = unlist(texte))
+date <- rbind(article1, article2)
+date <- date [order(date$ind),]
 ```
+
+On décompose date1 date2 avec possibilité une seule date
+
 
 On repère la place du mot du jour et on récupère les 2 mots d'après
 
 ```{r}
-date2 <- gsub("A compter du ", "", date)
-date2
-date3 <- gsub(" Le | Du ", "", date2)
-date3
-ind <- grep(jour, date3)
-date4 <- date3 [ind]
-date5 <- gsub("et jusqu’au| au ", "STOP", date4)
-date5
-liste_date <- strsplit(date5, "STOP")
-liste_date
-dateDeb <- sapply(liste_date, "[", 1)
+jour <- "lundi(s)*|mardi(s)*|mercredi(s)*|jeudi(s)*|vendredi(s)*|samedi(s)*|dimanche(s)*|2026"
+# pour avoir les pluriels au cas où (quantificateur * zéro ou plusieurs)
+date$texte
+(date$texte2 <- gsub("^.*compter du| et jusqu.au|Le(s)", "", date$texte))
+(date$texte3 <- gsub("^ || $", "", date$texte2))
+eclate <- strsplit(date$texte2, "2026")
+(datedeb <- sapply(eclate, "[",1))
+(datefin <-  sapply(eclate, "[",2))
+
+# traitement date deb
+
+(dateDeb2 <- gsub("mercredis", "mercredi", datedeb))
 # enlever espaces au début et à la fin
-dateDeb2 <- gsub("^ || $", "", dateDeb)
-dateDeb2
-ind <- which(names(dateDeb2)=="Arr_408")
-dateDeb2 [ind] <- paste(dateDeb2[ind], "2025")
-dateDeb3 <- as.Date(dateDeb2 , format = "%A %d %B %Y")
-dateDeb3
-annee <- format(dateDeb3,  "%Y")
-dateDeb3 [15]
-date4 [15]
-dateFin <- sapply(liste_date, "[",2)
-dateFin <- gsub("yendredi", "vendredi", dateFin)
-dateFin
-dateFin2 <- gsub("^ || $", "", dateFin)
-liste_date  <- strsplit(dateFin2, " ")
-jour <- lapply(liste_date, "[",1:3)
-fusionJour <- function(vecteur){
-  chaine <- paste0(vecteur) 
- jour <-paste0(chaine, collapse =  " ")
-}
-test <- fusionJour(jour [[1]])
-jour2 <- sapply(jour, fusionJour)
-jour2
-dateFin3 <- paste(jour2, annee, sep=" ")
-dateFin3
-dateFin4 <- as.Date(dateFin3 , format = "%A %d %B %Y")
-dateFin4
+(dateDeb3 <- gsub("^ *|| *$", "", dateDeb2))
+(dateDeb4 <- as.Date(dateDeb3 , format = "%A %d %B"))
+
+# erreurs
+pb <- which(is.na(dateDeb4))
+datedeb [pb]
+dateDeb4 [pb]  <- "2026-04-01"
+
+# traitement fin
+
+(dateFin2 <- gsub("^ | $|jusqu|.?au|et ", "", datefin))
+(dateFin3 <- as.Date(dateFin2 , format = "%A %d %B"))  
+
+
+# erreurs
+pb <- which(is.na(dateFin3))
+datefin [pb]
+
+# modification manuelle
+
+dateFin3 [pb]  <- c("2026-02-25", "2026-04-24", "2026-12-31", NA, "2026-06-26", NA, "2026-12-31", NA, "2026-05-01", NA)
 ```
 
-modification manuelle
+
+sauvegarde
 
 ```{r}
-dateFin4 [7] <- NA
-dateFin4 [15] <- gsub("NA", "2025", dateFin4 [15])
-dateFin4
+pagination$dateDeb <- dateDeb4
+pagination$dateFin <- dateFin3
 ```
 
 
+verif sur les NA
+
+```{r}
+ind <- which(is.na(pagination$dateFin))
+pagination [ind,]
 
 
+# recup indice lg dans pagination
+ind2 <- pagination$X.1 [ind]
+images[ind2 [1]]
+(txt <- stext[[ind2 [1]]])
+txt <- "Les mardi 07 avril, jeudi 11 juin, mardi 21 juillet, lundi 10 aoiit, jeudi 10 septembre, lundi 05 octobre et jeudi 05 novembre 2026, de 11h00 a 18h00"
+txt <- "A compter du lundi 02 mars et jusqu’au vendredi 13 mars 2026 de 08h00 à 18h00, excepté les mercredis 4 et 11 mars, jours de marché"
+```
+
+un cas multidate
+
+
+```{r}
+ind [4]
+pagination$dateObs <- NA
+pagination$dateObs [23] <- txt
+pagination$dateObs [ind [1]] <- txt
+```
+
+
+Sauvegare définitive pagination avec concaténation
+
+
+```{r}
+paginationFin <- read.csv("../data/paginationFin.csv")
+paginationFin <- rbind(pagination, paginationFin)
+write.csv(paginationFin,"../data/paginationFin.csv", row.names = F)
+```
 
 
 # Carto
@@ -1285,7 +1068,7 @@ dateFin4
 ```{r}
 library(banR)
 tab <- NULL
-tab <- tibble(x = pagination$lieu , y='93010', z=rnorm(18))
+tab <- tibble(x = pagination$lieu , y='93010', z=rnorm(29))
 res <- geocode_tbl(tab,adresse=x, code_insee=y)
 res <- res [res$result_score > 0.5,]
 res <- res [!is.na(res$x),]
@@ -1294,7 +1077,7 @@ jointure
 pb <- jointure [is.na(jointure$latitude),]
 jointure <- jointure [!is.na(jointure$latitude),]
 data <- st_as_sf(jointure, coords = c("longitude", "latitude"), crs = 4326)
-st_write(data,"../data/arrete.gpkg", "2026_01", delete_layer = T)
+st_write(data,"../data/arrete.gpkg", "2026_03", delete_layer = T)
 ```
 
 
@@ -1302,8 +1085,44 @@ st_write(data,"../data/arrete.gpkg", "2026_01", delete_layer = T)
 
 
 ```{r}
-data$popup <- paste0(data$num, "_", data$lieu)
+class(data$dateDeb)
+(data$dateDeb <- format(data$dateDeb, "%d %b" ))
+(data$dateFin <- format(data$dateFin, "%d %b" ))
+data$popup <- paste0("A",data$num, "_", data$lieu,  "<HR><BR>deb : ", data$dateDeb1, "<BR> fin : ", data$dateFin)
 library(leaflet)
 leaflet() %>% addProviderTiles(providers$CartoDB.Positron,options = tileOptions(minZoom = 10, maxZoom = 20)) %>% addMarkers(data=data, popup = data$popup) 
 ```
+
+avec les dates 
+
+essai choro
+
+
+```{r}
+
+(data$mois_début <- as.factor(months(data$dateDeb)))
+
+liste <- split(data, data$mois_début)
+(avril <- liste [[1]])
+(fev <- liste [[2]])
+(mars <- liste [[3]])
+
+
+leaflet() %>%
+  addProviderTiles(providers$CartoDB.Positron,options = tileOptions(minZoom = 10, maxZoom = 20)) %>% 
+  addCircleMarkers(data=fev, popup = data$popup, color = "red", group = "fev") %>% 
+  addCircleMarkers(data=avril, popup = data$popup, color = "blue", group ="avril") %>% 
+  addCircleMarkers(data=mars, popup = data$popup, color = "green", group = "mars") %>%
+  addLayersControl(overlayGroups = c("fev", "mars", "avril"), options = layersControlOptions(collapsed = FALSE))
+
+
+```
+
+
+essai couches
+
+
+
+
+
 

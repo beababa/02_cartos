@@ -132,6 +132,7 @@ typo <- read.csv2(paste0(chemin, "anct.csv"), skip = 2, dec = ".", na.strings = 
 typo <- typo [typo$Code == 93010,]
 names(typo) <- c("code", "ville", "HLM", "RPLS 2023", "RP 2022", "Locataires 2022", "nb lgts 2022",  "vacants 2 ans +", "vacants", "proprio 2022", "APL", "neuf 2020 24")
 typoPct <- round((typo [, c(3:6,8:12)]/ typo$`nb lgts 2022`)*100,0)
+knitr::kable(typo  [,c("proprio 2022", "Locataires 2022", "HLM", "RPLS 2023", "RP 2022", "vacants", "vacants 2 ans +", "nb lgts 2022")], row.names = F)
 knitr::kable(typoPct [,c("proprio 2022", "Locataires 2022", "HLM", "RPLS 2023", "RP 2022", "vacants", "vacants 2 ans +")], row.names = F)
 ```
 
@@ -303,6 +304,7 @@ write.csv(rnic, "../data/rnic.csv")
 ```{r}
 rnic <- read.csv("../data/rnic.csv") 
 rnic <- st_as_sf(rnic, coords = c("long", "lat"), crs = 4326)
+st_write(rnic, "../data/habitat.gpkg", "rnic", delete_layer = T)
 pb <- rnic [rnic$copro_aidee == 'Oui', c("nom_d_usage_de_la_copropriete", "nombre_total_de_lots" )]
 knitr::kable(st_drop_geometry(pb), row.names = F)
 mf_map(rnic)

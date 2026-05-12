@@ -1,0 +1,205 @@
+---
+title: "Photos container vêtement"
+author: "B. Maranget"
+date: "29/10/2025"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Utilisation du script reproductible pour la propreté - borne de vêtement
+
+Production d'une carte leaflet avec poubelle et photo
+
++ fichier portail = récup des données couche "Déchets" (ensemble de def) puis buffer 10 m puis export
+
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(dplyr)
+library(ggplot2)
+library(leaflet)
+library(leafpop)
+library(lubridate)
+library(purrr)
+library(readr)
+library(sf)
+library(mapsf)
+library(tibble)
+library(tidyr)
+library(exiftoolr) # metadonnées photo
+library(magick)
+library(mapview)
+```
+
+
+## Chemins
+
+
+```{r}
+cheminPhoto <-   "S:/VOIRIE PLANS/05_SIG/05_PHOTOS/vetement/"
+```
+
+
+
+# Données
+
+on a fait un export à partir d'une couche du geoportail EE
+
+```{r}
+export <- st_read("C:/Users/bmaranget/Documents/03_SIG/03_03_Data.shp")
+```
+
+(chemin par défaut d'Arcgis pro)
+
+
+
+## Photos
+
+
+```{r}
+
+photo <- list.files(path.expand(cheminPhoto), pattern = "*jpg")
+photo
+```
+
+
+
+## Récup métadonnées photo
+
+```{r}
+lireMeta <- function(fic){
+  exif_read(path.expand(paste0(cheminPhoto, fic)))
+} 
+test <- lireMeta(photo)
+test$FileCreateDate
+test$FileModifyDate
+test$FileAccessDate
+test$SourceFile
+test$GPSHPositioningError
+test$GPSLatitude
+test$GPSLongitude
+#install_exiftool()
+```
+
+Filtre colonne
+
+```{r}
+photos <- test [,c("ModifyDate", "GPSLatitude", "GPSLongitude", "SourceFile", "FileName")]
+```
+
+
+# Reduction taille photos
+
+
+Copie de la boucle du script photo reproductible photo
+
+```{r}
+test$SourceFile
+i <- 1
+for (i in  c(1:length(test$FileModifyDate))){
+  nom <- test$FileName [i]
+  img <- image_read(test$SourceFile [i], density = NULL, depth = NULL, strip = FALSE)
+  img2 <- image_scale(img, geometry = "300")
+  image_write(img2, path = paste0("../img/vetement/", nom), format = NULL, quality = NULL,
+              depth = NULL, density = NULL, comment = NULL, flatten = FALSE)
+}
+```
+
+Tri des photos dans le rep img/poubelle
+
+
+```{r}
+fic <- list.files("../img/vetement/")
+photos <- photos [photos$FileName %in% fic,]
+photos$petit <- paste0("../img/vetement/", photos$FileName)
+photos <- photos [!is.na(photos$GPSLatitude),]
+photos <- st_as_sf(photos, coords = c("GPSLongitude", "GPSLatitude"), crs=4326)
+st_write(photos,"../data/vetement.gpkg", "photos", delete_layer=T)
+```
+
+On rajoute la photo gazzi en pt sur qgis
+
+Verif carto
+
+```{r}
+photos <- st_read( "../data/vetement.gpkg", "photos")
+mf_map(photos)
+mf_map(export, col = "red", alpha = 0.5, add = T)
+photos$num <- substring(photos$FileName, nchar(photos$FileName)-6, nchar(photos$FileName)-4)
+mf_label(photos, var ="num", overlap = F, halo = T)
+```
+
+
+
+
+# Lien photo - export 
+
+l'export est un tampon
+
+```{r}
+export <- st_buffer(export,50)
+export <- st_transform(export, 4326)
+inter <- st_intersection(export, photos)
+```
+
+
+```{r}
+mf_map(export)
+#mf_label(export, "code_inter", )
+mf_map(inter, col = "red", add = T, cex = 2)
+mf_map(photos, col = "green", add = T, pch = 21, cex = 3, alpha = 0.5)
+mf_label(photos, var ="num", overlap = F, halo = T, lines = T)
+mf_layout("Correspondance photo points EE", "sources internes et EE")
+```
+
+
+```{r}
+export <- st_centroid(export)
+```
+
+
+
+```{r}
+
+st_write(inter,  "../data/vetement.gpkg", "photosInter", delete_layer = T)
+```
+
+
+
+
+# Leaflet
+
+
+
+
+
+```{r, eval=TRUE}
+leaflet() %>% 
+  addProviderTiles("OpenStreetMap.France") %>%
+  addMarkers(data = export, label = ~adresse) %>% 
+  addCircleMarkers(data = photos,  group = "photos") %>%
+  addPopupImages(photos$petit, group = "photos", width = 300, height = 450) 
+```
+

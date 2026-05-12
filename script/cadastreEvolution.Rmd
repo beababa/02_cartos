@@ -28,6 +28,12 @@ Essayer de trouver une méthode permettant de recouper les parcelles.
 
 C'est la 1e démarche par rapport à l'archivage...
 
+Production d'une carte à intervalle régulier sur la division parcellaire, le cadastre est mis à jour tous les 3 mois mais uniquement son dessin.
+
+
+
+
+
 ```{r}
 library(sf)
 library(mapsf)
@@ -40,18 +46,99 @@ https://files.data.gouv.fr/cadastre/etalab-cadastre/2022-01-01/geojson/communes/
 url <- "https://files.data.gouv.fr/cadastre/etalab-cadastre/2022-01-01/geojson/communes/93/93010/"
 url <- c(url, "https://cadastre.data.gouv.fr/data/etalab-cadastre/2023-01-01/geojson/communes/93/93010/")
 url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2024-01-01/geojson/communes/93/93010/")
-url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2025-01-01/geojson/communes/93/93010/")
+url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2026-03-01/geojson/communes/93/93010/")
 nom <- c("cadastre-93010-parcelles.json.gz")
 url <- paste0(url, nom)
 destfile <- c("cadastre2022.geojson", "cadastre2023.geojson", "cadastre2024.geojson", "cadastre2025.geojson")
 destfile <- paste0("../data/", destfile)
+destfile <- paste0("../data/cadastre2026.geojson")
 cadastreURL <- function(url, fic){
   download.file(url, fic)
 }
+cadastre <- download.file(url, destfile)
 for (i in 1:4){
   print(i)
   cadastreURL(url [i], destfile[i])
 }
 fic <- list.files("../data/", "cadastre[202]")
+cadastre <- st_read(paste0("../data/", fic [7]))
+```
+
+
+filtre sur les nouvelles parcelles puis jointure avec matrice précédente (dans bdd bondy)
+
+```{r}
+cadastre$an <- substring(cadastre$updated,1,4)
+table(cadastre$an)
+cadastre$mois <- substring(cadastre$updated, 1,7)
+table(cadastre$mois)
+nouveau <- cadastre [cadastre$an %in% c("2025", "2026"),]
+table(nouveau$mois)
+```
+
+
+Jointure sur les parcelles (spatiale)
+
+
+Récupération de l'ancienne version copiée dans la base
+
+```{r}
+library(rpostgis)
+conn <- RPostgreSQL::dbConnect(drv="PostgreSQL", dbname = "bondy", user="postgres", password="postgres")
+pgPostGIS(conn)
+pgListGeom(conn)
+#cadastre2025 <- st_read(conn, "cadastre",  query = "select * from agg;")
+cadastre2025 <- st_read(conn,   query = "select * from cadastre.parcelle_info;")
+```
+
+
+
+```{r}
+st_crs(cadastre2025)
+st_crs(nouveau)
+nouveau <- st_transform(nouveau, 2154)
+# pour faire la jointure spatiale on utilise le centroide
+jointure <- st_intersection(st_centroid(nouveau), cadastre2025)
+pt <- jointure [, c("section", "numero", "proprietaire", "an", "mois", "code")]
+st_write(pt,"../data/cadastre.gpkg", "Division_2025_mars2026", delete_layer = T)
+cadastre2025$code
+pt <- pt [, c("code"), drop = T]
+poly <- cadastre2025 [cadastre2025$code %in% pt,]
+```
+
+Champs propriétaire
+
+
+```{r}
+cadastre <- poly
+# 1er coupure et on récupère uniquement le 1er proprio
+tmp <- strsplit(cadastre$proprietaire, split= "\\|")
+proprio <- sapply(tmp, "[",1)
+# 2e coupure et on réucpère le nom
+tmp <- strsplit(proprio, split= "\\-")
+proprio <- sapply(tmp, "[",2)
+proprio <- gsub("^ | $",x =  proprio, "")
+cadastre$proprio <- proprio
+st_write(cadastre, "../data/cadastre.gpkg", "proprio2025_division", delete_layer = T)
+```
+
+
+
+```{r}
+mf_map(jointure)
+mf_map(poly, add = T)
+```
+
+
+```{r}
 
 ```
+
+
+
+
+
+```{r}
+RPostgreSQL::dbDisconnect(conn)
+```
+

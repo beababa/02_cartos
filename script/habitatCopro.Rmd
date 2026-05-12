@@ -28,12 +28,90 @@ knitr::opts_chunk$set(warning = FALSE)
 
 A partir des données du  POC habitat, cartos en prévision d'une division pour enquête terrain
 
+
+```{r}
+library(sf)
+```
+
+
+# la donnée
+
+```{r}
+st_layers("../data/habitat.gpkg")
+st_layers("../data/habitat2026.gpkg")
+```
+
+
+
 # Quelques chiffres
 
+Poc habitat
+
+export 1
 
 ```{r}
 data <- st_read("../data/pocHabitat.geojson")
 table(data$source)
-table(data$source, data$)
+data$existenceNom <- ifelse(!is.na(data$nom_usage), "oui", "non")
+table(data$source, data$existenceNom)
 ```
+
+
+export 2 (plus complet)
+
+
+ 
+
+```{r}
+poc <- read.csv2("../data/pocHabitatWidgetRqt.csv", fileEncoding = "UTF-8", dec = ",")
+table(is.na(poc$ref_geom_x))
+poc$ref_geom_x
+# espace insécable...
+conversion <- function(str){
+  str <- gsub(" ","", str)
+str <- gsub(",", ".", str)
+str <- as.numeric(str)
+} 
+poc$x <- conversion(poc$ref_geom_x)
+poc$y <- conversion(poc$ref_geom_y)
+poc <- st_as_sf(poc, coords = c("x", "y"), crs = 2154)
+st_write(poc, "../data/habitat2026.gpkg", "poc")
+names(poc)
+```
+
+
+```{r}
+library(mapsf)
+mf_map(poc)
+```
+
+
+```{r}
+poc$last_syndi
+poc$siret <- gsub("[^0-9]", "", poc$last_syndi)
+poc$siret
+```
+
+14 caractères
+
+```{r}
+table(nchar(poc$siret))
+poc$nb <- nchar(poc$siret)
+poc <- poc [poc$nb == 14,]
+```
+
+
+```{r}
+
+```
+
+
+
+Le rnic
+
+```{r}
+rnic <- st_read("../data/habitat.gpkg", "rnic")
+table(rnic$mandat_en_cours_dans_la_copropriete,rnic$type_de_syndic_benevole_professionnel_non_connu)
+```
+
 
