@@ -74,6 +74,8 @@ cadastre$mois <- substring(cadastre$updated, 1,7)
 table(cadastre$mois)
 nouveau <- cadastre [cadastre$an %in% c("2025", "2026"),]
 table(nouveau$mois)
+mapview(nouveau)
+st_write(nouveau, "../data/cadastre.gpkg", "nouveau_25_26", delete_layer = T)
 ```
 
 
