@@ -1,5 +1,5 @@
 ---
-title: "Habitat verification OCLEE"
+title: "Habitat verification OCLEE TT"
 author: "B. Maranget"
 date: "30/04/2026"
 output:
@@ -26,21 +26,14 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Vérifier les données de l'OCLEE (Outil de suivi de la Construction des Logements d'Est Ensemble) = fichier annuel
+Suite à oubli de sauvegarde veille TT, 2 points précis à ré intégrer dans le script
 
-Dans le mail, il est indiqué :
+- croisement RIL et Oclee : déterminer les pts à vérifier
 
-- en priorité livraison 2025 et après 
+- identification permis de construire
 
-- état programmation différent de livré
+- géocodage parcelle
 
-Il est nécessaire de trouver un process puisque cette vérification intervient tous les ans.
-
-Idées :
-
-- filtre fait sur le tableau
-
-- croiser RIL (connaissance terrain), données urba (données plus récentes) avec l'OCLEE
 
 
 ```{r}
@@ -54,16 +47,10 @@ library(mapview)
 ```{r}
 st_layers("../data/habitat.gpkg")
 st_layers("../data/habitat2026.gpkg")
+st_layers("../data/cadastre2025.geojson.gpkg")
 ```
 
-
-
-## OCLEE
-
-
-### Filtre
-
-filtre  = 83 obs (202 au départ)
+oclee filtre  = 83 obs (202 au départ)
 
 
 ```{r}
@@ -72,93 +59,14 @@ oclee <- oclee [oclee$etat_prog != "Livré" & oclee$ann_lvr >= 2025, ]
 ```
 
 
-### Identification parcelle 1
-
-Extraction section et parcelle 1
-
-
 ```{r}
-liste <- strsplit(oclee$cad, " ")
-(oclee$section <- sapply(liste, "[", 1)) 
-(oclee$num <- sapply(liste, "[", 2))
-(oclee$cad2 <- paste0(oclee$section, oclee$num))
-parcelle <- oclee [(oclee$cad2)!="NANA",c( "cad", "cad2")]
-write.csv(parcelle, "../data/parcelleOclee.csv", row.names = FALSE)
-# 45 sur 83 ont parcelle
-```
-
-
- A corriger manque espace dans K105
-
-## Géolocalisation
-
-
-C'est le fait de récupérer la localisation cartographique. 
-
-On cherche à partir de l'adresse, puis de la parcelle.
-
-Enfin, on peut comparer avec le résultat obtenu par Est Ensemble puisque la donnée OCLEE est
-géolocalisée.
-
-### Méthode 1 : à partir de l'adresse
-
-
-```{r}
-library(dplyr)
-library(banR)
-adr <- oclee$adr [oclee$adr !=""]
-# 75 adresses sur 83 lignes
-tbl <- tibble(x =  adr, y='93010', z=rnorm(75))
-res <- geocode_tbl(tab,adresse=x, code_insee=y)
-hist(res$result_score)
-(pb <- res [res$result_score < 0.7 & !is.na(res$x),])
-# le géocodage fonctionne quand même y compris sur voie nouvelle
-res <- res [!is.na(res$x),]
-```
-
-75 adresses géocodées sur 83 
-
-```{r}
-setdiff(adr, res$x)
-```
-
-2 adresses non géocodées ?
-
-
-```{r}
-table(adr)
-table(res$x)
-```
-
-
-
-```{r}
-jointure <- merge(oclee, res [,c("longitude","latitude","x")], by.x = "adr", by.y = "x", all.x = T)
-# 111 pourquoi ? pb doublons
-pb <- jointure [is.na(jointure$latitude),]
-pb [, c("adr", "cad", "ann_lvr", "nb_log_crees_.ab.", "nom_prog", "nom_ope")]
-pb [order(pb$nom_ope), c( "nom_prog", "nom_ope", "ann_lvr")]
-jointure <- jointure [!is.na(jointure$latitude),]
-data <- st_as_sf(jointure, coords = c("longitude", "latitude"), crs = 4326)
-st_write(data,"../data/habitat2026.gpkg", "oclee", delete_layer = T)
+parcelle <- read.csv("../data/parcelleOclee.csv")
 ```
 
 
 ```{r}
 data <- st_read("../data/habitat2026.gpkg", "oclee")
 ```
-
-
-96 sur 83-15
-
-```{r}
-data$adr  [duplicated(data$adr)]
-oclee$adr [duplicated(oclee$adr)]
-```
-
-
-
-
 
 
 ### Méthode 2 : à la parcelle
@@ -175,48 +83,42 @@ nouveau$code <- paste0(nouveau$section, nouveau$numero)
 mapview(nouveau, zcol = "code", legend = FALSE)
 ```
 
-On récupère la version du cadastre de l'IGN
+On récupère la version du cadastre avec adresse
 
-```{r, eval=FALSE}
-library(happign)
-cadastre <- get_apicarto_cadastre("93010", type = "parcelle")
-cadastre$numero <- as.integer(cadastre$numero)
-cadastre$section <- gsub("0", "", cadastre$section)
-cadastre$cad2 <- paste0(cadastre$section, cadastre$numero)
-st_write(cadastre, "../data/cadastre.gpkg", "cadastreHappign", delete_layer = T)
-```
+attention la seule disponible est dans cadastre2024.gpkg parcelle_info
+
+TODO import dans base tt
 
 
 ```{r}
-cadastre <- st_read("../data/cadastre.gpkg", "cadastreHappign")
+cadastre <- st_read("../data/cadastre2024.gpkg", "parcelle_info")
+cadastre$geo_section
+cadastre$tex
+cadastre$code
+cadastre$section <- gsub("[0-9]", "", cadastre$geo_section)
+cadastre$cad2 <- paste0(cadastre$section, cadastre$tex)
+table(duplicated(cadastre$cad2))
 jointure <- merge(cadastre, parcelle, by = "cad2")
+jointure2 <- merge (jointure, oclee, by = "cad")
 ```
 
-
-
-41 / 45
-
+43 parcelles / 45
 
 ```{r}
-parcelle$cad2 
-jointure$cad2
 setdiff(parcelle$cad2, jointure$cad2)
-# section AY
-sel <- cadastre [grep("^AY",cadastre$cad2),]
-mapview(sel, zcol="numero")
 ```
 
+2 erreurs déjà connues
 
-F108 cadastre 2026 (marx dormoy)
 
-
-AY157
 
 ```{r}
-oclee$adr [oclee$cad2 == "AY157"]
+mapview (jointure2, zcol="ann_lvr", legend = FALSE)
+st_write(jointure2, "../data/habitat2026.gpkg", "parcelleOclee")
 ```
 
-A corriger c'est Y157
+
+
 
 
 ### Méthode 3 : récupérer la couche Observatoire
