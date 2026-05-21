@@ -1,0 +1,310 @@
+---
+title: "Habitat verification OCLEE TT"
+author: "B. Maranget"
+date: "30/04/2026"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    theme: cerulean
+  pdf_document:
+    toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Suite à oubli de sauvegarde veille TT, 2 points précis à ré intégrer dans le script
+
+- croisement RIL et Oclee : déterminer les pts à vérifier
+
+- identification permis de construire
+
+- géocodage parcelle
+
+
+
+```{r}
+library(sf)
+library(mapview)
+```
+
+
+# La donnée
+
+```{r}
+st_layers("../data/habitat.gpkg")
+st_layers("../data/habitat2026.gpkg")
+st_layers("../data/cadastre2025.geojson.gpkg")
+```
+
+oclee filtre  = 83 obs (202 au départ)
+
+
+```{r}
+oclee <- read.csv2("../data/oclee.csv", fileEncoding = "windows-1252")
+oclee <- oclee [oclee$etat_prog != "Livré" & oclee$ann_lvr >= 2025, ]
+```
+
+
+```{r}
+parcelle <- read.csv("../data/parcelleOclee.csv")
+```
+
+
+```{r}
+data <- st_read("../data/habitat2026.gpkg", "oclee")
+```
+
+
+### Méthode 2 : à la parcelle
+
+
+Utiliser cette méthode permet de prendre conscience des modifications du cadastre.
+Par exemple, 242 modifications de parcelles sur 2025-26 et ces modifications interviennent
+souvent en rapport avec les constructions.
+
+
+```{r}
+nouveau <- st_read("../data/cadastre.gpkg", "nouveau_25_26")
+nouveau$code <- paste0(nouveau$section, nouveau$numero)
+mapview(nouveau, zcol = "code", legend = FALSE)
+```
+
+On récupère la version du cadastre avec adresse
+
+attention la seule disponible est dans cadastre2024.gpkg parcelle_info
+
+TODO import dans base tt
+
+
+```{r}
+cadastre <- st_read("../data/cadastre2024.gpkg", "parcelle_info")
+cadastre$geo_section
+cadastre$tex
+cadastre$code
+cadastre$section <- gsub("[0-9]", "", cadastre$geo_section)
+cadastre$cad2 <- paste0(cadastre$section, cadastre$tex)
+table(duplicated(cadastre$cad2))
+jointure <- merge(cadastre, parcelle, by = "cad2")
+jointure2 <- merge (jointure, oclee, by = "cad")
+```
+
+43 parcelles / 45
+
+```{r}
+setdiff(parcelle$cad2, jointure$cad2)
+```
+
+2 erreurs déjà connues
+
+
+
+```{r}
+mapview (jointure2, zcol="ann_lvr", legend = FALSE)
+st_write(jointure2, "../data/habitat2026.gpkg", "parcelleOclee")
+```
+
+
+
+
+
+### Méthode 3 : récupérer la couche Observatoire
+
+Comment a été faite la géolocalisation ?
+
+### Remarques
+
+Cette étude a permis, dans le tableau à modifier de :
+
+- correction de 2 éléments au niveau de la parcelle
+
+- précision sur les adresses (étude des doublons) 
+
+
+
+## ADS : données logiciel Operis
+
+
+Pour mémoire, export Operis en faisant "Bondy" dans la recherche avanncée = 500 dossiers en limite, vaut mieux passer par statis
+
+```{r}
+ads <- read.csv2("../data/adsExportMai2026.csv", fileEncoding = "windows-1252")
+ads <- ads [, c("Dossier","Terrain...Adresse","Parcelles.concernées")]
+# type dossier
+ads$type <- substring(ads$Dossier, 1,2)
+table (ads$type)
+# année
+listeNum <- strsplit(ads$Dossier, "B")
+annee <- sapply(listeNum, "[",1)
+annee <- gsub("^.*93010", "", annee)
+annee <- as.integer(annee)
+table(annee)
+ads$annee <- annee
+table(ads$annee, ads$type)
+# numéro PC
+(num <- sapply(listeNum, "[",2))
+ads$num <- as.integer(num)
+table(is.na(ads$num))
+# 158 NA à voir ?
+ads
+```
+
+# Données urba (retour théorique)
+
+
+Dans le logiciel ADS, on a plus que SITADEL, cela vaut-il le coup ?
+
+
+Exemple sur les numéros de PC : ils existent dans le logiciel de l'urbanisme
+
+
+## pc accordé
+
+manque numéro de PC pour 2 dans les PC accordés
+
+```{r}
+(verif <- oclee [oclee$etat_prog == "PC accordé" & oclee$idpc =='',])
+# seulement 2
+```
+
+
+Quels sont ces 2 PC ? On regarde dans ADS par rapport aux parcelles
+
+
+
+```{r}
+sel <- ads [ads$Parcelles.concernées %in% verif$cad2,]
+sel
+```
+
+On rajoute dans le tableau
+
+
+## vérification numéros de PC
+
+Filtre sur les dossiers avec numéros de PC dans OCLEE
+
+```{r}
+table(oclee$idpc=="")
+oclee2 <- oclee [oclee$idpc != "",]
+```
+
+39 pc / 83 ... on vérifie dans ads 
+
+La difficulté est la comparaison des numéros de pc, le format est différent
+
+
+```{r}
+head(oclee2$idpc)
+head(ads$Dossier)
+```
+
+numéro et année
+
+```{r}
+listeNum <- strsplit(oclee2$idpc, "B")
+oclee2$num <- sapply(listeNum, "[", 2)
+(oclee2$num <- as.integer(oclee2$num))
+(oclee2$ann_pc <- substring(oclee2$ann_pc, (nchar(oclee2$ann_pc)-1), nchar(oclee2$ann_pc)))
+table(oclee2$ann_pc)
+```
+
+type
+
+```{r}
+
+```
+
+
+dans Oclee 10 dossiers en 2024 / dans operis, 808
+
+
+```{r}
+(oclee2$ref <- paste0(oclee2$ann_pc, oclee2$num))
+(ads$ref <- paste0(ads$annee, ads$num))
+```
+
+
+
+```{r}
+sel <- ads [ads$ref %in% oclee2$ref,]
+sel <- sel [sel$type == "PC",]
+```
+
+29 PC dans ads correspondent à oclee
+
+Qu'en est-il des  45-29 = 16 autres ?
+
+```{r}
+pb <- setdiff(oclee2$ref, sel$ref)
+oclee2  [oclee2$ref %in% pb, c( "adr", "ann_lvr", "idpc", "ref")]
+```
+
+
+```{r}
+ads [grep( "1 Allée des Hêtres", ads$Terrain...Adresse), c( "Dossier", "Parcelles.concernées", "Terrain...Adresse")]
+```
+
+On retrouve 87 résultats ... pb type dossier
+
+
+
+# RIL : le retour terrain
+
+
+Constitution d'un atlas des adresses communes OCLEE RIL
+
+Visite des adresses non RIL en priorité
+
+
+```{r}
+st_layers("../data/ril2026.gpkg")
+ril <- st_read("../data/ril2026.gpkg", "mars")
+oclee <- st_read("../data/habitat2026.gpkg", "oclee")
+```
+
+
+```{r}
+ril <- st_buffer(ril, 50)
+oclee <- st_transform(oclee,2154)
+inter <- st_intersection(ril, oclee)
+nonInter <- setdiff(oclee$adr, inter$adr)
+nonInter <- oclee [oclee$adr %in% nonInter,]
+mapview(nonInter)
+```
+
+
+49 adresses à aller voir en priorité sur 99
+
+38 en enlevant les doublons
+
+```{r}
+nonInter <- nonInter [!duplicated(nonInter$adr),]
+st_write(nonInter [, c("adr","cad", "nb_log_livr_.a.", "ann_lvr","etat_prog", "rem")], "../data/habitat2026.gpkg", "prioriteTerrain", delete_layer = T)
+names(nonInter)
+nom <- c("adr","cad", "nb_log_crees_.ab.", "ann_lvr","etat_prog", "rem")
+setdiff(nom, names(nonInter))
+```
+
+
+# Etude de l'OCLEE par nombre de logements
+
+Regarder en parallèle le SIG EE
+
+```{r}
+gros <- oclee [oclee$nb_log_crees_.ab. > 10,]
+```
+

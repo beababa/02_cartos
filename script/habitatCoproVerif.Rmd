@@ -84,6 +84,7 @@ liste <- strsplit(oclee$cad, " ")
 (oclee$num <- sapply(liste, "[", 2))
 (oclee$cad2 <- paste0(oclee$section, oclee$num))
 parcelle <- oclee [(oclee$cad2)!="NANA",c( "cad", "cad2")]
+write.csv(parcelle, "../data/parcelleOclee.csv", row.names = FALSE)
 # 45 sur 83 ont parcelle
 ```
 
