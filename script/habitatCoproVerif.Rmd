@@ -463,11 +463,11 @@ mapview(nonInter)
 
 49 adresses à aller voir en priorité sur 99
 
-38 en enlevant les doublons
+35 en enlevant les doublons
 
 ```{r}
 nonInter <- nonInter [!duplicated(nonInter$adr),]
-st_write(nonInter [, c("adr","cad", "nb_log_livr_.a.", "ann_lvr","etat_prog", "rem")], "../data/habitat2026.gpkg", "prioriteTerrain", delete_layer = T)
+st_write(nonInter [, c("adr","cad", "nb_log_livr_.a.", "ann_lvr","etat_prog", "rem", "nom_bail","nom_prom", "nom_prog")], "../data/habitat2026.gpkg", "prioriteTerrain", delete_layer = T)
 names(nonInter)
 nom <- c("adr","cad", "nb_log_crees_.ab.", "ann_lvr","etat_prog", "rem")
 setdiff(nom, names(nonInter))
@@ -480,5 +480,16 @@ Regarder en parallèle le SIG EE
 
 ```{r}
 gros <- oclee [oclee$nb_log_crees_.ab. > 10,]
+# à priori on peut récupérer la parcelle et l'adresse
+table(gros$cad==""&gros$adr=="")
 ```
 
+8 permis sans localisation
+
+
+```{r}
+gros [gros$cad == ""&gros$adr=="", c("rem", "source", "nb_log_crees_.ab.", "nom_ope", "nom_prog")]
+```
+
+
+Des éléments ?
