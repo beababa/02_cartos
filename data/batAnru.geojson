@@ -1,0 +1,598 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-05-28T05:24:16Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/20751641",
+        "building": "yes",
+        "building:levels": "4",
+        "dwellings": "28",
+        "name": "bat. C",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "start_date": "1955",
+        "type": "multipolygon"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4777166,
+              48.9115589
+            ],
+            [
+              2.4777587,
+              48.9115538
+            ],
+            [
+              2.4784719,
+              48.9114679
+            ],
+            [
+              2.4784951,
+              48.9115478
+            ],
+            [
+              2.4777408,
+              48.9116393
+            ],
+            [
+              2.4777166,
+              48.9115589
+            ]
+          ]
+        ]
+      },
+      "id": "relation/20751641"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84164589",
+        "building": "yes",
+        "building:levels": "2",
+        "dwellings": "28",
+        "name": "bat. A1",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4797576,
+              48.9137361
+            ],
+            [
+              2.4799302,
+              48.9137144
+            ],
+            [
+              2.4803661,
+              48.9136628
+            ],
+            [
+              2.4803727,
+              48.9136846
+            ],
+            [
+              2.4810719,
+              48.9136013
+            ],
+            [
+              2.4810772,
+              48.9136209
+            ],
+            [
+              2.4811055,
+              48.9137266
+            ],
+            [
+              2.4802789,
+              48.9138242
+            ],
+            [
+              2.4802651,
+              48.913783
+            ],
+            [
+              2.4801833,
+              48.9137924
+            ],
+            [
+              2.4801878,
+              48.9138145
+            ],
+            [
+              2.4801495,
+              48.913819
+            ],
+            [
+              2.4801439,
+              48.9137965
+            ],
+            [
+              2.4799951,
+              48.9138151
+            ],
+            [
+              2.4800024,
+              48.9138365
+            ],
+            [
+              2.4799636,
+              48.9138415
+            ],
+            [
+              2.479957,
+              48.9138205
+            ],
+            [
+              2.4798538,
+              48.9138327
+            ],
+            [
+              2.4797863,
+              48.9138391
+            ],
+            [
+              2.4797576,
+              48.9137361
+            ]
+          ]
+        ]
+      },
+      "id": "way/84164589"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84166398",
+        "building": "yes",
+        "name": "bat. E",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4774997,
+              48.9105912
+            ],
+            [
+              2.4776348,
+              48.9110883
+            ],
+            [
+              2.4775128,
+              48.9111036
+            ],
+            [
+              2.4773798,
+              48.910604
+            ],
+            [
+              2.4774997,
+              48.9105912
+            ]
+          ]
+        ]
+      },
+      "id": "way/84166398"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84167308",
+        "building": "yes",
+        "building:levels": "5",
+        "dwellings": "35",
+        "name": "bat. C",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4811739,
+              48.9142798
+            ],
+            [
+              2.4813113,
+              48.9147727
+            ],
+            [
+              2.4811793,
+              48.9147899
+            ],
+            [
+              2.4810467,
+              48.914293
+            ],
+            [
+              2.4811739,
+              48.9142798
+            ]
+          ]
+        ]
+      },
+      "id": "way/84167308"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84174252",
+        "building": "yes",
+        "building:levels": "4",
+        "dwellings": "9",
+        "name": "bat. B",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "start_date": "1955"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4785772,
+              48.9111748
+            ],
+            [
+              2.4783524,
+              48.9103687
+            ],
+            [
+              2.4784713,
+              48.9103568
+            ],
+            [
+              2.4786955,
+              48.9111578
+            ],
+            [
+              2.4785772,
+              48.9111748
+            ]
+          ]
+        ]
+      },
+      "id": "way/84174252"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84181785",
+        "building": "yes",
+        "dwellings": "26",
+        "name": "bat. A",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4808652,
+              48.9144518
+            ],
+            [
+              2.4796094,
+              48.9145994
+            ],
+            [
+              2.4795871,
+              48.9145169
+            ],
+            [
+              2.4808417,
+              48.9143672
+            ],
+            [
+              2.4808652,
+              48.9144518
+            ]
+          ]
+        ]
+      },
+      "id": "way/84181785"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84189135",
+        "building": "yes",
+        "name": "bat. D",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4815216,
+              48.9146058
+            ],
+            [
+              2.4815018,
+              48.9145246
+            ],
+            [
+              2.4831858,
+              48.9143264
+            ],
+            [
+              2.4832111,
+              48.9144081
+            ],
+            [
+              2.4815216,
+              48.9146058
+            ]
+          ]
+        ]
+      },
+      "id": "way/84189135"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84191823",
+        "building": "yes",
+        "building:levels": "4",
+        "dwellings": "74",
+        "name": "bat. A",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "start_date": "1955"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4775529,
+              48.912056
+            ],
+            [
+              2.4775341,
+              48.9119779
+            ],
+            [
+              2.4784296,
+              48.911874
+            ],
+            [
+              2.4784262,
+              48.9118595
+            ],
+            [
+              2.4786615,
+              48.9118317
+            ],
+            [
+              2.4793203,
+              48.9117538
+            ],
+            [
+              2.4793402,
+              48.9118334
+            ],
+            [
+              2.4786828,
+              48.9119064
+            ],
+            [
+              2.4784464,
+              48.9119327
+            ],
+            [
+              2.478447,
+              48.9119505
+            ],
+            [
+              2.4775529,
+              48.912056
+            ]
+          ]
+        ]
+      },
+      "id": "way/84191823"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84192051",
+        "building": "yes",
+        "building:levels": "4",
+        "dwellings": "19",
+        "name": "bat. M",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "start_date": "1955"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.476137,
+              48.9106008
+            ],
+            [
+              2.4762481,
+              48.9105653
+            ],
+            [
+              2.4764627,
+              48.9108741
+            ],
+            [
+              2.4763512,
+              48.9109083
+            ],
+            [
+              2.476137,
+              48.9106008
+            ]
+          ]
+        ]
+      },
+      "id": "way/84192051"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1049309613",
+        "building": "yes",
+        "building:levels": "5",
+        "dwellings": "50",
+        "name": "bat. B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4798875,
+              48.9142438
+            ],
+            [
+              2.4798607,
+              48.9141309
+            ],
+            [
+              2.4813896,
+              48.9139582
+            ],
+            [
+              2.4814245,
+              48.9140587
+            ],
+            [
+              2.4798875,
+              48.9142438
+            ]
+          ]
+        ]
+      },
+      "id": "way/1049309613"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1523445016",
+        "building": "yes",
+        "layer": "1",
+        "name": "bat. G"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4781319,
+              48.9109996
+            ],
+            [
+              2.4779738,
+              48.9104097
+            ],
+            [
+              2.4780235,
+              48.9104061
+            ],
+            [
+              2.4780945,
+              48.9103956
+            ],
+            [
+              2.4782574,
+              48.9109867
+            ],
+            [
+              2.4781319,
+              48.9109996
+            ]
+          ]
+        ]
+      },
+      "id": "way/1523445016"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1523445017",
+        "building": "yes",
+        "name": "bat. H"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.477764,
+              48.9104387
+            ],
+            [
+              2.4777398,
+              48.9103556
+            ],
+            [
+              2.4779993,
+              48.910323
+            ],
+            [
+              2.4780235,
+              48.9104061
+            ],
+            [
+              2.477764,
+              48.9104387
+            ]
+          ]
+        ]
+      },
+      "id": "way/1523445017"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1523445018",
+        "building": "yes",
+        "name": "bat. D"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.4776339,
+              48.9115685
+            ],
+            [
+              2.4775503,
+              48.9112815
+            ],
+            [
+              2.4776795,
+              48.9112653
+            ],
+            [
+              2.4777587,
+              48.9115538
+            ],
+            [
+              2.4776339,
+              48.9115685
+            ]
+          ]
+        ]
+      },
+      "id": "way/1523445018"
+    }
+  ]
+}
