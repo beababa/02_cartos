@@ -58,7 +58,7 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 
 ```{r}
 bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
-tampon <- st_buffer(bondy, 700)
+tampon <- st_buffer(bondy, 1000)
 mf_map(tampon)
 mf_map(bondy, add = T)
 ```
@@ -68,8 +68,14 @@ mf_map(bondy, add = T)
 ```{r}
 # Toute la France
 antenne <- st_read(paste0(chemin,"sourceANFR_France.geojson"))
+antenne <- st_read("../data/observatoireod_20260521.geojson")
 antenne <- st_transform(antenne, 2154)
-# Uniquement Bondy
+mf_map(inter, add = T)
+# Uniquement Bondy (tampon)
+inter <- st_intersection(antenne, tampon)
+inter
+st_write(inter [, c("adm_lb_nom","emr_lb_systeme","emr_dt", "code_insee", "generation", "nat_id","sup_nm_haut",
+                    "adr_lb_add1")], "../data/antenneRelais.gpkg", "mai2026")
 antenne <- st_read(paste0(chemin,"antenneRelais.gpkg"))
 ```
 
@@ -78,18 +84,34 @@ antenne <- st_read(paste0(chemin,"antenneRelais.gpkg"))
 bat <- st_read(paste0(chemin2, "BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D093_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D093-ED2024-03-15/BATI/BATIMENT.shp"))
 ```
 
+on utilise désormais happign
+
+```{r}
+library(happign)
+wfs_layers <- get_layers_metadata(data_type = "wfs")
+wfs_layers$Name [grep("^BDTOPO_V3:ba", wfs_layers$Name)]
+bat <- get_wfs(
+  x = tampon,
+  layer = "BDTOPO_V3:batiment",
+  predicate = within()
+)
+```
+
+ouaouh / 45244
 
 Intersections
 
 ```{r}
-batSel <- st_intersection(bat  [bat$HAUTEUR > 15,], tampon)
+bat <- st_transform(bat, 2154)
+batSel <- st_intersection(bat  [bat$hauteur > 15,], tampon)
 mf_map(batSel)
-batSel <- batSel [,c("HAUTEUR")]
+batSel <- batSel [,c("hauteur")]
+# 872 bat >15 m
 # si pb gééométrie
 batSel <- st_cast(bat, "MULTIPOLYGON")
 # par défaut les immeubles sans hauteur ne sont pas importants
-sansHauteur <- batSel [is.na(batSel$HAUTEUR),]
-batSel <- batSel [!is.na(batSel$HAUTEUR)]
+sanshauteur <- batSel [is.na(batSel$hauteur),]
+batSel <- batSel [!is.na(batSel$hauteur)]
 # par curiosité
 batSel$aire <- st_area(batSel$geometry)
 summary(batSel$aire)
@@ -99,13 +121,14 @@ batSel$aire <- drop_units(batSel$aire)
 mf_map(batSel [batSel$aire > 600,])
 mf_layout("gros batiment (aire)", "BDTOPO")
 # recodage
-batSel$taille [batSel$HAUTEUR  >= 15 & batSel$HAUTEUR < 20] <- "petit"
-batSel$taille [batSel$HAUTEUR  >= 20 & batSel$HAUTEUR < 40] <- "moyen"
-batSel$taille [batSel$HAUTEUR  >= 40 & batSel$HAUTEUR < 60] <- "grand"
+batSel$taille <- NA
+batSel$taille [batSel$hauteur  >= 15 & batSel$hauteur < 20] <- "petit"
+batSel$taille [batSel$hauteur  >= 20 & batSel$hauteur < 40] <- "moyen"
+batSel$taille [batSel$hauteur  >= 40 & batSel$hauteur < 60] <- "grand"
 # fusion avec critère
 aggBat <- aggregate(batSel [,c("taille")], by= list(batSel$taille), length )
 names (aggBat) [1:2] <- c("taille","nb")
-st_write("../data/antenneRelais.gpkg", "bat_tampon")
+st_write(aggBat,"../data/antenneRelais.gpkg", "bat_tampon2026", delete_layer = T)
 antenneSel <- st_intersection(antenne, tampon)
 ```
 
@@ -115,12 +138,10 @@ mf_init(tampon)
 mf_map(bondy, col="wheat", border = NA, add = T)
 mf_map(antenneSel, add = T)
 mf_typo(aggBat, var = "taille", border = NA, add = T)
-mf_layout("Antennes relais et batiments > 15 m", "IGN, ANFR")
+mf_layout("Antennes relais et batiments > 15 m", "IGN, ANFR\nMai 2026")
 ```
 
-```{r}
-st_write(aggBat, "../data/antenneRelais.gpkg", "bat_tampon_700m", delete_layer = T)
-```
+
 
 
 # Agregation
@@ -145,18 +166,21 @@ data <- antenne4G
 # détermination du nb de points d'implantation quelque soit le fournisseur et la fréquence
 agg <- aggregate(data [, c("adr_lb_add1","geometry")], by=list(data$adr_lb_add1), length)
 # 77 pour le tampon
+# 108 sur tampon 1 km
 # founisseur
 agg <- aggregate(data [, c("adr_lb_add1","geometry")], by=list(data$adr_lb_add1,  data$adm_lb_nom), length)
 # 107
+# 146
 agg <- st_jitter(agg)
 names(agg)[1:3]  <- c("Adresse", "Fournisseur", "nb")
 hist(agg$nb)
 # le nb varie de 5 à 10 avec les fréquences
-st_write(agg, "../data/antenneRelais.gpkg", "aggFournisseur_tampon_4G", delete_layer = T)
+st_write(agg, "../data/antenneRelais.gpkg", "aggFournisseur_tampon_4G_2026", delete_layer = T)
 summary(agg$nb)
 length(agg$nb)
 sum(agg$nb)
 # 439 antennes 4 G
+# 703 tampon 1 km
 ```
 
 
@@ -213,7 +237,7 @@ agg <- aggregate(inter [ ,c("nb"), drop = T], by = list(inter$ID), sum)
 names(agg) <- c("ID", "nb")
 jointure <- merge(grid, agg, by= "ID")
 mf_choro(jointure, var = "nb")
-st_write(jointure, "../data/antenneRelais.gpkg", "densite_tampon", delete_layer = T)
+st_write(jointure, "../data/antenneRelais.gpkg", "densite_tampon_2026", delete_layer = T)
 ```
 
 
@@ -221,8 +245,65 @@ st_write(jointure, "../data/antenneRelais.gpkg", "densite_tampon", delete_layer 
 mf_init(tampon)
 mf_map(bondy, col = "wheat", border = NA)
 mf_choro(jointure, var = "nb", border= NA, add = T)
-mf_layout("densité antennes relais","ANFR, IGN")
+mf_layout("densité antennes relais","ANFR, IGN\mai 2026")
 summary(jointure$nb)
 ```
 
+
+# En 2026, rajoute des zones urbaines
+
+
+
+```{r}
+get_gpu_layers()
+zone <- get_apicarto_gpu(bondy,"zone-urba")
+zone <- st_cast(zone, "POLYGON")
+zone <- zone [st_is_valid(zone),]
+zone <- st_transform(zone, 2154)
+inter <- st_intersection (bondy, zone) 
+mf_map(interSel, "typo", var = "libelong")
+interSel <- inter [grep("^UR|^UA|^UEi", inter$libelle),]
+table(inter$libelle)
+table(interSel$libelle)
+# zones PLUi UR UA et UEi 
+```
+
+
+```{r}
+par(mfrow = c(1,3))
+col <- c("wheat", "purple", "cadetblue2")
+i <- 1
+zone <- c("^UR","^UA","^UEi")
+for (z in zone){
+  print(z)
+  tmp <- inter [grep(z, inter$libelle),]
+  mf_map(tmp, col = col [i], border = NA)
+  mf_layout(z, "GPU\nMai 2026")
+  i <- i+ 1
+}
+```
+  
+
+```{r}
+palBat <- c("green", "orange", "yellow")
+png("../img/antennePtsansBat.png", height = 10000, width = 10000, res = 1000)
+
+mf_map(bondy, col = "cornsilk")
+mf_map(interSel, type = "typo", var = "libelong", pal = col, border = NA, add = T)
+#mf_map(aggBat, type = "typo", var = "taille", pal = palBat, border = NA,add = T, leg_pos = "right")
+mf_map(antenne, add = T, col="red")
+mf_layout("Antennes relais, immeubles sup. 5 m et zones urbaines", "GPU,ANFR\nMai 2026")
+dev.off()
+```
+
+```{r}
+png("../img/antenneCarsansBat.png", height = 10000, width = 10000, res = 1000)
+
+mf_map(bondy, col = "cornsilk")
+mf_map(interSel, type = "typo", var = "libelong", pal = col, border = NA, add = T)
+#mf_map(aggBat, type = "typo", var = "taille", pal = palBat, border = NA,add = T, leg_pos = "right")
+mf_map(jointure, add = T, "choro", var = "nb", border = NA, alpha = 0.5)
+mf_layout("Antennes relais, immeubles sup. 5 m et zones urbaines", "GPU,ANFR\nMai 2026")
+dev.off()
+```
 
