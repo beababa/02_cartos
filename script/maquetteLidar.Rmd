@@ -1,0 +1,145 @@
+---
+title: "Maquette Lidar"
+author: "B. Maranget"
+date: "13/07/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+# pour la 3d du markdown
+options(rgl.useNULL = TRUE) # Suppress the separate window.
+library(rgl)
+rgl::setupKnitr(autoprint = TRUE)
+```
+
+
+
+
+# Objet
+
+utiliser le fond LIDAR pour un shéma d'accès maison des parents
+
+https://r-lidar.github.io/lidRbook/io.html
+
+et surtout en très clair
+
+https://orbi.uliege.be/bitstream/2268/307897/5/R_GIS_04_lidR.pdf
+
+
+i
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(sf)
+library(lidR)
+library(rgl)# pour visu 3d
+library(mapsf)
+library(leaflet)
+library(terra)
+#library(mapview)
+```
+
+## Ressources
+
+source : https://whitschroder.github.io/remote-sensing/lidr.html#cloth-simulation-function-csf
+
+https://r-lidar.github.io/lidRbook/dtm.html
+
+traduction rapide du manuel lidR
+
+https://r-lidar.github.io/lidRbook/io.html
+
+donnée position x y z intensité rang angle d'incidence
+
+laz format compressé de las
+
+l'objet est constitué de l'en tête et du nuage de point
+
+installation : install.packages('lidR', repos = c('https://r-lidar.r-universe.dev', 'https://cloud.r-project.org'))
+
+## Chemins
+
+Les fichiers de téléchargement sont lourds, on les met dans data/gros
+et on modifie le gitignore pour les exclure
+
+Récupération des formes pour couper
+
+
+# Extraction maison des familles
+
+```{r}
+zone <- st_read("../data/zoneExtraction.gpkg", "zoneExtraction")
+zone <- zone [zone$Nom2 == 'stade',]
+zone <- st_transform(zone, 2154)
+lasf <- dir("../data/gros", "*.laz")
+las <- readLAS(paste0("../data/gros/",lasf), select = "xyz")
+sel <- clip_roi(las, zone)
+writeLAS(sel, paste0( "../data/maisonDesParents.las"))
+```
+
+
+
+# présenter
+
+
+
+Tous les points sont à zéro
+
+```{r}
+tot <- readLAS("../data/maisonDesParents.las")
+# tous les points
+df <- payload(tot)
+table(df$Classification)
+```
+
+Revoir la classification ?
+
+
+```{r}
+tot <- classify_ground(tot, algorithm = pmf (ws = 5, th = 3))
+plot(tot, color = "Classification", size = 3, bg = "white")
+```
+
+
+
+
+
+## vue 2d
+
+```{r, eval=FALSE}
+library(ggplot2)
+ggplot(payload(tot), aes(X,Z, color = Z)) + 
+  geom_point(size = 0.5) + 
+  coord_equal() + 
+  theme_minimal() +
+  scale_color_gradientn(colours = height.colors(50))
+```
+
+
+![](img/ggplot.png)
+
+## rgl
+
+
+
+```{r,  eval=TRUE}
+tot <- readLAS("data/gros/tot.las")
+plot(sel, bg="white")
+rglwidget()
+```
+

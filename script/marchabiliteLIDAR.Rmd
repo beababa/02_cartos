@@ -1,0 +1,215 @@
+---
+title: "mns et marchabilité"
+author: "B. Maranget"
+date: "8/07/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Objet
+
+Le MNT issu du Lidar permet-il de repérer les problèmes voirie ?
+
+on va chercher la pente et les éventuels anomalies des trottoirs avant la visite
+terrain marchabilité
+
+# Définitions MNS MNT MNE
+
+
+Charger les dalles correspondant à vos rues
+
+-   [MNT](https://cartes.gouv.fr/telechargement/IGNF_MNT-LIDAR-HD)
+
+-   [MNS](https://cartes.gouv.fr/telechargement/IGNF_MNS-LIDAR-HD)
+
+Pour Bondy, les 3 rues sont sur 1 seule dalle (662 / 6867)
+
+```{r}
+(fic <- list.files("../data/gros/", pattern = "68", recursive = T, include.dirs = T))
+f <- paste0("../data/gros/",fic [2])
+f2 <- paste0("../data/gros/", fic [6])
+library(sf)
+library(terra)
+mns <- rast(f)
+mnt <- rast(f2)
+plot(mns)
+plot(mnt)
+```
+
+-   rmq : précision dans nom de fichier 50 cm
+
+# Récupérer les rues
+
+Récupérer l'emprise du raster pour avoir les rues
+
+
+```{r}
+bb <- st_bbox(mns)
+# nécessité transforme en poly
+bb_poly <- st_sfc(st_polygon(list(matrix(c(
+  bb$xmin, bb$ymin,
+  bb$xmax, bb$ymin,
+  bb$xmax, bb$ymax,
+  bb$xmin, bb$ymax,
+  bb$xmin, bb$ymin), ncol=2, byrow=T))), crs = 2154)
+rue <- st_read("../data/socle2026copie.gpkg", "rues")
+inter <- st_intersection(rue, bb_poly)
+plot(inter$geom)
+```
+
+# Couper au tampon
+
+## Tampon le plus petit possible
+
+Quelle est la largeur d'un trottoir + chaussée ?
+
+```{r}
+tampon <- st_buffer(inter,8)
+library(mapview)
+mapview(tampon)
+st_write(tampon, "../data/marchabilite.gpkg", "tampon", delete_layer = T, quiet = T)
+```
+
+Préciser la sélection
+
+
+```{r}
+sel <- tampon [tampon$NOM == 'LATERAL',]
+```
+
+
+## Couper (= crop / mask)
+
+Pour couper, explorer le menu imagerie / processus et raster functions, quelle est la différence ?
+
+Dans fonctions rasters, tout est dans gestion des données
+
+```{r}
+st_crs(mns)
+st_crs(tampon)
+```
+
+
+
+```{r}
+MNT <- crop(mnt, sel, mask=T)
+MNS <- crop(mns, sel, mask=T)
+```
+
+```{r}
+plot(MNT)
+plot(MNS)
+```
+
+
+Observer les différences au niveau du mnt et du mns
+
+## Statistiques
+
+Quelle différence dans les étendues min / max ?
+
+```{r}
+freqMNS <- freq(MNS)
+freqMNT <- freq(MNT)
+head(freqMNT)
+par(mf_row = c(1,2))
+barplot(MNT, main = "MNT")
+barplot(MNS, main = "MNS")
+```
+
+
+
+## La question !
+
+Et surtout peut-on déjà supposer que la route n'est pas totalement lisse ?
+
+![](img/pbVoirieClaudel.png)
+
+# MNH : utilisation de la calculatrice raster
+
+Retenir la notion d'algèbre des cartes
+
+Afin d'éliminer le problème de différence d'élévation entre les 3 rues, on va créer un MNH.
+
+```{r}
+MNH <- MNS - MNT 
+#writeRaster(MNH, "data/cours5/mnh.tif", overwrite = T)
+```
+
+# Tester les modes de visualisation
+
+Les rasters d'élévations sont toujours utilisés avec les mêmes outils :
+
+![](img/mntModesvisualisation.png) ![](img/pente.png)
+
+Essayer notamment ombrage, pente et contour.
+
+```{r}
+# utilisation du contour
+contour(MNH, col = "red", border=NA)
+# taille pente (en degrés) et exposition
+pente <- terrain(MNH, v = c("slope", "aspect"), unit ="degrees")
+ombrage <- shade(slope = pente$slope, aspect = pente$aspect)
+plot(ombrage, col = gray (0:50/50),legend = F)
+```
+
+Il apparaît très facile avec les différents outils proposés de cerner les anomalies de la voirie.
+
+# Dénombrer le nombre d'anomalies par rue
+
+Reprendre par exemple la couche pente.
+
+Proposition d'une méthode :
+
+-   lissage
+
+On agrège les pixels à leurs voisins selon la valeur.
+
+```{r}
+lissage <- focal(pente, w=3, fun = mean, nar.rm=T)
+plot(lissage)
+```
+
+-   seuillage (reclassification) : distinguer les pentes \> 30 des autres
+
+```{r}
+lissage <- focal(pente, w=3, fun = mean, nar.rm=T)
+hist(lissage)
+reclassif <- matrix (c(0,5,1,
+                       5,83,2),
+                     ncol = 3,
+                     byrow = TRUE)
+lissage2 <- classify(lissage, rcl = reclassif)
+pal <- c("white", "blue")
+plot(lissage2, col = pal)
+freq(lissage2)
+```
+
+-   Convertir raster =\> vecteur et agréger les polygones contigus
+
+```{r}
+library(sf)
+v <- as.polygons(lissage2)
+v <- st_as_sf(v)
+v <- st_cast(v, "POLYGON")
+table(v$slope)
+v <- v [v$slope == 2,]
+mapview(v)
+```
+
+-   Comter le nombre de géométries et leur taille
+
+```{r}
+v$aire <- st_area(v)
+hist(v$aire)
+library(mapsf)
+mf_init(v [1:10,])
+mf_map(v, "aire", type ="choro", add = T)
+```
+
+Une vérification sur le terrain s'impose bien sûr !

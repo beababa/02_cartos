@@ -1,0 +1,121 @@
+---
+title: "Itinéraire : ordre des points"
+author: "B. Maranget"
+date: "8/07/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Bizarrement, avec Qgis, l'itinéraire est tracé sous forme d'une ligne avec un sens.
+
+Mais la liste des points ordonnées n'est pas produite.
+
+Serait-ce possible sous R ?
+
+- explosion de la ligne selon les points
+
+- identification des itinéraires
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r , eval=TRUE}
+library(sf)
+library(mapsf)
+```
+
+
+
+
+
+## Chemins
+
+
+tout est dans 02_carto
+
+
+## Data 
+
+
+```{r}
+st_layers("../data/balconFleuri.gpkg")
+chemin <- st_read("../data/balconFleuri.gpkg", "trajet2026")
+
+pt <- st_read("../data/balconFleuri.gpkg", "geocodage2026")
+pt <- pt [, c("nom", "x")]
+```
+
+
+# Traitement
+
+```{r}
+mf_map(chemin)
+mf_map(pt, add = T, col = "green")
+mf_label(pt, "nom", overlap = F)
+```
+
+```{r}
+pt$ordre <- st_line_project(chemin$geom, pt$geom)
+pt <- pt [order (pt$ordre),]
+pt$num <- seq(1,30)
+library(mapview)
+mapview(st_jitter(pt), zcol = "num")
+mf_label(pt, "num", overlap = F)
+```
+
+```{r}
+st_write(pt, "../data/balconFleuri.gpkg", "ordre")
+```
+
+# animation
+
+
+```{r}
+num <- pt$num
+pt$etik <- paste0(pt$num, "_", pt$nom)
+for (n in num) {
+  p <- pt [n,]
+  png(paste0("../img/trajet_", n, ".png"))
+  mf_map(chemin)
+  mf_map (p, add = T, col = "red")
+  mf_label(p, "etik")
+  dev.off()
+}
+```
+
+
+
+```{r}
+library("magick")
+fic <- dir("../img/", "trajet")
+tot <- NULL
+for (f in fic){
+  tmp <- image_read(paste0("../img/",f))
+  assign(f, tmp)
+  tot <- c(tmp,tot)
+}
+A.img <- image_animate(tot, fps = 1, dispose = "previous")
+image_write(A.img, "../img/trajet.gif")
+```
+
+
