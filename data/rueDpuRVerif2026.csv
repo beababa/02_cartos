@@ -1,0 +1,46 @@
+nom_voie,numeros,verif
+Allee Anne Frank,rue entière,oui
+Allée Hannah Arendt,rue entière,oui
+Av du Mal de Lattre de Tassigny,2bis-4bis,oui
+Avenue de Verdun,7,rajout
+Avenue Galliéni,rue entière,oui
+Avenue Jean-Baptiste Devillers (chemin Latéral),impairs,rajout
+Avenue Marguerite,rue entière,oui
+Chemin de Groslay,22-48,oui
+Cours de la République,1-19,oui
+Cours de la République,2-18bis,oui
+Impasse des Violettes,rue entière,non
+Impasse Fernand Pottier,rue entière,oui
+Place Arthur Rimbaud,rue entière,oui
+Place de la Division Leclerc,rue entière,oui
+Quai Hubertine Auclert,rue entière,oui
+Route d'Aulnay,24-36,oui
+Route d'Aulnay,35-39,oui
+Rue Aretha Franklin,rue entière,oui
+Rue Arthur Rimbaud,rue entière,oui
+Rue Auguste Polissard,rue entière,oui
+Rue Benoîte Groult,rue entière,oui
+Rue Borel,rue entière,oui
+Rue des Ecoles,rue entière,oui
+Rue des Frères Darty,1-7,oui
+Rue du Breuil,1-39,oui
+Rue du Potager,rue entière,oui
+Rue Fremin,rue entière,oui
+Rue Gatine,rue entière,oui
+Rue Georges Elie,28-54,oui
+Rue Gisèle Halimi,rue entière,oui
+Rue Jean Jaurés,10-22,oui
+Rue Jean Jaurés,13-25bis,oui
+Rue Jules Guesde,28-64,oui
+Rue Jules Guesde,impairs,oui
+Rue Laug,rue entière,oui
+Rue Nadia Murad,rue entière,oui
+Rue Paul Vaillant-couturier,9-37,oui
+Rue Roger Salengro,1-9,non
+Rue Roger Salengro,1-7,oui
+Rue Roger Salengro,2-46,oui
+Rue Sainte-Barbe,rue entière,oui
+Rue Simone Veil,rue entière,oui
+Ruelle Sainte Barbe,rue entière,oui
+Villa Fleury,rue entière,oui
+Villa Thorel,rue entière,oui
