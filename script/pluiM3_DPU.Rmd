@@ -1,9 +1,6 @@
 ---
-<<<<<<< HEAD
 title: "carto DPU M3 Plui"
-=======
 title: "verif PLUi M3"
->>>>>>> a95722df9b62ff71a21ec23b02815ad5e4c5fc7b
 author: "B. Maranget"
 date: "15/10/2025"
 output: 
@@ -47,14 +44,17 @@ le cadastre est issu des couches de sqlite cadastre2024 (à mettre à jour avec 
 st_layers("../data/limitesSocle.gpkg")
 st_layers ("../data/cadastre.gpkg")
 st_layers("../data/pluiM3OLD3.gpkg")
-cadastre <- st_read("../data/cadastre2024.gpkg", "parcelle_info")
+cadastre <- st_read("../data/cadastre.gpkg", "cadastreHappign")
 bondy <- st_read("../data/cadastre2024.gpkg", "bondy")
 dpu <- st_read("../data/pluiM3OLD3.gpkg", "M3_INFO_SURF")
-dpu <- dpu [grep("Droit de",dpu$LIBELLE) & dpu$TXT == 'Bondy', ]
+dpu2 <- dpu [grep("Droit de",dpu$LIBELLE), ]
+dpu2 <- dpu2 [  dpu2$TXT == 'Bondy', ]
+dpu2$LIBELLE
+dpu2$TXT
 # carto
-mf_map(dpu, type = "typo", var ="LIBELLE", border = NA)
+mf_map(dpu2, type = "typo", var ="LIBELLE", border = NA)
 mf_layout("DPU Bondy M3", "PLUi M3\nOctobre 2025")
-dpu <- dpu [,c("LIBELLE")]
+dpu <- dpu2 [,c("LIBELLE")]
 mapview(dpu, popup = FALSE)
 ```
 
@@ -81,6 +81,7 @@ st_write(ban, "../data/ban.gpkg", "ban", delete_layer = T)
 Comme on n'a pas les rues (à retrouver, j'ai dû faire un rep gros)
 
 ```{r}
+ban <- st_read("../data/ban.gpkg", "ban")
 inter <- st_intersection(ban [, c("numero", "nom_voie", "rep")], dpu [dpu$LIBELLE == "Droit de preemption urbain renforce", "geom"])
 inter
 mf_map(dpu, type = "typo", var ="LIBELLE", border = NA)
@@ -289,15 +290,3 @@ tot <- rbind(rues, ruesEntieres)
 write.csv(tot, "../data/rueDpuR.csv", row.names = F, fileEncoding = "UTF-8")
 ```
 
-<<<<<<< HEAD
-
-# Leaflet
-
-avec barre de recherches adresse
-
-```{r}
-
-```
-
-=======
->>>>>>> a95722df9b62ff71a21ec23b02815ad5e4c5fc7b
