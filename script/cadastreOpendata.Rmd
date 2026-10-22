@@ -53,14 +53,14 @@ cadastrePM$code <- paste0(cadastrePM$Section, cadastrePM$N..plan)
 
 
 ```{r}
-couches <- (st_layers("../data/gros/cadastre.gpkg"))
+couches <- (st_layers("../data/cadastre.gpkg"))
 cadastre <- st_read("../data/cadastre.gpkg", "cadastreHappign")
 cadastre$cad2
 cadastrePM$code <- gsub(" ", "", cadastrePM$code)
 jointure <- merge (cadastre [,"cad2"], cadastrePM, by.y=  "code", by.x = "cad2")
 mf_map(cadastre)
 mf_map(jointure, add = T, col="red")
-st_write(jointure, "../data/cadastre2.gpkg", "pmorale", add = T)
+st_write(jointure, "../data/cadastre.gpkg", "pmorale", add = T)
 ```
 
 Stats

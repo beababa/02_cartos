@@ -63,7 +63,7 @@ La démarche adoptée est la suivante :
 ## Chemins
 
 ```{r, eval=TRUE}
-  chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 ```
 
 ## Librairies
