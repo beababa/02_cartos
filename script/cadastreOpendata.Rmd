@@ -1,0 +1,88 @@
+---
+title: "Cadastre opendata"
+author: "B. Maranget"
+date: "05/08/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Traitement du fichier opendata personne morale V 2025
+
+
+https://www.data.gouv.fr/datasets/fichiers-des-locaux-et-des-parcelles-des-personnes-morales
+
+https://www.data.gouv.fr/api/1/datasets/r/56119729-9b73-421e-93aa-bab611349223
+
+
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+```
+
+
+# Chemin data
+
+
+
+```{r}
+# lecture du fichier
+cadastrePM <- read.csv2("../data/gros/PM_25_NB_930.csv", fileEncoding = "UTF-8")
+str(cadastrePM)
+cadastrePM <- cadastrePM [cadastrePM$Nom.de.la.commune == 'BONDY',]
+cadastrePM$code <- paste0(cadastrePM$Section, cadastrePM$N..plan)
+```
+
+
+```{r}
+couches <- (st_layers("../data/gros/cadastre.gpkg"))
+cadastre <- st_read("../data/cadastre.gpkg", "cadastreHappign")
+cadastre$cad2
+cadastrePM$code <- gsub(" ", "", cadastrePM$code)
+jointure <- merge (cadastre [,"cad2"], cadastrePM, by.y=  "code", by.x = "cad2")
+mf_map(cadastre)
+mf_map(jointure, add = T, col="red")
+st_write(jointure, "../data/cadastre2.gpkg", "pmorale", add = T)
+```
+
+Stats
+
+```{r}
+(length(jointure$cad2)/ length(cadastre$cad2))*100
+(sum(st_area(jointure))/ sum(st_area(cadastre)))*100
+```
+
+1 parcelle sur 5 en p morale mais 2/3 de l'espace cadastral
+
+
+
+
+# Personne morale et voirie
+
+
+Si on intersecte p morale et voirie, que reste t il au niveau incohérence rue cadastrée / publique
+
+
+
+```{r}
+st_intersection(jointure, cadastre)
+```
+

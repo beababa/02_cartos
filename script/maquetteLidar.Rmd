@@ -113,6 +113,7 @@ Revoir la classification ?
 ```{r}
 tot <- classify_ground(tot, algorithm = pmf (ws = 5, th = 3))
 plot(tot, color = "Classification", size = 3, bg = "white")
+
 ```
 
 
