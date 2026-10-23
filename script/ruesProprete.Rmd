@@ -1,0 +1,94 @@
+---
+title: "Rue propreté"
+author: "B. Maranget"
+date: "09/09/2026"
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Longueur des rues dans les secteurs définis pour l'audit
+
+Les secteurs peuvent varier mais les gt restent les mêmes
+
+union secteur puis inter et cumul
+
+
+# Environnement
+
+
+## Librairies
+
+
+```{r}
+library(sf)
+library(mapsf)
+#library(banR)
+```
+
+https://rtask.thinkr.fr/fr/interagir-avec-postgis-depuis-r-avec-dbi-et-sf/
+
+https://cidree.github.io/rpostgis/
+
+pour base postgis
+
+```{r}
+library(rpostgis)
+library(RPostgreSQL)
+# With DBI
+con <-   dbConnect("PostgreSQL",
+  host = "localhost",
+  dbname = "bondy",
+  port = 5432,
+  user = "postgres",
+  password = "postgres"
+)
+pgPostGIS(con)
+```
+
+
+# Données 
+
+```{r}
+rue <- st_read(con, query = "SELECT * FROM base.rue")
+rue <- rue [rue$usage == 'public',]
+```
+
+```{r}
+chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/23_PROPRETE/"
+zone <- st_read(paste0(chemin, "zonagePourAudit.gpkg"), "zone1")
+```
+
+
+# GT
+
+```{r}
+agg <- aggregate(zone [,"simplification"],  by = list( zone$simplification), length)
+inter <- st_intersection(rue, agg)
+inter$longueur <- st_length(inter)
+agg2 <- aggregate (inter [, c( "longueur")], by = list(inter$Group.1), sum)
+st_write(agg2, paste0(chemin, "zonagePourAudit.gpkg"), "total")
+```
+
+
+
+# Déconnexion
+
+```{r}
+dbDisconnect(con) 
+```
+

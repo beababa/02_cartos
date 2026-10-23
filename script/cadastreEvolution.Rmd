@@ -37,49 +37,39 @@ Production d'une carte à intervalle régulier sur la division parcellaire, le c
 ```{r}
 library(sf)
 library(mapsf)
+library(mapview)
 ```
 
 
 https://files.data.gouv.fr/cadastre/etalab-cadastre/2022-01-01/geojson/communes/93/93010/
 
 ```{r}
+url <- NULL
 url <- "https://files.data.gouv.fr/cadastre/etalab-cadastre/2022-01-01/geojson/communes/93/93010/"
 url <- c(url, "https://cadastre.data.gouv.fr/data/etalab-cadastre/2023-01-01/geojson/communes/93/93010/")
 url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2024-01-01/geojson/communes/93/93010/")
-url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2026-03-01/geojson/communes/93/93010/")
-nom <- c("cadastre-93010-parcelles.json.gz")
+# on change la date a chaque fois
+url <- c(url,"https://cadastre.data.gouv.fr/data/etalab-cadastre/2026-06-01/geojson/communes/93/93010/")
+nom <- c("cadastre-93010-parcelles.json.gz", "cadastre-93010-batiments.json.gz")
+
 url <- paste0(url, nom)
+url
 destfile <- c("cadastre2022.geojson", "cadastre2023.geojson", "cadastre2024.geojson", "cadastre2025.geojson")
+destfile <- c("cadastre_2026_06_parcelle.json.gz", "cadastre_2026_06_bat.json.gz")
 destfile <- paste0("../data/", destfile)
 destfile <- paste0("../data/cadastre2026.geojson")
 cadastreURL <- function(url, fic){
   download.file(url, fic)
 }
 cadastre <- download.file(url, destfile)
-for (i in 1:4){
+for (i in 1:2){
   print(i)
   cadastreURL(url [i], destfile[i])
 }
-fic <- list.files("../data/", "cadastre[202]")
-cadastre <- st_read(paste0("../data/", fic [7]))
+(fic <- list.files("../data/", "cadastre_2026*"))
+# on dézippe à la main
+maj <- st_read(paste0("../data/", fic [3]))
 ```
-
-
-filtre sur les nouvelles parcelles puis jointure avec matrice précédente (dans bdd bondy)
-
-```{r}
-cadastre$an <- substring(cadastre$updated,1,4)
-table(cadastre$an)
-cadastre$mois <- substring(cadastre$updated, 1,7)
-table(cadastre$mois)
-nouveau <- cadastre [cadastre$an %in% c("2025", "2026"),]
-table(nouveau$mois)
-mapview(nouveau)
-st_write(nouveau, "../data/cadastre.gpkg", "nouveau_25_26", delete_layer = T)
-```
-
-
-Jointure sur les parcelles (spatiale)
 
 
 Récupération de l'ancienne version copiée dans la base
@@ -90,25 +80,47 @@ conn <- RPostgreSQL::dbConnect(drv="PostgreSQL", dbname = "bondy", user="postgre
 pgPostGIS(conn)
 pgListGeom(conn)
 #cadastre2025 <- st_read(conn, "cadastre",  query = "select * from agg;")
-cadastre2025 <- st_read(conn,   query = "select * from cadastre.parcelle_info;")
+cadastre <- st_read(conn,   query = "select * from cadastre.parcelle_info;")
 ```
+
+
+
+
+filtre sur les nouvelles parcelles puis jointure avec matrice précédente (dans bdd bondy)
+
+```{r}
+maj$an <- substring(maj$updated,1,4)
+table(maj$an)
+maj$mois <- substring(maj$updated, 1,7)
+table(maj$mois)
+nouveau <- maj [maj$an %in% c( "2026"),]
+table(nouveau$mois)
+mapview(nouveau, zcol = "mois", pane = NULL)
+st_write(nouveau, "../data/cadastre.gpkg", "nouveau_juin_26", delete_layer = T)
+```
+
+
+Jointure sur les parcelles (spatiale)
+
 
 
 
 ```{r}
-st_crs(cadastre2025)
+st_crs(cadastre)
 st_crs(nouveau)
 nouveau <- st_transform(nouveau, 2154)
 # pour faire la jointure spatiale on utilise le centroide
-jointure <- st_intersection(st_centroid(nouveau), cadastre2025)
+jointure <- st_intersection(st_centroid(nouveau), cadastre)
 pt <- jointure [, c("section", "numero", "proprietaire", "an", "mois", "code")]
-st_write(pt,"../data/cadastre.gpkg", "Division_2025_mars2026", delete_layer = T)
-cadastre2025$code
+st_write(pt,"../data/cadastre.gpkg", "Division_2026_06", delete_layer = T)
+cadastre$code
 pt <- pt [, c("code"), drop = T]
-poly <- cadastre2025 [cadastre2025$code %in% pt,]
+poly <- cadastre [cadastre$code %in% pt,]
 ```
 
 Champs propriétaire
+
+cette manip déjà faite mais on la refait
 
 
 ```{r}
@@ -121,7 +133,8 @@ tmp <- strsplit(proprio, split= "\\-")
 proprio <- sapply(tmp, "[",2)
 proprio <- gsub("^ | $",x =  proprio, "")
 cadastre$proprio <- proprio
-st_write(cadastre, "../data/cadastre.gpkg", "proprio2025_division", delete_layer = T)
+(cadastre$code <- substring(cadastre$idu, 7,15))
+st_write(cadastre [, c("code","proprio", "adresse")], "../data/cadastre.gpkg", "proprio_division_2026_06", delete_layer = T)
 ```
 
 
@@ -132,15 +145,31 @@ mf_map(poly, add = T)
 ```
 
 
+agrégation par proprio
+
 ```{r}
-
+agg <- aggregate(cadastre [,"proprio"], by = list(cadastre$proprio), length)
+names(agg) [1:2] <- c("proprio", "nb parcelles")
+st_write(agg, "../data/cadastre.gpkg", "proprio_division_2026_06_agg", delete_layer = T)
 ```
-
 
 
 
 
 ```{r}
 RPostgreSQL::dbDisconnect(conn)
+```
+
+projet QGIS cadastre division parcellaire
+
+attention au positionnement des étiquettes il faut recoder en particulier / copro / p morale (aphp / dpt / mairie)
+
+
+```{r}
+agg$proprio [grep("^M", agg$proprio)] <- "particulier"
+agg$proprio [grep ("COPRO", agg$proprio)] <- "copro"
+agg$proprio [1:3] <-  c("APHP", "BONDY", "dpt")
+agg$proprio
+st_write(agg, "../data/cadastre.gpkg", "proprio_division_2026_06_agg", delete_layer = T)
 ```
 

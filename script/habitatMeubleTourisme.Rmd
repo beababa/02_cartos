@@ -1,0 +1,83 @@
+---
+title: "Habitat meublés tourisme"
+author: "B. Maranget"
+date: "`30/09/2026"
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    toc_float: true
+    theme: cerulean
+  pdf_document:
+    toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+La chargé habitat privé souhaite une carte à partir du fichier des meublés de tourisme
+
+
+```{r}
+suppressPackageStartupMessages(library(sf))
+library(mapsf)
+library(mapview)
+chemin <- "Q:/GEOMATIQUE/habitat 2026/recherche data Mars/"
+chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/10_HABITAT/"
+```
+
+
+
+
+# Data
+
+géolocalisation du fichier
+
+
+
+```{r}
+data <- read.csv2(paste0(chemin2,"meubleTourisme.csv"), fileEncoding = "latin1")
+lieu <- strsplit(data$Quelle.est.l.adresse.du.logement.à.louer....identifiant., "~")
+data$y <- as.double(sapply (lieu , "[[", 2))
+data$x <- as.double(sapply (lieu , "[[", 3))
+data_sf <- st_as_sf(data, coords = c("x", "y"), crs = 4326)
+data_sf <- st_transform(data_sf, 2154)
+bondy <- st_read("../data/limitesSocle.gpkg", "bondy")
+mf_map(bondy)
+mf_map(data_sf, add = T)
+mapview(data_sf)
+st_write(data_sf, "../data/meubleTourisme.gpkg", "pointXY", delete_layer = T)
+barplot(popInsee$nb, names.arg = popInsee$année, las = 2, col = "white", main = "Evolution population Bondy (1876 - 2023)", cex.names = 0.8)
+popInsee <- popInsee [popInsee$année > 2016,]
+barplot((popInsee$nb), names.arg = popInsee$année, las = 2, col = "white", main = "Evolution population Bondy à partir 2017", ylim = c(50000,55000))
+knitr::kable(popInsee)
+```
+
+
+# Info supp
+
+Extraction numéro logement
+
+```{r}
+data <- st_read("../data/meubleTourisme.gpkg", "pointXY")
+(data$num <- as.integer(gsub("[a-z]", "", data_sf$num, ignore.case = T)))
+```
+
+
+```{r}
+i <- which(is.na(data$num))
+data$num [i] <- gsub(" 93140 Bondy", "", data$Quelle.est.l.adresse.du.logement.à.louer.. [i])
+st_write(data, "../data/meubleTourisme.gpkg", "data", delete_layer = T)
+```
+

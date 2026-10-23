@@ -1,0 +1,3 @@
+https://geo.seinesaintdenis.fr/server/rest/services/ORTHO/OrthoVraie_2025_5cm/MapServer/WMTS
+
+https://data.geopf.fr/annexes/ressources/wms-v/adresse.xml

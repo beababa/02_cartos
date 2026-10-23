@@ -1,0 +1,66 @@
+---
+title: "Périmètre d'aménagment"
+author: "B. Maranget"
+date: "20/08/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Pour alimenter Urbansimul, on exporte (avec la technique de bidouillage du buffer) les périmètres de la carte projets EE + PPCOA
+
+Le script consiste à reprendre et concaténer les 3 couches
+
+
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(mapview)
+```
+
+
+```{r}
+st_layers("../data/perimAmenagement2026.gpkg")
+```
+
+
+
+```{r}
+nom <- st_layers("../data/perimAmenagement2026.gpkg")
+for (i in c(2:4) ){
+  tmp <- st_read("../data/perimAmenagement2026.gpkg", nom$name [i])
+  tmp <- tmp [,1]
+  names(tmp) [1] <- "LIBELLE"
+  assign( nom$name[i], tmp)
+}
+tot <- rbind(npnru, PPCOA, zoneAmenagement)
+tot
+mf_map(tot)
+mf_label(tot, "LIBELLE")
+st_write(tot, "../data/perimAmenagement2026.gpkg", "total")
+```
+
+
+
+```{r}
+
+```
+

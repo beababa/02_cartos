@@ -63,7 +63,7 @@ table(rue$couleur)
 
 ```{r}
 leaflet() %>% addTiles(options = tileOptions(minZoom = 10, maxZoom = 20)) %>%
-  addPolylines(data=rue, color = ~factpal(couleur), weight = 8 )
+  addPolylines(data=rue, color = ~factpal(couleur), weight = 8 )  
 ```
 
 

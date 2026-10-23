@@ -54,7 +54,7 @@ chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
 # Données
 
 ```{r}
-rilCSV <- paste0(chemin, "ril2026_1 .csv")
+rilCSV <- paste0(chemin, "Envoi_liste-2026-09-28-15-58-08.csv")
 ```
 
 
@@ -115,7 +115,7 @@ str(ril)
 
 
 ```{r}
-st_write(ril_sf,"../data/ril2026.gpkg", "mars", delete_layer = T)
+st_write(ril_sf,"../data/ril2026.gpkg", "oct", delete_layer = T)
 ril <- st_drop_geometry(ril)
 write.csv(ril, "../data/rilMars2026.csv")
 ```
@@ -159,8 +159,18 @@ st_crs(zone) <- 2154
 inter <- st_intersection(ril_sf, zone)
 str(ril)
 ril <- inter [, c("cle","numero", "repetition", "complement", "type_voie", "libelle", "nombre_logements", "numero_permis", "commentaire", "nom")]
-st_write(ril, "../data/ril2025.gpkg", "octobre", delete_layer = T)
-str(ril)
+```
+
+## Nb de pts par zone 
+
+```{r}
+tab <- table(ril$nom)
+tab <- as.data.frame(tab)
+names(tab)  <- c("nom", "oct")
+zone <- merge(zone, tab, by ="nom")
+mf_label(zone, "oct", cex = 2)
+st_write(zone, "../data/ril2026.gpkg", "zonesDeSortie2026", delete_layer = T)
+st_write(ril, "../data/ril2026.gpkg", "oct", delete_layer = T)
 write.csv(st_drop_geometry(ril),"../data/ril.csv", fileEncoding = "UTF-8")
 ```
 
@@ -196,7 +206,7 @@ table(ril_sf$cluster)
 Enveloppe
 
 ```{r}
-agg <- aggregate(ril_sf [, c("cluster")], by = list(ril_sf$cluster), length)
+agg <- aggregate(ril [, c("cluster")], by = list(ril_sf$cluster), length)
 env <- st_convex_hull(agg)
 mf_map(env)
 mf_map(agg, type = "typo", var = "cluster", add = T)
@@ -218,6 +228,14 @@ inter <- inter [!duplicated(inter$geometry),]
 st_write(inter, "../data/ril2026.gpkg", "mars", delete_layer = T)
 ```
 
+Agregation après intersection
+
+
+```{r}
+agg <- aggregate (ril [,"nom" ], by = list(ril$nom), length)
+names(agg) [1:2] <- c("nom", "nb")
+st_write(agg,"../data/ril2026.gpkg", "zoneOct")
+```
 
 
 ## Cheminement
@@ -296,4 +314,16 @@ st_write(photo, "../data/ril.gpkg", "photo", delete_layer = T)
 ```{r}
 photo <- st_read("../data/ril.gpkg", "photo")
 ```
+
+
+# commentaire
+
+
+```{r}
+ril <- st_read("../data/ril2026.gpkg", "oct")
+ril$commentaire
+ril$commentaire <- gsub("¶", "\n",ril$commentaire)
+st_write(ril, "../data/ril2026.gpkg", "oct", delete_layer = T)
+```
+
 

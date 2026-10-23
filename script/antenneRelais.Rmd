@@ -29,7 +29,7 @@ https://data.anfr.fr/visualisation/table/?id=observatoire_2g_3g_4g&sort=adr_nm_c
 ANFR agence nationale des fréquences
 
 
-
+difficile de trouver sans le lien !!!!
 
 # Environnement
 
@@ -48,7 +48,7 @@ library(mapsf)
 
 ```{r}
 chemin <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/25_DEV_DURABLE/"
-chemin2 <- "C:/Users/bmaranget/Documents/03_SIG/03_03_Data/03_SOCLE/"
+chemin2 <- "S:/VOIRIE PLANS/05_SIG/03_SOCLE/"
 ```
 
 
@@ -67,7 +67,8 @@ mf_map(bondy, add = T)
 
 ```{r}
 # Toute la France
-antenne <- st_read(paste0(chemin,"sourceANFR_France.geojson"))
+antenne <- st_read(paste0(chemin,"sourceANFR_Bondy_2026.geojson"))
+# 330 obs
 antenne <- st_read("../data/observatoireod_20260521.geojson")
 antenne <- st_transform(antenne, 2154)
 mf_map(inter, add = T)
@@ -75,13 +76,18 @@ mf_map(inter, add = T)
 inter <- st_intersection(antenne, tampon)
 inter
 st_write(inter [, c("adm_lb_nom","emr_lb_systeme","emr_dt", "code_insee", "generation", "nat_id","sup_nm_haut",
-                    "adr_lb_add1")], "../data/antenneRelais.gpkg", "mai2026")
-antenne <- st_read(paste0(chemin,"antenneRelais.gpkg"))
+                    "adr_lb_add1")], "../data/antenneRelais.gpkg", "oct2026", delete_layer = T)
+antenne <- st_read("../data/antenneRelais.gpkg", "oct2026")
 ```
 
 
+galère sur les fichiers bdtopo / chemins pb + poids fichierr
+
+
 ```{r}
-bat <- st_read(paste0(chemin2, "BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D093_2024-03-15/BDTOPO/1_DONNEES_LIVRAISON_2024-04-00042/BDT_3-3_SHP_LAMB93_D093-ED2024-03-15/BATI/BATIMENT.shp"))
+cheminBDTopo <- "BDTOPO_3-5_TOUSTHEMES_GPKG_LAMB93_D093_2025-12-15/BDTOPO/1_DONNEES_LIVRAISON_2025-12-00078/BDT_3-5_GPKG_LAMB93_D093_ED2025-12-15/"
+bat <- st_read(paste0(chemin2, cheminBDTopo, "BDT_3-5_GPKG_LAMB93_D093-ED2025-12-15.gpkg"), "batiment")
+st_layers(paste0(chemin2, cheminBDTopo, "BDT_3-5_GPKG_LAMB93_D093-ED2025-12-15.gpkg"))
 ```
 
 on utilise désormais happign
@@ -189,10 +195,12 @@ sum(agg$nb)
 En vue de créer une carte de densité pondérée par le nb d'antennes sur chaque point.
 
 ```{r}
-data <- antenneSel
-agg <- aggregate(data [, c("adr_lb_add1","geometry")], by=list(data$adr_lb_add1), length)
+data <- antenne
+agg <- aggregate(data [, c("adr_lb_add1","geom")], by=list(adresse = data$adr_lb_add1), length)
+# 35 emplacements
 names(agg)[1:2]  <- c("Adresse",  "nb")
 hist(agg$nb)
+st_write(agg, "../data/antenneRelais.gpkg", "aggAdresse2026", delete_layer = T)
 ```
 
 
@@ -306,4 +314,66 @@ mf_map(jointure, add = T, "choro", var = "nb", border = NA, alpha = 0.5)
 mf_layout("Antennes relais, immeubles sup. 5 m et zones urbaines", "GPU,ANFR\nMai 2026")
 dev.off()
 ```
+
+
+# Nom proprio parcelles
+
+
+
+```{r}
+library(DBI)
+library(rpostgis)
+# With DBI
+con <- dbConnect(
+  RPostgres::Postgres(),
+  host = "localhost",
+  dbname = "bondy",
+  shema = "cadastre",
+  port = 5432,
+  user = "postgres",
+  password = "postgres"
+)
+```
+
+
+```{r}
+
+dbListTables(con, ":memory:")
+dbSchema(con, name = "cadastre")
+st_read(con,  "proprio2025")
+```
+
+
+pb lecture shema
+
+
+
+```{r}
+proprio <- st_read("../data/socle2026.gpkg", "proprio2025")
+antenne <- st_read("../data/antenneRelais.gpkg", "aggAdresse2026")
+```
+
+
+```{r}
+inter <- st_intersection(antenne, proprio)
+```
+
+33
+
+on rectifie 2 pts sous qgis et on relance (av galliéni) 2 bis de lattre et 2 polissard
+
+
+35
+
+```{r}
+nom <- names(inter)
+nom <- c(1,13,2,15,20)
+data <- inter [, nom]
+names(data)
+names(data)[1:2] <- c("adresse antenne", "adresse parcelle")
+st_write(data, "../data/antenneRelais.gpkg", "aggAdresseParcelle", delete_layer = T)
+data <- st_drop_geometry(data)
+write.csv(data, "../data/antenneParcelle.csv", fileEncoding = "UTF-8", row.names = F)
+```
+
 
