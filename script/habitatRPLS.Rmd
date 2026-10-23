@@ -84,15 +84,16 @@ Pour 2023 (=données 2022), un seul fichier de 3 G°
 
 ```{r}
 rpls2022 <- read.csv2("C:/Users/bmaranget/Downloads/RPLS-Donnees-detaillees-au-1er-janvier-2022.2022-01(1).csv")
-str(rpls2022)
-rpls2022Bondy <- rpls2022 [rpls2022$Code.Postal == '93140',]
-write.csv(rpls2022Bondy, "../data/rpls2022.csv")
+rpls2026 <- read.csv2("../data/gros/Donnees-detaillees-au-logement-du-repertoire-des-logements-locatifs-des-bailleurs-sociau.2025-01.csv")
+rpls <- rpls2026
+str(rpls)
+rplsBondy <- rpls [rpls$CODEPOSTAL == '93140',]
+# 9706
+write.csv(rplsBondy, "../data/rpls2026.csv")
 ```
 
-9605 pts
-
-
-2023
+9605 pts 2023
+9706 en 2026
 
 ```{r}
 rpls2023 <- read.csv2(paste0(chemin, "rpls_2023_OD_GEOLOC_DiDo.csv"), skip = 3)
@@ -129,7 +130,7 @@ rpls2025 <- read.csv2(paste0(chemin, "rpls2025.csv"), dec = ".", skip = 1)
 Puisqu'il s'agit de traiter pl fichiers, on va tout mettre en fonctions ?
 
 ```{r}
-fic <- rpls2025
+fic <- read.csv("../data/rpls2026.csv")
 names(fic)
 head(fic)
 # pb pour 2024 sur le nom de voie
@@ -185,10 +186,13 @@ data <- st_as_sf(joint2,
 return(data)
 }
 rpls <- agg(fic)
-st_write(rpls, "../data/RPLS.gpkg", "rpls2025", delete_layer = T)
+st_write(rpls, "../data/RPLS.gpkg", "rpls2026", delete_layer = T)
 ```
 
 
+2e fichier
+
+A partir de 2021, on fait l'intersection avec le cadastre
 
 ```{r}
 RPLSbailleurs <- read.csv2(paste0(chemin,"rpls2021_geolocalise_loi_depcom93010.csv")
@@ -226,6 +230,67 @@ barplot((tab), names.arg = names((tab)) , las = 2)
 tab <- tab [-7]
 ```
 
+
+# Intersection avec cadastre
+
+On a cadastre proprio et cadastre personnes morales pour déterminer les bailleurs
+
+
+```{r}
+proprio <- st_read("../data/cadastre.gpkg", "proprio2026")
+# 7124
+pmorale <- st_read("../data/cadastre.gpkg", "pmorale")
+library(mapview)
+mapview(pmorale)
+pmorale <- st_transform(pmorale, 2154)
+st_crs(pmorale)
+st_crs(proprio)
+# 1444
+rpls <- st_read("../data/RPLS.gpkg", "rpls2026")
+st_crs(rpls)
+```
+
+
+
+```{r}
+inter <- st_intersection(rpls, proprio)
+interPM <- st_intersection(rpls, pmorale)
+
+
+
+
+mf_map(cadastre, col = "wheat", border = NA)
+mf_map(inter)
+mf_map(interPM, add = T, col = "red")
+mf_layout("Bailleurs non pmorale", "cadastre et rpls 2025")
+```
+
+
+Bailleurs non pmorale
+
+
+```{r}
+pmorale$cad2
+proprio$code
+proprio$section <- substring(proprio$code, 1, 2)
+proprio$section <- gsub("0", "", proprio$section)
+proprio$parcelle <- substring( proprio$code, 3, 10)
+proprio$parcelle <- gsub("^0+", "", proprio$parcelle) 
+proprio$code2 <- paste0(proprio$section, proprio$parcelle)
+sel <- inter [!(inter$code2 %in% interPM$cad2),]
+mf_map(sel, add = T, col = "green")
+names(sel)
+sel <- sel [, c("cle", "appartement", "etage", "CONSTRUCT", "proprio", "code2", "voie", "adresse")]
+st_write(sel, "../data/RPLS.gpkg", "proprioNonPM", delete_layer = T)
+```
+
+
+118 différences (doublons géométriques) 
+
+
+```{r}
+table(sel$adresse, useNA = "always")
+```
 
 
 
@@ -325,13 +390,14 @@ st_write(data, "../data/RPLS.gpkg", "rpls2021RS", delete_layer = T)
 
 ```{r}
 st_layers("../data/RPLS.gpkg")
-rpls <- st_read("../data/RPLS.gpkg", "rpls2025")
+rpls <- st_read("../data/RPLS.gpkg", "rpls2026")
 ```
 
 ## Nombre d'étages
 
 ```{r}
-st_layers("../data/gros/cadastre.gpkg")
+st_layers("../data/cadastre.gpkg")
+st_layers("../data/tt.gpkg")
 cadastre <- st_read("../data/gros/cadastre.gpkg", "proprio2025")
 mf_export(rpls, width = 1000, height = 1000, res = 100, filename = "../img/RPLS2025.png", expandBB = c(10,10,30,10))
 mf_init(rpls)

@@ -104,9 +104,10 @@ Parcelle_info semble le fichier le plus intéressant : num parcelle et proprio
 # attention chemin 03/SOCLE/cadastre2025.sqlite pour travail en mairie
 cadastre <- st_read(paste0(chemin,chCadastre), "parcelle_info")
 str(cadastre)
+cadastre <- st_read("../data/tt.gpkg", "parcelle")
 ```
 
-
+7124 obs
 
 ## Code parcelle : suppression espace
 
@@ -135,7 +136,7 @@ tmp <- strsplit(proprio, split= "\\-")
 proprio <- sapply(tmp, "[",2)
 proprio <- gsub("^ | $",x =  proprio, "")
 cadastre$proprio <- proprio
-st_write(cadastre, "../data/gros/cadastre.gpkg", "proprio2025", delete_layer = T)
+st_write(cadastre, "../data/cadastre.gpkg", "proprio2026", delete_layer = T)
 ```
 
 
@@ -156,9 +157,10 @@ Aggregation des parcelles (permet de gérer le pb des parcelles mitoyennes)
 ```{r, eval = F}
 agg <- aggregate(cadastre [, ("proprio")], by = list(cadastre$proprio), length)
 # on passe de 7028 à 5476
+# 2026 7124 5439
 names(agg)[1:2] <- c("nom", "nb_parcelles")
 agg$nom <- gsub("^\\s+|\\s+$", "", agg$nom)
-st_write(agg, "../data/gros/cadastre.gpkg", "agg", delete_layer = T)
+st_write(agg, "../data/cadastre.gpkg", "agg", delete_layer = T)
 ```
 
 repères : gros mouvement de concentration !
@@ -168,6 +170,8 @@ repères : gros mouvement de concentration !
 7094 à 5443 2023
 
 7126 à 5427 2025
+
+7124 à 5476 2026
 
 ```{r}
 repere <- read.table("../data/cadastre.csv", header =  T, row.names = 1, sep = ";", fileEncoding = "UTF-8")
@@ -191,7 +195,7 @@ repere [,1] / repere [,2]
 On repart de parcelle_info donc proprio
 
 ```{r}
-cadastre <- st_read("../data/cadastre.gpkg", "proprio2025")
+cadastre <- st_read("../data/cadastre.gpkg", "proprio2026")
 ind <- grep("COMMUNE DE BONDY", cadastre$proprio)
 parcellesMairie <- cadastre [ind,]
 png("../img/cadastre2025parcellesMairie.png", width = 6000, height = 6000, res = 800)
@@ -217,14 +221,14 @@ write.csv(export, "../data/parcelleMairie.csv")
 fonction des parcelles à partir des POI
 
 ```{r}
-fic <- paste0(chemin, "03_sOCLE/batiment.gpkg")
+fic <- "../data/tt.gpkg"
 st_layers(fic) 
-poi <- st_read(fic, "poi3")
+poi <- st_read(fic, "poi")
 names(poi)
-inter <- st_intersection(parcellesMairie, poi)
+inter <- st_intersection(cadastre, poi)
 table(parcellesMairie$parcelle_batie, useNA = "always")
 names(inter)
-inter <- inter [,c("code", "Title", "adresse","categorie"), drop=T]
+inter <- inter [,c("code", "title", "adresse","categorie"), drop=T]
 joint <- merge(parcellesMairie [,c("code", "adresse", "parcelle_batie")], all.x=T ,inter, by="code")
 st_write(joint, "../data/gros/cadastre.gpkg", "parcelleMairie", delete_layer = T)
 ```
@@ -238,6 +242,7 @@ Il existe un fichier proprietaire dans la base sqlite, qui permet d'avoir les ca
 ```{r}
 # voir remarque paragraphe précedente
 proprio <- st_read(paste0(chemin,chCadastre), "proprietaire")
+proprio <- st_read("../data/cadastre.gpkg", "proprio2026")
 str(proprio)
 head(proprio)
 # Le champs personne morale est ccogrm

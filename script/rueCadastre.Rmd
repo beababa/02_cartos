@@ -39,7 +39,7 @@ library(mapsf)
 # Chemin data
 
 
-```{r, eval = T}
+```{r, eval = F}
 chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
 chemin <- "G:/Mon Drive/05_DATA/"
 ```
@@ -61,10 +61,13 @@ on finit par repartir de la couche finale rue.gpkg rueCadastre
 
 ```{r}
 #02_URBA pour le drive 06 pour pc mairie
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
+rue <- st_read("../data/socle2026copie.gpkg", "rues")
 st_layers("../data/cadastre.gpkg") 
-cadastre <- st_read("../data/cadastre.gpkg", "parcelleAdresse")
-pmorale <- st_read("../data/cadastre.gpkg", "pmoraleOpendata")
+cadastre <- st_read("../data/cadastre2026.gpkg", "agg4326")
+mf_map(cadastre)
+cadastre <- st_transform(cadastre, 2154)
+pmorale <- st_read("../data/cadastre2.gpkg", "pmorale")
+pmorale <- st_transform(pmorale, 2154)
 ```
 
 
@@ -76,7 +79,6 @@ On récupère en fait le nb d'intersection que l'on rend booléen
 ```{r}
 inter <- st_intersection(rue, cadastre)
 interMat <- st_intersects (rue, cadastre)
-length(interMat [[6]])
 # les lignes vides marquent les rues non cadastrées.
 rue$inter <- sapply(interMat, length)
 table(rue$inter)
@@ -94,21 +96,21 @@ rueCadastre <- rue [rue$inter != 0,]
 sum(st_length(rueCadastre))
 ```
 
-36 km de voirie cadastrée
+41 km de voirie cadastrée
 
 
 ```{r}
 table(rue$inter)
 rue$cadastre <- ifelse(rue$inter == 0, "non", "oui") 
 tab  <- aggregate(st_length(rue), by = list(rue$cadastre), sum)
-st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
+st_write(rue,  "../data/rue.gpkg", "rueCadastre", delete_layer = T)
 ```
 
 
 Reprise de l'attribut
 
 ```{r}
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
+rue <- st_read("../data/rue.gpkg", "rueCadastre")
 str(rue)
 # éclatement terme et nom rue
 
@@ -130,11 +132,11 @@ Récup de l'usage à partir de la delib de 2019 (sous Qgis)
 On essaie ensuite de trouver les incohérences : rues d'usage privées non cadastrées
 
 ```{r}
-rue <- st_read(paste0(chemin,"03_SOCLE/rue.gpkg"), "rueCadastre")
-rue$incoherence [rue$cadastre == "non"& rue$usage == "privé"] <- "incohérence"
+rue$incoherence [rue$cadastre == "non"& rue$usage == "privé"] <- "rue non cadastrée privée"
+rue$incoherence [rue$cadastre == "oui"& rue$usage == "public"] <- "rue cadastrée publique"
 table(rue$incoherence)
-sort(rue$NOM_1_G [rue$incoherence == "incohérence"])
-st_write(rue, paste0(chemin, "03_sOCLE/rue.gpkg"), "rueCadastre", delete_layer = T)
+# 96 incohérences
+st_write(rue, "../data/rue.gpkg", "rueCadastre", delete_layer = T)
 ```
 
 export liste
