@@ -1,0 +1,235 @@
+---
+title: "DAF"
+author: "B. Maranget"
+date: "23/10/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+Créer un inventaire du patrimoine réunissant plusieurs sources internes et externe permettant la gestion budgétaire M57
+
+![](../img/patrimoine.png)
+
+
+
+
+```{r}
+library(sf)
+library(mapsf)
+library(mapview)
+library(jsonlite)
+library(geojsonR)
+library(httr2)
+library(rpostgis)
+```
+
+
+# RNB
+
+https://files.data.gouv.fr/cadastre/etalab-cadastre/2022-01-01/geojson/communes/93/93010/
+
+
+## Script sur une page
+
+
+
+```{r}
+# URL 1  API classique en GeoJSON
+url <- "https://rnb-api.beta.gouv.fr/api/alpha/buildings/?insee_code=93010&format=geojson&limit=100"
+# URL 2
+url_base <- paste0(
+  "https://rnb-api.beta.gouv.fr/api/alpha/ogc/",
+  "collections/buildings/items"
+)
+
+url_courante <- paste0(
+  url_base,
+  "?insee_code=", code_insee,
+  "&limit=100"
+)
+reponse <- request(url)
+reponse <- req_perform(reponse)
+contenu <- resp_body_string(reponse)
+writeBin(contenu, "../data/rnb_classique.geojson", useBytes = TRUE)
+batiments <- st_read("../data/rnb_classique.geojson")
+fichier_temp <- tempfile(fileext = ".geojson")
+    writeBin(charToRaw(contenu), fichier_temp)
+
+    # Importer les géométries et attributs dans sf
+    objets_sf <- st_read(
+      fichier_temp,
+      quiet = TRUE
+    )
+
+mf_map(objets_sf)
+
+st_write(geojson, "../data/fic.geojson")
+```
+
+
+script R chatGPT
+
+```{r}
+code_insee <- "93010"
+
+url_base <- paste0(
+  "https://rnb-api.beta.gouv.fr/api/alpha/ogc/",
+  "collections/buildings/items"
+)
+
+url_courante <- paste0(
+  url_base,
+  "?insee_code=", code_insee,
+  "&limit=100"
+)
+
+# Dossier de sortie
+#dir.create("../data/donnees_rnb", showWarnings = FALSE)
+
+# 3. Récupérer les pages successives
+# objet sf liste
+liste_sf <- list()
+# objet nb urls
+urls_visitees <- character()
+# num page type entier
+numero_page <- 0L
+
+repeat {
+
+  # Éviter une boucle infinie si l'API renvoie un lien répété
+  if (url_courante %in% urls_visitees) {
+    stop("URL de pagination déjà visitée : arrêt de sécurité.")
+  }
+
+  urls_visitees <- c(urls_visitees, url_courante)
+
+  message("Téléchargement de la page ", numero_page + 1L)
+
+  reponse <- request(url_courante) |>
+    req_retry(max_tries = 4) |>
+    req_perform()
+
+  if (resp_status(reponse) != 200L) {
+    stop("Erreur HTTP : ", resp_status(reponse))
+  }
+
+  contenu <- resp_body_string(reponse)
+
+  # Lire la FeatureCollection GeoJSON
+  geojson <- fromJSON(contenu, simplifyVector = FALSE)
+
+  if (is.null(geojson$features)) {
+    stop("Réponse GeoJSON inattendue : champ features absent.")
+  }
+
+  n_page <- length(geojson$features)
+
+  message("  Bâtiments reçus : ", n_page)
+
+  if (n_page > 0L) {
+
+    # Écrire le GeoJSON dans un fichier temporaire
+    fichier_temp <- tempfile(fileext = ".geojson")
+    writeBin(charToRaw(contenu), fichier_temp)
+
+    # Importer les géométries et attributs dans sf
+    objets_sf <- st_read(
+      fichier_temp,
+      quiet = TRUE
+    )
+
+    liste_sf[[length(liste_sf) + 1L]] <- objets_sf
+
+    unlink(fichier_temp)
+  }
+
+  numero_page <- numero_page + 1L
+
+  # Chercher le lien OGC de la page suivante
+  liens <- geojson$links
+
+  lien_suivant <- NULL
+
+  if (!is.null(liens)) {
+    for (lien in liens) {
+      if (identical(lien$rel, "next")) {
+        lien_suivant <- lien$href
+        break
+      }
+    }
+  }
+
+  # Plus de lien "next" : toutes les pages sont récupérées
+  if (is.null(lien_suivant) || !nzchar(lien_suivant)) {
+    break
+  }
+
+  # Résoudre les URL relatives si nécessaire
+  url_courante <- xml2::url_absolute(
+    lien_suivant,
+    url_courante
+  )
+
+  # Rester prudent vis-à-vis des limites de débit
+  Sys.sleep(0.1)
+}
+
+# 4. Fusionner toutes les pages
+if (length(liste_sf) == 0L) {
+  stop("Aucun bâtiment retourné pour le code INSEE ", code_insee)
+}
+
+rnb_93010 <- do.call(rbind, liste_sf)
+
+# 5. Contrôles
+cat("Nombre de pages :", numero_page, "\n")
+cat("Nombre de bâtiments :", nrow(rnb_93010), "\n")
+cat("Système de coordonnées :",
+    st_crs(rnb_93010)$input, "\n")
+
+print(rnb_93010)
+print(st_geometry_type(rnb_93010))
+
+# 6. Sauvegarder les données géographiques
+st_write(
+  rnb_93010,
+  "donnees_rnb/RNB_93010.gpkg",
+  delete_dsn = TRUE,
+  quiet = TRUE
+)
+
+# 7. Exporter également en GeoJSON
+st_write(
+  rnb_93010,
+  "../data//RNB.gpkg", "rnb2026",
+  delete_dsn = TRUE,
+  quiet = TRUE
+)
+
+message("Export terminé dans le dossier donnees_rnb.")
+
+```
+
+## final
+
+```{r}
+bat <- st_read("../data/RNB_93010.gpkg")
+```
+
+

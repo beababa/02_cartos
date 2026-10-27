@@ -60,7 +60,7 @@ cadastrePM$code <- gsub(" ", "", cadastrePM$code)
 jointure <- merge (cadastre [,"cad2"], cadastrePM, by.y=  "code", by.x = "cad2")
 mf_map(cadastre)
 mf_map(jointure, add = T, col="red")
-st_write(jointure, "../data/cadastre.gpkg", "pmorale", add = T)
+st_write(jointure, "../data/cadastre.gpkg", "pmorale", add = T, delete_layer = T)
 ```
 
 Stats
