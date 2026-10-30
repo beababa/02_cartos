@@ -162,3 +162,47 @@ mf_layout("Zones stationnement", "sources internes")
 dev.off()
 ```
 
+
+# Modifications
+
+
+## Octobre 2026 : extension ZAC Ourcq
+
+
+Les rues sont rajoutées dans QGIS. Au niveau de la liste des rues, on fait une jointure 
+rueStationnement2024 et rues pour récupérer le nom et le type
+
+
+```{r}
+library(RPostgreSQL)
+library(rpostgis)
+conn <- RPostgreSQL::dbConnect(drv="PostgreSQL", dbname = "bondy", user="postgres", password="postgres")
+pgPostGIS(conn)
+pgListGeom(conn)
+rue <- st_read(conn, query = "select * from base.rue;")
+rue <- st_drop_geometry(rue)
+```
+
+
+```{r}
+dbDisconnect(conn)
+```
+
+
+```{r}
+stationnement <- st_read("../data/stationnement.gpkg", "rueStationnement2024")
+jointure <- merge(stationnement, rue [,c("nom_1_g", "nom", "nature")], by.x = "NOM_1_G", by.y = "nom_1_g", all.x = T)
+# 9 enregistrements à faire à la main
+mf_map(type = "typo", jointure, var = "couleur")
+st_write(jointure, "../data/stationnement.gpkg", "rueStationnement2026", delete_layer = T)
+```
+
+pb 109 <> 100 attention modification à faire à la main.
+
+
+```{r}
+stationnement [!(stationnement$NOM_1_G %in% jointure$NOM_1_G),]
+rue [!(rue$nom_1_g %in% jointure$NOM_1_G),]
+```
+
+

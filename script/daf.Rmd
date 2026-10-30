@@ -55,7 +55,7 @@ En effet,
 
 - le RNB inclue la totalité de la ville, 
 
-- le cadastre personne morale toutes les parcelles dont la ville est propriétaire
+- le cadastre personne morale toutes les parcelles dont la ville est propriétaire (attention 2 versions opendata et matrice)
 
 - les POI, tous les bâtiments d'intérêt de la ville
 
@@ -70,11 +70,11 @@ table(pmorale$Groupe.personne...par)
 pmorale <- pmorale [pmorale$Groupe.personne...par == "4 - Commune",]
 ind <- grep ("BONDY", pmorale$Dénomination...par)
 pmorale <- pmorale [ind,]
-pmorale <- pmorale [, c("cad2", "Nature.voie", "Nom.voie", "N..voirie", "Indice.de.répétition")]
-st_write (pmorale, "../data/finance.gpkg", "pmorale", delete_layer = T)
+pmorale <- pmorale [, c("code", "Nature.voie", "Nom.voie", "N..voirie", "Indice.de.répétition")]
+st_write (pmorale, "../data/finance.gpkg", "proprioBondy", delete_layer = T)
 ```
 
-233 parcelles
+230 parcelles
 
 ### RNB
 
@@ -98,7 +98,7 @@ poi <- st_read(conn,   query = "select * from public.poi;")
 dbDisconnect(conn)
 ```
 
-234 poi
+239 poi
 
 
 ## Intersections

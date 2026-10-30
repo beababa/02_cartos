@@ -22,10 +22,14 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Traitement du fichier opendata personne morale V 2025
+Traitement du fichier opendata personne morale qui possède 
+
+On utilise également happign pour récupérer le cadastre (mise à jour semestrielle)
 
 
 https://www.data.gouv.fr/datasets/fichiers-des-locaux-et-des-parcelles-des-personnes-morales
+
+URL stable
 
 https://www.data.gouv.fr/api/1/datasets/r/56119729-9b73-421e-93aa-bab611349223
 
@@ -36,6 +40,7 @@ https://www.data.gouv.fr/api/1/datasets/r/56119729-9b73-421e-93aa-bab611349223
 ```{r}
 library(sf)
 library(mapsf)
+library(happign)
 ```
 
 
@@ -46,27 +51,57 @@ library(mapsf)
 ```{r}
 # lecture du fichier
 cadastrePM <- read.csv2("../data/gros/PM_25_NB_930.csv", fileEncoding = "UTF-8")
+# en date du 1er oct 2025
 str(cadastrePM)
 cadastrePM <- cadastrePM [cadastrePM$Nom.de.la.commune == 'BONDY',]
 cadastrePM$code <- paste0(cadastrePM$Section, cadastrePM$N..plan)
+cadastrePM$code
 ```
+
+Le code pas de zéro
+
+pour le cadastre, on utilise la version happign que l'on met à jour mensuellement
+
+
+```{r}
+cadastre <- get_apicarto_cadastre("93010" , type = "parcelle", source = "PCI")
+# PCI pour le parcellaire express maj semestrielle
+# 7166
+st_write(cadastre, "../data/cadastre.gpkg", "cadastreHappIGN_oct")
+```
+
 
 
 ```{r}
 couches <- (st_layers("../data/cadastre.gpkg"))
-cadastre <- st_read("../data/cadastre.gpkg", "cadastreHappign")
-cadastre$cad2
+cadastre <- st_read("../data/cadastre.gpkg", "cadastreHappIGN_oct")
+# suppression des zéros
+cadastre$sectionZ <- gsub("^0","",cadastre$section)
+cadastre$numeroZ <- gsub("^0+","",cadastre$numero)
+cadastre$numero
+cadastre$numeroZ
+cadastre$code <- paste0(cadastre$sectionZ, cadastre$numeroZ)
 cadastrePM$code <- gsub(" ", "", cadastrePM$code)
-jointure <- merge (cadastre [,"cad2"], cadastrePM, by.y=  "code", by.x = "cad2")
+cadastrePM$code
+cadastre$code
+jointure <- merge (cadastre [,"code"], cadastrePM, by =  "code")
 mf_map(cadastre)
 mf_map(jointure, add = T, col="red")
-st_write(jointure, "../data/cadastre.gpkg", "pmorale", add = T, delete_layer = T)
 ```
+
+Filtre
+
+```{r}
+names(jointure)
+noms <- c(1,7:10:13:25)
+st_write(jointure [,noms], "../data/cadastre.gpkg", "pmorale", add = T, delete_layer = T)
+```
+
 
 Stats
 
 ```{r}
-(length(jointure$cad2)/ length(cadastre$cad2))*100
+(length(jointure$code)/ length(cadastre$code))*100
 (sum(st_area(jointure))/ sum(st_area(cadastre)))*100
 ```
 
@@ -75,14 +110,83 @@ Stats
 
 
 
-# Personne morale et voirie
+# Personne morale = pb parcelles mitoyennes
 
 
-Si on intersecte p morale et voirie, que reste t il au niveau incohérence rue cadastrée / publique
+
 
 
 
 ```{r}
-st_intersection(jointure, cadastre)
+cadastre <- st_read("../data/cadastre.gpkg", "pmorale")
+
+# 1439
+agg <- aggregate(cadastre [,"code"], by = list(cadastre$Dénomination...par), length )
+# 497
+names(agg)[1:2] <- c("Dénomination...par", "nb_parcelles")
 ```
+
+attention eclate 2 fois pour que cela fonctionne
+
+```{r}
+eclate <- st_cast(agg, "MULTIPOLYGON", do_split =TRUE)
+eclate2 <- st_cast(eclate, "POLYGON", do_split = TRUE)
+mf_map(cadastre)
+mf_map(eclate, col ="burlywood1", add = T)
+mf_map(eclate2, col = "cadetblue2", add = T)
+```
+
+
+Recupération centroide pour verif et récup info attributaire
+
+```{r}
+eclate2
+ctr <- st_centroid(eclate2)
+ctr
+mf_map(eclate)
+mf_map(ctr, add = T)
+```
+
+
+
+```{r}
+# opération st_intersection trop coûteuse
+inter <- st_intersects( ctr, cadastre)
+# traduction : 1e pt intersecte 596e poly
+pt <- ctr [1,]
+poly <- cadastre [596,]
+mf_map(poly)
+mf_map(pt, add = T)
+nbPoly <- sapply(inter, length)
+poly <- sapply(inter, "[",1)
+eclate2$poly <- poly
+eclate2$nbPoly <- nbPoly
+cadastre$poly <- rownames(cadastre)
+
+tot <- merge(eclate2, st_drop_geometry(cadastre [,c("code", "poly")]), by = "poly")
+mf_map(cadastre)
+mf_map(tot, add = T, col = "cadetblue1")
+names(tot)
+tot <- tot [,c(2:5)]
+# pourquoi 3 ?
+
+```
+
+
+
+```{r}
+st_write(tot, "../data/cadastre.gpkg", "pmoraleFusion", delete_layer = T)
+```
+
+
+ctr et nbpoly 3
+
+
+```{r}
+intersection <- tot [tot$nbPoly == 3,]
+mf_map(intersection, col ="red")
+mf_map(cadastre, col = NA, add = T)
+mf_map(ctr, add = T)
+```
+
 

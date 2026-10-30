@@ -22,17 +22,15 @@ knitr::opts_chunk$set(warning = FALSE)
 
 # Objet
 
-Thématique cadastrale public / privé
+Chaque année, après réception des fichiers majic, on fait un sqlite avec le cadastre.
 
-Dans une la réunion du 14/04/2022, Laurent Soulié (Bobigny) a proposé une thématique intéressante
-sur la notion  public / privé autour du cadastre.
+on créee un cadastre.gpkg avec les couches les plus utiles :
 
-Etats, CT, bailleurs, Etablissement publics et instituionnales, autres (copro, personne morale non remarquable, personne physique et absence de donnée ou mutation en cours)
-
-
-Version du cadastre de juillet 2022 puis 2023 puis 2025
+- suppression du caractère vide dans le code
+- agrégation des propriétaires
 
 
+on met un double au niveau de la bdd locale
 
 ```{r}
 library(sf)
@@ -44,29 +42,37 @@ library(mapsf)
 
 
 ```{r, eval = T}
-chemin <-  paste0(Sys.getenv('HOME'), "/03_SIG/03_03_Data/")
+chemin <-  ( "S:/VOIRIE PLANS/05_SIG/03_SOCLE/cadastre2026/")
 #chemin <- "G:/Mon Drive/05_DATA"
 # changer le chemin chaque année
-chCadastre <- "03_SOCLE/cadastre2025.sqlite"
+base <- "cadastre.sqlite"
 ```
 
 
-Verif cadastre.gpkg
+Verif cadastre.gpkg (année précédénte) et archivage 2025
+
+(une seule fois)
 
 ```{r}
-couches <- (st_layers("../data/gros/cadastre.gpkg"))
-couches <- couches$name
+couches <- st_layers("../data/cadastre.gpkg")
+(couches <- couches$name)
 #couches importantes : 1, 9,14
 for (i in c(1:length(couches))){
-  tmp <- st_read("../data/gros/cadastre.gpkg", couches [i])
+  tmp <- st_read("../data/cadastre.gpkg", couches [i])
   assign(couches [i], tmp)
-  st_write(tmp, "../data/cadastreBase.gpkg", couches [i], delete_layer = T)
+  st_write(tmp, "../data/cadastreArchive.gpkg", paste0("2025_",couches [i]), delete_layer = T)
 }
 ```
 
+Suppression du cadastre.gpkg
+
+```{r}
+file.remove("../data/cadastre.gpkg")
+```
 
 
 
+fait au 29/10/2026
 
 
 # Nommage sections
@@ -75,17 +81,21 @@ objectif : faire une carte de flux.
 étape 1 : matrice de flux
 
 ```{r}
-section <- st_read(paste0(chemin, cadastre), "geo_section")
+section <- st_read(paste0(chemin, base), "geo_section")
 section$dest <- c(section$tex [-1],"")
-st_write (section, "../data/gros/cadastre.gpkg", "section", delete_layer = T)
+st_write (section, "../data/cadastre.gpkg", "section", delete_layer = T)
 pts <- st_centroid(section)
 st_coordinates(pts) [,"X"]
 section
+```
+
+
+```{r}
 png("../img/section.png", width = 800, height = 800, res = 100)
 mf_map(section, col = "antiquewhite1", border = "grey", lwd = 0.5)
 arrows (st_coordinates(pts) [-55,"X"], st_coordinates(pts) [-55,"Y"], st_coordinates(pts) [-1, "X"], st_coordinates (pts) [-1,"Y"],  col = "ivory", lwd = 4, length = 0.10 )
-mf_label(section, var = "section3", halo = T, bg = "white", cex = 1)
-mf_layout("Sections cadastrales : ordre", "DGST / oct 2025\nDGFiP, 2025")
+mf_label(section, var = "tex", halo = T, bg = "white", cex = 0.5)
+mf_layout("Sections cadastrales : ordre", "DGST / oct 2026\nDGFiP, 2026")
 dev.off()
 ```
 
@@ -102,12 +112,13 @@ Parcelle_info semble le fichier le plus intéressant : num parcelle et proprio
 
 ```{r}
 # attention chemin 03/SOCLE/cadastre2025.sqlite pour travail en mairie
-cadastre <- st_read(paste0(chemin,chCadastre), "parcelle_info")
+cadastre <- st_read(paste0(chemin,base), "parcelle_info")
 str(cadastre)
-cadastre <- st_read("../data/tt.gpkg", "parcelle")
 ```
 
-7124 obs
+7124 obs 
+
+7169 obs en  2026
 
 ## Code parcelle : suppression espace
 
@@ -127,7 +138,6 @@ La variable *propriétaire* contient toutes les informations intéressantes
 il faut éclater le champs propriétaire | et -, ce qu'on sauvegarde ds le cadastre original
 
 ```{r}
-cadastre <- cadastre2025
 # 1er coupure et on récupère uniquement le 1er proprio
 tmp <- strsplit(cadastre$proprietaire, split= "\\|")
 proprio <- sapply(tmp, "[",1)
@@ -136,7 +146,28 @@ tmp <- strsplit(proprio, split= "\\-")
 proprio <- sapply(tmp, "[",2)
 proprio <- gsub("^ | $",x =  proprio, "")
 cadastre$proprio <- proprio
-st_write(cadastre, "../data/cadastre.gpkg", "proprio2026", delete_layer = T)
+st_write(cadastre, "../data/cadastre.gpkg", "proprio", delete_layer = T)
+```
+
+
+## Carto autour 
+
+```{r}
+tab <- table(cadastre$proprio)
+head(tab [order(tab, decreasing = T)])
+cadastreBondy <- cadastre [grep( "COMMUNE DE BONDY", cadastre$proprio ),]
+cadastreBondyGrand <- cadastreBondy [cadastreBondy$contenance > 10000,]
+nb <- length(cadastreBondy$geo_parcelle)
+nb2 <- length(cadastreBondyGrand$geo_parcelle)
+```
+
+
+```{r}
+par(mfrow = c(1,2))
+mf_map(cadastreBondy, border = NA)
+mf_label(cadastreBondyGrand, "contenance", overlap = F)
+mf_layout(paste0(nb2, " parcelles (< 1 ha)\n total : ", nb, " parcelles"), "cadastre 2026")
+hist(st_area(cadastreBondy)/10000, main = paste0(nb2, " parcelles (< 1 ha)\n", nb, " parcelles"), xlab = "ha", ylab = "nb parcelles")
 ```
 
 
@@ -151,13 +182,15 @@ cadastre$nom <- sapply(chaine, "[",2)
 cadastre$nom [is.na(cadastre$proprietaire)] <- "inconnu"
 ```
 
+# Agregation parcelles
+
 
 Aggregation des parcelles (permet de gérer le pb des parcelles mitoyennes)
 
 ```{r, eval = F}
 agg <- aggregate(cadastre [, ("proprio")], by = list(cadastre$proprio), length)
 # on passe de 7028 à 5476
-# 2026 7124 5439
+# 2026 7169 5419
 names(agg)[1:2] <- c("nom", "nb_parcelles")
 agg$nom <- gsub("^\\s+|\\s+$", "", agg$nom)
 st_write(agg, "../data/cadastre.gpkg", "agg", delete_layer = T)
@@ -171,10 +204,12 @@ repères : gros mouvement de concentration !
 
 7126 à 5427 2025
 
-7124 à 5476 2026
+7169 à 5419 2026
+
+## Shéma concentration
 
 ```{r}
-repere <- read.table("../data/cadastre.csv", header =  T, row.names = 1, sep = ";", fileEncoding = "UTF-8")
+repere <- read.csv("../data/cadastre.csv", header =  T, row.names = 1, sep = ",", fileEncoding = "UTF-8")
 class(repere)
 knitr::kable(repere)
 repere <- as.matrix(repere)
@@ -188,6 +223,24 @@ lines(c(0,8000),c(0,8000))
 repere [,1] / repere [,2]
 ```
 
+## Eclatement pour disjoindre les non mitoyennes
+
+
+```{r}
+cadastre <- st_read("../data/cadastre.gpkg", "proprio")
+agg <- st_read("../data/cadastre.gpkg", "agg")
+```
+
+```{r}
+eclate <- st_cast(agg, "POLYGON")
+ctr <- st_centroid(cadastre)
+inter <- st_intersection(eclate, ctr)
+jointure <- merge (cadastre [,c("code")], st_drop_geometry(inter), by ="code")
+jointure <- jointure [,c("code", "nb_parcelles","proprio", "adresse", "surface_geo", "contenance", "parcelle_batie")]
+st_write(jointure, "../data/cadastre.gpkg","aggParcelleEclate", delete_layer = T)
+```
+
+7154 parcelles / 7169 cadastre de départ
 
 
 # Personnes morales : propriété ville
@@ -195,43 +248,57 @@ repere [,1] / repere [,2]
 On repart de parcelle_info donc proprio
 
 ```{r}
-cadastre <- st_read("../data/cadastre.gpkg", "proprio2026")
+cadastre <- st_read("../data/cadastre.gpkg", "proprio")
 ind <- grep("COMMUNE DE BONDY", cadastre$proprio)
 parcellesMairie <- cadastre [ind,]
-png("../img/cadastre2025parcellesMairie.png", width = 6000, height = 6000, res = 800)
+png("../img/cadastre2026parcellesMairie.png", width = 6000, height = 6000, res = 800)
 mf_init(parcellesMairie)
 mf_map(cadastre, col="antiquewhite1", border=NA, add =T)
 mf_map(parcellesMairie, type="typo", var = "parcelle_batie", add = T, border=NA)
 titre <- paste0("Propriétés mairie (",length(parcellesMairie$geo_parcelle) , " parcelles)")
-mf_layout(titre, credits = "Cadastre 2025\nMairie / DGST\nSeptembre 2025")
+mf_layout(titre, credits = "Cadastre 2026\nMairie / DGST\nOct 2026")
 #mf_label(parcellesMairie, "code", overlap = F, cex=0.5)
 dev.off()
 ```
 
-![](../img/cadastre2025parcellesMairie.png)
+![](../img/cadastre2026parcellesMairie.png)
 
+## Export
 
 ```{r}
 parcellesMairie
 export <- cadastre [,c("code", "proprio", "adresse", "parcelle_batie"), drop=T]
 write.csv(export, "../data/parcelleMairie.csv")
+table(parcellesMairie$parcelle_batie, useNA = "always")
 ```
 
 
-fonction des parcelles à partir des POI
+## Fonction des parcelles à partir des POI
+
+
+### Récupération POI dernière version (bdd)
 
 ```{r}
-fic <- "../data/tt.gpkg"
-st_layers(fic) 
-poi <- st_read(fic, "poi")
-names(poi)
+library(RPostgreSQL)
+library(rpostgis)
+conn <- RPostgreSQL::dbConnect(drv="PostgreSQL", dbname = "bondy", user="postgres", password="postgres")
+pgPostGIS(conn)
+pgListGeom(conn)
+poi <- st_read(conn,   query = "select * from public.poi;")
+dbDisconnect(conn)
+```
+
+
+```{r}
+cadastre <- st_read("../data/cadastre.gpkg", "proprio")
 inter <- st_intersection(cadastre, poi)
-table(parcellesMairie$parcelle_batie, useNA = "always")
+# 210
 names(inter)
 inter <- inter [,c("code", "title", "adresse","categorie"), drop=T]
-joint <- merge(parcellesMairie [,c("code", "adresse", "parcelle_batie")], all.x=T ,inter, by="code")
-st_write(joint, "../data/gros/cadastre.gpkg", "parcelleMairie", delete_layer = T)
+joint <- merge(cadastre [,c("code", "adresse", "parcelle_batie", "proprio")], inter, by="code")
+st_write(joint, "../data/cadastre.gpkg", "interCadastrePOI", delete_layer = T)
 ```
+
 
 
 
@@ -539,3 +606,38 @@ st_write(jointure, "../data/cadastre.gpkg", "pmorale", delete_layer = T)
 ```
 
 5583 enregistrement
+
+
+# Enregistrement dans bdd locale de cadastre.gpkg
+
+```{r}
+library(RPostgreSQL)
+library(rpostgis)
+conn <- RPostgreSQL::dbConnect(drv="PostgreSQL", dbname = "bondy", user="postgres", password="postgres")
+pgPostGIS(conn)
+bdd <- pgListGeom(conn)
+bdd$table_name
+bdd [bdd$schema_name == "cadastre",]```
+
+
+
+```{r}
+st_layers("../data/cadastre.gpkg")
+enregistrerBDD <- function(couche){
+    tmp <- st_read("../data/cadastre.gpkg", couche)
+    assign(couche, tmp)
+    st_write(dsn = conn, obj = tmp, 
+         layer = c("cadastre",  couche ), delete_layer = TRUE)
+}
+enregistrerBDD("agg")
+enregistrerBDD("proprio")
+enregistrerBDD("aggParcelleEclate")
+enregistrerBDD("interCadastrePOI")
+```
+
+on vérifie
+
+```{r}
+dbDisconnect(conn)
+```
+
