@@ -1,0 +1,2451 @@
+"","m57_id","m57_lib","nb"
+"1","1","COMPTES DE CAPITAUX 1",21
+"2","10","DOTATIONS, FONDS DIVERS ET RÉSERVES",35
+"3","102","Dotations et fonds d’investissement",35
+"4","1021","Dotations",9
+"5","1022","Fonds d’investissement",22
+"6","10222","F.C.T.V.A.",10
+"7","10223","TICPE 2e part",13
+"8","10226","Taxe d’aménagement",18
+"9","10227","Versement pour sous densité",27
+"10","10228","Autres fonds d’investissement",29
+"11","10229","Reprise sur F.C.T.V.A. et autres fonds d’investissement",55
+"12","102291","Reprise sur F.C.T.V.A.",22
+"13","102296","Reprise sur taxe d’aménagement",30
+"14","102297","Reprise sur versement pour sous densité",39
+"15","102298","Reprise sur autres fonds d’investissement",41
+"16","1025","Dons et legs en capital",23
+"17","10251","Dons et legs en capital",23
+"18","10259","Reprise sur dons et legs en capital",35
+"19","1027","Mise à disposition (chez le bénéficiaire)2",42
+"20","103","Plan de relance FCTVA",21
+"21","106","Réserves",8
+"22","1064","Réserve DMTO2",13
+"23","1068","Excédents de fonctionnement capitalisés",39
+"24","11","REPORT À NOUVEAU (solde créditeur ou débiteur)2",47
+"25","110","Report à nouveau (solde créditeur)",34
+"26","119","Report à nouveau (solde débiteur)",33
+"27","12","RÉSULTAT DE L’EXERCICE (Excédentaire ou déficitaire)2",53
+"28","13","SUBVENTIONS D’INVESTISSEMENT",28
+"29","131","Subventions d’investissement rattachées aux actifs amortissables",64
+"30","1311","État et établissements nationaux",32
+"31","1312","Régions",7
+"32","1313","Départements",12
+"33","1314","Communes",8
+"34","13141","Communes membres du GFP",23
+"35","13146","Attributions de compensation d’investissement",45
+"36","13148","Autres communes",15
+"37","1315","Groupements de collectivités et collectivités à statut particulier",66
+"38","13151","GFP de rattachement",19
+"39","13156","Attributions de compensation d’investissement",45
+"40","13158","Autres groupements",18
+"41","1316","Autres établissements publics locaux",36
+"42","1317","Fonds européens",15
+"43","13171","Fonds social européen",21
+"44","13172","FEDER",5
+"45","13173","FEADER",6
+"46","13178","Autres fonds européens",22
+"47","1318","Autres",6
+"48","132","Subventions d’investissement rattachées aux actifs non amortissables",68
+"49","1321","État et établissements nationaux",32
+"50","1322","Régions",7
+"51","1323","Départements",12
+"52","1324","Communes",8
+"53","13241","Communes membres du GFP",23
+"54","13246","Attributions de compensation d’investissement",45
+"55","13248","Autres communes",15
+"56","1325","Groupements de collectivités et collectivités à statut particulier",66
+"57","13251","GFP de rattachement",19
+"58","13256","Attributions de compensation d’investissement",45
+"59","13258","Autres groupements",18
+"60","1326","Autres établissements publics locaux",36
+"61","1327","Fonds européens",15
+"62","13271","Fonds social européen",21
+"63","13272","FEDER",5
+"64","13273","FEADER",6
+"65","13278","Autres fonds européens",22
+"66","1328","Autres",6
+"67","133","Fonds affectés à l’équipement amortissable",42
+"68","1331","Dotations à l’équipement",24
+"69","13311","DGE",3
+"70","13312","Dotation de construction et d’équipement scolaire",49
+"71","133121","Dotation départementale d’équipement des collèges",49
+"72","133122","Dotation régionale d’équipement scolaire",40
+"73","133123","Dotation globale de construction et d’équipement scolaire (COM)",63
+"74","13313","Dotation de soutien à l’investissement des départements",55
+"75","13314","Fonds d’aide à l’investissement des SDIS",40
+"76","1333","Fonds spécifiques – Région Île-de-France",40
+"77","13332","Taxe pour création de locaux à usage de bureaux, de locaux commerciaux et de locaux de (TCBCE)  ",86
+"79","13333","Taxe complémentaire à la taxe locale d’équipement",49
+"80","13334","Taxe sur les surfaces de stationnement",38
+"81","1334","Contributions locales temporaires",33
+"82","1335","Amendes de radars automatiques et amendes de police",51
+"83","1336","Fonds communaux et intercommunaux",33
+"84","13361","Dotation d’équipement des territoires ruraux",44
+"85","13362","Dotation de soutien à l’investissement local",44
+"86","1337","Fonds régional pour le développement et l’emploi (outre-mer)",60
+"87","1338","Autres",6
+"88","134","Fonds affectés à l’équipement non amortissable",46
+"89","1341","Dotations à l’équipement",24
+"90","13411","DGE",3
+"91","13413","Dotation de soutien à l’investissement des départements",55
+"92","1344","Contributions locales temporaires",33
+"93","1345","Amendes de radars automatiques et amendes de police",51
+"94","1346","Fonds communaux et intercommunaux",33
+"95","13461","Dotation d’équipement des territoires ruraux",44
+"96","13462","Dotation de soutien à l’investissement local",44
+"97","1347","Fonds régional pour le développement et l’emploi (outre-mer)",60
+"98","1348","Autres",6
+"99","138","Autres subventions d’investissement non transférables",53
+"100","1381","État et établissements nationaux",32
+"101","1382","Régions",7
+"102","1383","Départements",12
+"103","1384","Communes",8
+"104","1385","Groupements de collectivités et collectivités à statut particulier",66
+"105","1386","Autres établissements publics locaux",36
+"106","1387","Fonds européens",15
+"107","13871","Fonds social européen",21
+"108","13872","FEDER",5
+"109","13873","FEADER",6
+"110","13878","Autres fonds européens",22
+"111","1388","Autres",6
+"112","139","Subventions d’investissement transférées au compte de résultat",62
+"113","1391","Subventions d’investissement rattachées aux actifs amortissables (à subdiviser comme le compte 131)",99
+"114","1393","Fonds affectés à l’équipement (à subdiviser comme le compte 133)",64
+"115","15","PROVISIONS POUR RISQUES ET CHARGES",34
+"116","151","Provisions pour risques",23
+"117","1511","Provisions pour litiges et contentieux",38
+"118","15111","Provisions pour litiges et contentieux (non budgétaire)",55
+"119","15112","Provisions pour litiges et contentieux (budgétaire)",51
+"120","1515","Provisions pour pertes de change",32
+"121","15151","Provisions pour pertes de change (non budgétaire)",49
+"122","15152","Provisions pour pertes de change (budgétaire)",45
+"123","1517","Provisions pour garanties d’emprunt",35
+"124","15171","Provisions pour garanties d’emprunts (non budgétaire)",53
+"125","15172","Provisions pour garanties d’emprunts (budgétaire)",49
+"126","1518","Autres provisions pour risques",30
+"127","15181","Autres provisions pour risques (non budgétaire)",47
+"128","15182","Autres provisions pour risques (budgétaire)",43
+"129","152","Provisions pour risques et charges sur emprunts",47
+"130","1521","Provisions pour risques et charges sur emprunts (non budgétaire)",64
+"131","1522","Provisions pour risques et charges sur emprunts (budgétaire)",60
+"132","154","Provisions pour compte épargne temps",36
+"133","1541","Provisions pour compte épargne temps (non budgétaire)",53
+"134","1542","Provisions pour compte épargne temps (budgétaire)",49
+"135","157","Provisions pour charges à répartir sur plusieurs exercices",58
+"136","1572","Provisions pour gros entretien ou grandes révisions",51
+"137","15721","Provisions pour gros entretien ou grandes révisions (non budgétaire)",68
+"138","15722","Provisions pour gros entretien ou grandes révisions (budgétaire)",64
+"139","158","Autres provisions pour risques et charges",41
+"140","1581","Autres provisions pour charges (non budgétaire)",47
+"141","1582","Autres provisions pour charges (budgétaire)",43
+"142","16","EMPRUNTS ET DETTES ASSIMILÉES",29
+"143","163","Emprunts obligataires",21
+"144","1631","Emprunts obligataires",21
+"145","16311","Emprunts obligataires remboursables in fine",43
+"146","16318","Autres emprunts obligataires",28
+"147","1632","Opérations sur capital non échu des emprunts obligataires remboursables in fine – Anticipation du en capital  ",97
+"149","164","Emprunts auprès des établissements financiers",45
+"150","1641","Emprunts en euros",17
+"151","1643","Emprunts en devises",19
+"152","1644","Emprunts assortis d’une option de tirage sur ligne de trésorerie",64
+"153","16441","Opérations afférentes à l’emprunt",33
+"154","16449","Opérations afférentes à l’option de tirage sur ligne de trésorerie",66
+"155","1645","Remboursements temporaires sur emprunts auprès des établissements financiers",76
+"156","16451","Remboursements temporaires sur emprunts en euros",48
+"157","16452","Remboursements temporaires sur emprunts en devises",50
+"158","165","Dépôts et cautionnements reçus",30
+"159","166","Refinancement de dette",22
+"160","167","Emprunts et dettes assortis de conditions particulières",55
+"161","1671","Avances consolidées du Trésor",29
+"162","1672","Emprunts sur comptes spéciaux du Trésor",39
+"163","1675","Dettes afférentes aux M.E.T.P et P.P.P.",39
+"164","1676","Dettes envers locataires-acquéreurs",35
+"165","1678","Autres emprunts et dettes",25
+"166","168","Autres emprunts et dettes assimilées",36
+"167","1681","Autres emprunts",15
+"168","16811","Organismes d’assurances",23
+"169","16812","Entreprises non financières",27
+"170","16813","Particuliers",12
+"171","16814","Étranger",8
+"172","16818","Autres prêteurs",15
+"173","1682","Bons à moyen terme négociables",30
+"174","1687","Autres dettes",13
+"175","16871","État et établissements nationaux",32
+"176","16872","Régions",7
+"177","16873","Départements",12
+"178","16874","Communes",8
+"179","168741","Communes membres du GFP",23
+"180","168748","Autres communes",15
+"181","16875","Groupements de collectivités et collectivités à statut particulier",66
+"182","168751","GFP de rattachement",19
+"183","168758","Autres groupements",18
+"184","16876","Autres établissements publics locaux",36
+"185","16877","Budget communautaire et Fonds européens",39
+"186","168771","Fonds social européen",21
+"187","168772","FEDER",5
+"188","168778","Autres fonds européens",22
+"189","16878","Autres organismes et particuliers",33
+"190","1688","Intérêts courus2",16
+"191","16883","Intérêts courus sur emprunts obligataires",41
+"192","16884","Intérêts courus sur emprunts auprès des établissements financiers",65
+"193","16888","Intérêts sur autres emprunts et dettes assimilées",49
+"194","169","Primes de remboursement des obligations",39
+"195","18","COMPTE DE LIAISON : AFFECTATION (BUDGETS ANNEXES – RÉGIES NON PERSONNALISÉES)",77
+"196","181","Compte de liaison : affectation à …(budgets annexes – régies non personnalisées)",80
+"197","19","NEUTRALISATIONS ET RÉGULARISATIONS D’OPÉRATIONS",47
+"198","192","Plus ou moins-values sur cessions d’immobilisations",51
+"199","193","Autres neutralisations et régularisations d’opérations2",55
+"200","194","Provisions pour risques et charges sur emprunts – Stock à la date de première application2",90
+"201","197","Neutralisation des provisions et dépréciations",46
+"202","198","Neutralisation des amortissements",33
+"203","2","COMPTES D’IMMOBILISATIONS2",26
+"204","20","IMMOBILISATIONS INCORPORELLES",29
+"205","202","Frais d’études, d’élaboration, de modifications et de révisions des documents d’urbanisme",89
+"206","203","Frais d’études, de recherche et de développement et frais d’insertion",69
+"207","2031","Frais d’études",14
+"208","2032","Frais de recherche et de développement",38
+"209","2033","Frais d’insertion",17
+"210","204","Subventions d’équipement versées",32
+"211","2041","Subventions d’équipement aux organismes publics",47
+"212","20411","État",4
+"213","204111","Biens mobiliers, matériel et études",35
+"214","204112","Bâtiments et installations",26
+"215","204113","Projets d’infrastructures d’intérêt national",44
+"216","204114","Voirie",6
+"217","204115","Monuments historiques",21
+"218","20412","Régions",7
+"219","204121","Biens mobiliers, matériel et études",35
+"220","204122","Bâtiments et installations",26
+"221","204123","Projets d’infrastructures d’intérêt national",44
+"222","20413","Départements",12
+"223","204131","Biens mobiliers, matériel et études",35
+"224","204132","Bâtiments et installations",26
+"225","204133","Projets d’infrastructures d’intérêt national",44
+"226","20414","Communes",8
+"227","204141","Communes membres du GFP",23
+"228","2041411","Biens mobiliers, matériel et études",35
+"229","2041412","Bâtiments et installations",26
+"230","2041413","Projets d’infrastructures d’intérêt national",44
+"231","204148","Autres communes",15
+"232","2041481","Biens mobiliers, matériel et études",35
+"233","2041482","Bâtiments et installations",26
+"234","2041483","Projets d’infrastructures d’intérêt national",44
+"235","20415","Groupements de collectivités, EPL et collectivités à statut particulier",71
+"236","204151","GFP de rattachement",19
+"237","2041511","Biens mobiliers, matériel et études",35
+"238","2041512","Bâtiments et installations",26
+"239","2041513","Projets d’infrastructures d’intérêt national",44
+"240","204153","EPL et services rattachés",25
+"241","2041531","Caisse des écoles",17
+"242","20415311","Biens mobiliers, matériel et études",35
+"243","20415312","Bâtiments et installations",26
+"244","20415313","Projets d’infrastructures d’intérêt national",44
+"245","2041532","CCAS",4
+"246","20415321","Biens mobiliers, matériel et études",35
+"247","20415322","Bâtiments et installations",26
+"248","20415323","Projets d’infrastructures d’intérêt national",44
+"249","2041533","A caractère administratif",25
+"250","20415331","Biens mobiliers, matériel et études",35
+"251","20415332","Bâtiments et installations",26
+"252","20415333","Projets d’infrastructures d’intérêt national",44
+"253","2041534","A caractère industriel et commercial",36
+"254","20415341","Biens mobiliers, matériel et études",35
+"255","20415342","Bâtiments et installations",26
+"256","20415343","Projets d’infrastructures d’intérêt national",44
+"257","204158","Autres groupements et collectivités à statut particulier",56
+"258","2041581","Biens mobiliers, matériel et études",35
+"259","2041582","Bâtiments et installations",26
+"260","2041583","Projets d’infrastructures d’intérêt national",44
+"261","20417","Organismes de transport",23
+"262","204171","SNCF",4
+"263","2041711","Biens mobiliers, matériel et études",35
+"264","2041712","Bâtiments et installations",26
+"265","2041713","Projets d’infrastructures d’intérêt national",44
+"266","204172","SNCF Réseau",11
+"267","2041721","Biens mobiliers, matériel et études",35
+"268","2041722","Bâtiments et installations",26
+"269","2041723","Projets d’infrastructures d’intérêt national",44
+"270","204178","Autres",6
+"271","2041781","Biens mobiliers, matériel et études",35
+"272","2041782","Bâtiments et installations",26
+"273","2041783","Projets d’infrastructures d’intérêt national",44
+"274","20418","Organismes publics divers",25
+"275","204181","Biens mobiliers, matériel et études",35
+"276","204182","Bâtiments et installations",26
+"277","204183","Projets d’infrastructures d’intérêt national",44
+"278","2042","Subventions d’équipement aux personnes de droit privé",53
+"279","20421","Biens mobiliers, matériel et études",35
+"280","20422","Bâtiments et installations",26
+"281","20423","Projets d’infrastructures d’intérêt national",44
+"282","2043","Subventions aux établissements scolaires publics pour leurs dépenses d’équipement",81
+"283","20431","Biens mobiliers, matériel et études",35
+"284","20432","Bâtiments et installations",26
+"285","20433","Projets d’infrastructures d’intérêt national",44
+"286","2044","Subventions d’équipement en nature",34
+"287","20441","Organismes publics",18
+"288","204411","Biens mobiliers, matériel et études",35
+"289","204412","Bâtiments et installations",26
+"290","204413","Projets d’infrastructures d’intérêt national",44
+"291","20442","Personnes de droit privé",24
+"292","204421","Biens mobiliers, matériel et études",35
+"293","204422","Bâtiments et installations",26
+"294","204423","Projets d’infrastructures d’intérêt national",44
+"295","2045","Subventions d'équipement versées aux tiers (fonds européens)",60
+"296","2046","Attributions de compensation d’investissement",45
+"297","205","Concessions et droits similaires, brevets, licences, marques, procédés, droits et valeurs similaires",100
+"298","2051","Concessions et droits similaires",32
+"299","2053","Droit de superficie",19
+"300","208","Autres immobilisations incorporelles",36
+"301","2087","Immobilisations incorporelles reçues au titre d’une mise à disposition",70
+"302","2088","Autres immobilisations incorporelles",36
+"303","21","IMMOBILISATIONS CORPORELLES",27
+"304","211","Terrains",8
+"305","2111","Terrains nus",12
+"306","2112","Terrains de voirie",18
+"307","2113","Terrains aménagés autres que voirie",35
+"308","2114","Terrains de gisement",20
+"309","2115","Terrains bâtis",14
+"310","2116","Cimetières",10
+"311","2117","Bois et forêts",14
+"312","2118","Autres terrains",15
+"313","212","Agencements et aménagements de terrains",39
+"314","2121","Plantations d’arbres et d’arbustes",34
+"315","2128","Autres agencements et aménagements",34
+"316","213","Constructions",13
+"317","2131","Bâtiments publics",17
+"318","21311","Bâtiments administratifs",24
+"319","21312","Bâtiments scolaires",19
+"320","21313","Bâtiments sociaux et médico-sociaux",35
+"321","21314","Bâtiments culturels et sportifs",31
+"322","21315","Centres d’incendie et de secours",32
+"323","21316","Équipements du cimetière",24
+"324","21318","Autres bâtiments publics",24
+"325","2132","Bâtiments privés",16
+"326","21321","Immeubles de rapport",20
+"327","21328","Autres bâtiments privés",23
+"328","2135","Installations générales, agencements, aménagements des constructions",68
+"329","21351","Bâtiments publics",17
+"330","21352","Bâtiments privés",16
+"331","2138","Autres constructions",20
+"332","214","Constructions sur sol d’autrui",30
+"333","2141","Bâtiments publics",17
+"334","2142","Immeubles de rapport",20
+"335","2143","Droit de superficie",19
+"336","2145","Installations générales, agencements, aménagements",50
+"337","2148","Autres constructions",20
+"338","215","Installations, matériel et outillage techniques",47
+"339","2151","Réseaux de voirie",17
+"340","2152","Installations de voirie",23
+"341","2153","Réseaux divers",14
+"342","21531","Réseaux de transmission",23
+"343","21532","Réseaux d’alerte",16
+"344","21533","Réseaux câblés",14
+"345","21534","Réseaux d’électrification",25
+"346","21538","Autres réseaux",14
+"347","2154","Voies navigables",16
+"348","2156","Matériel et outillage d’incendie et de défense civile",53
+"349","21561","Matériel roulant",16
+"350","21568","Autre matériel et outillage d’incendie et de défense civile",59
+"351","2157","Matériel et outillage technique",31
+"352","21571","Matériel ferroviaire",20
+"353","21572","Matériel technique scolaire",27
+"354","21573","Matériel et outillage de voirie",31
+"355","215731","Matériel roulant",16
+"356","215738","Autre matériel et outillage de voirie",37
+"357","21574","Installations, matériel et outillage techniques des caisses des écoles",70
+"358","215741","Installations, matériel et outillage des cantines scolaires",59
+"359","215742","Installations, matériel et outillage des colonies de vacances",61
+"360","21578","Autre matériel technique",24
+"361","2158","Autres installations, matériel et outillage techniques",54
+"362","216","Biens historiques et culturels",30
+"363","2161","Biens historiques et culturels immobiliers",42
+"364","21611","Biens sous-jacents",18
+"365","21612","Dépenses ultérieures immobilisées",33
+"366","2162","Biens historiques et culturels mobiliers",40
+"367","21621","Biens sous-jacents",18
+"368","21622","Dépenses ultérieures immobilisées",33
+"369","217","Immobilisations reçues au titre d’une mise à disposition",56
+"370","2171","Terrains",8
+"371","21711","Terrains nus",12
+"372","21712","Terrains de voirie",18
+"373","21713","Terrains aménagés autres que voirie",35
+"374","21714","Terrains de gisement",20
+"375","21715","Terrains bâtis",14
+"376","21717","Bois et forêts",14
+"377","21718","Autres terrains",15
+"378","2172","Agencements et aménagements de terrains",39
+"379","21721","Plantations d’arbres et arbustes",32
+"380","21728","Autres agencements et aménagements",34
+"381","2173","Constructions",13
+"382","21731","Bâtiments publics",17
+"383","217311","Bâtiments administratifs",24
+"384","217312","Bâtiments scolaires",19
+"385","217313","Bâtiments sociaux et médico-sociaux",35
+"386","217314","Bâtiments culturels et sportifs",31
+"387","217315","Centres d’incendie et de secours",32
+"388","217318","Autres bâtiments publics",24
+"389","21732","Bâtiments privés",16
+"390","217321","Immeubles de rapport",20
+"391","217328","Autres bâtiments privés",23
+"392","21735","Installations générales, agencements, aménagements des constructions",68
+"393","21738","Autres constructions",20
+"394","2174","Constructions sur sol d’autrui",30
+"395","21741","Bâtiments publics",17
+"396","21742","Immeubles de rapport",20
+"397","21745","Installations générales, agencements, aménagements",50
+"398","21748","Autres constructions",20
+"399","2175","Installations, matériel et outillage techniques",47
+"400","21751","Réseaux de voirie",17
+"401","21752","Installations de voirie",23
+"402","21753","Réseaux divers",14
+"403","217531","Réseaux de transmission",23
+"404","217532","Réseaux d’alerte",16
+"405","217533","Réseaux câblés",14
+"406","217534","Réseaux d’électrification",25
+"407","217538","Autres réseaux",14
+"408","21754","Voies navigables",16
+"409","21756","Matériel et outillage d’incendie et de défense civile",53
+"410","217561","Matériel roulant",16
+"411","217568","Autre matériel et outillage d’incendie et de défense civile",59
+"412","21757","Matériel et outillage techniques",32
+"413","217571","Matériel ferroviaire",20
+"414","217572","Matériel technique scolaire",27
+"415","217573","Matériel et outillage de voirie",31
+"416","2175731","Matériel roulant",16
+"417","2175738","Autre matériel et outillage de voirie",37
+"418","217578","Autre matériel technique",24
+"419","21758","Autres installations, matériel et outillage techniques",54
+"420","2176","Biens historiques et culturels",30
+"421","21761","Biens historiques et culturels immobiliers",42
+"422","217611","Biens sous-jacents",18
+"423","217612","Dépenses ultérieures immobilisées",33
+"424","21762","Biens historiques et culturels mobiliers",40
+"425","217621","Biens sous-jacents",18
+"426","217622","Dépenses ultérieures immobilisées",33
+"427","2178","Autres immobilisations corporelles reçues au titre d’une mise à disposition",75
+"428","21782","Matériel de transport",21
+"429","217821","Matériel de transport ferroviaire",33
+"430","217828","Autres matériels de transport",29
+"431","21783","Matériel informatique",21
+"432","217831","Matériel informatique scolaire",30
+"433","217838","Autre matériel informatique",27
+"434","21784","Matériel de bureau et mobilier",30
+"435","217841","Matériel de bureau et mobilier scolaires",40
+"436","217848","Autres matériels de bureau et mobiliers",39
+"437","21785","Matériel de téléphonie",22
+"438","21786","Cheptel",7
+"439","21788","Autres",6
+"440","218","Autres immobilisations corporelles",34
+"441","2181","Installations générales, agencements et aménagements divers",59
+"442","2182","Matériel de transport",21
+"443","21821","Matériel de transport ferroviaire",33
+"444","21828","Autres matériels de transport",29
+"445","2183","Matériel informatique",21
+"446","21831","Matériel informatique scolaire",30
+"447","21838","Autre matériel informatique",27
+"448","2184","Matériel de bureau et mobilier",30
+"449","21841","Matériel de bureau et mobilier scolaires",40
+"450","21848","Autres matériels de bureau et mobiliers",39
+"451","2185","Matériel de téléphonie",22
+"452","2186","Cheptel",7
+"453","2188","Autres",6
+"454","22","IMMOBILISATIONS REÇUES EN AFFECTATION",37
+"455","221","Terrains",8
+"456","2211","Terrains nus",12
+"457","2212","Terrains de voirie",18
+"458","2213","Terrains aménagés autres que voirie",35
+"459","2214","Terrains de gisement",20
+"460","2215","Terrains bâtis",14
+"461","2217","Bois et forêts",14
+"462","2218","Autres terrains",15
+"463","222","Agencements et aménagements de terrains",39
+"464","2221","Plantations d’arbres et arbustes",32
+"465","2228","Autres agencements et aménagements",34
+"466","223","Constructions",13
+"467","2231","Bâtiments publics",17
+"468","22311","Bâtiments administratifs",24
+"469","22312","Bâtiments scolaires",19
+"470","22313","Bâtiments sociaux et médico-sociaux",35
+"471","22314","Bâtiments culturels et sportifs",31
+"472","22315","Centres d’incendie et de secours",32
+"473","22318","Autres bâtiments publics",24
+"474","2232","Bâtiments privés",16
+"475","22321","Immeubles de rapport",20
+"476","22328","Autres bâtiments privés",23
+"477","2235","Installations générales, agencements, aménagements des constructions",68
+"478","2238","Autres constructions",20
+"479","224","Constructions sur sol d’autrui",30
+"480","2241","Bâtiments publics",17
+"481","2242","Immeubles de rapport",20
+"482","2245","Installations générales, agencements, aménagements",50
+"483","2248","Autres constructions",20
+"484","225","Installations, matériel et outillage techniques",47
+"485","2251","Réseaux de voirie",17
+"486","2252","Installations de voirie",23
+"487","2253","Réseaux divers",14
+"488","22531","Réseaux de transmission",23
+"489","22532","Réseaux d’alerte",16
+"490","22533","Réseaux câblés",14
+"491","22534","Réseaux d’électrification",25
+"492","22538","Autres réseaux",14
+"493","2254","Voies navigables",16
+"494","2256","Matériel et outillage d’incendie et de défense civile",53
+"495","2257","Matériel et outillage techniques",32
+"496","22571","Matériel ferroviaire",20
+"497","22572","Matériel technique scolaire",27
+"498","22573","Matériel et outillage de voirie",31
+"499","225731","Matériel roulant",16
+"500","225738","Autre matériel et outillage de voirie",37
+"501","22578","Autre matériel technique",24
+"502","2258","Autres installations, matériel et outillage techniques",54
+"503","226","Biens historiques et culturels",30
+"504","2261","Biens historiques et culturels immobiliers",42
+"505","22611","Biens sous-jacents",18
+"506","22612","Dépenses ultérieures immobilisées",33
+"507","2262","Biens historiques et culturels mobiliers",40
+"508","22621","Biens sous-jacents",18
+"509","22622","Dépenses ultérieures immobilisées",33
+"510","228","Autres immobilisations corporelles",34
+"511","2281","Installations générales, agencements et aménagements divers",59
+"512","2282","Matériel de transport",21
+"513","22821","Matériel de transport ferroviaire",33
+"514","22828","Autres matériels de transport",29
+"515","2283","Matériel informatique",21
+"516","22831","Matériel informatique scolaire",30
+"517","22838","Autre matériel informatique",27
+"518","2284","Matériel de bureau et mobilier",30
+"519","22841","Matériel de bureau et mobilier scolaire",39
+"520","22848","Autres matériels de bureau et mobiliers",39
+"521","2285","Matériel de téléphonie",22
+"522","2286","Cheptel",7
+"523","2288","Autres",6
+"524","229","Droits de l’affectant1",22
+"525","2291","État",4
+"526","2292","Région",6
+"527","2293","Département",11
+"528","2294","Communes",8
+"529","2295","EPCI",4
+"530","2296","Autres groupements de collectivités",35
+"531","2298","Autres",6
+"532","23","IMMOBILISATIONS EN COURS",24
+"533","231","Immobilisations corporelles en cours",36
+"534","2312","Agencements et aménagements de terrains",39
+"535","2313","Constructions",13
+"536","2314","Constructions sur sol d'autrui",30
+"537","2315","Installations, matériel et outillage techniques",47
+"538","2316","Restauration des biens historiques et culturels",47
+"539","2317","Immobilisations reçues au titre d’une mise à disposition",56
+"540","2318","Autres immobilisations corporelles",34
+"541","232","Immobilisations incorporelles en cours",38
+"542","2324","Subventions d’équipement versées",32
+"543","2328","Autres immobilisations incorporelles",36
+"544","235","Part investissement P.P.P.",26
+"545","236","Avances versées aux E.P.L.E. sur immobilisations",48
+"546","237","Avances versées sur commandes d’immobilisations incorporelles",61
+"547","238","Avances versées sur commandes d’immobilisations corporelles",59
+"548","24","IMMOBILISATIONS AFFECTÉES, CONCÉDÉES, AFFERMÉES OU MISES À DISPOSITION1",71
+"549","241","Mises en concession ou en affermage",35
+"550","2411","Réseaux",7
+"551","2418","Autres mises en concession",26
+"552","242","Mises à disposition dans le cadre du transfert de compétences",61
+"553","2421","de la collectivité territoriale",31
+"554","2423","d’établissements publics de coopération intercommunale",54
+"555","2424","des services départementaux d’incendie et de secours",52
+"556","2428","autres",6
+"557","243","Mises en affectation à une régie dotée de la personnalité morale et de l’autonomie financière",93
+"558","244","Immobilisations mises en affectation à un centre communal d’action sociale",74
+"559","245","Immobilisations mises en affectation à une caisse des écoles",60
+"560","246","Mises en affectation à un établissement public de coopération intercommunale, une entente ou un syndicat #VALEUR!  ",104
+"562","248","Autres mises en affectation",27
+"563","249","Droits du remettant",19
+"564","2491","Mises en concession ou en affermage",35
+"565","2492","Mises à disposition dans le cadre du transfert de compétences",61
+"566","2493","Mises en affectation à une régie dotée de la personnalité morale et de l’autonomie financière",93
+"567","2494","Mises en affectation à un centre communal d’action sociale",58
+"568","2495","Mises en affectation à une caisse des écoles",44
+"569","2496","Mises en affectation à un établissement public de coopération intercommunale, une entente ou un mixte  ",95
+"571","2498","Autres mises en affectation",27
+"572","26","PARTICIPATIONS ET CRÉANCES RATTACHÉES A DES PARTICIPATIONS",58
+"573","261","Titres de participation",23
+"574","266","Autres formes de participation",30
+"575","269","Versements restant à effectuer sur titres de participation non libérés",70
+"576","27","AUTRES IMMOBILISATIONS FINANCIÈRES",34
+"577","271","Titres immobilisés (droits de propriété)",40
+"578","272","Titres immobilisés (droits de créance)",38
+"579","273","Compte de placements (long terme)",33
+"580","2731","Compte de placements rémunérés",30
+"581","2732","Fonds d’épargne forestière",26
+"582","274","Prêts",5
+"583","2741","Prêts aux collectivités et aux groupements",42
+"584","2743","Prêts au personnel",18
+"585","2744","Prêts d’honneur",15
+"586","2745","Avances remboursables",21
+"587","2748","Autres prêts",12
+"588","275","Dépôts et cautionnements versés",31
+"589","276","Autres créances immobilisées",28
+"590","2761","Créances pour avances en garanties d’emprunt",44
+"591","2762","Créances sur transfert de droits à déduction de T.V.A.",54
+"592","2763","Créances sur des collectivités publiques",40
+"593","27631","État et établissements nationaux",32
+"594","27632","Régions",7
+"595","27633","Départements",12
+"596","27634","Communes",8
+"597","276341","Communes membres du GFP",23
+"598","276348","Autres communes",15
+"599","27635","Groupements de collectivités et collectivités à statut particulier",66
+"600","276351","GFP de rattachement",19
+"601","276358","Autres groupements",18
+"602","27636","CCAS et caisse des écoles",25
+"603","27638","Autres établissements publics",29
+"604","2764","Créances sur des particuliers et autres personnes de droit privé",64
+"605","2766","Créances pour locations-acquisitions",36
+"606","2768","Intérêts courus 1",17
+"607","27682","Intérêts courus sur titres immobilisés (droits de créance)",58
+"608","27684","Intérêts courus sur prêts",25
+"609","27688","Intérêts courus sur créances diverses",37
+"610","279","Versements restant à effectuer sur titres immobilisés non libérés.",66
+"611","28","AMORTISSEMENTS DES IMMOBILISATIONS",34
+"612","280","Amortissements des immobilisations incorporelles",48
+"613","2802","Frais d’études, d’élaboration, de modifications et de révisions des documents d’urbanisme",89
+"614","2803","Frais d’études, de recherche et de développement et frais d’insertion",69
+"615","28031","Frais d’études",14
+"616","28032","Frais de recherche et de développement",38
+"617","28033","Frais d’insertion",17
+"618","2804","Subventions d’équipement versées",32
+"619","28041","Subventions d’équipement aux organismes publics",47
+"620","280411","État",4
+"621","2804111","Biens mobiliers, matériel et études",35
+"622","2804112","Bâtiments et installations",26
+"623","2804113","Projets d’infrastructures d’intérêt national",44
+"624","2804114","Voirie",6
+"625","2804115","Monuments historiques",21
+"626","280412","Régions",7
+"627","2804121","Biens mobiliers, matériel et études",35
+"628","2804122","Bâtiments et installations",26
+"629","2804123","Projets d’infrastructures d’intérêt national",44
+"630","280413","Départements",12
+"631","2804131","Biens mobiliers, matériel et études",35
+"632","2804132","Bâtiments et installations",26
+"633","2804133","Projets d’infrastructures d’intérêt national",44
+"634","280414","Communes",8
+"635","2804141","Communes membres du GFP",23
+"636","28041411","Biens mobiliers, matériel et études",35
+"637","28041412","Bâtiments et installations",26
+"638","28041413","Projets d’infrastructures d’intérêt national",44
+"639","2804148","Autres communes",15
+"640","28041481","Biens mobiliers, matériel et études",35
+"641","28041482","Bâtiments et installations",26
+"642","28041483","Projets d’infrastructures d’intérêt national",44
+"643","280415","Groupements de collectivités et EPL et collectivités à statut particulier",73
+"644","2804151","GFP de rattachement",19
+"645","28041511","Biens mobiliers, matériel et études",35
+"646","28041512","Bâtiments et installations",26
+"647","28041513","Projets d’infrastructures d’intérêt national",44
+"648","2804153","EPL et services rattachés",25
+"649","28041531","Caisse des écoles",17
+"650","280415311","Biens mobiliers, matériel et études",35
+"651","280415312","Bâtiments et installations",26
+"652","280415313","Projets d’infrastructures d’intérêt national",44
+"653","28041532","CCAS",4
+"654","280415321","Biens mobiliers, matériel et études",35
+"655","280415322","Bâtiments et installations",26
+"656","280415323","Projets d’infrastructures d’intérêt national",44
+"657","28041533","A caractère administratif",25
+"658","280415331","Biens mobiliers, matériel et études",35
+"659","280415332","Bâtiments et installations",26
+"660","280415333","Projets d’infrastructures d’intérêt national",44
+"661","28041534","A caractère industriel et commercial",36
+"662","280415341","Biens mobiliers, matériel et études",35
+"663","280415342","Bâtiments et installations",26
+"664","280415343","Projets d’infrastructures d’intérêt national",44
+"665","2804158","Autres groupements et collectivités à statut particulier",56
+"666","28041581","Biens mobiliers, matériel et études",35
+"667","28041582","Bâtiments et installations",26
+"668","28041583","Projets d’infrastructures d’intérêt national",44
+"669","280417","Organismes de transport",23
+"670","2804171","SNCF",4
+"671","28041711","Biens mobiliers, matériel et études",35
+"672","28041712","Bâtiments et installations",26
+"673","28041713","Projets d’infrastructures d’intérêt national",44
+"674","2804172","SNCF Réseau",11
+"675","28041721","Biens mobiliers, matériel et études",35
+"676","28041722","Bâtiments et installations",26
+"677","28041723","Projets d’infrastructures d’intérêt national",44
+"678","2804178","Autres",6
+"679","28041781","Biens mobiliers, matériel et études",35
+"680","28041782","Bâtiments et installations",26
+"681","28041783","Projets d’infrastructures d’intérêt national",44
+"682","280418","Organismes publics divers",25
+"683","2804181","Biens mobiliers, matériel et études",35
+"684","2804182","Bâtiments et installations",26
+"685","2804183","Projets d’infrastructures d’intérêt national",44
+"686","28042","Subventions d'équipement aux personnes de droit privé",53
+"687","280421","Biens mobiliers, matériel et études",35
+"688","280422","Bâtiments et installations",26
+"689","280423","Projets d’infrastructures d’intérêt national",44
+"690","28043","Subventions aux établissements scolaires publics pour leurs dépenses d’équipement",81
+"691","280431","Biens mobiliers, matériel et études",35
+"692","280432","Bâtiments et installations",26
+"693","280433","Projets d’infrastructures d’intérêt national",44
+"694","28044","Subventions d’équipement en nature",34
+"695","280441","Organismes publics",18
+"696","2804411","Biens mobiliers, matériel et études",35
+"697","2804412","Bâtiments et installations",26
+"698","2804413","Projets d’infrastructures d’intérêt national",44
+"699","280442","Personnes de droit privé",24
+"700","2804421","Biens mobiliers, matériel et études",35
+"701","2804422","Bâtiments et installations",26
+"702","2804423","Projets d’infrastructures d’intérêt national",44
+"703","28045","Subventions d’équipement versées aux tiers (fonds européens)",60
+"704","28046","Attributions de compensation d’investissement",45
+"705","2805","Concessions et droits similaires, brevets, licences, droits et valeurs similaires",81
+"706","2808","Autres immobilisations incorporelles",36
+"707","28087","Immobilisations incorporelles reçues au titre d’une mise à disposition",70
+"708","28088","Autres immobilisations incorporelles",36
+"709","281","Amortissements des immobilisations corporelles",46
+"710","2811","Terrains de gisement",20
+"711","2812","Agencements et aménagements de terrains",39
+"712","28121","Plantations d’arbres et d’arbustes",34
+"713","28128","Autres agencements et aménagements",34
+"714","2813","Constructions",13
+"715","28131","Bâtiments publics",17
+"716","281311","Bâtiments administratifs",24
+"717","281312","Bâtiments scolaires",19
+"718","281313","Bâtiments sociaux et médico-sociaux",35
+"719","281314","Bâtiments culturels et sportifs",31
+"720","281315","Centres d’incendie et de secours",32
+"721","281316","Équipements du cimetière",24
+"722","281318","Autres bâtiments publics",24
+"723","28132","Bâtiments privés",16
+"724","281321","Immeubles de rapport",20
+"725","281328","Autres bâtiments privés",23
+"726","28135","Installations générales, agencements, aménagements des constructions",68
+"727","281351","Bâtiments publics",17
+"728","281352","Bâtiments privés",16
+"729","28138","Autres constructions",20
+"730","2814","Constructions sur sol d’autrui",30
+"731","28141","Bâtiments publics",17
+"732","28142","Immeubles de rapport",20
+"733","28143","Droit de superficie",19
+"734","28145","Installations générales, agencements, aménagements",50
+"735","28148","Autres constructions",20
+"736","2815","Installations, matériel et outillage techniques",47
+"737","28151","Réseaux de voirie",17
+"738","28152","Installations de voirie",23
+"739","28153","Réseaux divers",14
+"740","281531","Réseaux de transmission",23
+"741","281532","Réseaux d’alerte",16
+"742","281533","Réseaux câblés",14
+"743","281534","Réseaux d’électrification",25
+"744","281538","Autres réseaux",14
+"745","28154","Voies navigables",16
+"746","28156","Matériel et outillage d’incendie et de défense civile",53
+"747","281561","Matériel roulant",16
+"748","281568","Autre matériel et outillage d’incendie et de défense civile",59
+"749","28157","Matériel et outillage technique",31
+"750","281571","Matériel ferroviaire",20
+"751","281572","Matériel technique scolaire",27
+"752","281573","Matériel et outillage de voirie",31
+"753","2815731","Matériel roulant",16
+"754","2815738","Autre matériel et outillage de voirie",37
+"755","281574","Installations, matériel et outillage techniques des caisses des écoles",70
+"756","2815741","Installations, matériel et outillage des cantines scolaires",59
+"757","2815742","Installations, matériel et outillage des colonies de vacances",61
+"758","281578","Autre matériel technique",24
+"759","28158","Autres installations, matériel et outillage techniques",54
+"760","2816","Biens historiques et culturels – Dépenses ultérieures amortissables",67
+"761","2817","Immobilisations reçues au titre d’une mise à disposition",56
+"762","28171","Terrains de gisement",20
+"763","28172","Agencements et aménagements de terrains",39
+"764","281721","Plantations d’arbres et arbustes",32
+"765","281728","Autres agencements et aménagements",34
+"766","28173","Constructions",13
+"767","281731","Bâtiments publics",17
+"768","2817311","Bâtiments administratifs",24
+"769","2817312","Bâtiments scolaires",19
+"770","2817313","Bâtiments sociaux et médico-sociaux",35
+"771","2817314","Bâtiments culturels et sportifs",31
+"772","2817315","Centres d’incendie et de secours",32
+"773","2817318","Autres bâtiments publics",24
+"774","281732","Bâtiments privés",16
+"775","2817321","Immeubles de rapport",20
+"776","2817328","Autres bâtiments privés",23
+"777","281735","Installations générales, agencements, aménagements des constructions",68
+"778","281738","Autres constructions",20
+"779","28174","Constructions sur sol d’autrui",30
+"780","281741","Bâtiments publics",17
+"781","281742","Immeubles de rapport",20
+"782","281745","Installations générales, agencements, aménagements",50
+"783","281748","Autres constructions",20
+"784","28175","Installations, matériel et outillage techniques",47
+"785","281751","Réseaux de voirie",17
+"786","281752","Installations de voirie",23
+"787","281753","Réseaux divers",14
+"788","2817531","Réseaux de transmission",23
+"789","2817532","Réseaux d’alerte",16
+"790","2817533","Réseaux câblés",14
+"791","2817534","Réseaux d’électrification",25
+"792","2817538","Autres réseaux",14
+"793","281754","Voies navigables",16
+"794","281756","Matériel et outillage d’incendie et de défense civile",53
+"795","2817561","Matériel roulant",16
+"796","2817568","Autre matériel et outillage d’incendie et de défense civile",59
+"797","281757","Matériel et outillage techniques",32
+"798","2817571","Matériel ferroviaire",20
+"799","2817572","Matériel technique scolaire",27
+"800","2817573","Matériel et outillage de voirie",31
+"801","28175731","Matériel roulant",16
+"802","28175738","Autre matériel et outillage de voirie",37
+"803","2817578","Autre matériel technique",24
+"804","281758","Autres installations, matériel et outillage techniques",54
+"805","28176","Biens historiques et culturels – dépenses ultérieures amortissables",67
+"806","28178","Autres immobilisations corporelles reçues au titre d’une mise à disposition",75
+"807","281782","Matériel de transport",21
+"808","2817821","Matériel de transport ferroviaire",33
+"809","2817828","Autres matériels de transport",29
+"810","281783","Matériel informatique",21
+"811","2817831","Matériel informatique scolaire",30
+"812","2817838","Autre matériel informatique",27
+"813","281784","Matériel de bureau et mobilier",30
+"814","2817841","Matériel de bureau et mobilier scolaires",40
+"815","2817848","Autres matériels de bureau et mobiliers",39
+"816","281785","Matériel de téléphonie",22
+"817","281786","Cheptel",7
+"818","281788","Autres",6
+"819","2818","Autres immobilisations corporelles",34
+"820","28181","Installations générales, agencements et aménagements divers",59
+"821","28182","Matériel de transport",21
+"822","281821","Matériel de transport ferroviaire",33
+"823","281828","Autres matériels de transport",29
+"824","28183","Matériel informatique",21
+"825","281831","Matériel informatique scolaire",30
+"826","281838","Autre matériel informatique",27
+"827","28184","Matériel de bureau et mobilier",30
+"828","281841","Matériel de bureau et mobilier scolaires",40
+"829","281848","Autres matériels de bureau et mobiliers",39
+"830","28185","Matériel de téléphonie",22
+"831","28186","Cheptel",7
+"832","28188","Autres",6
+"833","282","Amortissements des immobilisations reçues en affectation",56
+"834","2821","Terrains de gisement",20
+"835","2822","Agencements et aménagements de terrains",39
+"836","28221","Plantations d’arbres et arbustes",32
+"837","28228","Autres agencements et aménagements",34
+"838","2823","Constructions",13
+"839","28231","Bâtiments publics",17
+"840","282311","Bâtiments administratifs",24
+"841","282312","Bâtiments scolaires",19
+"842","282313","Bâtiments sociaux et médico-sociaux",35
+"843","282314","Bâtiments culturels et sportifs",31
+"844","282315","Centres d’incendie et de secours",32
+"845","282318","Autres bâtiments publics",24
+"846","28232","Bâtiments privés",16
+"847","282321","Immeubles de rapport",20
+"848","282328","Autres bâtiments privés",23
+"849","28235","Installations générales, agencements, aménagements des constructions",68
+"850","28238","Autres constructions",20
+"851","2824","Constructions sur sol d’autrui",30
+"852","28241","Bâtiments publics",17
+"853","28242","Immeubles de rapport",20
+"854","28245","Installations générales, agencements, aménagements",50
+"855","28248","Autres constructions",20
+"856","2825","Installations, matériel et outillage techniques",47
+"857","28251","Réseaux de voirie",17
+"858","28252","Installations de voirie",23
+"859","28253","Réseaux divers",14
+"860","282531","Réseaux de transmission",23
+"861","282532","Réseaux d’alerte",16
+"862","282533","Réseaux câblés",14
+"863","282534","Réseaux d’électrification",25
+"864","282538","Autres réseaux",14
+"865","28254","Voies navigables",16
+"866","28256","Matériel et outillage d’incendie et de défense civile",53
+"867","28257","Matériel et outillage techniques",32
+"868","282571","Matériel ferroviaire",20
+"869","282572","Matériel technique scolaire",27
+"870","282573","Matériel et outillage de voirie",31
+"871","2825731","Matériel roulant",16
+"872","2825738","Autre matériel et outillage de voirie",37
+"873","282578","Autre matériel technique",24
+"874","28258","Autres installations, matériel et outillage techniques",54
+"875","2826","Biens historiques et cultures – dépenses ultérieures amortissables",66
+"876","2828","Autres immobilisations corporelles",34
+"877","28281","Installations générales, agencements et aménagements divers",59
+"878","28282","Matériel de transport",21
+"879","282821","Matériel de transport ferroviaire",33
+"880","282828","Autres matériels de transport",29
+"881","28283","Matériel informatique",21
+"882","282831","Matériel informatique scolaire",30
+"883","282838","Autre matériel informatique",27
+"884","28284","Matériel de bureau et mobilier",30
+"885","282841","Matériel de bureau et mobilier scolaire",39
+"886","282848","Autres matériels de bureau et mobiliers",39
+"887","28285","Matériel de téléphonie",22
+"888","28286","Cheptel",7
+"889","28288","Autres",6
+"890","29","DÉPRÉCIATIONS DES IMMOBILISATIONS",33
+"891","290","Dépréciations des immobilisations incorporelles",47
+"892","2904","Subventions d’équipement versées",32
+"893","29041","Subventions d’équipement versées (non budgétaire)",49
+"894","29042","Subventions d’équipement versées (budgétaire)",45
+"895","2905","Marques, procédés, droits et valeurs similaires",47
+"896","29051","Marques, procédés, droits et valeurs similaires (non budgétaire)",64
+"897","29052","Marques, procédés, droits et valeurs similaires (budgétaire)",60
+"898","2908","Autres immobilisations incorporelles",36
+"899","29081","Autres immobilisations incorporelles (non budgétaire)",53
+"900","29082","Autres immobilisations incorporelles (budgétaire)",49
+"901","291","Dépréciations des immobilisations corporelles",45
+"902","2911","Terrains",8
+"903","29111","Terrains (non budgétaire)",25
+"904","29112","Terrains (budgétaire)",21
+"905","2912","Agencements et aménagements de terrains",39
+"906","29121","Agencements et aménagements de terrains (non budgétaire)",56
+"907","29122","Agencements et aménagements de terrains (budgétaire)",52
+"908","2913","Constructions",13
+"909","29131","Constructions (non budgétaire)",30
+"910","29132","Constructions (budgétaire)",26
+"911","2914","Constructions sur sol d'autrui",30
+"912","29141","Constructions sur sol d’autrui (non budgétaire)",47
+"913","29142","Constructions sur sol d’autrui (budgétaire)",43
+"914","2915","Installations, matériel et outillage techniques",47
+"915","29151","Réseaux de voirie",17
+"916","291511","Réseaux de voirie (non budgétaire)",34
+"917","291512","Réseaux de voirie (budgétaire)",30
+"918","29152","Installations de voirie",23
+"919","291521","Installations de voirie (non budgétaire)",40
+"920","291522","Installations de voirie (budgétaire)",36
+"921","29153","Réseaux divers",14
+"922","291531","Réseaux divers (non budgétaire)",31
+"923","291532","Réseaux divers (budgétaire)",27
+"924","29154","Voies navigables",16
+"925","291541","Voies navigables (non budgétaire)",33
+"926","291542","Voies navigables (budgétaire)",29
+"927","29156","Matériel et outillage d’incendie et de défense civile",53
+"928","291561","Matériel et outillage d’incendie et de défense civile (non budgétaire)",70
+"929","291562","Matériel et outillage d’incendie et de défense civile (budgétaire)",66
+"930","29157","Matériel et outillage technique",31
+"931","291571","Matériel et outillage technique (non budgétaire)",48
+"932","291572","Matériel et outillage technique (budgétaire)",44
+"933","29158","Autres installations, matériel et outillage techniques",54
+"934","291581","Autres installations, matériel et outillage techniques (non budgétaire)",71
+"935","291582","Autres installations, matériel et outillage techniques (budgétaire)",67
+"936","2916","Biens historiques et culturels - dépenses ultérieures dépréciables",66
+"937","29161","Dépenses ultérieures dépréciables (non budgétaire)",50
+"938","29162","Dépenses ultérieures dépréciables (budgétaire)",46
+"939","2917","Immobilisations reçues au titre d’une mise à disposition",56
+"940","29171","Terrains",8
+"941","291711","Terrains (non budgétaire)",25
+"942","291712","Terrains (budgétaire)",21
+"943","29172","Agencements et aménagements de terrains",39
+"944","291721","Agencements et aménagements de terrains (non budgétaire)",56
+"945","291722","Agencements et aménagements de terrains (budgétaire)",52
+"946","29173","Constructions",13
+"947","291731","Constructions (non budgétaire)",30
+"948","291732","Constructions (budgétaire)",26
+"949","29174","Constructions sur sol d’autrui",30
+"950","291741","Constructions sur sol d'autrui (non budgétaire)",47
+"951","291742","Constructions sur sol d'autrui (budgétaire)",43
+"952","29175","Installations, matériel et outillage techniques",47
+"953","291751","Réseaux de voirie",17
+"954","2917511","Réseaux de voirie (non budgétaire)",34
+"955","2917512","Réseaux de voirie (budgétaire)",30
+"956","291752","Installations de voirie",23
+"957","2917521","Installations de voirie (non budgétaire)",40
+"958","2917522","Installations de voirie (budgétaire)",36
+"959","291753","Réseaux divers",14
+"960","2917531","Réseaux divers (non budgétaire)",31
+"961","2917532","Réseaux divers (budgétaire)",27
+"962","291754","Voies navigables",16
+"963","2917541","Voies navigables (non budgétaire)",33
+"964","2917542","Voies navigables (budgétaire)",29
+"965","291756","Matériel et outillage d’incendie et de défense civil",52
+"966","2917561","Matériel et outillage d’incendie et de défense civil (non budgétaire)",69
+"967","2917562","Matériel et outillage d’incendie et de défense civil (budgétaire)",65
+"968","291757","Matériel et outillage techniques",32
+"969","2917571","Matériel et outillage techniques (non budgétaire)",49
+"970","2917572","Matériel et outillage techniques (budgétaire)",45
+"971","291758","Autres installations, matériel et outillage techniques",54
+"972","2917581","Autres installations, matériel et outillage techniques (non budgétaire)",71
+"973","2917582","Autres installations, matériel et outillage techniques (budgétaire)",67
+"974","29176","Biens historiques et culturels - dépenses ultérieures dépréciables",66
+"975","291761","Dépenses ultérieures dépréciables (non budgétaire)",50
+"976","291762","Dépenses ultérieures dépréciables (budgétaire)",46
+"977","29178","Autres immobilisations corporelles reçues au titre d’une mise à disposition",75
+"978","291781","Autres immobilisations corporelles reçues au titre d’une mise à disposition (non budgétaire)",92
+"979","291782","Autres immobilisations corporelles reçues au titre d’une mise à disposition (budgétaire)",88
+"980","2918","Autres immobilisations corporelles",34
+"981","29181","Autres immobilisations corporelles (non budgétaire)",51
+"982","29182","Autres immobilisations corporelles (budgétaire)",47
+"983","292","Dépréciations des immobilisations reçues en affectation",55
+"984","2921","Terrains",8
+"985","29211","Terrains (non budgétaire)",25
+"986","29212","Terrains (budgétaire)",21
+"987","2922","Agencements et aménagements de terrains",39
+"988","29221","Agencements et aménagements de terrains (non budgétaire)",56
+"989","29222","Agencements et aménagements de terrains (budgétaire)",52
+"990","2923","Constructions",13
+"991","29231","Constructions (non budgétaire)",30
+"992","29232","Constructions (budgétaire)",26
+"993","2924","Constructions sur sol d'autrui",30
+"994","29241","Constructions sur sol d'autrui (non budgétaire)",47
+"995","29242","Constructions sur sol d'autrui (budgétaire)",43
+"996","2925","Installations, matériel et outillage techniques",47
+"997","29251","Réseaux de voirie",17
+"998","292511","Réseaux de voirie (non budgétaire)",34
+"999","292512","Réseaux de voirie (budgétaire)",30
+"1000","29252","Installations de voirie",23
+"1001","292521","Installations de voirie (non budgétaire)",40
+"1002","292522","Installations de voirie (budgétaire)",36
+"1003","29253","Réseaux divers",14
+"1004","292531","Réseaux divers (non budgétaire)",31
+"1005","292532","Réseaux divers (budgétaire)",27
+"1006","29254","Voies navigables",16
+"1007","292541","Voies navigables (non budgétaire)",33
+"1008","292542","Voies navigables (budgétaire)",29
+"1009","29256","Matériel et outillage d’incendie et de défense civile",53
+"1010","292561","Matériel et outillage d’incendie et de défense civile (non budgétaire)",70
+"1011","292562","Matériel et outillage d’incendie et de défense civile (budgétaire)",66
+"1012","29257","Matériel et outillage technique",31
+"1013","292571","Matériel et outillage technique (non budgétaire)",48
+"1014","292572","Matériel et outillage technique (budgétaire)",44
+"1015","29258","Autres installations, matériel et outillage techniques",54
+"1016","292581","Autres installations, matériel et outillage techniques (non budgétaire)",71
+"1017","292582","Autres installations, matériel et outillage techniques (budgétaire)",67
+"1018","2926","Biens historiques et culturels - dépenses ultérieures dépréciables",66
+"1019","29261","Dépenses ultérieures dépréciables (non budgétaire)",50
+"1020","29262","Dépenses ultérieures dépréciables (budgétaire)",46
+"1021","2928","Autres immobilisations corporelles",34
+"1022","29281","Autres immobilisations corporelles (non budgétaire)",51
+"1023","29282","Autres immobilisations corporelles (budgétaire)",47
+"1024","293","Dépréciations des immobilisations en cours",42
+"1025","2931","Immobilisations corporelles en cours",36
+"1026","29311","Immobilisations corporelles en cours (non budgétaire)",53
+"1027","29312","Immobilisations corporelles en cours (budgétaire)",49
+"1028","2932","Immobilisations incorporelles en cours",38
+"1029","29321","Immobilisations incorporelles en cours (non budgétaire)",55
+"1030","29322","Immobilisations incorporelles en cours (budgétaire)",51
+"1031","296","Dépréciations des participations et créances rattachées à des participations",76
+"1032","2961","Titres de participation",23
+"1033","29611","Titres de participation (non budgétaire)",40
+"1034","29612","Titres de participation (budgétaire)",36
+"1035","2966","Autres formes de participation",30
+"1036","29661","Autres formes de participation (non budgétaire)",47
+"1037","29662","Autres formes de participation (budgétaire)",43
+"1038","297","Dépréciations des autres immobilisations financières",52
+"1039","2971","Titres immobilisés - Droit de propriété",39
+"1040","29711","Titres immobilisés - Droit de propriété (non budgétaire)",56
+"1041","29712","Titres immobilisés - Droit de propriété (budgétaire)",52
+"1042","2972","Titres immobilisés - Droit de créance",37
+"1043","29721","Titres immobilisés – droit de créance (non budgétaire)",54
+"1044","29722","Titres immobilisés – droit de créance (budgétaire)",50
+"1045","2973","Comptes de placements (long terme)",34
+"1046","29731","Compte de placements (long terme) (non budgétaire)",50
+"1047","29732","Comptes de placements (long terme) (budgétaire)",47
+"1048","2974","Prêts",5
+"1049","29741","Prêts (non budgétaire)",22
+"1050","29742","Prêts (budgétaire)",18
+"1051","2975","Dépôts et cautionnements versés",31
+"1052","29751","Dépôts et cautionnement versés (non budgétaire)",47
+"1053","29752","Dépôts et cautionnement versés (budgétaire)",43
+"1054","2976","Autres créances immobilisées",28
+"1055","29761","Créances pour avances en garanties d'emprunt Autres créances immobilisées (non budgétaire)",90
+"1056","297611","Créances pour avances en garantie d’emprunt (non budgétaire)",60
+"1057","297612","Créances pour avances en garantie d’emprunt (budgétaire)",56
+"1058","29762","Créances sur transfert de droits à déduction de T.V.A. Autres créances immobilisées (budgétaire)",96
+"1059","297621","Créances sur transfert de droits à déduction de T.V.A. (non budgétaire)",71
+"1060","297622","Créances sur transfert de droits à déduction de T.V.A. (budgétaire)",67
+"1061","29763","Créances sur des collectivités publiques",40
+"1062","297631","Créances sur des collectivités publiques (non budgétaire)",57
+"1063","297632","Créances sur des collectivités publiques (budgétaire)",53
+"1064","29764","Créances sur des particuliers et autres personnes de droit privé",64
+"1065","297641","Créances sur des particuliers et autres personnes de droit privé (non budgétaire)",81
+"1066","297642","Créances sur des particuliers et autres personnes de droit privé (budgétaire)",77
+"1067","3","COMPTES DE STOCKS ET EN-COURS3",30
+"1068","31","MATIÈRES PREMIÈRES (ET FOURNITURES)",35
+"1069","311","Matières premières et fournitures autres que terrains",53
+"1070","315","Terrains à aménager",19
+"1071","32","AUTRES APPROVISIONNEMENTS",25
+"1072","321","Matières consommables",21
+"1073","322","Fournitures consommables",24
+"1074","3221","Combustibles et carburants",26
+"1075","3222","Produits d’entretien",20
+"1076","3223","Fournitures techniques",22
+"1077","3224","Fournitures administratives",27
+"1078","3225","Livres, disques, cassettes (bibliothèques, médiathèques)",56
+"1079","3226","Habillement et vêtements de travail",35
+"1080","3227","Fournitures scolaires",21
+"1081","3228","Autres fournitures consommables",31
+"1082","323","Fournitures de voirie",21
+"1083","324","Alimentation",12
+"1084","326","Produits pharmaceutiques",24
+"1085","3261","Médicaments",11
+"1086","3262","Vaccins et sérums",17
+"1087","3268","Autres produits pharmaceutiques",31
+"1088","328","Autres achats stockés et autres approvisionnements",50
+"1089","33","EN-COURS DE PRODUCTION DE BIENS",31
+"1090","331","Produits en cours",17
+"1091","335","Travaux en cours",16
+"1092","3351","Terrains",8
+"1093","3354","Études et prestations de services",33
+"1094","3355","Travaux",7
+"1095","3358","Frais annexes",13
+"1096","33581","Frais accessoires",17
+"1097","33586","Frais financiers",16
+"1098","34","EN-COURS DE PRODUCTION DE SERVICES",34
+"1099","35","STOCKS DE PRODUITS",18
+"1100","351","Produits intermédiaires",23
+"1101","355","Produits finis",14
+"1102","3551","Produits finis (autres que terrains aménagés)",45
+"1103","3555","Terrains aménagés",17
+"1104","358","Produits résiduels",18
+"1105","37","STOCKS DE MARCHANDISES ET DE TERRAINS NUS",41
+"1106","39","DÉPRÉCIATIONS DES STOCKS ET EN-COURS",36
+"1107","391","Dépréciations des matières premières (et fournitures)",53
+"1108","3911","Dépréciations des matières premières (et fournitures) (non budgétaire)",70
+"1109","3912","Dépréciations des matières premières (et fournitures) (budgétaire)",66
+"1110","392","Dépréciations des autres approvisionnements (non budgétaire)",60
+"1111","393","Dépréciations des en-cours de production de biens",49
+"1112","3931","Dépréciations des en-cours de production de biens (non budgétaire)",66
+"1113","3932","Dépréciations des en-cours de production de biens (budgétaire)",62
+"1114","394","Dépréciations des en-cours de production de services",52
+"1115","3941","Dépréciations des en-cours de production de services (non budgétaire)",69
+"1116","3942","Dépréciations des en-cours de production de services (budgétaire)",65
+"1117","395","Dépréciations des stocks de produits",36
+"1118","3951","Dépréciations des stocks de produits (non budgétaire)",53
+"1119","3952","Dépréciations des stocks de produits (budgétaire)",49
+"1120","397","Dépréciations des stocks de marchandises (non budgétaire)",57
+"1121","4","COMPTES DE TIERS",16
+"1122","40","FOURNISSEURS ET COMPTES RATTACHÉS",33
+"1123","401","Fournisseurs",12
+"1124","4011","Fournisseurs",12
+"1125","4017","Fournisseurs – Oppositions, retenues de garantie et pénalités de retard d’exécution des marchés",95
+"1126","40171","Fournisseurs – Retenues de garantie",35
+"1127","40172","Fournisseurs – Cessions, oppositions",36
+"1128","40173","Fournisseurs – Pénalités de retard d’exécution des marchés",58
+"1129","402","Bénéficiaires de l’aide sociale",31
+"1130","4021","Bénéficiaires de l’aide sociale",31
+"1131","4027","Bénéficiaires de l’aide sociale – Cessions",42
+"1132","403","Fournisseurs – Lettre-change relevé (L.C.R.)",44
+"1133","404","Fournisseurs d’immobilisations",30
+"1134","4041","Fournisseurs d’immobilisations",30
+"1135","4047","Fournisseurs – Oppositions, retenues de garantie et pénalités de retard d’exécution des marchés",95
+"1136","40471","Fournisseurs d’immobilisations – Retenues de garantie",53
+"1137","40472","Fournisseurs d’immobilisations – Cessions, oppositions",54
+"1138","40473","Fournisseurs – pénalités de retard d’exécution des marchés",58
+"1139","405","Fournisseurs d’immobilisations – Lettre-change relevé (L.C.R.)",62
+"1140","407","Différences de conversion – Fournisseurs",40
+"1141","4071","Différences de conversion – Fournisseurs",40
+"1142","4074","Différences de conversion – Fournisseurs d’immobilisations",58
+"1143","408","Fournisseurs – Factures non parvenues",37
+"1144","409","Fournisseurs débiteurs",22
+"1145","4091","Fournisseurs – Avances versées sur commandes",44
+"1146","4092","Avances aux établissements sociaux et médicaux-sociaux",54
+"1147","4093","Mandat – Avance de fonds ou remboursement de débours",52
+"1148","4097","Fournisseurs – Avoirs",21
+"1149","40971","Fournisseurs – Avoirs – Amiable",31
+"1150","40976","Fournisseurs – Avoirs – Contentieux",35
+"1151","4098","Rabais, remises, ristournes à obtenir et avoirs non encore reçus",64
+"1152","41","REDEVABLES ET COMPTES RATTACHÉS",31
+"1153","411","Redevables",10
+"1154","412","Acquéreurs de terrains aménagés stockés",39
+"1155","414","Locataires-acquéreurs et locataires",35
+"1156","415","Traites de coupe de bois (régime forestier)",43
+"1157","416","Clients – Créances douteuses et irrécouvrables",46
+"1158","4161","Créances douteuses",18
+"1159","4162","Créances irrécouvrables admises par le juge des comptes",55
+"1160","417","Différences de conversion – Redevables",38
+"1161","418","Redevables – Produits non encore facturés",41
+"1162","4181","Redevables – Produits non encore facturés",41
+"1163","4182","Acquéreurs de terrains aménagés stockés – Produits non encore facturés",70
+"1164","419","Avances et acomptes reçus",25
+"1165","4191","Préfinancements initiaux – Fonds européens",42
+"1166","41911","Fonds social européen",21
+"1167","41912","FEDER",5
+"1168","41918","Autres",6
+"1169","4192","Préfinancements annuels – Fonds européens",41
+"1170","41921","Fonds social européen",21
+"1171","41922","FEDER",5
+"1172","41928","Autres",6
+"1173","4193","Acquéreurs de terrains aménagés",31
+"1174","4198","Autres avances et acomptes reçus",32
+"1175","42","PERSONNEL ET COMPTES RATTACHÉS",30
+"1176","421","Personnel – Rémunérations dues",30
+"1177","425","Personnel – Avances et acomptes",31
+"1178","427","Personnel – Oppositions",23
+"1179","428","Personnel – Charges à payer et produits à recevoir",50
+"1180","4282","Dettes provisionnées sur congés à payer",39
+"1181","4286","Autres charges à payer",22
+"1182","4287","Produits à recevoir",19
+"1183","429","Déficits et débets des comptables et régisseurs",47
+"1184","43","SÉCURITÉ SOCIALE ET AUTRES ORGANISMES SOCIAUX",45
+"1185","431","Sécurité sociale",16
+"1186","437","Autres organismes sociaux",25
+"1187","438","Organismes sociaux – Charges à payer et produits à recevoir",59
+"1188","4382","Charges sociales sur congés à payer",35
+"1189","4386","Autres charges à payer",22
+"1190","4387","Produits à recevoir",19
+"1191","44","ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",38
+"1192","441","État et autres collectivités publiques – Subventions à recevoir",63
+"1193","4411","Subventions à recevoir – Amiable",32
+"1194","4412","Fonds de soutien",16
+"1195","44121","Sortie des emprunts à risques avec IRA capitalisées",51
+"1196","44122","Sortie des emprunts à risques sans IRA capitalisées",51
+"1197","4416","Subventions à recevoir – Contentieux",36
+"1198","442","État - Impôts et taxes recouvrables sur des tiers",49
+"1199","4421","Prélèvement à la source – Impôt sur le revenu",45
+"1200","4428","Autres",6
+"1201","443","Opérations particulières avec l’État et les collectivités publiques",67
+"1202","4431","État",4
+"1203","44311","Dépenses",8
+"1204","44312","Recettes – Amiable",18
+"1205","44316","Recettes – Contentieux",22
+"1206","4432","Régions",7
+"1207","44321","Dépenses",8
+"1208","44322","Recettes – Amiable",18
+"1209","44326","Recettes – Contentieux",22
+"1210","4433","Départements",12
+"1211","44331","Dépenses",8
+"1212","44332","Recettes – Amiable",18
+"1213","44336","Recettes – Contentieux",22
+"1214","4434","Communes",8
+"1215","44341","Dépenses",8
+"1216","44342","Recettes – Amiable",18
+"1217","44346","Recettes – Contentieux",22
+"1218","4435","Groupements de collectivités et collectivités à statut particulier",66
+"1219","44351","Dépenses",8
+"1220","44352","Recettes – Amiable",18
+"1221","44356","Recettes – Contentieux",22
+"1222","4436","Caisses des écoles",18
+"1223","44361","Dépenses",8
+"1224","44362","Recettes – Amiable",18
+"1225","44366","Recettes – Contentieux",22
+"1226","4437","CCAS",4
+"1227","44371","Dépenses",8
+"1228","44372","Recettes – Amiable",18
+"1229","44376","Recettes – Contentieux",22
+"1230","4438","Autres établissements publics locaux",36
+"1231","44381","Dépenses",8
+"1232","44382","Recettes – Amiable",18
+"1233","44386","Recettes – Contentieux",22
+"1234","444","Opérations pour le compte de la Communauté Européenne",53
+"1235","445","État – Taxes sur le chiffre d’affaires",38
+"1236","4452","TVA due intracommunautaire",26
+"1237","4455","Taxes sur le chiffre d’affaires à décaisser",43
+"1238","44551","T.V.A. à décaisser",18
+"1239","44558","Taxes assimilées à la T.V.A.",28
+"1240","4456","Taxes sur le chiffre d’affaires déductibles",43
+"1241","44562","T.V.A. sur immobilisations",26
+"1242","44566","T.V.A. sur autres biens et services",35
+"1243","44567","Crédit de T.V.A. à reporter",27
+"1244","44568","Taxes assimilées à la T.V.A.",28
+"1245","4457","Taxes sur le chiffre d’affaires collectées",42
+"1246","44571","T.V.A. collectée",16
+"1247","44578","Taxes assimilées à la T.V.A.",28
+"1248","4458","Taxes sur le chiffre d’affaires à régulariser ou en attente.",60
+"1249","44581","Acomptes – régime simplifié d’imposition",40
+"1250","44583","Remboursement de taxes sur le chiffre d’affaires demandé",56
+"1251","44585","TVA à régulariser – Retenue de garantie",39
+"1252","44588","Autres taxes sur le chiffre d’affaires à régulariser ou en attente",66
+"1253","445884","TVA déduite sur avances versées – Régime des encaissements",58
+"1254","445885","TVA décaissée sur avances reçues – Régime des encaissements",59
+"1255","445886","TVA à déduire lors du paiement – Régime des encaissements",57
+"1256","445888","Autres taxes sur le chiffre d’affaires à régulariser ou en attente",66
+"1257","447","Autres impôts, taxes et versements assimilés.",45
+"1258","448","État et autres organismes publics – Charges à payer et produits à recevoir",74
+"1259","4482","Charges fiscales sur congés à payer",35
+"1260","4486","Autres charges à payer",22
+"1261","4487","Produits à recevoir",19
+"1262","449","Quotas d’émission de GES à acquérir",35
+"1263","45","COMPTABILITÉ DISTINCTE RATTACHÉE",32
+"1264","451","Compte de rattachement avec…(à subdiviser par budget annexe)",60
+"1265","452","Deniers des pupilles",20
+"1266","453","Fonds gérés par l’entité",24
+"1267","4531","Fonds de garantie",17
+"1268","4532","Fonds communs des services d’hébergement",40
+"1269","4534","Caisse départementale d’avances pour l’aménagement des lotissements défectueux",78
+"1270","4535","Fonds commun départemental de la redevance des mines sur le pétrole",67
+"1271","4536","Fonds contractuels à répartir",29
+"1272","4538","Fonds divers",12
+"1273","454","Travaux effectués d’office pour le compte de tiers (à subdiviser par opération)1",80
+"1274","4541","Travaux exécutés d’office",25
+"1275","45411","Dépenses",8
+"1276","45412","Recettes",8
+"1277","4542","Remembrement",12
+"1278","45421","Dépenses",8
+"1279","45422","Recettes",8
+"1280","4543","Défense contre la mer",21
+"1281","45431","Dépenses",8
+"1282","45432","Recettes",8
+"1283","4544","Aménagement foncier",19
+"1284","45441","Dépenses",8
+"1285","45442","Recettes",8
+"1286","455","Opérations d’investissement sur établissements d’enseignement (à subdiviser par mandat) 1",89
+"1287","4551","Dépenses",8
+"1288","4552","Recettes",8
+"1289","456","Recettes sur rôle pour compte de tiers",38
+"1290","4561","Redevables sur rôle pour le compte de tiers",43
+"1291","4567","Produits sur rôle pour le compte de tiers",41
+"1292","4568","TVA sur rôle pour compte de tiers",33
+"1293","45681","Prise en compte",15
+"1294","45682","Encaissements",13
+"1295","4569","Versement sur rôle pour le compte de tiers",42
+"1296","45691","Produits",8
+"1297","45692","TVA",3
+"1298","458","Opérations sous mandat (à subdiviser par mandat) 1",50
+"1299","4581","Dépenses (à subdiviser par mandat)",34
+"1300","4582","Recettes (à subdiviser par mandat)",34
+"1301","46","DÉBITEURS ET CRÉDITEURS DIVERS",30
+"1302","461","Dons et legs en instance",24
+"1303","462","Créances sur cessions d’immobilisations",39
+"1304","4621","Créances sur cessions d’immobilisations – Amiable",49
+"1305","4626","Créances sur cessions d’immobilisations – Contentieux",53
+"1306","463","Emprunts souscrits dans le public gérés par la collectivité",59
+"1307","4631","Souscriptions reçues",20
+"1308","4632","Intérêts à payer",16
+"1309","4633","Titres amortis (ou capital) à rembourser",40
+"1310","464","Opérations pour le compte de particuliers",41
+"1311","4641","Coupes affouagères distribuées en nature",40
+"1312","4642","Coupes affouagères à répartir",29
+"1313","4643","Vacations encaissées à reverser",31
+"1314","4645","Fonds des bénéficiaires d’une mesure d’accompagnement social personnalisé",73
+"1315","4648","Opérations pour le compte de particuliers",41
+"1316","465","Avances en garantie d’emprunt",29
+"1317","466","Excédents de versement",22
+"1318","467","Autres comptes débiteurs ou créditeurs",38
+"1319","4671","Autres comptes créditeurs",25
+"1320","46711","Autres comptes créditeurs",25
+"1321","46717","Autres comptes créditeurs – Cessions, oppositions",49
+"1322","4672","Autres comptes débiteurs",24
+"1323","46721","Débiteurs divers – Amiable",26
+"1324","46726","Débiteurs divers – Contentieux",30
+"1325","4673","Débiteurs d’indus d’insertion et d’aide sociale",47
+"1326","46731","Débiteurs d’indus RMI",21
+"1327","467311","Débiteurs d’indus RMI – Amiable",31
+"1328","467316","Débiteurs d’indus RMI – Contentieux",35
+"1329","46732","Débiteurs d’indus RMA",21
+"1330","467321","Débiteurs d’indus RMA- Amiable",30
+"1331","467326","Débiteurs d’indus RMA- Contentieux",34
+"1332","46733","Débiteurs d’indus APA",21
+"1333","467331","Débiteurs d’indus APA- Amiable",30
+"1334","467336","Débiteurs d’indus APA- Contentieux",34
+"1335","46734","Débiteurs d’indus RSA",21
+"1336","467341","Débiteurs d’indus RSA – Amiable",31
+"1337","467346","Débiteurs d’indus RSA – Contentieux",35
+"1338","46735","Débiteurs d’indus PCH",21
+"1339","467351","Débiteurs d’indus PCH – Amiable",31
+"1340","467356","Débiteurs d’indus PCH – Contentieux",35
+"1341","46738","Autres débiteurs d’indus",24
+"1342","467381","Autres débiteurs d’indus – Amiable",34
+"1343","467386","Autres débiteurs d’indus – Contentieux",38
+"1344","4675","Opérations avec des gérants d’immeubles, des régisseurs intéressés ou des mandataires",85
+"1345","46751","Opérations avec des gérants d’immeubles et des régisseurs intéressés",68
+"1346","46752","Mandataire – Opérations déléguées – Recettes",44
+"1347","4677","Différences de conversion – Débiteurs ou créditeurs divers",58
+"1348","46771","Différences de conversion – Créditeurs divers",45
+"1349","46772","Différences de conversion – Débiteurs divers",44
+"1350","468","Divers – Charges à payer et produits à recevoir",47
+"1351","4686","Charges à payer",15
+"1352","4687","Produits à recevoir",19
+"1353","47","COMPTES TRANSITOIRES OU D’ATTENTE",33
+"1354","471","Recettes à classer ou à régulariser",35
+"1355","4711","Versements des régisseurs",25
+"1356","4712","Virements réimputés",19
+"1357","4713","Recettes perçues avant émission des titres",42
+"1358","47131","Versements sur contributions directes",37
+"1359","47132","Versements sur dotation globale de fonctionnement",49
+"1360","47133","Fonds d’emprunt",15
+"1361","47134","Subventions",11
+"1362","47138","Autres",6
+"1363","4714","Recettes à réimputer",20
+"1364","47141","Recettes perçues en excédent à réimputer",40
+"1365","471411","Excédent à réimputer – Personnes physiques",42
+"1366","471412","Excédent à réimputer – Personnes morales",40
+"1367","47142","Frais de saisie perçus avant prise en charge",44
+"1368","47143","Flux d’encaissements à réimputer",32
+"1369","4715","Recettes à ventiler (carte multi-services)",42
+"1370","4716","Versements des mandataires",26
+"1371","4717","Recettes relevé banque de France et DFT",39
+"1372","47171","Recettes relevé BDF – hors Héra",31
+"1373","47172","Recettes relevé BDF – Héra",26
+"1374","47173","Recettes relevé DFT – hors Héra",31
+"1375","47174","Recettes relevé DFT – Héra",26
+"1376","4718","Autres recettes à régulariser",29
+"1377","472","Dépenses à classer ou à régulariser",35
+"1378","4721","Dépenses réglées sans mandatement préalable",43
+"1379","47211","Remboursement d’annuités d’emprunt",34
+"1380","47212","RMI-RSA – Versement aux organismes payeurs",42
+"1381","47213","Indemnités versées aux employeurs d’apprentis",45
+"1382","47218","Autres dépenses",15
+"1383","4722","Commissions bancaires en instance de mandatement",48
+"1384","4725","Allocations et secours",22
+"1385","4727","Avance pour achat de valeurs mobilières",39
+"1386","4728","Autres dépenses à régulariser",29
+"1387","475","Recettes sur rôle",17
+"1388","4751","Redevables sur rôle",19
+"1389","4757","Produits sur rôle",17
+"1390","4758","TVA sur rôle",12
+"1391","4759","Versements du tiers en charge du rôle",37
+"1392","476","Différences de conversion – Actif",33
+"1393","4761","Diminution des créances",23
+"1394","47611","Diminution des prêts",20
+"1395","47612","Diminution d’autres créances",28
+"1396","4762","Augmentation des dettes",23
+"1397","47621","Augmentation d’emprunts et dettes assimilées",44
+"1398","47622","Augmentation d’autres dettes",28
+"1399","4768","Différences compensées par couverture de change",47
+"1400","477","Différences de conversion – Passif",34
+"1401","4771","Augmentation des créances",25
+"1402","47711","Augmentation des prêts",22
+"1403","47712","Augmentation d’autres créances",30
+"1404","4772","Diminution des dettes",21
+"1405","47721","Diminution d’emprunts et dettes assimilées",42
+"1406","47722","Diminution d’autres dettes",26
+"1407","4778","Différences compensées par couverture de change",47
+"1408","478","Autres comptes transitoires",27
+"1409","4781","Frais de poursuite rattachés",28
+"1410","4784","Arrondis sur déclaration de TVA",31
+"1411","4788","Autres comptes transitoires",27
+"1412","48","COMPTES DE RÉGULARISATION",25
+"1413","481","Charges à répartir sur plusieurs exercices 1",44
+"1414","4815","Charges liées à la crise sanitaire Covid-19",43
+"1415","4816","Frais d’émission des emprunts",29
+"1416","4817","Indemnités de renégociation de la dette",39
+"1417","4818","Charges à étaler",16
+"1418","486","Charges constatées d’avance",27
+"1419","487","Produits constatés d’avance",27
+"1420","49","DÉPRÉCIATIONS DES COMPTES DE TIERS",34
+"1421","491","Dépréciations des comptes de redevables",39
+"1422","4911","Dépréciations des comptes de redevables (non budgétaire)",56
+"1423","4912","Dépréciations des comptes de redevables (budgétaire)",52
+"1424","496","Dépréciations des comptes de débiteurs divers",45
+"1425","4961","Dépréciations des comptes de débiteurs divers (non budgétaire)",62
+"1426","4962","Dépréciations des comptes de débiteurs divers (budgétaire)",58
+"1427","5","COMPTES FINANCIERS",18
+"1428","50","VALEURS MOBILIÈRES DE PLACEMENT",31
+"1429","506","Obligations",11
+"1430","507","Bons du Trésor",14
+"1431","508","Autres valeurs mobilières et créances assimilées",48
+"1432","51","TRÉSOR, ÉTABLISSEMENTS FINANCIERS ET ASSIMILÉS",46
+"1433","511","Valeurs à l’encaissement",24
+"1434","5113","Titres spéciaux de paiement",27
+"1435","5115","Cartes bancaires à l’encaissement",33
+"1436","5116","T.I.P. à l’encaissement",23
+"1437","5117","Valeurs impayées",16
+"1438","51172","Chèques impayés",15
+"1439","51175","Cartes bancaires impayées",25
+"1440","51176","T.I.P. impayés",14
+"1441","51178","Autres valeurs impayées",23
+"1442","5118","Autres valeurs à l’encaissement",31
+"1443","515","Compte au Trésor",16
+"1444","516","Compte de placements (court terme)",34
+"1445","5161","Compte de placements rémunérés",30
+"1446","5162","Compte à terme",14
+"1447","517","Livrets d’épargne des pupilles du département",45
+"1448","518","Intérêts courus",15
+"1449","5186","Intérêts courus à payer",23
+"1450","5187","Intérêts courus à recevoir",26
+"1451","519","Crédits de trésorerie",21
+"1452","5191","Avances du Trésor",17
+"1453","5192","Avances de trésorerie",21
+"1454","5193","Lignes de crédit de trésorerie",30
+"1455","51931","Lignes de crédit de trésorerie non liées à un emprunt",53
+"1456","51932","Lignes de crédit de trésorerie liées à un emprunt",49
+"1457","5194","Billets de trésorerie",21
+"1458","5198","Autres crédits de trésorerie",28
+"1459","54","RÉGIES",6
+"1460","541","Disponibilités chez les régisseurs",34
+"1461","5411","Régisseurs d’avances (avances)",30
+"1462","5412","Régisseurs de recettes (fonds de caisse)",40
+"1463","5414","Régisseurs des dépôts des enfants",33
+"1464","542","Disponibilités chez d’autres tiers",34
+"1465","5421","Administrateurs de legs",23
+"1466","5428","Disponibilités chez d’autres tiers",34
+"1467","55","AVANCES DE TRÉSORERIE VERSÉES",29
+"1468","551","Avances à des établissements publics locaux et à certains organismes",68
+"1469","5511","Avances aux établissements de santé",35
+"1470","5512","Avances aux EPCI en début d’activité",36
+"1471","5518","Autres avances aux EPL et organismes",36
+"1472","552","Avances aux Sociétés d’Économie Mixte",37
+"1473","553","Avances à des régies dotées de la seule autonomie financière",60
+"1474","558","Autres avances de trésoreries versées",37
+"1475","56","FONDS DE GARANTIE RÉGIONAUX",27
+"1476","561","Fonds de garantie sur comptes de dépôts",39
+"1477","562","Fonds de garantie sur comptes de marché monétaire",49
+"1478","563","Fonds de garantie sur comptes de valeurs",40
+"1479","58","VIREMENTS INTERNES",18
+"1480","580","Opérations d’ordre budgétaires",30
+"1481","584","Encaissement par lecture optique",32
+"1482","586","Opérations financières entre le budget principal et ses budgets comptablement rattachés",87
+"1483","587","Comptes pivots",14
+"1484","5871","Compte pivot – Encaissement régie à ventiler",44
+"1485","5872","Compte pivot – Admission en non valeur",38
+"1486","588","Autres virements internes",25
+"1487","589","Comptes techniques",18
+"1488","5891","Reprise des balances d’entrée",29
+"1489","5892","Migration",9
+"1490","5893","Migration des rôles",19
+"1491","5894","Ventilation comptes budgétaires",31
+"1492","59","DÉPRÉCIATIONS DES COMPTES FINANCIERS",36
+"1493","590","Dépréciations des valeurs mobilières de placement",49
+"1494","5906","Obligations",11
+"1495","59061","Obligations (non budgétaire)",28
+"1496","59062","Obligations (budgétaire)",24
+"1497","5908","Autres valeurs mobilières et créances assimilées",48
+"1498","59081","Autres valeurs mobilières et créances assimilées (non budgétaire)",65
+"1499","59082","Autres valeurs mobilières et créances assimilées (budgétaire)",61
+"1500","595","Dépréciations des avances de trésorerie versées",47
+"1501","5951","Dépréciations des avances de trésorerie versées (non budgétaire)",64
+"1502","5952","Dépréciations des avances de trésorerie versées (budgétaire)",60
+"1503","6","COMPTES DE CHARGES",18
+"1504","60","ACHATS ET VARIATION DES STOCKS",30
+"1505","601","Achats stockés - Matières premières (et fournitures)",52
+"1506","6011","Matières premières et fournitures autres que terrains",53
+"1507","6015","Terrains à aménager",19
+"1508","602","Achats stockés - Autres approvisionnements",42
+"1509","6021","Matières consommables",21
+"1510","6022","Fournitures consommables",24
+"1511","60221","Combustibles et carburants",26
+"1512","60222","Produits d'entretien",20
+"1513","60223","Fournitures techniques",22
+"1514","602231","Fournitures des ateliers de la collectivité",43
+"1515","602238","Autres",6
+"1516","60224","Fournitures administratives",27
+"1517","60225","Livres, disques, cassettes (bibliothèques, médiathèques)",56
+"1518","60226","Habillement et vêtements de travail",35
+"1519","60227","Fournitures scolaires",21
+"1520","60228","Autres fournitures consommables",31
+"1521","6023","Fournitures de voirie",21
+"1522","6026","Produits pharmaceutiques",24
+"1523","60261","Médicaments",11
+"1524","60262","Vaccins et sérums",17
+"1525","60268","Autres produits pharmaceutiques",31
+"1526","6027","Alimentation",12
+"1527","6028","Autres achats stockés et autres approvisionnements",50
+"1528","603","Variation des stocks (approvisionnements et marchandises)",57
+"1529","6031","Variation des stocks de matières premières (et fournitures)",59
+"1530","60311","Variation des stocks de matières premières et fournitures autres que de terrains",80
+"1531","60315","Variation des stocks des terrains à aménager",44
+"1532","6032","Variation des stocks des autres approvisionnements",50
+"1533","6037","Variation des stocks de marchandises et de terrains nus",55
+"1534","604","Achats d'études, prestations de services",40
+"1535","6041","Achats d'études (autres que terrains à aménager)",48
+"1536","6042","Achats de prestations de services (autres que terrains à aménager)",66
+"1537","6045","Achats d’études et de prestations de services (terrains à aménager)",67
+"1538","605","Achats de matériel, équipements et travaux",42
+"1539","606","Achats non stockés de matières et fournitures",45
+"1540","6061","Fournitures non stockables",26
+"1541","60611","Eau et assainissement",21
+"1542","60612","Énergie - Électricité",21
+"1543","60613","Chauffage urbain",16
+"1544","60618","Autres fournitures",18
+"1545","6062","Fournitures non stockées",24
+"1546","60621","Combustibles",12
+"1547","60622","Carburants",10
+"1548","60623","Alimentation",12
+"1549","60624","Produits de traitement",22
+"1550","60628","Autres fournitures non stockées",31
+"1551","6063","Fournitures d'entretien et de petit équipement",46
+"1552","60631","Fournitures d’entretien",23
+"1553","60632","Fournitures de petit équipement",31
+"1554","60633","Fournitures de voirie",21
+"1555","60636","Habillement et Vêtements de travail",35
+"1556","6064","Fournitures administratives",27
+"1557","6065","Livres, disques, cassettes ... (bibliothèques et médiathèques)",62
+"1558","6066","Produits pharmaceutiques",24
+"1559","60661","Médicaments",11
+"1560","60662","Vaccins et sérums",17
+"1561","60668","Autres produits pharmaceutiques",31
+"1562","6067","Fournitures scolaires",21
+"1563","6068","Autres matières et fournitures.",31
+"1564","607","Achats de marchandises",22
+"1565","6071","Compteurs",9
+"1566","6078","Autres marchandises",19
+"1567","608","Frais accessoires sur terrains en cours d’aménagement",53
+"1568","609","Rabais, remises et ristournes obtenus sur achats",48
+"1569","6091","de matières premières (et fournitures)",38
+"1570","6092","d’autres approvisionnements stockés",35
+"1571","6094","d’études, prestations de services",33
+"1572","6095","de matériel, équipements et travaux",35
+"1573","6096","d’approvisionnements non stockés",32
+"1574","6097","de marchandises",15
+"1575","6098","de frais accessoires sur terrains en cours d’aménagement",56
+"1576","61-62","AUTRES CHARGES EXTERNES",23
+"1577","61","SERVICES EXTÉRIEURS",19
+"1578","611","Contrats de prestations de services",35
+"1579","612","Redevances de crédit-bail",25
+"1580","6122","Crédit-bail mobilier",20
+"1581","61221","Matériel roulant",16
+"1582","61228","Autres",6
+"1583","6125","Crédit-bail immobilier",22
+"1584","613","Locations",9
+"1585","6132","Locations immobilières",22
+"1586","6135","Locations mobilières",20
+"1587","61351","Matériel roulant",16
+"1588","61358","Autres",6
+"1589","614","Charges locatives et de copropriété",35
+"1590","615","Entretien et réparations",24
+"1591","6152","Entretien et réparations sur biens immobiliers",46
+"1592","61521","Terrains",8
+"1593","61522","Bâtiments",9
+"1594","615221","Bâtiments publics",17
+"1595","615228","Autres bâtiments",16
+"1596","61523","Voies et réseaux",16
+"1597","615231","Voiries",7
+"1598","615232","Réseaux",7
+"1599","61524","Bois et forêts",14
+"1600","6155","Entretien et réparations sur biens mobiliers",44
+"1601","61551","Matériel roulant",16
+"1602","61558","Autres biens mobiliers",22
+"1603","6156","Maintenance",11
+"1604","616","Primes d’assurances",19
+"1605","6161","Multirisques",12
+"1606","6162","Assurance obligatoire dommage-construction",42
+"1607","6168","Autres",6
+"1608","617","Études et recherches",20
+"1609","618","Divers",6
+"1610","6182","Documentation générale et technique",35
+"1611","6183","Frais de formation (personnel extérieur à la collectivité)",58
+"1612","6184","Versements à des organismes de formation",40
+"1613","6185","Frais de colloques et séminaires",32
+"1614","6188","Autres frais divers",19
+"1615","619","Rabais, remises et ristournes obtenus sur services extérieurs",61
+"1616","62","AUTRES SERVICES EXTÉRIEURS",26
+"1617","621","Personnel extérieur au service",30
+"1618","6215","Personnel affecté par la collectivité de rattachement",53
+"1619","6216","Personnel affecté par le GFP de rattachement",44
+"1620","6217","Personnel affecté par la commune membre du GFP",46
+"1621","6218","Autre personnel extérieur",25
+"1622","622","Rémunérations d’intermédiaires et honoraires",44
+"1623","6225","Indemnités au comptable et aux régisseurs",41
+"1624","6226","Honoraires",10
+"1625","62261","Honoraires médicaux et paramédicaux",35
+"1626","62268","Autres honoraires, conseils...",30
+"1627","6227","Frais d’actes et de contentieux",31
+"1628","6228","Divers",6
+"1629","623","Publicité, publications, relations publiques",44
+"1630","6231","Annonces et insertions",22
+"1631","6232","Fêtes et cérémonies",19
+"1632","6233","Foires et expositions",21
+"1633","6234","Réceptions",10
+"1634","6236","Catalogues et imprimés et publications",38
+"1635","6238","Divers",6
+"1636","624","Transports de biens et transports collectifs",44
+"1637","6241","Transports de biens",19
+"1638","6245","Transports de personnes extérieures à la collectivité",53
+"1639","6247","Transports collectifs du personnel",34
+"1640","6248","Divers",6
+"1641","625","Déplacements et missions",24
+"1642","6251","Voyages, déplacements et missions",33
+"1643","6255","Frais de déménagement",21
+"1644","626","Frais postaux et frais de télécommunications",44
+"1645","6261","Frais d’affranchissement",24
+"1646","6262","Frais de télécommunications",27
+"1647","627","Services bancaires et assimilés.",32
+"1648","628","Divers",6
+"1649","6281","Concours divers (cotisations...)",32
+"1650","6282","Frais de gardiennage",20
+"1651","6283","Frais de nettoyage des locaux",29
+"1652","6284","Redevance pour services rendus",30
+"1653","6287","Remboursements de frais",23
+"1654","62871","A la collectivité de rattachement 4",35
+"1655","62872","Aux budgets annexes et aux régies",33
+"1656","62873","Au CCAS",7
+"1657","62874","A la caisse des écoles",22
+"1658","62875","Aux communes membres du GFP",27
+"1659","62876","Au GFP de rattachement",22
+"1660","62878","A des tiers",11
+"1661","6288","Autres",6
+"1662","629","Rabais, remises et ristournes obtenus sur autres services extérieurs.",69
+"1663","63","IMPÔTS, TAXES ET VERSEMENTS ASSIMILÉS",37
+"1664","631","Impôts, taxes et versements assimilés sur rémunérations (administration des impôts)",83
+"1665","633","Impôts, taxes et versements assimilés sur rémunérations (autres organismes)",75
+"1666","6331","Versement mobilité",18
+"1667","6332","Cotisations versées au F.N.A.L.",31
+"1668","6333","Participation des employeurs à la formation professionnelle continue",68
+"1669","6336","Cotisations au CNFPT et au centre de gestion de la fonction publique territoriale",81
+"1670","6338","Autres impôts, taxes et versements assimilés sur rémunérations",62
+"1671","635","Autres impôts, taxes et versements assimilés (administration des impôts).",73
+"1672","6351","Impôts directs",14
+"1673","63512","Taxes foncières",15
+"1674","63513","Autres impôts locaux",20
+"1675","6353","Impôts indirects",16
+"1676","6354","Droits d’enregistrement et de timbre",36
+"1677","6355","Taxes et impôts sur les véhicules",33
+"1678","6358","Autres droits",13
+"1679","637","Autres impôts, taxes et versements assimilés (autres organismes)",64
+"1680","64","CHARGES DE PERSONNEL",20
+"1681","641","Rémunérations du personnel",26
+"1682","6411","Personnel titulaire",19
+"1683","64111","Rémunération principale",23
+"1684","64112","Supplément familial de traitement et indemnité de résidence",59
+"1685","64113","NBI",3
+"1686","64114","Personnel titulaire – Indemnité inflation",41
+"1687","64116","Indemnités de licenciement",26
+"1688","64118","Autres indemnités",17
+"1689","6412","Assistantes maternelles",23
+"1690","64121","Rémunération principale",23
+"1691","64123","Indemnités d’attente",20
+"1692","64124","Assistantes maternelles - Indemnité inflation",45
+"1693","64126","Indemnités de licenciement",26
+"1694","64128","Autres indemnités",17
+"1695","6413","Personnel non titulaire",23
+"1696","64131","Rémunérations",13
+"1697","64132","Supplément familial de traitement et indemnité de résidence",59
+"1698","64134","Personnel non titulaire - Indemnité inflation",45
+"1699","64136","Indemnités liées à la perte d’emploi",36
+"1700","64138","Primes et autres indemnités",27
+"1701","6414","Personnel rémunéré à la vacation",32
+"1702","64141","Personnel rémunéré à la vacation - rémunérations",48
+"1703","64142","Personnel rémunéré à la vacation - indemnité inflation",54
+"1704","6416","Emplois aidés",13
+"1705","64161","Emplois jeunes",14
+"1706","64162","Emplois d’avenir",16
+"1707","64164","Emplois aidés – indemnité inflation",35
+"1708","64168","Autres emplois aidés",20
+"1709","6417","Rémunérations des apprentis",27
+"1710","64171","Apprentis - rémunérations",25
+"1711","64172","Apprentis – indemnité inflation",31
+"1712","6419","Remboursements sur rémunérations du personnel",45
+"1713","645","Charges de sécurité sociale et de prévoyance",44
+"1714","6451","Cotisations à l'U.R.S.S.A.F.",28
+"1715","6453","Cotisations aux caisses de retraite",35
+"1716","6454","Cotisations aux A.S.S.E.D.I.C",29
+"1717","6455","Cotisations pour assurance du personnel",39
+"1718","6456","Versement au F.N.C du supplément familial",41
+"1719","6457","Cotisations sociales liées à l’apprentissage",44
+"1720","6458","Cotisations aux autres organismes sociaux.",42
+"1721","6459","Remboursements sur charges de Sécurité Sociale et de prévoyance",63
+"1722","646","Allocation de vétérance",23
+"1723","647","Autres charges sociales",23
+"1724","6471","Prestations versées pour le compte du F.N.A.L.",46
+"1725","6472","Prestations familiales directes",31
+"1726","6473","Allocations de chômage",22
+"1727","64731","Versées directement",19
+"1728","64732","Versées aux A.S.S.E.D.I.C.",26
+"1729","6474","Versements aux oeuvres sociales",31
+"1730","6475","Médecine du travail, pharmacie",30
+"1731","6478","Autres charges sociales diverses",32
+"1732","6479","Remboursements sur autres charges sociales",42
+"1733","648","Autres charges de personnel",27
+"1734","6484","Congé pour difficulté opérationnelle",36
+"1735","6488","Autres",6
+"1736","65","AUTRES CHARGES DE GESTION COURANTE",34
+"1737","651","Aides à la personne",19
+"1738","6511","Allocations",11
+"1739","65111","Famille et enfance",18
+"1740","65112","Handicapés",10
+"1741","651121","Prestation de compensation du handicap",38
+"1742","6511211","Prestation de compensation du handicap – plus de 20 ans",55
+"1743","6511212","Prestation de compensation du handicap – moins de 20 ans",56
+"1744","6511213","Prestation de compensation – Dotation qualité",45
+"1745","651122","Allocation compensatrice tierce personne",40
+"1746","651123","Aides au titre du fonds départemental des personnes handicapées",63
+"1747","651128","Autres",6
+"1748","65113","Personnes âgées",15
+"1749","65114","Personnes dépendantes",21
+"1750","651141","APA à domicile versée au service d’aide à domicile",50
+"1751","6511411","APA",3
+"1752","6511412","APA – Dotation qualité",22
+"1753","651142","APA à domicile versée au bénéficiaire",37
+"1754","651143","APA versée au bénéficiaire en établissement",43
+"1755","651144","APA versée à l'établissement",28
+"1756","651148","APA autres",10
+"1757","6512","Stagiaires de la formation professionnelle",42
+"1758","65121","Rémunérations",13
+"1759","65122","Cotisations sociales",20
+"1760","65123","Remboursement à l’ASP",21
+"1761","65124","Autres remboursements",21
+"1762","6513","Bourses, prix et secours",24
+"1763","65131","Bourses",7
+"1764","65132","Prix",4
+"1765","65133","Secours d’urgence",17
+"1766","65134","Aides",5
+"1767","65138","Autres secours",14
+"1768","6514","Cotisations, adhésions et autres prestations (pour le compte de tiers)",70
+"1769","6515","Allocations RMI (versement aux organismes payeurs)",50
+"1770","6517","Allocations RSA (versements aux organismes payeurs)",51
+"1771","65171","RSA – Versements pour allocations forfaitaires",46
+"1772","65172","RSA – Versements pour allocations forfaitaires majorées",55
+"1773","65173","RSA – Versements facultatifs",28
+"1774","6518","Autres (primes, dots...)",24
+"1775","652","Frais de séjour, frais d’hébergement et frais d’inhumation",58
+"1776","6521","Frais de scolarité et frais périscolaires",41
+"1777","65211","Frais de scolarité",18
+"1778","65212","Frais périscolaires",19
+"1779","6522","Accueil familial",16
+"1780","6523","Frais d'hospitalisation",23
+"1781","6524","Frais de séjour en établissements médicaux-sociaux et autres lieux d’accueil",76
+"1782","65241","Frais de séjour en établissements et services de l’aide sociale à l’enfance",75
+"1783","652411","Foyers de l’enfance, centres et hôtels maternels",48
+"1784","652412","Maisons d’enfants à caractère social",36
+"1785","652413","Lieux de vie et d’accueil",25
+"1786","652414","Foyers de jeunes travailleurs",29
+"1787","652415","Établissements scolaires",24
+"1788","652416","Services d’aide éducative en milieu ouvert et à domicile",56
+"1789","652418","Autres",6
+"1790","65242","Frais de séjour en établissements et services pour adultes handicapés",69
+"1791","65243","Frais de séjour en établissements pour personnes âgées",54
+"1792","6525","Frais d’inhumation",18
+"1793","6526","Prévention spécialisée",22
+"1794","653","Indemnités",10
+"1795","6531","Indemnités, frais de mission et de formation des élus",53
+"1796","65311","Indemnités de fonction",22
+"1797","65312","Frais de mission et de déplacement",34
+"1798","65313","Cotisations de retraite",23
+"1799","65314","Cotisations de sécurité sociale - part patronale",48
+"1800","65315","Formation",9
+"1801","65316","Frais de représentation du maire",32
+"1802","65317","Compensation pour perte de revenus",34
+"1803","653171","Compensation pour formation",27
+"1804","653172","Cotisations au fonds de financement de l’allocation de fin de mandat",68
+"1805","65318","Frais divers",12
+"1806","653181","Frais médicaux et para-médicaux",31
+"1807","653188","Autres",6
+"1808","6532","Indemnités des membres du Conseil économique, social, environnemental, de la culture et de l'éducation - section économique, sociale et environnementale",152
+"1809","65321","Indemnités de fonction",22
+"1810","65322","Frais de mission et déplacement",31
+"1811","65325","Frais de formation",18
+"1812","65326","Frais de représentation du Président",36
+"1813","65328","Frais supplémentaires",21
+"1814","6533","Indemnités des membres du Conseil économique, social, environnemental, de la culture et de l'éducation - section de la culture, de l'éducation et des sports",156
+"1815","65331","Indemnités de fonction",22
+"1816","65332","Frais de mission et déplacement",31
+"1817","65335","Frais de formation",18
+"1818","65338","Frais supplémentaires",21
+"1819","6538","Autres organismes",17
+"1820","654","Pertes sur créances irrécouvrables",34
+"1821","6541","Créances admises en non-valeur",30
+"1822","6542","Créances éteintes",17
+"1823","655","Contributions obligatoires",26
+"1824","6551","Dotation de fonctionnement des établissements d'enseignement secondaire",71
+"1825","65511","Dotation de fonctionnement des collèges",39
+"1826","655111","Établissements publics",22
+"1827","655112","Établissements privés",21
+"1828","65512","Dotation de fonctionnement des lycées",37
+"1829","655121","Établissements publics",22
+"1830","655122","Établissements privés",21
+"1831","6552","Primes employeurs apprentis",27
+"1832","65521","Personnes de droit privé",24
+"1833","65522","Collectivités",13
+"1834","65523","Organismes publics",18
+"1835","655231","Établissements publics d’enseignement",37
+"1836","655238","Autres organismes publics",25
+"1837","6553","Service d'incendie",18
+"1838","6554","Dotation de compensation de charges transférées",47
+"1839","65541","Compensation versée à la Région dans le cadre de la loi NOTRé",61
+"1840","65542","Compensation au titre de l'article L. 5217-13 du CGCT",53
+"1841","6555","Contributions au C.N.F.P.T. (personnel privé d'emploi)",54
+"1842","6556","Contributions à des fonds",25
+"1843","65561","Contributions au fonds de compensation des charges territoriales (établissement public de territoire)",101
+"1844","65568","Autres contributions",20
+"1845","6557","Contributions communales et intercommunales obligatoires",56
+"1846","65571","Police d’État",13
+"1847","65572","Aide sociale du département",27
+"1848","65573","Indemnité de logement des instituteurs",38
+"1849","65574","Contributions au titre de la politique de l'habitat",51
+"1850","6558","Autres contributions obligatoires",33
+"1851","656","Participations",14
+"1852","6561","Organismes de regroupement",26
+"1853","6562","Au titre de la coopération décentralisée",40
+"1854","6564","Participations aux organismes de transport",42
+"1855","65641","SNCF",4
+"1856","65642","SNCF Réseau",11
+"1857","65648","Autres",6
+"1858","6565","Versements au titre du RMA",26
+"1859","6566","Versements au titre du contrat d'avenir",39
+"1860","6567","Versements au titre des contrats d'insertion",44
+"1861","65671","Contrat d'accompagnement dans l'emploi",38
+"1862","65672","Contrat d’initiative-emploi",27
+"1863","6568","Autres participations",21
+"1864","657","Subventions",11
+"1865","6573","Subventions de fonctionnement aux organismes publics",52
+"1866","65731","État",4
+"1867","65732","Régions",7
+"1868","65733","Départements",12
+"1869","65734","Communes",8
+"1870","657341","Communes membres du GFP",23
+"1871","657348","Autres communes",15
+"1872","65735","Groupements de collectivités et collectivités à statut particulier",66
+"1873","657351","GFP de rattachement",19
+"1874","657358","Autres groupements",18
+"1875","65736","Établissements et services rattachés",36
+"1876","657361","Caisses des écoles",18
+"1877","657362","CCAS",4
+"1878","657363","à caractère administratif",25
+"1879","657364","à caractère industriel et commercial",36
+"1880","6573641","aux budgets annexes et aux régies dotées de la seule autonomie financière",73
+"1881","6573642","aux régies dotées de la personnalité morale",43
+"1882","6573643","aux fermiers et aux concessionnaires",36
+"1883","6573644","aux syndicats exploitant un SPIC",32
+"1884","65737","SNCF",4
+"1885","65738","Autres établissements publics",29
+"1886","657381","Autres établissements publics locaux",36
+"1887","657382","Organismes publics divers",25
+"1888","6574","Subventions de fonctionnement aux personnes, aux associations et aux autres organismes de droit privé",101
+"1889","65741","Ménages",7
+"1890","65742","Entreprises",11
+"1891","65748","Autres personnes de droit privé",31
+"1892","6575","Bonifications d’intérêts",24
+"1893","6577","Remises gracieuses",18
+"1894","658","Charges diverses de gestion courante",36
+"1895","6581","Redevances pour concessions, brevets, licences, procédés, droits et valeurs similaires",86
+"1896","65811","Droits d’utilisation – informatique en nuage",44
+"1897","65818","Autres",6
+"1898","6582","Déficit ou excédent des budgets annexes à caractère administratif",65
+"1899","65821","Déficit des budgets annexes à caractère administratif",53
+"1900","65822","Reversement de l’excédent des budgets annexes à caractère administratif au budget principal",91
+"1901","6583","Intérêts moratoires et pénalités sur marchés",44
+"1902","6584","Amendes fiscales et pénales",27
+"1903","6586","Frais de fonctionnement des groupes d’élus",42
+"1904","65861","Frais de personnel",18
+"1905","65862","Matériel, équipement et fournitures",35
+"1906","65869","Remboursements sur frais de fonctionnement des groupes d’élus",61
+"1907","6588","Autres charges diverses de gestion courante",43
+"1908","65881","Hébergement et restauration scolaires",37
+"1909","65882","Mise en réserve – Surplus de DMTO",33
+"1910","65886","Pertes de change sur créances et dettes non financières",55
+"1911","65888","Autres",6
+"1912","66","CHARGES FINANCIÈRES",19
+"1913","661","Charges d'intérêts",18
+"1914","6611","Intérêts des emprunts et dettes",31
+"1915","66111","Intérêts réglés à l’échéance",28
+"1916","66112","Intérêts - rattachement des ICNE",32
+"1917","66113","Remboursements d’intérêts d’emprunts transférés",47
+"1918","661131","aux communes membres du GFP",27
+"1919","661132","au GFP de rattachement",22
+"1920","661133","à la collectivité ou à l’établissement de rattachement",54
+"1921","661138","à d’autres tiers",16
+"1922","6615","Intérêts des comptes courants et de dépôts créditeurs",53
+"1923","6616","Intérêts bancaires et sur opérations de financement (escompte,...)",66
+"1924","6618","Intérêts des autres dettes",26
+"1925","665","Escomptes accordés",18
+"1926","666","Pertes de change sur créances et dettes financières",51
+"1927","667","Charges nettes sur cessions de valeurs mobilières de placement.",63
+"1928","668","Autres charges financières",26
+"1929","6681","Indemnités pour remboursement anticipé d’emprunt à risques",58
+"1930","6682","Indemnités de réaménagement d’emprunt (pour ordre)",50
+"1931","6688","Autres",6
+"1932","67","CHARGES SPECIFIQUES",19
+"1933","673","Titres annulés (sur exercices antérieurs)",41
+"1934","675","Valeurs comptables des immobilisations cédées",45
+"1935","676","Neutralisations et différences sur réalisations (positives)",59
+"1936","6761","Différences sur réalisations (positives) transférées en investissement",70
+"1937","6768","Neutralisation des dépréciations et provisions",46
+"1938","68","DOTATIONS AUX AMORTISSEMENTS, AUX DEPRECIATIONS ET AUX PROVISIONS",65
+"1939","681","Dotations aux amortissements, aux dépréciations et aux provisions - Charges de fonctionnement",93
+"1940","6811","Dotations aux amortissements des immobilisations incorporelles et corporelles",77
+"1941","6812","Dotations aux amortissements des charges de fonctionnement à répartir",69
+"1942","68126","Dotations aux amortissements des frais d’émission des emprunts",62
+"1943","68128","Dotations aux amortissements des charges exceptionnelles différées",66
+"1944","6815","Dotations aux provisions pour risques et charges de fonctionnement",66
+"1945","6816","Dotations aux dépréciations des immobilisations incorporelles et corporelles",76
+"1946","6817","Dotations aux dépréciations des actifs circulants",49
+"1947","686","Dotations aux amortissements, aux dépréciations et aux provisions - Charges financières",87
+"1948","6861","Dotations aux amortissements des primes de remboursement des obligations",72
+"1949","6862","Dotations aux amortissements des charges financières à répartir",63
+"1950","6865","Dotations aux provisions pour risques et charges financiers",59
+"1951","6866","Dotations aux dépréciations des éléments financiers",51
+"1952","7","COMPTES DE PRODUITS",19
+"1953","70","PRODUITS DES SERVICES DU DOMAINE ET VENTES DIVERSES",51
+"1954","701","Ventes de produits finis",24
+"1955","7011","Ventes d’eau",12
+"1956","7012","Taxes et redevances d’eau",25
+"1957","70124","Redevance pour pollution d’origine domestique",45
+"1958","701241","Redevance pour pollution d’origine domestique",45
+"1959","701249","Reversement de la redevance pour pollution d’origine domestique5",64
+"1960","70128","Autres taxes et redevances d’eau",32
+"1961","7013","Vente de produits résiduels",27
+"1962","7015","Ventes de terrains aménagés",27
+"1963","7018","Autres ventes de produits finis",31
+"1964","702","Ventes de récoltes et de produits forestiers",44
+"1965","7021","Ventes de récoltes",18
+"1966","7022","Coupes de bois",14
+"1967","7023","Menus produits forestiers",25
+"1968","7024","Remboursement forfaitaire T.V.A.",32
+"1969","7025","Taxes d’affouage",16
+"1970","7028","Autres produits",15
+"1971","703","Redevances et recettes d'utilisation du domaine",47
+"1972","7031","Concessions et redevances funéraires",36
+"1973","70311","Concession dans les cimetières (produit net)",44
+"1974","70312","Redevances funéraires",21
+"1975","7032","Droits de permis de stationnement et de location sur la voie publique, les rivières, ports et quais et autres lieux publics  ",99
+"1977","70321","Droits de stationnement et de location sur la voie publique",59
+"1978","70322","Droits de stationnement et de location sur le domaine public portuaire et fluvial",81
+"1979","70323","Redevance d’occupation du domaine public",40
+"1980","70328","Autres droits de stationnement et de location",45
+"1981","7033","Redevances pour appareils distributeurs d'essence",49
+"1982","7034","Droits de péage, droits de passage, droits de pesage, mesurage et jaugeage",74
+"1983","7035","Locations de droits de chasse et de pêche",41
+"1984","7036","Droits de pâturage et de tourbage",33
+"1985","7037","Contribution pour dégradation des voies et chemins",50
+"1986","7038","Autres redevances et recettes",29
+"1987","70382","Redevances de ski de fond",25
+"1988","70383","Redevance de stationnement",26
+"1989","70384","Forfait de post-stationnement",29
+"1990","70388","Autres redevances et recettes diverses",38
+"1991","70389","Reversements sur redevances",27
+"1992","703892","Reversements sur redevances de ski de fond",42
+"1993","703894","Reversements sur forfait de post-stationnement",46
+"1994","704","Travaux",7
+"1995","705","Études",6
+"1996","706","Prestations de services",23
+"1997","7061","Redevances d'enlèvement des ordures et des déchets",50
+"1998","70611","Redevance d’enlèvement des ordures ménagères",44
+"1999","70612","Redevance spéciale d’enlèvement des ordures",43
+"2000","70613","Abonnement ou redevance pour enlèvement des déchets industriels et commerciaux",78
+"2001","70619","Reversements sur redevances d’enlèvement des ordures et des déchets",67
+"2002","7062","Redevances et droits des services à caractère culturel",54
+"2003","7063","Redevances et droits des services à caractère sportif et de loisirs",67
+"2004","70631","A caractère sportif",19
+"2005","70632","A caractère de loisirs",22
+"2006","7064","Taxes d’analyse et de désinfection",34
+"2007","70641","Taxes d’analyse",15
+"2008","70642","Taxes de désinfection (services d’hygiène)",42
+"2009","7065","Droits de ports et de navigation (autres que stationnement et location)",71
+"2010","7066","Redevances et droits des services à caractère social",52
+"2011","7067","Redevances et droits des services périscolaires et d’enseignement",65
+"2012","7068","Autres redevances et droits",27
+"2013","70681","Redevances d’assainissement et pour modernisation des réseaux de collecte",73
+"2014","706811","Redevance d’assainissement collectif",36
+"2015","706812","Redevance pour modernisation des réseaux de collecte",52
+"2016","7068121","Redevance pour modernisation des réseaux de collecte",52
+"2017","7068129","Reversement de la redevance pour modernisation des réseaux de collecte1",71
+"2018","706813","Participations pour l’assainissement collectif",46
+"2019","706814","Redevance d’assainissement non collectif",40
+"2020","70682","Location de compteurs",21
+"2021","70683","Produits des commissions pour recouvrement de la redevance d’assainissement",75
+"2022","70684","Redevances d’archéologie préventive",35
+"2023","70685","Interventions soumises à facturation (article L 1424-42 du CGCT)",64
+"2024","70688","Autres prestations de services",30
+"2025","707","Ventes de marchandises",22
+"2026","7071","Compteurs",9
+"2027","7078","Autres marchandises",19
+"2028","708","Autres produits",15
+"2029","7081","Produits des services exploités dans l'intérêt du personnel",59
+"2030","7082","Commissions",11
+"2031","7083","Locations diverses (autres qu’immeubles)",40
+"2032","7084","Mise à disposition de personnel facturée",40
+"2033","70841","aux budgets annexes, régies, CCAS et caisse des écoles",54
+"2034","70845","aux communes membres du GFP",27
+"2035","70846","au GFP de rattachement",22
+"2036","70848","aux autres organismes",21
+"2037","7087","Remboursements de frais",23
+"2038","70871","par la collectivité de rattachement 6",37
+"2039","70872","par les budgets annexes et les régies",37
+"2040","70873","par les C.C.A.S.",16
+"2041","70874","par les caisses des écoles",26
+"2042","70875","par les communes membres du GFP",31
+"2043","70876","par le GFP de rattachement",26
+"2044","70878","par des tiers",13
+"2045","7088","Autres produits d'activités annexes (abonnements et vente d'ouvrages…)",70
+"2046","709","Rabais, remises et ristournes accordés",38
+"2047","71","PRODUCTION STOCKÉE (OU DESTOCKAGE)",34
+"2048","713","Variation des stocks (en-cours de production, produits)",55
+"2049","7133","Variation des en-cours de production de biens.",46
+"2050","7134","Variation des en-cours de production de services",48
+"2051","7135","Variation des stocks de produits",32
+"2052","71351","Variation des stocks de produits autres que terrains",52
+"2053","71355","Variation des stocks de terrains aménagés",41
+"2054","72","PRODUCTION IMMOBILISÉE",22
+"2055","721","Immobilisations incorporelles",29
+"2056","722","Immobilisations corporelles",27
+"2057","73","IMPOTS ET TAXES",15
+"2058","731","Fiscalité locale",16
+"2059","7311","Contributions directes",22
+"2060","73111","Impôts directs locaux",21
+"2061","73112","Cotisation sur la valeur ajoutée des entreprises",48
+"2062","73113","Taxe sur les surfaces commerciales",34
+"2063","73114","Imposition forfaitaire sur les entreprises de réseaux",53
+"2064","73118","Autres contributions directes",29
+"2065","7312","Publicité foncière et droit d’enregistrement",44
+"2066","73121","Taxe départementale de publicité foncière et droit départemental d’enregistrement",81
+"2067","73122","Taxe départementale additionnelle à certains droits d’enregistrement",68
+"2068","73123","Taxe communale additionnelle aux droits de mutation ou à la taxe de publicité foncière",86
+"2069","73128","Autres droits d’enregistrement",30
+"2070","7313","Taxes liées à l’urbanisation, aux déchets et à l’environnement",62
+"2071","73131","Taxe d’aménagement – part départementale",40
+"2072","73132","Taxe sur les pylônes électriques",32
+"2073","73133","Taxe d’enlèvement des ordures ménagères et assimilées",53
+"2074","73134","Taxe sur les déchets stockés",28
+"2075","73135","Taxe de balayage",16
+"2076","73136","Taxe pour la gestion des milieux aquatiques et la prévention des inondations",76
+"2077","73137","Taxe sur les passagers",22
+"2078","73138","Autres taxes liées à l’urbanisation, aux déchets et à l’environnement",69
+"2079","7314","Impôts et taxes liés à la production et à la consommation énergétiques et industrielles",87
+"2080","73141","Taxe sur la consommation finale d'électricité",45
+"2081","73142","Taxe intérieure de consommation sur les produits énergiques (TICPE)",67
+"2082","731421","TICPE – LRL",11
+"2083","731422","TICPE – Grenelle (2ème part)",28
+"2084","731423","TICPE – Communauté européenne d’Alsace",38
+"2085","73143","Redevance des mines",19
+"2086","73144","Surtaxe sur les eaux minérales",30
+"2087","73148","Autres impôts et taxes liés à la production et à la consommation énergétiques et industrielles",94
+"2088","7315","Taxes liées aux transports, aux véhicules et aux droits de stationnement",72
+"2089","73151","Taxe sur les permis de conduire",31
+"2090","73152","Taxe nationale sur les véhicules de transport de marchandises",61
+"2091","73153","Taxe sur les certificats d'immatriculation des véhicules",56
+"2092","73154","Droits de place",15
+"2093","73156","Versement mobilité",18
+"2094","73158","Autres taxes liées aux transports, aux véhicules et aux droits de stationnement",79
+"2095","7317","Impôts et taxes spécifiques liés à des activités de services",60
+"2096","73171","Taxe sur les conventions d’assurance",36
+"2097","73172","Taxe de séjour",14
+"2098","731721","Taxe de séjour",14
+"2099","731722","Taxe additionnelle à la taxe de séjour",38
+"2100","73173","Impôt et prélèvement sur les jeux",33
+"2101","731731","Impôt sur les cercles et maisons de jeux",40
+"2102","731732","Prélèvement sur les produits des jeux",37
+"2103","73174","Taxe locale sur la publicité extérieure",39
+"2104","73175","Taxe sur les remontées mécaniques",33
+"2105","73176","Taxes funéraires",16
+"2106","73177","Taxes liées à l’insertion professionnelle",41
+"2107","731771","Fraction TICPE – Réforme de l’apprentissage",43
+"2108","731773","Frais de gestion des ressources pour la formation professionnelle et l’apprentissage",84
+"2109","731774","TICPE FPA",9
+"2110","731775","TICPE – Primes employeurs apprentis",35
+"2111","73178","Autres impôts et taxes spécifiques liés à des activités de services",67
+"2112","7318","Autres",6
+"2113","732","Fiscalité reversée",18
+"2114","7321","Fiscalité reversée entre collectivités locales",46
+"2115","73211","Attribution de compensation",27
+"2116","73212","Dotation de solidarité communautaire",36
+"2117","73213","Reversement du prélèvement du bloc communal sur le produit brut des jeux",72
+"2118","73214","Attribution de compensation CVAE – Département – Région",55
+"2119","73215","Reversements conventionnels de fiscalité",40
+"2120","73218","Autres fiscalité reversée entre collectivités locales",53
+"2121","7322","Fiscalité reversée par l’intermédiaire d'un fonds",49
+"2122","73221","FNGIR",5
+"2123","73222","Fonds de péréquation des ressources",35
+"2124","732221","Fonds de péréquation des ressources communales et intercommunales",65
+"2125","732222","Fonds de péréquation des ressources perçues par les régions et la collectivité territoriale de Corse",100
+"2126","73223","Fonds départemental des DMTO pour les communes de moins de 5 000 habitants",74
+"2127","73224","Fonds de péréquation de la cotisation sur la valeur ajoutée des entreprises",75
+"2128","73225","Attributions au titre des fonds de péréquation fondés sur les D.M.T.O.",70
+"2129","732251","Attribution au titre du fonds national de péréquation des D.M.T.O. perçus par les départements",94
+"2130","732258","Autres attributions",19
+"2131","7323","Reversement du prélèvement sur les jeux et les paris hippiques",62
+"2132","7324","Frais de gestion de la taxe foncière sur les propriétés bâties",62
+"2133","7328","Autres fiscalités reversées",27
+"2134","733","Fiscalité spécifique des collectivités d’Île-de-France",54
+"2135","7331","Taxe annuelle sur les locaux à usage de bureaux",47
+"2136","7332","Taxe additionnelle aux droits de mutation",41
+"2137","7333","Fonds de solidarité des collectivités d’Île-de-France",53
+"2138","73331","Communes (FSRIF)",16
+"2139","73332","Départements (FSDRIF)",21
+"2140","7334","Dotation de soutien à l’investissement territorial",50
+"2141","7338","Autres impôts et taxes spécifiques des collectivités d’Île-de-France",68
+"2142","734","Fiscalité spécifique à la collectivité de Corse et à l’Outre-mer",64
+"2143","7341","Taxe sur les alcools et tabacs",30
+"2144","73411","Taxe sur les rhums",18
+"2145","73412","Droits de consommation sur les alcools (Corse)",46
+"2146","73413","Droits de consommation sur les tabacs (Corse)",45
+"2147","7342","Taxes sur les carburants",24
+"2148","7343","Taxe due à l'entrée des marchandises ou de personnes et droits de francisation",78
+"2149","73431","Octroi de mer",13
+"2150","73432","Octroi de mer régional",22
+"2151","73433","Taxe due par les entreprises de transport public aérien et maritimes (dont Corse)",81
+"2152","73434","Droit de francisation et de navigation, droit de passeport des navires de plaisance (Corse)",91
+"2153","7345","Produit des amendes",19
+"2154","7347","Fiscalité de Saint-Pierre et Miquelon et des COM",48
+"2155","73471","Impôt sur les sociétés",22
+"2156","73472","Impôt sur le revenu",19
+"2157","73473","Autres taxes spécifiques à Saint-Pierre et Miquelon et aux COM",62
+"2158","734731","Droits de douanes",17
+"2159","734732","Taxe spéciale sur l’importation",31
+"2160","734733","Droits de consommation",22
+"2161","734734","Bureau de tabacs",16
+"2162","734735","Accessoires au produit des impôts",33
+"2163","734736","Droit de quai",13
+"2164","734737","Taxe d’enlèvement des ordures ménagères",39
+"2165","73474","TVA",3
+"2166","73475","Droits de licence des débits de boisson",39
+"2167","7348","Autres impôts et taxes d’Outre-mer",34
+"2168","735","Fraction de TVA",15
+"2169","7351","Fraction compensatoire de la TFPB et de la taxe d’habitation sur les résidences principales",91
+"2170","7352","Fraction compensatoire de la CVAE",33
+"2171","7358","Autres",6
+"2172","738","Autres impôts et taxes",22
+"2173","739","Reversements et restitutions sur impôts et taxes",48
+"2174","7391","Reversements et restitutions sur fiscalité locale",49
+"2175","73911","Reversements et restitutions sur contributions directes",55
+"2176","739111","Restitutions au titre des dégrèvements à la charge des collectivités locales",76
+"2177","7391111","Dégrèvement de taxe foncière sur les propriétés non bâties en faveur des jeunes agriculteurs",92
+"2178","7391112","Dégrèvement de taxe d’habitation sur les logements vacants",58
+"2179","7391113","Dégrèvement au titre du plafonnement de la CET sur la valeur ajoutée",68
+"2180","7391118","Autres restitutions au titre des dégrèvements sur contributions directes",72
+"2181","739115","Prélèvements au titre de la contribution pour le redressement des finances publiques",84
+"2182","739116","Prélèvements au titre de l’article 55 de la loi SRU",51
+"2183","739118","Autres reversements et restitutions sur contributions directes",62
+"2184","73912","Reversements sur droits d’enregistrement",40
+"2185","73913","Reversements sur taxes liées à l’urbanisation et à l’environnement",66
+"2186","73915","Reversements sur taxes liées aux transports",43
+"2187","739156","Reversements sur taxe de versement mobilité",43
+"2188","739158","Autres",6
+"2189","73917","Reversements sur impôts et taxes spécifiques liés à des activités de services",77
+"2190","739173","Reversement sur impôts et prélèvement sur les jeux",50
+"2191","7391731","Reversement de l’impôt sur les cercles et maisons de jeux (CCAS)",64
+"2192","739178","Autres",6
+"2193","73918","Autres reversements et restitutions sur fiscalité locale",56
+"2194","7392","Prélèvements pour reversements de fiscalité",43
+"2195","73921","Prélèvement pour reversements de fiscalité entre collectivités locales",70
+"2196","739211","Attribution de compensation",27
+"2197","739212","Dotation de solidarité communautaire",36
+"2198","739213","Reversement du prélèvement du bloc communal sur le produit brut des jeux",72
+"2199","739214","Attribution de compensation CVAE – Département – Région",55
+"2200","739215","Reversements conventionnels de fiscalité",40
+"2201","739218","Autres prélèvements pour reversements de fiscalité entre collectivités locales",78
+"2202","73922","Prélèvement pour reversements de fiscalité par l’intermédiaire d’un fonds",73
+"2203","739221","FNGIR",5
+"2204","739222","Fonds de péréquation des ressources",35
+"2205","7392221","Fonds de péréquation des ressources communales et intercommunales",65
+"2206","7392222","Fonds de péréquation des recettes perçues par les régions et la collectivité territoriale de Corse",98
+"2207","739224","Fonds de péréquation de la cotisation sur la valeur ajoutée des entreprises",75
+"2208","739225","Prélèvements au titre des fonds de péréquation fondés sur les D.M.T.O.",70
+"2209","7392251","Prélèvements au titre du fonds national de péréquation des D.M.T.O. perçus par les départements",95
+"2210","7392258","Autres prélèvements",19
+"2211","73928","Autres prélèvements pour reversements de fiscalité",50
+"2212","7393","Reversements de fiscalité spécifique des collectivités d’Île-de-France",70
+"2213","73933","Fonds de solidarité des collectivités d’Île-de-France",53
+"2214","739331","Communes",8
+"2215","739332","Départements",12
+"2216","73934","Dotation de soutien à l’investissement territorial",50
+"2217","7394","Reversements de fiscalité de la collectivité de Corse et de l’Outre-mer",71
+"2218","73942","Reversements de la taxe sur les carburants",42
+"2219","739421","Aux départements",16
+"2220","739422","Aux communes",12
+"2221","739423","Restitution de sommes indûment perçues au titre de la taxe sur les carburants (ROM)",83
+"2222","7398","Reversements, restitutions et prélèvements divers",49
+"2223","74","DOTATIONS ET PARTICIPATIONS",27
+"2224","741","D.G.F.",6
+"2225","7411","DGF des communes et des établissements publics de coopération intercommunale (EPCI)",83
+"2226","74111","Dotation forfaitaire des communes",33
+"2227","74112","Dotation d’aménagement",22
+"2228","741121","Dotation de solidarité rurale (DSR) des communes",48
+"2229","741123","Dotation de solidarité urbaine (DSU) des communes",49
+"2230","741124","Dotation d’intercommunalité des EPCI",36
+"2231","741125","Dotation d’aménagement des communes d’Outre-mer (DACOM)",55
+"2232","741126","Dotation de compensation des EPCI",33
+"2233","741127","Dotation nationale de péréquation (DNP) des communes",52
+"2234","74114","Régularisation de l'exercice écoulé",35
+"2235","74119","Reversement sur DGF",19
+"2236","7412","DGF des départements",20
+"2237","74121","Dotation forfaitaire des départements",37
+"2238","74122","DGF – Concours particuliers",27
+"2239","741221","Dotation de fonctionnement minimale des départements",52
+"2240","741222","Dotation de péréquation urbaine des départements",48
+"2241","741223","Dotation de compensation des départements",41
+"2242","74124","Régularisation de l’exercice écoulé",35
+"2243","7413","DGF des régions",15
+"2244","74131","Dotation forfaitaire des régions",32
+"2245","74132","Dotation de péréquation des régions",35
+"2246","7414","DGF des permanents syndicaux",28
+"2247","742","Dotations aux élus locaux",25
+"2248","743","Dotation spéciale au titre des instituteurs (DSI)",49
+"2249","744","FCTVA",5
+"2250","745","Dotation d'apprentissage et de formation professionnelle",56
+"2251","7451","Dotation de décentralisation – Formation professionnelle continue et apprentissage",82
+"2252","7452","Dotation du fonds national régional d’apprentissage et de formation professionnelle",83
+"2253","7453","Dotations Primes employeurs apprentis",37
+"2254","7454","Prélèvement sur recettes – Réforme de l’apprentissage",53
+"2255","7458","Autres",6
+"2256","746","Dotation générale de décentralisation",37
+"2257","7461","DGD des communes et EPCI",24
+"2258","74611","DGD",3
+"2259","74612","Régularisation de l'exercice",28
+"2260","7462","DGD des départements",20
+"2261","74621","DGD",3
+"2262","74622","Régularisation de l'exercice écoulé",35
+"2263","7463","DGD des régions",15
+"2264","74631","DGD",3
+"2265","74632","Régularisation de l’exercice écoulé",35
+"2266","7464","DGD « continuité territoriale » (ROM)",37
+"2267","74641","DGD",3
+"2268","74642","Régularisation de l'exercice écoulé",35
+"2269","7468","Autre DGD",9
+"2270","74681","DGD",3
+"2271","74682","Régularisation de l'exercice écoulé",35
+"2272","747","Participations",14
+"2273","7471","État",4
+"2274","74711","Emplois-jeunes",14
+"2275","74712","Emplois d’avenir",16
+"2276","74713","Fonds d'appui aux politiques d'insertion",40
+"2277","74718","Autres",6
+"2278","7472","Régions",7
+"2279","7473","Départements",12
+"2280","7474","Communes",8
+"2281","74741","Communes membres du GFP",23
+"2282","74748","Autres communes",15
+"2283","7475","Groupements de collectivités, collectivités à statut particulier et établissements publics",90
+"2284","74751","GFP de rattachement",19
+"2285","74752","Recettes liées au fonds de compensation des charges territoriales",65
+"2286","74758","Autres groupements",18
+"2287","7476","Sécurité sociale et organismes mutualistes",42
+"2288","7477","Fonds européens",15
+"2289","74771","Fonds social européen",21
+"2290","74772","FEDER",5
+"2291","74773","FEADER",6
+"2292","74778","Autres fonds européens",22
+"2293","7478","Autres organismes",17
+"2294","74781","Dotations versées par la CNSA",29
+"2295","747811","Dotation versée au titre de l’APA",33
+"2296","747812","Dotation versée au titre de la PCH",34
+"2297","747813","Dotation versée au titre des MDPH",33
+"2298","747814","Dotation versée au titre de la Conférence des financeurs",56
+"2299","7478141","Part autonomie",14
+"2300","7478142","Part prévention",15
+"2301","747818","Autres",6
+"2302","74782","Fonds départemental des personnes handicapées",45
+"2303","747821","Participations des organismes de droit public",45
+"2304","7478211","État",4
+"2305","7478212","Régions",7
+"2306","7478213","Départements",12
+"2307","7478214","Communes et structures intercommunales",38
+"2308","7478218","Autres groupements de collectivités et collectivités à statut particulier",73
+"2309","747822","Participations des personnes de droit privé",43
+"2310","7478221","Organismes d’assurance maladie",30
+"2311","7478222","Caisses d’allocations familiales",32
+"2312","7478223","Organismes régis par le Code de la mutualité",44
+"2313","7478224","Associations de l’article L 323-8-3 du Code du travail",54
+"2314","7478228","Autres personnes privées",24
+"2315","74783","Fonds de mobilisation départemental pour l’insertion",52
+"2316","74784","CCAS et caisses des écoles",26
+"2317","74788","Autres",6
+"2318","748","Compensations, attributions et autres participations",52
+"2319","7481","Attributions sur le versement représentatif d’impôt sur les cercles et maisons de jeux",86
+"2320","7482","Compensation pour perte de taxe additionnelle aux droits d'enregistrement ou la taxe de publicité foncière",106
+"2321","7483","Attributions de péréquation et de compensation",46
+"2322","74831","Dotations et compensations relatives à la fiscalité professionnelle",67
+"2323","748311","Compensation des pertes de bases d’imposition à la CET",54
+"2324","748312","D.C.R.T.P.",10
+"2325","748313","Dotation unique des compensations spécifiques à la taxe professionnelle",71
+"2326","748314","Dotations de compensation relatives à la taxe professionnelle – syndicale",73
+"2327","748315","Compensation des pertes d’IFER",30
+"2328","74832","État – Compensation au titre de la Contribution Économique Territoriale (CVAE et CFE)",85
+"2329","74833","État – Compensation au titre des exonérations de taxes foncières",64
+"2330","74834","État – compensation au titre des exonérations de taxe d’habitation",66
+"2331","74835","Dotation pour transfert de compensations d’exonérations de fiscalité directe locale",83
+"2332","74836","Attribution du fonds départemental de péréquation de la taxe professionnelle",76
+"2333","74837","Dotations de développement",26
+"2334","748371","Dotation d’équipement des territoires ruraux (DETR)",51
+"2335","748372","Dotation politique de la ville (DPV)",36
+"2336","748373","Dotation de soutien à l’investissement local (DSIL)",51
+"2337","74838","Autres attributions de péréquation et de compensation",53
+"2338","748381","Compensation liée au relèvement du seuil des personnes assujetties au versement mobilité",88
+"2339","748382","Dotation de compensation pour perte des frais de gestion TH",59
+"2340","748388","Autres",6
+"2341","7484","Dotation de recensement",23
+"2342","7485","Dotation pour les titres sécurisés",34
+"2343","7486","Dotation d'équilibre (Métropole du Grand Paris)",47
+"2344","74861","Attribution de la dotation d’équilibre",38
+"2345","74869","Reversement de la dotation d’équilibre",38
+"2346","7487","Dotations des arrondissements ou des communes associées",55
+"2347","74871","Dotation d’animation locale",27
+"2348","748711","Dotation d’animation locale reçue",33
+"2349","748719","Dotation d’animation locale versée",34
+"2350","74872","Dotation de gestion locale",26
+"2351","748721","Dotation de gestion locale reçue",32
+"2352","748729","Dotation d’animation locale versée",34
+"2353","7488","Autres attributions et participations",37
+"2354","74881","Participation des familles au titre de la restauration et de l’hébergement scolaires",84
+"2355","74888","Autres",6
+"2356","749","Reversement et restitution sur dotations et participations",58
+"2357","7491","Contribution à la dotation de fonctionnement minimale",53
+"2358","7498","Autres reversements sur dotations et participations",51
+"2359","75","AUTRES PRODUITS DE GESTION COURANTE",35
+"2360","751","Recouvrements de dépenses d’aide sociale",40
+"2361","7511","Recouvrements sur départements et autres collectivités publiques",64
+"2362","7512","Recouvrements sur Sécurité Sociale et organismes mutualistes",60
+"2363","7513","Recouvrements sur bénéficiaire, tiers-payants et successions",60
+"2364","7518","Recouvrements sur autres redevables",35
+"2365","752","Revenus des immeubles",21
+"2366","753","Recouvrements des indus d’insertion et d’aide sociale",53
+"2367","7531","RMI",3
+"2368","7532","RMA",3
+"2369","7533","APA",3
+"2370","7534","RSA",3
+"2371","75342","Allocations forfaitaires",24
+"2372","75343","Allocations forfaitaires majorées",33
+"2373","75344","Versements facultatifs",22
+"2374","7535","PCH",3
+"2375","7538","Autres",6
+"2376","755","Dédits et pénalités perçus",26
+"2377","756","Libéralités reçues",18
+"2378","757","Subventions",11
+"2379","758","Produits divers de gestion courante",35
+"2380","7581","Redevances",10
+"2381","75811","Redevances pour concessions, brevets, licences, marques, procédés, droits et valeurs similaires",95
+"2382","75812","Redevances pour défaut de branchement à l’égout",47
+"2383","75813","Redevances versées par les fermiers et concessionnaires",55
+"2384","75814","Redevance sur l'énergie hydraulique",35
+"2385","7582","Excédent ou déficit des budgets annexes à caractère administratif",65
+"2386","75821","Excédent des budgets annexes à caractère administratif",54
+"2387","75822","Prise en charge du déficit du budget annexe à caractère administratif par le budget principal",93
+"2388","7583","Participations des bénéficiaires d'une mesure d'accompagnement social personnalisé",82
+"2389","7584","Recouvrement sur créances admises en non valeur",47
+"2390","7585","Bonifications d’intérêts",24
+"2391","7586","Excédents reversés par les régies à caractère industriel et commercial",70
+"2392","75861","Régies dotées de la seule autonomie financière",46
+"2393","75862","Régies dotées de la personnalité morale",39
+"2394","7588","Autres produits divers de gestion courante",42
+"2395","75882","Reprise réserve – Surplus de DMTO",33
+"2396","75886","Gains de change sur créances et dettes non financières",54
+"2397","75888","Autres",6
+"2398","76","PRODUITS FINANCIERS",19
+"2399","761","Produits de participations",26
+"2400","762","Produits des autres immobilisations financières",47
+"2401","7621","Produits des autres immobilisations financières – encaissés à l’échéance",72
+"2402","7622","Produits des autres immobilisations financières – rattachement des ICNE",71
+"2403","7623","Remboursements d’intérêts d’emprunts transférés",47
+"2404","76231","par les communes membres du GFP",31
+"2405","76232","par le GFP de rattachement",26
+"2406","76233","par leurs BA et régies à seule autonomie financière",51
+"2407","76238","par d’autres tiers",18
+"2408","764","Revenus des valeurs mobilières de placement",43
+"2409","765","Escomptes obtenus",17
+"2410","766","Gains de change sur créances et dettes financières",50
+"2411","767","Produits nets sur cessions de valeurs mobilières de placement",61
+"2412","768","Autres produits financiers",26
+"2413","7681","Fonds de soutien – Sortie des emprunts à risques",48
+"2414","76811","Sortie des emprunts à risques avec IRA capitalisées",51
+"2415","76812","Sortie des emprunts à risques sans IRA capitalisées",51
+"2416","7688","Autres",6
+"2417","77","PRODUITS SPÉCIFIQUES",20
+"2418","773","Mandats annulés (sur exercices antérieurs) ou atteints par la déchéance quadriennale",84
+"2419","775","Produits des cessions d'immobilisations",39
+"2420","776","Différences sur réalisations (négatives) reprises au compte de résultat",71
+"2421","7761","Différences sur réalisations (négatives) reprises au compte de résultat",71
+"2422","7768","Neutralisation des amortissements, dépréciations et provisions",62
+"2423","77681","Neutralisation des amortissements",33
+"2424","77682","Neutralisation des dépréciations et provisions",46
+"2425","777","Recettes et quote-part des subventions d'investissement transférées au compte de résultat",89
+"2426","78","REPRISES SUR AMORTISSEMENTS, DÉPRÉCIATIONS ET PROVISIONS",56
+"2427","781","Reprises sur amortissements, dépréciations et provisions (à inscrire dans les produits de fonctionnement courant)",113
+"2428","7811","Reprises sur amortissements des immobilisations incorporelles et corporelles",76
+"2429","7815","Reprises sur provisions pour risques et charges de fonctionnement courant",73
+"2430","7816","Reprises sur dépréciations des immobilisations incorporelles et corporelles.",76
+"2431","7817","Reprises sur dépréciations des actifs circulants.",49
+"2432","786","Reprises sur dépréciations et provisions (à inscrire dans les produits financiers)",82
+"2433","7865","Reprises sur provisions pour risques et charges financiers",58
+"2434","7866","Reprises sur dépréciations des éléments financiers",50
+"2435","79","TRANSFERTS DE CHARGES",21
+"2436","791","Transferts de charges de fonctionnement",39
+"2437","796","Transferts de charges financières",33
+"2438","8","COMPTES SPÉCIAUX",16
+"2439","80","ENGAGEMENTS HORS BILAN",22
+"2440","801","Engagements donnés par la collectivité",38
+"2441","8015","Engagements sur garanties d’emprunt",35
+"2442","8016","Engagements de crédit-bail restant à courir",43
+"2443","80161","Crédit-bail mobilier",20
+"2444","80165","Crédit-bail immobilier",22
+"2445","8017","Subventions à verser par annuités (annuités restant à courir)",61
+"2446","8018","Autres engagements donnés",25
+"2447","802","Engagements reçus par la collectivité",37
+"2448","8026","Redevances de crédit-bail restant à recevoir",44
+"2449","80265","Crédit-bail immobilier",22
+"2450","8027","Subventions à recevoir par annuités (annuités restant à recevoir)",65
+"2451","8028","Autres engagements reçus",24
+"2452","86","VALEURS INACTIVES",17
+"2453","861","Comptes de position : titres et valeurs en portefeuille",55
+"2454","862","Comptes de position : titres et valeurs chez les correspondants",63
+"2455","863","Comptes de prise en charge",26
