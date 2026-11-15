@@ -233,3 +233,7 @@ bat <- st_read("../data/RNB_93010.gpkg")
 ```
 
 
+# Modification
+
+
+On modifie le RNB à la main sur l'interface propposée
