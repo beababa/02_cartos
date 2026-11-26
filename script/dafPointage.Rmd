@@ -1,0 +1,39 @@
+---
+title: "DAF"
+author: "B. Maranget"
+date: "12/11/2026"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+
+# Objet
+
+liste de toutes les modifications à effectuer
+
+
+maison petite enfance :
+différencier ludothèque et ile des enfants
+
+le batiment est différencié sur le RNB
+
+
+espaces verts
+
+élimination bâtiment ? détruits ?
+assurances sur quels bâtiments ?
+
+

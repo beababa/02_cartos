@@ -156,6 +156,7 @@ rnb <- st_read("../data/RNB.gpkg", "rnb2026")
 
 9848 bâtiments
 
+
 ### POI
 
 Récupération via la base locale "bondy"
@@ -180,6 +181,8 @@ Récup en tt dans tt.gpkg (pas à jour avec la base)
 poi <- st_read("../data/tt.gpkg","poi")
 poi <- st_transform(poi, 4326)
 ```
+
+
 
 
 ## Premières intersections
@@ -337,6 +340,53 @@ TODO ?
 
 # Jointures avec autres fichiers
 
+
+## Data ES
+
+Autre source intéressante dont on reprendra les identifiants : 
+
+Base de données des équipements et lieux de pratiques issue de l'article L312-2 du Code du Sport
+
+
+Récupération sur le site du ministère pas de champs adresse, il existe une version sur data.gouv avec filtre exploration et champs adresse.
+
+```{r}
+library(arrow)
+sport <- read_parquet("../data/gros/data-es-equipement.parquet")
+ind <- grep('^I93010', sport$installation_numero)
+sport <- sport  [ind,]
+```
+
+
+73 installations sur Bondy
+
+Chaque installation peut avoir plusieurs équipements, ex : plateau TSB.
+
+
+```{r}
+str(sport)
+pb <- sport [is.na(sport$coordonnees_x),]
+sport <- sport [!(is.na(sport$coordonnees_x)),]
+# 70 3 non situées
+sport <- st_as_sf(sport, coords = c("coordonnees_x", "coordonnees_y"), crs = 4326)
+mf_map(sport)
+st_write(sport, "../data/finance.gpkg", "sport")
+```
+
+
+Les 3 sans lieu
+
+
+```{r}
+pb$coordonnees_x
+pb$coordonnees_y
+sport$coordonnees_x
+```
+
+
+remarque : le champs adresse ne figure pas dans l'export
+
+
 A savoir : 
 
 - la matrice => récupération d'invariant
@@ -485,8 +535,23 @@ dev.off()
 
 ### ERP
 
+```{r}
+erp <- st_read("../data/erp.gpkg")
+```
+
+
 
 ### OpenGST
+
+
+Géocodage effectué en 2025 
+
+2 fichiers dans socle 2025 / 233 pts et socle 2026 / 111 pts
+
+```{r}
+GST <- st_read("../data/socle2025.gpkg", "batOpenGST")
+```
+
 
 
 
