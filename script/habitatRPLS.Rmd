@@ -48,6 +48,10 @@ rpls 2025
 
 https://www.statistiques.developpement-durable.gouv.fr/catalogue?page=datafile&datafileRid=f3c2f2cb-8fb1-40fd-8733-964247744c9a
 
+
+En 2026, nb logements = le plus simple est de compter un pt par logement
+
+
 ```{r}
 library(sf)
 library(mapsf)
@@ -131,8 +135,33 @@ Puisqu'il s'agit de traiter pl fichiers, on va tout mettre en fonctions ?
 
 ```{r}
 fic <- read.csv("../data/rpls2026.csv")
+# 9706
 names(fic)
 head(fic)
+# spatialisation
+fic <- fic [!is.na(fic$X), ]
+# 9278
+pt <- st_as_sf(fic [,c("X.1", "X", "Y")], 
+                 coords = c(x = "X", y = "Y"), 
+                 crs = 2154)
+```
+
+
+# Nb de logements
+
+
+```{r}
+quartier <- st_read("S:/VOIRIE PLANS/05_SIG/03_SOCLE/socle2026.gpkg")
+quartier <- quartier [, c("nom")]
+nb <- aggregate(pt, by = quartier, length)
+mf_map(nb)
+mf_label(nb, "X.1")
+```
+
+
+
+
+```{r}
 # pb pour 2024 sur le nom de voie
 table(fic$NOMVOIE)
 fic$NOMVOIE <- gsub ("[0-9]", "", fic$NOMVOIE)
@@ -158,6 +187,10 @@ df <- as.data.frame(res [[1]])
 summary(df)
 df <- df [df$Freq > 70,]
 barplot(df$Freq, las = 2, horiz = T, names = df$Var1, main = "nb lgts sociaux par rue > 70", cex.names = 0.5)
+```
+
+
+```{r}
 # agregation par étage
 agg <- function(fic){
   ind <- grep("ETAGE", names(fic), ignore.case = T)
@@ -186,6 +219,9 @@ data <- st_as_sf(joint2,
 return(data)
 }
 rpls <- agg(fic)
+mf_map(rpls)
+doublon <- rpls [!duplicated(st_drop_geometry(rpls)),]
+sum(doublon$appartement)
 st_write(rpls, "../data/RPLS.gpkg", "rpls2026", delete_layer = T)
 ```
 
@@ -755,4 +791,8 @@ table(rpls2025$CUS)
 table(rpls2024$CUS)
 table(rpls2019$CUS)
 ```
+
+
+
+
 

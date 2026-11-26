@@ -114,10 +114,24 @@ Nb de logements sociaux
 
 
 ```{r}
-rpls <- st_read("../data/RPLS.gpkg", "rpls2025", quiet = T)
+rpls <- st_read("../data/RPLS.gpkg", "rpls2026", quiet = T)
+mf_map(rpls)
 sum(rpls$appartement)
 knitr::kable(table(rpls$etage), col.names = c("Nb étages", "Nb immeubles"))
 ```
+
+Par quartier
+
+```{r}
+
+inter <- st_intersection( quartier, rpls)
+(tot <- aggregate(inter$appartement, by = list(inter$nom), sum))
+library(mapsf)
+mf_map(tot)
+mf_label(tot, "appartement")
+```
+
+
 
 A noter, Marx Dormoy / ZAC de l'Ourcq / Sablière / allée Laffargue
 
